@@ -1,6 +1,5 @@
-[<img alt="uniwind" src="assets/banner.png">](https://uniwind.dev/)
-
 <div align="center">
+    <a href="https://uniwind.dev/"><img alt="uniwind" src="../../assets/banner.png"></a>
     <p align="center">
         <a href="https://uniwind.dev/" target="_blank">
             <h1 align="center" style="color:red;">Uniwind</h1>
