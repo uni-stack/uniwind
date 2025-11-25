@@ -27,11 +27,14 @@ const logDevError = (name: string) => {
     )
 }
 
+type IsGenericNumber<T> = T & 0 extends -1 ? false : true
 type CreateArray<N extends number, Value, TAcc extends Array<Value> = []> = TAcc['length'] extends N ? TAcc : CreateArray<N, Value, [...TAcc, Value]>
 
 type UseCSSVariable = {
     (name: string): string | number | undefined
-    <const T extends Array<string>>(names: T): CreateArray<T['length'], string | number | undefined>
+    <const T extends Array<string>>(
+        names: T,
+    ): IsGenericNumber<T['length']> extends true ? Array<string | number | undefined> : CreateArray<T['length'], string | number | undefined>
 }
 
 /**
