@@ -56,6 +56,19 @@ export default defineBuildConfig({
             declaration: true,
             format: 'esm',
         },
+        {
+            builder: 'rollup',
+            input: './src/vite',
+            name: 'vite/index',
+        },
+        {
+            builder: 'mkdist',
+            input: './src/vite',
+            outDir: 'dist/vite',
+            pattern: ['index.d.ts'],
+            declaration: true,
+            format: 'esm',
+        },
         ...getConfig({
             input: './src/components',
             outDir: 'components',
@@ -80,9 +93,6 @@ export default defineBuildConfig({
     ],
     rollup: {
         emitCJS: true,
-        output: {
-            format: 'cjs',
-        },
     },
     dependencies: [
         '@tailwindcss',

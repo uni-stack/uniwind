@@ -26,6 +26,7 @@ export default [
             'types.d.ts',
             'no-types.d.ts',
             'src/metro/index.d.ts',
+            'src/vite/index.d.ts',
             'dist',
             'specs',
         ],

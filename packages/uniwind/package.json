@@ -7,6 +7,7 @@
     "author": "UnistylesOSS",
     "type": "module",
     "repository": "https://github.com/Unistyles-OSS/uniwind",
+    "sideEffects": false,
     "scripts": {
         "precommit": "bun lint",
         "build": "unbuild",
@@ -56,6 +57,11 @@
             "import": "./dist/metro/index.mjs",
             "default": "./dist/metro/index.cjs"
         },
+        "./vite": {
+            "types": "./dist/vite/index.d.ts",
+            "import": "./dist/vite/index.mjs",
+            "default": "./dist/vite/index.cjs"
+        },
         "./types": "./types.d.ts",
         "./package.json": "./package.json"
     },
@@ -63,6 +69,7 @@
         "src",
         "dist",
         "metro",
+        "vite",
         "uniwind.css",
         "types.d.ts",
         "readme.md"
@@ -85,6 +92,7 @@
         "typescript": "catalog:",
         "metro": "0.83.3",
         "dpdm": "3.14.0",
-        "unbuild": "3.6.1"
+        "unbuild": "3.6.1",
+        "vite": "^7.2.4"
     }
 }
