@@ -90,6 +90,8 @@ export default defineBuildConfig({
         'lightningcss',
         /metro-cache/,
         /metro\/private/,
+        'postcss',
+        'postcss-dark-theme-class',
     ],
     rollup: {
         emitCJS: true,

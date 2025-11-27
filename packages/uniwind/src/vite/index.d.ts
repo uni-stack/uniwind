@@ -1,3 +1,8 @@
 import type { Plugin } from 'vite'
 
-export declare function uniwind(): Plugin
+type UniwindConfig = {
+    extraThemes?: Array<string>
+    dtsFile?: string
+}
+
+export declare function uniwind(config?: UniwindConfig): Plugin
