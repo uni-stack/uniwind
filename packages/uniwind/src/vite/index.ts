@@ -18,7 +18,7 @@ const componentPath = path.resolve(
     '../module/components/index.web.js',
 )
 
-export const uniwind = ({
+const uniwind = ({
     extraThemes,
     dtsFile = 'uniwind-types.d.ts',
 }: UniwindConfig = {}): Plugin => {
@@ -80,3 +80,5 @@ export const uniwind = ({
         },
     }
 }
+
+export default uniwind
