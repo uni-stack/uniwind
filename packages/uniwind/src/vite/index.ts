@@ -1,12 +1,10 @@
 import path, { dirname } from 'path'
-import postcssDarkThemeClass from 'postcss-dark-theme-class'
 import { fileURLToPath } from 'url'
 import type { Plugin } from 'vite'
 import { processFunctions } from '../css/processFunctions'
 import { uniq } from '../metro/utils'
 import { buildDtsFile } from '../utils/buildDtsFile'
 import { stringifyThemes } from '../utils/stringifyThemes'
-import postcssPlugin from './postcssPlugin'
 
 type UniwindConfig = {
     extraThemes?: Array<string>
@@ -33,45 +31,34 @@ export const uniwind = ({
 
     return {
         name: 'uniwind',
-        config: (userConfig) => {
-            const isLightningCss = userConfig.css?.transformer === 'lightningcss'
-
-            return {
-                css: {
-                    ...(isLightningCss
-                        ? {
-                            lightningcss: {
-                                visitor: {
-                                    Function: processFunctions,
-                                },
-                            },
-                        }
-                        : {
-                            postcss: {
-                                plugins: [postcssDarkThemeClass, postcssPlugin],
-                            },
-                        }),
+        config: () => ({
+            css: {
+                transformer: 'lightningcss',
+                lightningcss: {
+                    visitor: {
+                        Function: processFunctions,
+                    },
                 },
-                resolve: {
-                    alias: [
-                        {
-                            find: /^react-native$/,
-                            replacement: componentPath,
-                            customResolver: {
-                                resolveId(_, importer) {
-                                    // Check if import comes from uniwind
-                                    if (importer?.includes('node_modules/uniwind') === true) {
-                                        return this.resolve('react-native-web')
-                                    }
+            },
+            resolve: {
+                alias: [
+                    {
+                        find: /^react-native$/,
+                        replacement: componentPath,
+                        customResolver: {
+                            resolveId(_, importer) {
+                                // Check if import comes from uniwind
+                                if (importer?.includes('node_modules/uniwind') === true) {
+                                    return this.resolve('react-native-web')
+                                }
 
-                                    return componentPath
-                                },
+                                return componentPath
                             },
                         },
-                    ],
-                },
-            }
-        },
+                    },
+                ],
+            },
+        }),
         transformIndexHtml: (html) => {
             return {
                 html,

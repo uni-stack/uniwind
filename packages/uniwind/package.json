@@ -89,8 +89,6 @@
         "@types/bun": "catalog:",
         "@types/culori": "4.0.1",
         "@types/react": "catalog:",
-        "postcss": "^8.5.6",
-        "postcss-dark-theme-class": "^2.0.0",
         "typescript": "catalog:",
         "metro": "0.83.3",
         "dpdm": "3.14.0",
