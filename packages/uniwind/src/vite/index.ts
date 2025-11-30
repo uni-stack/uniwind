@@ -48,7 +48,7 @@ const uniwind = ({
                         customResolver: {
                             resolveId(_, importer) {
                                 // Check if import comes from uniwind
-                                if (importer?.includes('node_modules/uniwind') === true) {
+                                if (importer?.includes('uniwind/dist') === true) {
                                     return this.resolve('react-native-web')
                                 }
 
