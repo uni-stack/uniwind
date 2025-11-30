@@ -22,6 +22,7 @@
             "typescript": "5.9.3",
             "@types/bun": "1.3.2",
             "@types/react": "19.1.10",
+            "@types/react-dom": "19.1.10",
             "react": "19.1.0",
             "react-dom": "19.1.0",
             "expo": "54.0.23",
