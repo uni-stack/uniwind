@@ -1,9 +1,15 @@
 import tailwindcss from '@tailwindcss/vite'
-import uniwind from 'uniwind/vite'
+import { uniwind } from 'uniwind/vite'
 import { defineConfig } from 'vite'
 import { rnw } from 'vite-plugin-rnw'
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [rnw(), tailwindcss(), uniwind()],
+    plugins: [
+        rnw(),
+        tailwindcss(),
+        uniwind({
+            extraThemes: ['premium'],
+        }),
+    ],
 })

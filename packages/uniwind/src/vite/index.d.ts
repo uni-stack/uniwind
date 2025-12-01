@@ -5,5 +5,4 @@ type UniwindConfig = {
     dtsFile?: string
 }
 
-declare function uniwind(config?: UniwindConfig): Plugin
-export default uniwind
+export declare function uniwind(config?: UniwindConfig): Plugin
