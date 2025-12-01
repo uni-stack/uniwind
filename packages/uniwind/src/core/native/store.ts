@@ -1,8 +1,9 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, StyleDependency } from '../../types'
+import type { ThemeName } from '../config'
 import { UniwindListener } from '../listener'
-import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets } from '../types'
+import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets } from '../types'
 import { cloneWithAccessors } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
@@ -15,6 +16,7 @@ type StylesResult = {
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<string, unknown>
+    runtimeThemeVariables = new Map<ThemeName, CSSVariables>()
     private stylesheet = {} as StyleSheets
     private cache = new Map<string, StylesResult>()
     private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
@@ -60,6 +62,7 @@ class UniwindStoreBuilder {
 
         const themeVars = scopedVars[`__uniwind-theme-${this.runtime.currentThemeName}`]
         const platformVars = scopedVars[`__uniwind-platform-${Platform.OS}`]
+        const runtimeThemeVars = this.runtimeThemeVariables.get(this.runtime.currentThemeName)
 
         if (themeVars) {
             Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(themeVars))
@@ -67,6 +70,10 @@ class UniwindStoreBuilder {
 
         if (platformVars) {
             Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(platformVars))
+        }
+
+        if (runtimeThemeVars) {
+            Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(runtimeThemeVars))
         }
 
         if (__DEV__ && generateStyleSheetCallback) {

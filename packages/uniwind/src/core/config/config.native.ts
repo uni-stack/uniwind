@@ -3,29 +3,25 @@ import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { UniwindStore } from '../native'
-import { GenerateStyleSheetsCallback } from '../types'
-import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
+import { CSSVariables, GenerateStyleSheetsCallback } from '../types'
+import { ThemeName, UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {
     constructor() {
         super()
     }
 
-    // @ts-expect-error Overriding protected method
     __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
-        // @ts-expect-error Accessing protected method
-        super.__reinit(themes)
+        super.__reinit(generateStyleSheetCallback, themes)
         UniwindStore.reinit(generateStyleSheetCallback)
     }
 
     onThemeChange() {
         UniwindStore.runtime.currentThemeName = this.currentTheme
         UniwindStore.reinit()
-        // @ts-expect-error Accessing protected property
-        this.runtimeCSSVariables.clear()
     }
 
-    setCSSVariables(variables: Record<string, string | number>) {
+    updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
         Object.entries(variables).forEach(([varName, varValue]) => {
             if (!varName.startsWith('--') && __DEV__) {
                 Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
@@ -48,15 +44,21 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
                 return varValue
             }
+
             const value = getValue()
+            const runtimeThemeVariables = UniwindStore.runtimeThemeVariables.get(theme) ?? {}
 
             Object.defineProperty(UniwindStore.vars, varName, {
                 configurable: true,
                 enumerable: true,
                 get: () => value,
             })
-            // @ts-expect-error Accessing protected property
-            this.runtimeCSSVariables.add(varName)
+            Object.defineProperty(runtimeThemeVariables, varName, {
+                configurable: true,
+                enumerable: true,
+                get: () => value,
+            })
+            UniwindStore.runtimeThemeVariables.set(theme, runtimeThemeVariables)
         })
         UniwindListener.notify([StyleDependency.Theme])
     }

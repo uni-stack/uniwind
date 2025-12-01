@@ -1,7 +1,7 @@
 import { Appearance, Platform } from 'react-native'
 import { ColorScheme, StyleDependency, UniwindConfig } from '../../types'
 import { UniwindListener } from '../listener'
-import { Logger } from '../logger'
+import { CSSVariables, GenerateStyleSheetsCallback } from '../types'
 
 type UserThemes = UniwindConfig extends { themes: infer T extends ReadonlyArray<string> } ? T
     : ReadonlyArray<string>
@@ -11,8 +11,7 @@ export type ThemeName = UserThemes[number]
 const SYSTEM_THEME = 'system' as const
 
 export class UniwindConfigBuilder {
-    private themes = ['light', 'dark']
-    private runtimeCSSVariables = new Set<string>()
+    protected themes = ['light', 'dark']
     #hasAdaptiveThemes = true
     #currentTheme = this.colorScheme as ThemeName
 
@@ -70,7 +69,7 @@ export class UniwindConfigBuilder {
                 Appearance.setColorScheme(isAdaptiveTheme ? this.#currentTheme as ColorScheme : undefined)
             }
         } finally {
-            if (prevTheme !== this.#currentTheme || this.runtimeCSSVariables.size > 0) {
+            if (prevTheme !== this.#currentTheme) {
                 this.onThemeChange()
                 UniwindListener.notify([StyleDependency.Theme])
             }
@@ -81,41 +80,18 @@ export class UniwindConfigBuilder {
         }
     }
 
-    setCSSVariables(variables: Record<string, string | number>) {
-        Object.entries(variables).forEach(([varName, varValue]) => {
-            if (!varName.startsWith('--') && __DEV__) {
-                Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
-
-                return
-            }
-
-            if (Platform.OS !== 'web' || typeof document === 'undefined') {
-                return
-            }
-
-            this.runtimeCSSVariables.add(varName)
-            document.documentElement.style.setProperty(
-                varName,
-                typeof varValue === 'number' ? `${varValue}px` : varValue,
-            )
-        })
-
-        UniwindListener.notify([StyleDependency.Theme])
+    updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
+        // noop
+        theme
+        variables
     }
 
-    private __reinit(themes: Array<string>) {
+    protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {
         this.themes = themes
     }
 
-    private onThemeChange() {
-        this.runtimeCSSVariables.forEach(varName => {
-            if (Platform.OS !== 'web' || typeof document === 'undefined') {
-                return
-            }
-
-            document.documentElement.style.removeProperty(varName)
-        })
-        this.runtimeCSSVariables.clear()
+    protected onThemeChange() {
+        // noop
     }
 }
 

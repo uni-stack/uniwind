@@ -42,7 +42,7 @@ export const transform = async (
         data = Buffer.from(
             [
                 `import { Uniwind } from '${name}';`,
-                `Uniwind.__reinit(${injectedThemesCode});`,
+                `Uniwind.__reinit(() => ({}), ${injectedThemesCode});`,
             ].join(''),
             'utf-8',
         )
