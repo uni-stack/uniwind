@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { UniwindListener } from '../../core/listener'
+import { Logger } from '../../core/logger'
 import { StyleDependency } from '../../types'
 import { getVariableValue } from './getVariableValue'
 
@@ -20,9 +21,7 @@ let warned = false
 
 const logDevError = (name: string) => {
     warned = true
-
-    // eslint-disable-next-line no-console
-    console.warn(
+    Logger.warn(
         `We couldn't find your variable ${name}. Make sure it's used at least once in your className, or define it in a static theme as described in the docs: https://docs.uniwind.dev/api/use-css-variable`,
     )
 }
