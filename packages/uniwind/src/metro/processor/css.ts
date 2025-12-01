@@ -1,7 +1,7 @@
 import { OverflowKeyword } from 'lightningcss'
 import { Logger } from '../logger'
 import { DeclarationValues } from '../types'
-import { isDefined, pipe, roundToPrecision, shouldBeSerialized } from '../utils'
+import { deepEqual, isDefined, pipe, roundToPrecision, shouldBeSerialized } from '../utils'
 import type { ProcessorBuilder } from './processor'
 
 export class CSS {
@@ -325,8 +325,8 @@ export class CSS {
                 if (typeof value === 'object') {
                     const nextValue = array.at(index + 1)
 
-                    // Dimensions might be duplicated
-                    if (this.isDimension(value) && this.isDimension(nextValue)) {
+                    // Remove duplicates
+                    if (deepEqual(value, nextValue)) {
                         return acc
                     }
 
@@ -475,10 +475,6 @@ export class CSS {
         this.logUnsupported(`Unsupported value - ${JSON.stringify(declarationValue)}`)
 
         return undefined
-    }
-
-    private isDimension(value: any): value is { type: 'dimension' } {
-        return typeof value === 'object' && 'type' in value && value.type === 'dimension'
     }
 
     private isOverflow(value: any): value is { x: OverflowKeyword; y: OverflowKeyword } {
