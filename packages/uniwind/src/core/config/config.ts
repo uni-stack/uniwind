@@ -45,7 +45,10 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             this.runtimeCSSVariables.set(theme, runtimeCSSVariables)
             this.applyCSSVariable(varName, varValue)
         })
-        UniwindListener.notify([StyleDependency.Theme])
+
+        if (theme === this.currentTheme) {
+            UniwindListener.notify([StyleDependency.Theme])
+        }
     }
 
     private applyCSSVariable(varName: keyof CSSVariables, varValue: CSSVariables[keyof CSSVariables]) {

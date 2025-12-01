@@ -60,7 +60,10 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             })
             UniwindStore.runtimeThemeVariables.set(theme, runtimeThemeVariables)
         })
-        UniwindListener.notify([StyleDependency.Theme])
+
+        if (theme === this.currentTheme) {
+            UniwindListener.notify([StyleDependency.Theme])
+        }
     }
 }
 
