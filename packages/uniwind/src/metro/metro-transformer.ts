@@ -39,7 +39,13 @@ export const transform = async (
             dtsPath: config.uniwind.dtsFile,
         })
 
-        data = Buffer.from(injectedThemesCode)
+        data = Buffer.from(
+            [
+                `import { Uniwind } from '${name}';`,
+                `Uniwind.__reinit(${injectedThemesCode});`,
+            ].join(''),
+            'utf-8',
+        )
     }
 
     if (!isCss) {
@@ -69,8 +75,7 @@ export const transform = async (
             ? virtualCode
             : [
                 `import { Uniwind } from '${name}';`,
-                `Uniwind.__reinit(rt => ${virtualCode});`,
-                injectedThemesCode,
+                `Uniwind.__reinit(rt => ${virtualCode}, ${injectedThemesCode});`,
             ].join(''),
         'utf-8',
     )

@@ -1,7 +1,6 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, StyleDependency } from '../../types'
-import { Uniwind } from '../config/config'
 import { UniwindListener } from '../listener'
 import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets } from '../types'
 import { cloneWithAccessors } from './native-utils'
@@ -14,7 +13,6 @@ type StylesResult = {
 }
 
 class UniwindStoreBuilder {
-    initialized = false
     runtime = UniwindRuntime
     vars = {} as Record<string, unknown>
     private stylesheet = {} as StyleSheets
@@ -73,17 +71,6 @@ class UniwindStoreBuilder {
 
         if (__DEV__ && generateStyleSheetCallback) {
             UniwindListener.notifyAll()
-        }
-
-        if (!this.initialized) {
-            UniwindListener.subscribe(
-                () => {
-                    UniwindRuntime.currentThemeName = Uniwind.currentTheme
-                    UniwindStore.reinit()
-                },
-                [StyleDependency.Theme],
-            )
-            this.initialized = true
         }
     }
 
