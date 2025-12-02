@@ -1,5 +1,4 @@
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import path from 'path'
 import type { Plugin } from 'vite'
 import { processFunctions } from '../css/processFunctions'
 import { uniq } from '../metro/utils'
@@ -11,10 +10,8 @@ type UniwindConfig = {
     dtsFile?: string
 }
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
 const componentPath = path.resolve(
-    __dirname,
+    import.meta.dirname,
     '../module/components/index.web.js',
 )
 
