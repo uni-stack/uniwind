@@ -19,5 +19,5 @@ export const injectThemes = async ({
     await buildCSS(themes, input)
 
     // js generation
-    return `globalThis.__uniwindThemes__ = ${stringifiedThemes};`
+    return stringifiedThemes
 }

@@ -88,3 +88,5 @@ export type ComponentState = {
     isDisabled?: boolean
     isFocused?: boolean
 }
+
+export type CSSVariables = Record<string, string | number>

@@ -1,4 +1,5 @@
 export * from './boxShadow'
 export * from './fontVariant'
 export * from './gradient'
+export * from './textShadow'
 export * from './transforms'

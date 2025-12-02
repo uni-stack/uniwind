@@ -29,8 +29,11 @@ jobs:
       - name: Check types
         run: bun run check:typescript
 
-      - name: Check linting and formatting
+      - name: Check linting
         run: bun run lint
+
+      - name: Check formatting
+        run: bun run check:format
 
       - name: Check circular dependencies
         run: bun run circular:check

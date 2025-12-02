@@ -87,5 +87,5 @@ body:
         label: Additional information
         description: Please check all the boxes that apply
         options:
-          - label: I've searched for [similar issues in this repository](https://github.com/Unistyles-OSS/uniwind/issues) and found none
+          - label: I've searched for [similar issues in this repository](https://github.com/uni-stack/uniwind/issues) and found none
             required: true

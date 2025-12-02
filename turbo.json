@@ -11,9 +11,10 @@
         },
         "check:typescript": {},
         "lint": {},
+        "//#check:format": {},
         "circular:check": {},
         "precommit": {
-            "dependsOn": ["lint", "check:typescript", "circular:check", "test"]
+            "dependsOn": ["lint", "check:typescript", "circular:check", "test", "//#check:format"]
         },
         "test": {
             "cache": false

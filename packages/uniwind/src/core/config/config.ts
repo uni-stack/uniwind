@@ -1,83 +1,65 @@
-import { Appearance, Platform } from 'react-native'
-import { ColorScheme, StyleDependency, UniwindConfig } from '../../types'
+import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
+import { Logger } from '../logger'
+import { CSSVariables } from '../types'
+import { ThemeName, UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
-type UserThemes = UniwindConfig extends { themes: infer T extends ReadonlyArray<string> } ? T
-    : ReadonlyArray<string>
+export { type ThemeName } from './config.common'
 
-export type ThemeName = UserThemes[number]
-
-const SYSTEM_THEME = 'system' as const
-
-class UniwindConfigBuilder {
-    #hasAdaptiveThemes = true
-    #currentTheme = this.colorScheme as ThemeName
+class UniwindConfigBuilder extends UniwindConfigBuilderBase {
+    private runtimeCSSVariables = new Map<ThemeName, CSSVariables>()
 
     constructor() {
-        Appearance.addChangeListener(event => {
-            const colorScheme = event.colorScheme ?? ColorScheme.Light
-            const prevTheme = this.#currentTheme
+        super()
+    }
 
-            if (this.#hasAdaptiveThemes && prevTheme !== colorScheme) {
-                this.#currentTheme = colorScheme
-                UniwindListener.notify([StyleDependency.Theme])
-            }
+    onThemeChange() {
+        if (typeof document === 'undefined') {
+            return
+        }
+
+        document.documentElement.removeAttribute('style')
+
+        const runtimeCSSVariables = this.runtimeCSSVariables.get(this.currentTheme)
+
+        if (!runtimeCSSVariables) {
+            return
+        }
+
+        Object.entries(runtimeCSSVariables).forEach(([varName, varValue]) => {
+            this.applyCSSVariable(varName, varValue)
         })
     }
 
-    get hasAdaptiveThemes() {
-        return this.#hasAdaptiveThemes
-    }
-
-    get currentTheme(): ThemeName {
-        return this.#currentTheme
-    }
-
-    private get themes() {
-        return globalThis.__uniwindThemes__ ?? ['light', 'dark']
-    }
-
-    private get colorScheme() {
-        return Appearance.getColorScheme() ?? ColorScheme.Light
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    setTheme(theme: ThemeName | typeof SYSTEM_THEME) {
-        const prevTheme = this.#currentTheme
-        const prevHasAdaptiveThemes = this.#hasAdaptiveThemes
-        const isAdaptiveTheme = ['light', 'dark'].includes(theme)
-
-        try {
-            if (theme === SYSTEM_THEME) {
-                this.#hasAdaptiveThemes = true
-                this.#currentTheme = this.colorScheme
-
-                if (Platform.OS !== 'web') {
-                    Appearance.setColorScheme(undefined)
-                }
+    updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
+        Object.entries(variables).forEach(([varName, varValue]) => {
+            if (!varName.startsWith('--') && __DEV__) {
+                Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
 
                 return
             }
 
-            if (!this.themes.includes(theme)) {
-                throw new Error(`Uniwind: You're trying to setTheme to '${theme}', but it was not registered.`)
-            }
+            const runtimeCSSVariables = this.runtimeCSSVariables.get(theme) ?? {}
 
-            this.#hasAdaptiveThemes = false
-            this.#currentTheme = theme
+            runtimeCSSVariables[varName] = varValue
+            this.runtimeCSSVariables.set(theme, runtimeCSSVariables)
+            this.applyCSSVariable(varName, varValue)
+        })
 
-            if (Platform.OS !== 'web') {
-                Appearance.setColorScheme(isAdaptiveTheme ? this.#currentTheme as ColorScheme : undefined)
-            }
-        } finally {
-            if (prevTheme !== this.#currentTheme) {
-                UniwindListener.notify([StyleDependency.Theme])
-            }
-
-            if (prevHasAdaptiveThemes !== this.#hasAdaptiveThemes) {
-                UniwindListener.notify([StyleDependency.AdaptiveThemes])
-            }
+        if (theme === this.currentTheme) {
+            UniwindListener.notify([StyleDependency.Theme])
         }
+    }
+
+    private applyCSSVariable(varName: keyof CSSVariables, varValue: CSSVariables[keyof CSSVariables]) {
+        if (typeof document === 'undefined') {
+            return
+        }
+
+        document.documentElement.style.setProperty(
+            varName,
+            typeof varValue === 'number' ? `${varValue}px` : varValue,
+        )
     }
 }
 
