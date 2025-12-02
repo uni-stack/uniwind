@@ -14,6 +14,8 @@ const readFileSafe = (filePath: string) => {
 
 const isExcludedDependency = (url: string) =>
     [
+        url === 'tailwindcss',
+        url === 'uniwind',
         url.includes('node_modules/tailwindcss'),
         url.includes('node_modules/@tailwindcss'),
         url.includes('node_modules/uniwind'),

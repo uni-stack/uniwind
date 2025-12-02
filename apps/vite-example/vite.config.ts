@@ -9,6 +9,7 @@ export default defineConfig({
         rnw(),
         tailwindcss(),
         uniwind({
+            cssEntryFile: './src/App.css',
             extraThemes: ['premium'],
         }),
     ],
