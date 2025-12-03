@@ -65,7 +65,10 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
 
     useEffect(() => {
         const updateValue = () => setValue(getValue(nameRef.current))
-        const dispose = UniwindListener.subscribe(updateValue, [StyleDependency.Theme])
+        const dispose = UniwindListener.subscribe(
+            updateValue,
+            [StyleDependency.Theme, StyleDependency.Variables],
+        )
 
         return dispose
     }, [])

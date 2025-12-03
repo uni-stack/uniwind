@@ -14,6 +14,7 @@ class UniwindListenerBuilder {
         [StyleDependency.FontScale]: new Set<() => void>(),
         [StyleDependency.Rtl]: new Set<() => void>(),
         [StyleDependency.AdaptiveThemes]: new Set<() => void>(),
+        [StyleDependency.Variables]: new Set<() => void>(),
     }
 
     notify(dependencies: Array<StyleDependency>) {

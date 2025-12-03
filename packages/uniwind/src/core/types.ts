@@ -9,7 +9,7 @@ export type Style = {
     theme: ColorScheme | null
     rtl: boolean | null
     native: boolean
-    dependencies: Array<StyleDependency>
+    dependencies: Array<StyleDependency> | null
     index: number
     className: string
     importantProperties: Array<string>
