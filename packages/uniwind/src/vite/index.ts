@@ -1,3 +1,4 @@
+import { normalizePath } from '@tailwindcss/node'
 import path from 'path'
 import type { Plugin } from 'vite'
 import { buildCSS } from '../css'
@@ -51,7 +52,7 @@ export const uniwind = ({
                         customResolver: {
                             resolveId(_, importer) {
                                 // Check if import comes from uniwind
-                                if (importer?.includes('uniwind/dist') === true) {
+                                if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
                                     return this.resolve('react-native-web')
                                 }
 
