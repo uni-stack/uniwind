@@ -63,17 +63,12 @@ export const uniwind = ({
                 ],
             },
         }),
-        transformIndexHtml: (html) => {
-            return {
-                html,
-                tags: [
-                    {
-                        tag: 'script',
-                        attrs: { type: 'module' },
-                        injectTo: 'head',
-                        children: `globalThis.__uniwindThemes__ = ${stringifiedThemes}`,
-                    },
-                ],
+        transform: (code, id) => {
+            const normalizedId = normalizePath(id)
+            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
+                return {
+                    code: `${code}Uniwind.__reinit(() => ({}), ${stringifiedThemes})`,
+                }
             }
         },
         buildStart: async () => {
