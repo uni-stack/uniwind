@@ -42,7 +42,7 @@ export const uniwind = ({
                 },
             },
             optimizeDeps: {
-                exclude: ['react-native'],
+                exclude: ['uniwind', 'react-native'],
             },
             resolve: {
                 alias: [
