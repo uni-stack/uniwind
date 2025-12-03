@@ -264,6 +264,8 @@ export class CSS {
                     return ')'
                 case 'light-dark':
                     return `rt.lightDark( ${this.processValue(declarationValue.light)}, ${this.processValue(declarationValue.dark)} )`
+                case 'unresolved-color':
+                    return this.getProcessedValue(declarationValue.value)
                 case 'track-list':
                 case 'sticky':
                 case 'fit-content':
