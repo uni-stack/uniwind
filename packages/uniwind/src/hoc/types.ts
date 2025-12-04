@@ -1,3 +1,4 @@
+import { ComponentProps, ComponentPropsWithRef } from 'react'
 import { RNStyle } from '../core/types'
 
 export type AnyObject = Record<PropertyKey, any>
@@ -26,7 +27,7 @@ export type ApplyUniwindOptions<TProps extends AnyObject, TOptions extends { [K 
     }
     & TProps
 
-export type Component<T extends AnyObject> = React.JSXElementConstructor<T>
+export type Component<T extends AnyObject = AnyObject> = React.JSXElementConstructor<T>
 
 export type OptionMapping = {
     fromClassName: string
@@ -35,10 +36,10 @@ export type OptionMapping = {
 
 export type WithUniwind = {
     // Auto mapping
-    <TProps extends AnyObject>(Component: Component<TProps>): (props: ApplyUniwind<TProps> & {}) => React.ReactNode
+    <TComponent extends Component<any>>(Component: TComponent): (props: ApplyUniwind<ComponentPropsWithRef<TComponent>> & {}) => React.ReactNode
     // Manual mapping
-    <TProps extends AnyObject, const TOptions extends { [K in keyof TProps]?: OptionMapping }>(
-        Component: Component<TProps>,
+    <TComponent extends Component<any>, const TOptions extends { [K in keyof ComponentProps<TComponent>]?: OptionMapping }>(
+        Component: TComponent,
         options: TOptions,
-    ): (props: ApplyUniwindOptions<TProps, TOptions> & {}) => React.ReactNode
+    ): (props: ApplyUniwindOptions<ComponentPropsWithRef<TComponent>, TOptions> & {}) => React.ReactNode
 }
