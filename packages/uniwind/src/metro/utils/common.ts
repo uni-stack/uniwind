@@ -79,7 +79,7 @@ export const shouldBeSerialized = (value: string) => {
 
 export const roundToPrecision = (value: number, precision: number) => parseFloat(value.toFixed(precision))
 
-export const deepEqual = <T>(a: T, b: T) => {
+export const deepEqual = <T>(a: T, b: T): boolean => {
     if (Object.is(a, b)) {
         return true
     }
@@ -99,5 +99,5 @@ export const deepEqual = <T>(a: T, b: T) => {
         return false
     }
 
-    return keysA.every(key => Object.is(a[key], b[key]) && Object.prototype.hasOwnProperty.call(b, key))
+    return keysA.every(key => deepEqual(a[key], b[key]) && Object.prototype.hasOwnProperty.call(b, key))
 }

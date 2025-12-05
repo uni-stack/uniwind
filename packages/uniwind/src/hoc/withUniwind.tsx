@@ -1,13 +1,13 @@
-import { useEffect, useReducer } from 'react'
+import { ComponentProps, useEffect, useReducer } from 'react'
 import { CSSListener, formatColor, getWebStyles } from '../core/web'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 
 export const withUniwind: WithUniwind = <
-    TProps extends AnyObject,
-    TOptions extends Record<keyof TProps, OptionMapping>,
+    TComponent extends Component,
+    TOptions extends Record<keyof ComponentProps<TComponent>, OptionMapping>,
 >(
-    Component: Component<TProps>,
+    Component: TComponent,
     options?: TOptions,
 ) => options
     ? withManualUniwind(Component, options)

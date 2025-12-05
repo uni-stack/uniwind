@@ -84,7 +84,7 @@ class UniwindStoreBuilder {
     private resolveStyles(classNames: string, state?: ComponentState) {
         const result = {} as Record<string, any>
         let vars = this.vars
-        const dependencies = [] as Array<StyleDependency>
+        const dependencies = new Set<StyleDependency>()
         const bestBreakpoints = new Map<string, Style>()
 
         for (const className of classNames.split(' ')) {
@@ -93,7 +93,9 @@ class UniwindStoreBuilder {
             }
 
             for (const style of this.stylesheet[className] as Array<Style>) {
-                dependencies.push(...style.dependencies)
+                if (style.dependencies) {
+                    style.dependencies.forEach(dep => dependencies.add(dep))
+                }
 
                 if (
                     style.minWidth > this.runtime.screen.width
@@ -214,7 +216,7 @@ class UniwindStoreBuilder {
 
         return {
             styles: { ...result } as RNStyle,
-            dependencies: Array.from(new Set(dependencies)),
+            dependencies: Array.from(dependencies),
         }
     }
 }

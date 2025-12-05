@@ -47,7 +47,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         })
 
         if (theme === this.currentTheme) {
-            UniwindListener.notify([StyleDependency.Theme])
+            UniwindListener.notify([StyleDependency.Variables])
         }
     }
 

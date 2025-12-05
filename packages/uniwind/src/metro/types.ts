@@ -9,6 +9,7 @@ import type {
     ParsedComponent,
     Token,
     TokenOrValue,
+    UnresolvedColor,
 } from 'lightningcss'
 import { ColorScheme, Orientation } from '../types'
 
@@ -62,6 +63,7 @@ export type DeclarationValues =
     | LineDirection
     | GradientItemFor_DimensionPercentageFor_LengthValue
     | AbsoluteFontWeight
+    | UnresolvedColor
 
 export type ProcessMetaValues = {
     className?: string | null

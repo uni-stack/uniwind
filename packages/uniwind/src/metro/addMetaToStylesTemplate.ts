@@ -71,6 +71,10 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     })
                 })
 
+                if (usedVars.length > 0) {
+                    dependencies.push(StyleDependency.Variables)
+                }
+
                 if (theme !== null || isUsingThemedVar || stringifiedEntries.includes('rt.lightDark')) {
                     dependencies.push(StyleDependency.Theme)
                 }
@@ -108,7 +112,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     rtl,
                     colorScheme: makeSafeForSerialization(colorScheme),
                     native: platform !== null,
-                    dependencies,
+                    dependencies: dependencies.length > 0 ? dependencies : null,
                     index,
                     className: makeSafeForSerialization(className),
                     active,
