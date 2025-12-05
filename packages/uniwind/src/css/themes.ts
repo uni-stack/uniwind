@@ -2,6 +2,7 @@ import { compile } from '@tailwindcss/node'
 import fs from 'fs'
 import { transform } from 'lightningcss'
 import path from 'path'
+import { name } from '../../package.json'
 import { Logger } from '../metro/logger'
 
 const readFileSafe = (filePath: string) => {
@@ -15,7 +16,7 @@ const readFileSafe = (filePath: string) => {
 const isExcludedDependency = (url: string) =>
     [
         url === 'tailwindcss',
-        url === 'uniwind',
+        url === name,
         url.includes('node_modules/tailwindcss'),
         url.includes('node_modules/@tailwindcss'),
         url.includes('node_modules/uniwind'),
