@@ -11,7 +11,7 @@ export const useStyle = (className?: string, state?: ComponentState) => {
     const [_, rerender] = useReducer(() => ({}), {})
     const styleState = useMemo(
         () => className ? UniwindStore.getStyles(className, state) : emptyState,
-        [className, _, state?.isDisabled, state?.isFocused, state?.isPressed],
+        [className, _, state],
     )
 
     useEffect(() => {
