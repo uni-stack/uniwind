@@ -1,4 +1,5 @@
 import { formatHex, formatHex8, parse } from 'culori'
+import { Insets } from 'react-native'
 import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
@@ -64,6 +65,14 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         if (theme === this.currentTheme) {
             UniwindListener.notify([StyleDependency.Variables])
         }
+    }
+
+    updateInsets(insets: Insets) {
+        UniwindStore.runtime.insets.bottom = insets.bottom ?? 0
+        UniwindStore.runtime.insets.top = insets.top ?? 0
+        UniwindStore.runtime.insets.left = insets.left ?? 0
+        UniwindStore.runtime.insets.right = insets.right ?? 0
+        UniwindListener.notify([StyleDependency.Insets])
     }
 }
 

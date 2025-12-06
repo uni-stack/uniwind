@@ -1,4 +1,4 @@
-import { Appearance, Platform } from 'react-native'
+import { Appearance, Insets, Platform } from 'react-native'
 import { ColorScheme, StyleDependency, UniwindConfig } from '../../types'
 import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback } from '../types'
@@ -84,6 +84,11 @@ export class UniwindConfigBuilder {
         // noop
         theme
         variables
+    }
+
+    updateInsets(insets: Insets) {
+        // noop
+        insets
     }
 
     protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {
