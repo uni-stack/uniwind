@@ -1,46 +1,12 @@
 import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 
-/**
- * Schedules a callback to run during browser idle time, with a fallback to setTimeout.
- *
- * @param callback - The function to execute
- * @param timeout - Maximum time to wait before executing (in milliseconds)
- * @returns A handle that can be used to cancel the scheduled callback
- *
- * Note: The type cast `as unknown as number` is necessary because setTimeout returns
- * different types in different environments:
- * - In browsers: returns a number
- * - In Node.js: returns a NodeJS.Timeout object
- * We cast to number for consistent typing across environments since requestIdleCallback
- * always returns a number.
- */
-const scheduleIdleCallback = (callback: () => void, timeout: number): number => {
-    if (typeof requestIdleCallback !== 'undefined') {
-        return requestIdleCallback(callback, { timeout })
-    }
-    return setTimeout(callback, timeout) as unknown as number
-}
-
-/**
- * Cancels a callback scheduled with scheduleIdleCallback.
- *
- * @param id - The handle returned from scheduleIdleCallback
- */
-const cancelScheduledCallback = (id: number): void => {
-    if (typeof cancelIdleCallback !== 'undefined') {
-        cancelIdleCallback(id)
-    } else {
-        clearTimeout(id)
-    }
-}
-
 class CSSListenerBuilder {
     private classNameMediaQueryListeners = new Map<string, MediaQueryList>()
     private listeners = new Map<MediaQueryList, Set<VoidFunction>>()
     private registeredRules = new Map<string, MediaQueryList>()
     private processedStyleSheets = new WeakSet<CSSStyleSheet>()
-    private pendingInitialization: number | undefined
+    private pendingInitialization: number | undefined = undefined
 
     constructor() {
         if (typeof document === 'undefined') {
@@ -92,20 +58,34 @@ class CSSListenerBuilder {
     private scheduleInitialization() {
         this.cancelPendingInitialization()
 
-        this.pendingInitialization = scheduleIdleCallback(() => {
-            this.pendingInitialization = undefined
+        if (typeof requestIdleCallback !== 'undefined') {
+            this.pendingInitialization = requestIdleCallback(() => {
+                this.initialize()
+            }, { timeout: 50 })
+
+            return
+        }
+
+        this.pendingInitialization = setTimeout(() => {
             this.initialize()
-        }, 50)
+        }, 50) as unknown as number
     }
 
     private cancelPendingInitialization() {
         if (this.pendingInitialization !== undefined) {
-            cancelScheduledCallback(this.pendingInitialization)
+            if (typeof cancelIdleCallback !== 'undefined') {
+                cancelIdleCallback(this.pendingInitialization)
+            } else {
+                clearTimeout(this.pendingInitialization)
+            }
+
             this.pendingInitialization = undefined
         }
     }
 
     private initialize() {
+        this.pendingInitialization = undefined
+
         for (const sheet of Array.from(document.styleSheets)) {
             // Skip already processed stylesheets
             if (this.processedStyleSheets.has(sheet)) {
