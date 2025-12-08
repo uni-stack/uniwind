@@ -280,6 +280,8 @@ export class CSS {
                 case 'content-distribution':
                 case 'content-position':
                     return declarationValue.value
+                case 'baseline-position':
+                    return 'baseline'
                 default:
                     // CSS string properties like absolute, relative, italic, etc.
                     if (Object.keys(declarationValue).length === 1) {
