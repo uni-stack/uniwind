@@ -2,7 +2,6 @@ import { compile } from '@tailwindcss/node'
 import fs from 'fs'
 import { transform } from 'lightningcss'
 import path from 'path'
-import { name } from '../../package.json'
 import { Logger } from '../metro/logger'
 
 const readFileSafe = (filePath: string) => {
@@ -15,8 +14,6 @@ const readFileSafe = (filePath: string) => {
 
 const isExcludedDependency = (url: string) =>
     [
-        url === 'tailwindcss',
-        url === name,
         url.includes('node_modules/tailwindcss'),
         url.includes('node_modules/@tailwindcss'),
         url.includes('node_modules/uniwind'),
@@ -80,7 +77,7 @@ export const generateCSSForThemes = async (themes: Array<string>, input: string)
             .map(dependency => `@import "${dependency.url}";`).join('\n')
 
         await compile(importsCSS, {
-            base: path.dirname(cssPath),
+            base: path.resolve(path.dirname(cssPath)),
             onDependency: dependency => {
                 if (isExcludedDependency(dependency)) {
                     return

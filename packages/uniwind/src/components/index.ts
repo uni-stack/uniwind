@@ -253,4 +253,61 @@ module.exports = {
     get VirtualViewMode() {
         return require('react-native').VirtualViewMode
     },
+    get NativeComponentRegistry() {
+        return require('react-native').NativeComponentRegistry
+    },
+    get ReactNativeVersion() {
+        return require('react-native').ReactNativeVersion
+    },
+    get TVEventControl() {
+        return require('react-native').TVEventControl
+    },
+    get TVEventHandler() {
+        return require('react-native').TVEventHandler
+    },
+    get useTVEventHandler() {
+        return require('react-native').useTVEventHandler
+    },
+    get TVFocusGuideView() {
+        return require('react-native').TVFocusGuideView
+    },
+    get TVMenuControl() {
+        return require('react-native').TVMenuControl
+    },
+    get TVTextScrollView() {
+        return require('react-native').TVTextScrollView
+    },
+    get DynamicColorMacOS() {
+        return require('react-native').DynamicColorMacOS
+    },
+    get ColorWithSystemEffectMacOS() {
+        return require('react-native').ColorWithSystemEffectMacOS
+    },
+    get Flyout() {
+        return require('react-native').Flyout
+    },
+    get Glyph() {
+        return require('react-native').Glyph
+    },
+    get Popup() {
+        return require('react-native').Popup
+    },
+    get supportKeyboard() {
+        return require('react-native').supportKeyboard
+    },
+    get EventPhase() {
+        return require('react-native').EventPhase
+    },
+    get HandledEventPhase() {
+        return require('react-native').HandledEventPhase
+    },
+    get ViewWindows() {
+        return require('react-native').ViewWindows
+    },
+    get AppTheme() {
+        return require('react-native').AppTheme
+    },
+    get XamlHost() {
+        return require('react-native').XamlHost
+    },
 }
