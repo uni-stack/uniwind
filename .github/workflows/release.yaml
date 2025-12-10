@@ -249,11 +249,6 @@ jobs:
           echo "  Already published: ${{ steps.check_published.outputs.published }}"
           npm pack --dry-run
 
-      - name: Setup NPM authentication
-        if: ${{ !inputs.dry_run && steps.check_published.outputs.published == 'false' }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
       - name: Publish to NPM
         if: ${{ !inputs.dry_run && steps.check_published.outputs.published == 'false' }}
         working-directory: packages/uniwind
