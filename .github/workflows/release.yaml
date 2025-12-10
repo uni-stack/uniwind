@@ -39,6 +39,12 @@ jobs:
         with:
           bun-version-file: .bun-version
 
+      - name: Setup Node.js (for npm with OIDC support)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
