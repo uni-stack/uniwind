@@ -1,4 +1,4 @@
-export const copyComponentProperties = (Component: any, UniwindComponent: any) => {
+export const copyComponentProperties = <T extends object>(Component: T, UniwindComponent: any): T => {
     Object.entries(Component).forEach(([key, value]) => {
         // Filter out the keys we don't want to copy
         if (['$$typeof', 'render'].includes(key)) {
@@ -8,6 +8,7 @@ export const copyComponentProperties = (Component: any, UniwindComponent: any) =
         UniwindComponent[key] = value
     })
 
+    // @ts-expect-error Hidden property
     UniwindComponent.displayName = Component.displayName
     UniwindComponent.prototype = Object.getPrototypeOf(Component)
 
