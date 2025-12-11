@@ -3,7 +3,7 @@ import View from '../src/components/native/View'
 import { renderUniwind } from './utils'
 
 describe('Colors', () => {
-    test('', async () => {
+    test('Built in', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
                 <View
@@ -45,6 +45,29 @@ describe('Colors', () => {
 
         const blackStyles = getStylesFromId('black')
         expect(blackStyles.backgroundColor).toBe('#000000')
+    })
+
+    test('Custom', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View
+                    className="bg-[#00ff00]"
+                    testID="custom-hex-green"
+                />
+                <View
+                    className="bg-[#00ff0080]"
+                    testID="custom-hex-green-alpha"
+                />
+                <View
+                    className="bg-[rgb(255,0,0)]"
+                    testID="custom-rgb-red"
+                />
+                <View
+                    className="bg-[rgba(255,0,0,0.5)]"
+                    testID="custom-rgba-red-alpha"
+                />
+            </React.Fragment>,
+        )
 
         const customHexGreenStyles = getStylesFromId('custom-hex-green')
         expect(customHexGreenStyles.backgroundColor).toBe('#00ff00')
