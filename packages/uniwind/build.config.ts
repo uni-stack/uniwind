@@ -69,6 +69,12 @@ export default defineBuildConfig({
             declaration: true,
             format: 'esm',
         },
+        {
+            builder: 'copy',
+            input: '../../',
+            outDir: './',
+            pattern: ['LICENSE'],
+        },
         ...getConfig({
             input: './src/components',
             outDir: 'components',

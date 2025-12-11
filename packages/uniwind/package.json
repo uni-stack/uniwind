@@ -72,7 +72,8 @@
         "vite",
         "uniwind.css",
         "types.d.ts",
-        "readme.md"
+        "readme.md",
+        "LICENSE"
     ],
     "dependencies": {
         "@tailwindcss/node": "4.1.17",
