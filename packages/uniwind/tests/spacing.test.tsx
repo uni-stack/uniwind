@@ -7,6 +7,7 @@ describe('Spacing', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
                 <View className="w-10" testID="w-10" />
+                <View className="w-2" testID="w-2" />
                 <View className="h-10" testID="h-10" />
                 <View className="w-full" testID="w-full" />
                 <View className="h-full" testID="h-full" />
@@ -17,6 +18,7 @@ describe('Spacing', () => {
         )
 
         expect(getStylesFromId('w-10').width).toBe(40)
+        expect(getStylesFromId('w-2').width).toBe(8)
         expect(getStylesFromId('h-10').height).toBe(40)
         expect(getStylesFromId('w-full').width).toBe('100%')
         expect(getStylesFromId('h-full').height).toBe('100%')
