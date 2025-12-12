@@ -1,6 +1,6 @@
 import * as React from 'react'
-import View from '../src/components/native/View'
-import { renderUniwind } from './utils'
+import View from '../../src/components/native/View'
+import { renderUniwind } from '../utils'
 
 describe('Colors', () => {
     test('Built in', () => {

@@ -1,6 +1,6 @@
 import * as React from 'react'
-import View from '../src/components/native/View'
-import { renderUniwind } from './utils'
+import View from '../../src/components/native/View'
+import { renderUniwind } from '../utils'
 
 const NO_SHADOW = '0px 0px #00000000'
 
