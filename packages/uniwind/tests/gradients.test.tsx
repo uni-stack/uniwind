@@ -66,7 +66,19 @@ describe('Gradients', () => {
                     {
                         color: TW_BLUE_500,
                         positions: [
-                            '50%',
+                            '100%',
+                        ],
+                    },
+                    {
+                        color: TW_RED_500,
+                        positions: [
+                            '0%',
+                        ],
+                    },
+                    {
+                        color: TW_BLUE_500,
+                        positions: [
+                            '100%',
                         ],
                     },
                 ],
