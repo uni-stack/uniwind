@@ -38,7 +38,7 @@ body:
          - Issue is not related to your app that has multiple dependencies
          - Can isolate the problem
          - Allow us to reproduce in minutes
-      placeholder: https://github.com
+      placeholder: https://github.com (without reproduction the issue will be automatically closed)
     validations:
       required: true
 
