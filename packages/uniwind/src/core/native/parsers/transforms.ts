@@ -28,7 +28,7 @@ export const parseTransformsMutation = (styles: Record<string, any>) => {
     const transformTokens = typeof styles.transform === 'string'
         ? styles.transform
             .split(' ')
-            .filter(token => token === 'undefined')
+            .filter(token => token !== 'undefined')
         : []
 
     const transformsResult = []

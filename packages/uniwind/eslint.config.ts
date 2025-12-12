@@ -29,6 +29,9 @@ export default [
             'src/vite/index.d.ts',
             'dist',
             'specs',
+            'jest.config.js',
+            'tests',
+            'babel.config.cjs',
         ],
     },
 ]
