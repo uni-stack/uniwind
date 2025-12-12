@@ -1,0 +1,23 @@
+name: Validate issue
+
+on:
+  issues:
+    types: 
+      - opened
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NUMBER: ${{ github.event.issue.number }}
+  REPO: "uni-stack/uniwind"
+
+jobs:
+  autoclose:
+    if: ${{ !contains(github.event.issue.body, 'github.com') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Close Issue
+        run: gh issue close "$NUMBER" --comment "This issue has been automatically closed because it **lacks a clear, minimal reproduction** that we can use to verify the reported bug." --repo "$REPO"
+      - name: Label Issue
+        run: gh issue edit "$NUMBER" --add-label "invalid" --repo "$REPO"
