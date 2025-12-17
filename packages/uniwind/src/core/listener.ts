@@ -30,25 +30,29 @@ class UniwindListenerBuilder {
     }
 
     subscribe(listener: () => void, dependencies: Array<StyleDependency>, options?: SubscribeOptions) {
+        const wrappedListeners = new Map<StyleDependency, () => void>()
+
         const dispose = () => {
-            dependencies.forEach(dep => {
-                this.listeners[dep].delete(listener)
+            wrappedListeners.forEach((wrappedListener, dep) => {
+                this.listeners[dep].delete(wrappedListener)
             })
+            wrappedListeners.clear()
         }
 
         dependencies.forEach(dep => {
-            this.listeners[dep].add(() => {
+            const wrappedListener = () => {
                 listener()
 
                 if (options?.once) {
                     dispose()
                 }
-            })
+            }
+
+            wrappedListeners.set(dep, wrappedListener)
+            this.listeners[dep].add(wrappedListener)
         })
 
-        return () => {
-            dispose()
-        }
+        return dispose
     }
 }
 
