@@ -10,21 +10,23 @@ export const buildCSS = async (themes: Array<string>, input: string) => {
     const variants = generateCSSForVariants()
     const insets = generateCSSForInsets()
     const themesCSS = await generateCSSForThemes(themes, input)
-    const cssFile = path.join(dirname, '../../uniwind.css')
-    const oldCSSFile = fs.existsSync(cssFile)
-        ? fs.readFileSync(cssFile, 'utf-8')
+    const cssFilePath = path.join(dirname, '../../uniwind.css')
+    const oldCSSFile = fs.existsSync(cssFilePath)
+        ? fs.readFileSync(cssFilePath, 'utf-8')
         : ''
 
-    if (oldCSSFile === cssFile) {
+    const newCssFile = [
+        variants,
+        insets,
+        themesCSS,
+    ].join('\n')
+
+    if (oldCSSFile === newCssFile) {
         return
     }
 
     fs.writeFileSync(
-        cssFile,
-        [
-            variants,
-            insets,
-            themesCSS,
-        ].join('\n'),
+        cssFilePath,
+        newCssFile,
     )
 }
