@@ -1,7 +1,7 @@
 export const copyComponentProperties = <T extends object>(Component: T, UniwindComponent: any): T => {
     Object.entries(Component).forEach(([key, value]) => {
         // Filter out the keys we don't want to copy
-        if (['$$typeof', 'render'].includes(key)) {
+        if (['$$typeof', 'render', 'contextType'].includes(key)) {
             return
         }
 
