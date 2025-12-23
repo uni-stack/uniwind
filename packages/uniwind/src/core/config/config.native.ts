@@ -4,8 +4,8 @@ import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { UniwindStore } from '../native'
-import { CSSVariables, GenerateStyleSheetsCallback } from '../types'
-import { ThemeName, UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
+import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
+import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {
     constructor() {

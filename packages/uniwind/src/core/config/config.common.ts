@@ -1,12 +1,7 @@
 import { Appearance, Insets, Platform } from 'react-native'
-import { ColorScheme, StyleDependency, UniwindConfig } from '../../types'
+import { ColorScheme, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
-import { CSSVariables, GenerateStyleSheetsCallback } from '../types'
-
-type UserThemes = UniwindConfig extends { themes: infer T extends ReadonlyArray<string> } ? T
-    : ReadonlyArray<string>
-
-export type ThemeName = UserThemes[number]
+import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
 

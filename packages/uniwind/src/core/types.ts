@@ -30,7 +30,7 @@ export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
 type UserThemes = UniwindConfig extends { themes: infer T extends readonly string[] } ? T
     : readonly string[]
 
-type ThemeName = UserThemes[number]
+export type ThemeName = UserThemes[number]
 
 export type UniwindRuntime = {
     screen: {
