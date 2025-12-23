@@ -1,9 +1,8 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, StyleDependency } from '../../types'
-import type { ThemeName } from '../config'
 import { UniwindListener } from '../listener'
-import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets } from '../types'
+import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName } from '../types'
 import { cloneWithAccessors } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'

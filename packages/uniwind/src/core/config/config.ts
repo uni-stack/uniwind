@@ -1,10 +1,8 @@
 import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
-import { CSSVariables } from '../types'
-import { ThemeName, UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
-
-export { type ThemeName } from './config.common'
+import { CSSVariables, ThemeName } from '../types'
+import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {
     private runtimeCSSVariables = new Map<ThemeName, CSSVariables>()

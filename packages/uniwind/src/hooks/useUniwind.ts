@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ThemeName, Uniwind } from '../core'
+import { Uniwind } from '../core'
 import { UniwindListener } from '../core/listener'
+import { ThemeName } from '../core/types'
 import { StyleDependency } from '../types'
 
 export const useUniwind = () => {
