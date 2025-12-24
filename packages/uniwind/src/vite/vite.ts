@@ -14,8 +14,9 @@ type UniwindConfig = {
     dtsFile?: string
 }
 
+const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
 const componentPath = path.resolve(
-    import.meta.dirname,
+    dirname,
     '../module/components/web/index.js',
 )
 
