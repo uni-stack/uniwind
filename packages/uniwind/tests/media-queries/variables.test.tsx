@@ -12,7 +12,7 @@ import { renderUniwind } from '../utils'
 
 describe('CSS Variables in Media Queries', () => {
     beforeAll(async () => {
-        const cssPath = resolve('./tests/media-queries/css-variables-media-queries.test.css')
+        const cssPath = resolve('./tests/media-queries/variables.test.css')
         const css = readFileSync(cssPath, 'utf-8')
         const virtualCode = await compileVirtual({
             css,
@@ -39,6 +39,7 @@ describe('CSS Variables in Media Queries', () => {
     describe('min-width media queries', () => {
         test('uses default value when screen width is below media query threshold', () => {
             UniwindStore.runtime.screen = { width: 400, height: 667 }
+            UniwindListener.notify([StyleDependency.Dimensions])
 
             const { getStylesFromId } = renderUniwind(
                 <View className="text-base" testID="text-base" />,
@@ -60,6 +61,7 @@ describe('CSS Variables in Media Queries', () => {
 
         test('uses media query value when screen width equals threshold', () => {
             UniwindStore.runtime.screen = { width: 640, height: 667 }
+            UniwindListener.notify([StyleDependency.Dimensions])
 
             const { getStylesFromId } = renderUniwind(
                 <View className="text-base" testID="text-base" />,
@@ -108,7 +110,7 @@ describe('CSS Variables in Media Queries', () => {
 
         test('updates variable value when screen width changes from above to below threshold', () => {
             UniwindStore.runtime.screen = { width: 800, height: 667 }
-            UniwindStore.reinit()
+            UniwindStore.reinit() // Force a style rebuild
 
             const { getStylesFromId } = renderUniwind(
                 <View className="text-base" testID="text-base" />,
@@ -132,6 +134,7 @@ describe('CSS Variables in Media Queries', () => {
     describe('fallback to default values', () => {
         test('falls back to default when no media query matches', () => {
             UniwindStore.runtime.screen = { width: 300, height: 667 }
+            UniwindListener.notify([StyleDependency.Dimensions])
 
             const { getStylesFromId } = renderUniwind(
                 <View className="text-base" testID="text-base" />,
