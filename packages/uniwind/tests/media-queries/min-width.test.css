@@ -1,0 +1,54 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+    --text-xl: 1.5rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+  }
+}
+
+@media (min-width: 640px) {
+  :root {
+    --text-base: 2rem;
+    --text-lg: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --text-base: 3rem;
+    --text-lg: 4rem;
+    --text-xl: 5rem;
+  }
+}
+
+@media (min-width: 320px) {
+  :root {
+    --text-base: 1.5rem;
+  }
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+
+.text-lg {
+  font-size: var(--text-lg);
+}
+
+.text-xl {
+  font-size: var(--text-xl);
+}
+
+.p-spacing-sm {
+  padding: var(--spacing-sm);
+}
+
+.p-spacing-md {
+  padding: var(--spacing-md);
+}
+
