@@ -1,8 +1,8 @@
 import { ScrollViewProps } from 'react-native'
 import { ScrollView as RNGHScrollView } from 'react-native-gesture-handler'
 import { useUniwindAccent } from '../../../hooks'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const ScrollView = copyComponentProperties(RNGHScrollView, (props: ScrollViewProps) => {
     const style = useStyle(props.className)

@@ -1,7 +1,7 @@
 import { Pressable as RNGHPressable, PressableProps } from 'react-native-gesture-handler'
 import { UniwindStore } from '../../../core/native'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const Pressable = copyComponentProperties(RNGHPressable, (props: PressableProps) => {
     const style = useStyle(props.className, {

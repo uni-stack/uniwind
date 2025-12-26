@@ -3,8 +3,8 @@ import { TextInputProps } from 'react-native'
 import { TextInput as RNGHTextInput } from 'react-native-gesture-handler'
 import { ComponentState } from '../../../core/types'
 import { useUniwindAccent } from '../../../hooks/useUniwindAccent.native'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const TextInput = copyComponentProperties(RNGHTextInput, (props: TextInputProps) => {
     const [isFocused, setIsFocused] = useState(false)

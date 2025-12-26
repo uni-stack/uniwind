@@ -4,8 +4,8 @@ import {
     TouchableWithoutFeedbackProps,
 } from 'react-native-gesture-handler'
 import { ComponentState } from '../../../core/types'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const TouchableWithoutFeedback = copyComponentProperties(
     RNGHTouchableWithoutFeedback,

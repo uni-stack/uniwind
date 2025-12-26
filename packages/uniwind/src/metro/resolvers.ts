@@ -60,11 +60,11 @@ export const nativeResolver = ({
     }
 
     if (moduleName === 'react-native-gesture-handler') {
-        return resolver(context, `${name}/components/native/react-native-gesture-handler`, platform)
+        return resolver(context, `${name}/components/react-native-gesture-handler`, platform)
     }
 
     if (moduleName === 'react-native-svg') {
-        return resolver(context, `${name}/components/native/react-native-svg`, platform)
+        return resolver(context, `${name}/components/react-native-svg`, platform)
     }
 
     if (

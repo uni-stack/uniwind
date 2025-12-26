@@ -1,54 +1,54 @@
 module.exports = {
     get BaseButton() {
-        return require('./BaseButton').BaseButton
+        return require('./native/BaseButton').BaseButton
     },
     get BorderlessButton() {
-        return require('./BorderlessButton').BorderlessButton
+        return require('./native/BorderlessButton').BorderlessButton
     },
     get DrawerLayoutAndroid() {
-        return require('./DrawerLayoutAndroid').DrawerLayoutAndroid
+        return require('./native/DrawerLayoutAndroid').DrawerLayoutAndroid
     },
     get FlatList() {
-        return require('./FlatList').FlatList
+        return require('./native/FlatList').FlatList
     },
     get GestureHandlerRootView() {
-        return require('./GestureHandlerRootView').GestureHandlerRootView
+        return require('./native/GestureHandlerRootView').GestureHandlerRootView
     },
     get Pressable() {
-        return require('./Pressable').Pressable
+        return require('./native/Pressable').Pressable
     },
     get PureNativeButton() {
-        return require('./PureNativeButton').PureNativeButton
+        return require('./native/PureNativeButton').PureNativeButton
     },
     get RawButton() {
-        return require('./RawButton').RawButton
+        return require('./native/RawButton').RawButton
     },
     get RectButton() {
-        return require('./RectButton').RectButton
+        return require('./native/RectButton').RectButton
     },
     get RefreshControl() {
-        return require('./RefreshControl').RefreshControl
+        return require('./native/RefreshControl').RefreshControl
     },
     get ScrollView() {
-        return require('./ScrollView').ScrollView
+        return require('./native/ScrollView').ScrollView
     },
     get Switch() {
-        return require('./Switch').Switch
+        return require('./native/Switch').Switch
     },
     get Text() {
-        return require('./Text').Text
+        return require('./native/Text').Text
     },
     get TextInput() {
-        return require('./TextInput').TextInput
+        return require('./native/TextInput').TextInput
     },
     get TouchableNativeFeedback() {
-        return require('./TouchableNativeFeedback').TouchableNativeFeedback
+        return require('./native/TouchableNativeFeedback').TouchableNativeFeedback
     },
     get TouchableOpacity() {
-        return require('./TouchableOpacity').TouchableOpacity
+        return require('./native/TouchableOpacity').TouchableOpacity
     },
     get TouchableWithoutFeedback() {
-        return require('./TouchableWithoutFeedback').TouchableWithoutFeedback
+        return require('./native/TouchableWithoutFeedback').TouchableWithoutFeedback
     },
 
     // Re-export non-component exports from react-native-gesture-handler

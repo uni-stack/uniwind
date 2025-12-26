@@ -1,8 +1,8 @@
 import { RefreshControlProps } from 'react-native'
 import { RefreshControl as RNGHRefreshControl } from 'react-native-gesture-handler'
 import { useUniwindAccent } from '../../../hooks'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const RefreshControl = copyComponentProperties(RNGHRefreshControl, (props: RefreshControlProps) => {
     const style = useStyle(props.className)

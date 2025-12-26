@@ -1,6 +1,6 @@
 import { BorderlessButton as RNGHBorderlessButton, BorderlessButtonProps } from 'react-native-gesture-handler'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const BorderlessButton = copyComponentProperties(
     RNGHBorderlessButton,

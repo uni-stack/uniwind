@@ -3,8 +3,8 @@ import { TextProps } from 'react-native'
 import { Text as RNGHText } from 'react-native-gesture-handler'
 import { ComponentState } from '../../../core/types'
 import { useUniwindAccent } from '../../../hooks/useUniwindAccent.native'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 type StyleWithWebkitLineClamp = {
     WebkitLineClamp?: number

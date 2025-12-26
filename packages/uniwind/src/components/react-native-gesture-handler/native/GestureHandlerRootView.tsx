@@ -1,7 +1,7 @@
 import { GestureHandlerRootView as RNGestureHandlerRootView } from 'react-native-gesture-handler'
 import { GestureHandlerRootViewProps } from 'react-native-gesture-handler/lib/typescript/components/GestureHandlerRootView'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const GestureHandlerRootView = copyComponentProperties(
     RNGestureHandlerRootView,
