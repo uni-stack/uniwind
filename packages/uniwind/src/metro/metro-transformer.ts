@@ -1,9 +1,9 @@
 import fs from 'fs'
 import type { JsTransformerConfig, JsTransformOptions } from 'metro-transform-worker'
 import path from 'path'
-import { name } from '../../package.json'
 import { compileVirtual } from './compileVirtual'
 import { injectThemes } from './injectThemes'
+import { packageName } from './packageName'
 import { Platform, UniwindConfig } from './types'
 
 let worker: typeof import('metro-transform-worker')
@@ -41,7 +41,7 @@ export const transform = async (
 
         data = Buffer.from(
             [
-                `import { Uniwind } from '${name}';`,
+                `import { Uniwind } from '${packageName}';`,
                 `Uniwind.__reinit(() => ({}), ${injectedThemesCode});`,
             ].join(''),
             'utf-8',
@@ -74,7 +74,7 @@ export const transform = async (
         isWeb
             ? virtualCode
             : [
-                `import { Uniwind } from '${name}';`,
+                `import { Uniwind } from '${packageName}';`,
                 `Uniwind.__reinit(rt => ${virtualCode}, ${injectedThemesCode});`,
             ].join(''),
         'utf-8',
