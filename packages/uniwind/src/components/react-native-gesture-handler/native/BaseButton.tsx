@@ -1,6 +1,6 @@
 import { BaseButton as RNGHBaseButton, BaseButtonProps } from 'react-native-gesture-handler'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 type BaseButtonPropsWithClassName = BaseButtonProps & { className?: string }
 

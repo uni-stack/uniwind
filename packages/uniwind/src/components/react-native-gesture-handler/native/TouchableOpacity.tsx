@@ -1,13 +1,12 @@
 import { useState } from 'react'
-import { TouchableNativeFeedbackProps } from 'react-native'
-import { TouchableNativeFeedback as RNGHTouchableNativeFeedback } from 'react-native-gesture-handler'
+import { TouchableOpacity as RNGHTouchableOpacity, TouchableOpacityProps } from 'react-native-gesture-handler'
 import { ComponentState } from '../../../core/types'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
-export const TouchableNativeFeedback = copyComponentProperties(
-    RNGHTouchableNativeFeedback,
-    (props: TouchableNativeFeedbackProps) => {
+export const TouchableOpacity = copyComponentProperties(
+    RNGHTouchableOpacity,
+    (props: TouchableOpacityProps) => {
         const [isPressed, setIsPressed] = useState(false)
         const state = {
             isDisabled: Boolean(props.disabled),
@@ -16,20 +15,20 @@ export const TouchableNativeFeedback = copyComponentProperties(
         const style = useStyle(props.className, state)
 
         return (
-            <RNGHTouchableNativeFeedback
+            <RNGHTouchableOpacity
                 {...props}
                 style={[style, props.style]}
-                onPressIn={event => {
+                onPressIn={() => {
                     setIsPressed(true)
-                    props.onPressIn?.(event)
+                    props.onPressIn?.()
                 }}
-                onPressOut={event => {
+                onPressOut={() => {
                     setIsPressed(false)
-                    props.onPressOut?.(event)
+                    props.onPressOut?.()
                 }}
             />
         )
     },
 )
 
-export default TouchableNativeFeedback
+export default TouchableOpacity

@@ -2,8 +2,8 @@ import { SwitchProps } from 'react-native'
 import { Switch as RNGHSwitch } from 'react-native-gesture-handler'
 import { ComponentState } from '../../../core/types'
 import { useUniwindAccent } from '../../../hooks/useUniwindAccent.native'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const Switch = copyComponentProperties(RNGHSwitch, (props: SwitchProps) => {
     const state = {

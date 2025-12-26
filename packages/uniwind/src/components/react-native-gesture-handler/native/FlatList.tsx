@@ -1,8 +1,8 @@
 import { FlatListProps } from 'react-native'
 import { FlatList as RNGHFlatList } from 'react-native-gesture-handler'
 import { useUniwindAccent } from '../../../hooks'
+import { useStyle } from '../../native/useStyle'
 import { copyComponentProperties } from '../../utils'
-import { useStyle } from '../useStyle'
 
 export const FlatList = copyComponentProperties(RNGHFlatList, (props: FlatListProps<unknown>) => {
     const style = useStyle(props.className)
