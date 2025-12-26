@@ -84,6 +84,8 @@
     "peerDependencies": {
         "react": ">=19.0.0",
         "react-native": ">=0.81.0",
+        "react-native-gesture-handler": ">=2.28.0",
+        "react-native-svg": ">=15.15.1",
         "tailwindcss": ">=4"
     },
     "devDependencies": {
