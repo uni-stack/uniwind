@@ -12,6 +12,7 @@
     "dependencies": {
         "@expo/metro-runtime": "6.1.2",
         "@expo/vector-icons": "15.0.3",
+        "@niibase/uniwind": "workspace:*",
         "@react-navigation/bottom-tabs": "7.4.0",
         "@react-navigation/elements": "2.6.3",
         "@react-navigation/native": "7.1.8",
@@ -41,8 +42,7 @@
         "react-native-screens": "4.16.0",
         "react-native-web": "catalog:",
         "react-native-worklets": "0.5.1",
-        "tailwind-merge": "3.4.0",
-        "uniwind": "workspace:*"
+        "tailwind-merge": "3.4.0"
     },
     "devDependencies": {
         "@types/react": "catalog:",

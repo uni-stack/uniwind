@@ -1,8 +1,8 @@
 import { IconSymbol, IconSymbolName } from '@/components/icon-symbol'
 import { UniwindThemes, useStoredTheme } from '@/utils/theme'
+import { useResolveClassNames } from '@niibase/uniwind'
 import { HeaderButton } from '@react-navigation/elements'
 import { router } from 'expo-router'
-import { useResolveClassNames } from 'uniwind'
 
 const THEME_ICON_NAMES: Record<UniwindThemes, IconSymbolName> = {
     dark: 'moon.fill',

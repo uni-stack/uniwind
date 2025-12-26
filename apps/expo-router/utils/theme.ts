@@ -1,10 +1,10 @@
 import { storage } from '@/utils/storage'
 import { DarkTheme, DefaultTheme } from '@react-navigation/native'
 
+import { Uniwind } from '@niibase/uniwind'
 import { useCallback } from 'react'
 import { Appearance } from 'react-native'
 import { useMMKVString } from 'react-native-mmkv'
-import { Uniwind } from 'uniwind'
 
 export type UniwindThemes = typeof Uniwind.currentTheme | 'system'
 type NativeColorScheme = 'light' | 'dark' | undefined

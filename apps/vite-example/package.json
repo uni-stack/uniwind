@@ -9,13 +9,13 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@niibase/uniwind": "workspace:*",
         "@tailwindcss/vite": "4.1.17",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",
         "react-native-web": "catalog:",
-        "tailwindcss": "catalog:",
-        "uniwind": "workspace:*"
+        "tailwindcss": "catalog:"
     },
     "devDependencies": {
         "@types/node": "24.10.1",
@@ -24,7 +24,7 @@
         "@vitejs/plugin-react": "5.1.1",
         "globals": "16.5.0",
         "typescript": "catalog:",
-        "vite": "7.2.6",
+        "vite": "7.2.7",
         "vite-plugin-rnw": "0.0.10"
     }
 }

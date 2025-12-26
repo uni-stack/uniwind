@@ -1,6 +1,6 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config')
-const { withUniwindConfig } = require('uniwind/metro')
+const { withUniwindConfig } = require('@niibase/uniwind/metro')
 const path = require('path')
 
 const projectRoot = __dirname

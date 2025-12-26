@@ -1,6 +1,6 @@
 import './global.css'
+import { Uniwind, useUniwind } from '@niibase/uniwind'
 import { Button, Text, View } from 'react-native'
-import { Uniwind, useUniwind } from 'uniwind'
 
 export function App() {
     const { theme } = useUniwind()

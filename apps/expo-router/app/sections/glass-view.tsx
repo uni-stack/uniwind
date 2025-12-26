@@ -1,10 +1,10 @@
 import { ThemedText } from '@/components/themed-text'
+import { withUniwind } from '@niibase/uniwind'
 import { useHeaderHeight } from '@react-navigation/elements'
 import { GlassView } from 'expo-glass-effect'
 import React from 'react'
 import { Image, ScrollView, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { withUniwind } from 'uniwind'
 
 const StyledGlassViewAutoMapping = withUniwind(GlassView)
 
