@@ -1,6 +1,6 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { basename, resolve, sep } from 'node:path'
-import { name } from '../../package.json'
+import { name as packageName } from '../../package.json'
 
 type ResolverConfig = {
     platform: string | null
@@ -11,8 +11,10 @@ type ResolverConfig = {
 
 const thisModuleDist = resolve(__dirname, '../../dist')
 const thisModuleSrc = resolve(__dirname, '../../src')
+const nodeModulesPath = resolve(__dirname, '../../../')
 
 const isFromThisModule = (filename: string) => filename.startsWith(thisModuleDist) || filename.startsWith(thisModuleSrc)
+const name = basename(nodeModulesPath) === 'node_modules' ? basename(resolve(__dirname, '../../')) : packageName
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
