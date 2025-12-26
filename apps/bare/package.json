@@ -8,9 +8,9 @@
         "start": "react-native start"
     },
     "dependencies": {
+        "@niibase/uniwind": "workspace:*",
         "react": "catalog:",
-        "react-native": "catalog:",
-        "uniwind": "workspace:*"
+        "react-native": "catalog:"
     },
     "devDependencies": {
         "@babel/core": "7.25.2",

@@ -25,6 +25,9 @@ bun add @niibase/uniwind tailwindcss
 
 # Or install from the original package
 bun add uniwind tailwindcss
+
+# Or install @niibase/uniwind as alias for uniwind
+bun add uniwind@npm:@niibase/uniwind tailwindcss
 ```
 
 Then follow [installation guides](https://docs.uniwind.dev/quickstart)
