@@ -15,9 +15,15 @@
 [![npm downloads](https://img.shields.io/npm/dt/uniwind?style=for-the-badge)](https://www.npmjs.com/package/uniwind)
 [![License: MIT](https://img.shields.io/badge/License-MIT-44CD11.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
+> **Note:** This is a fork of uniwind that makes pro subscription features available for free (except for Unistyles support). Install from `@niibase/uniwind` to get these features.
+
 ## Installation
 
 ```sh
+# Install from the fork (recommended - includes pro features for free)
+bun add @niibase/uniwind tailwindcss
+
+# Or install from the original package
 bun add uniwind tailwindcss
 ```
 
@@ -39,6 +45,14 @@ Then follow [installation guides](https://docs.uniwind.dev/quickstart)
 - 📱 Responsive design with media queries
 - 🧰 Use custom CSS properties directly in React Native
 - 🔥 And [much more](https://docs.uniwind.dev/api/use-uniwind)
+
+## Roadmap
+
+- [ ] **Reanimated 4 support** - Full compatibility with React Native Reanimated v4
+- [ ] **Babel support to extend beyond React Native components** - Enable className support for custom components and third-party libraries
+- [ ] **Unistyles (future)** - Integration with Unistyles for enhanced styling capabilities
+
+> **Note:** Once Babel support is completed, the likelihood of adding Unistyles support is high.
 
 ## Contributing
 

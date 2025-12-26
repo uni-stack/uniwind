@@ -8,7 +8,7 @@ on:
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   NUMBER: ${{ github.event.issue.number }}
-  REPO: "uni-stack/uniwind"
+  REPO: "divineniiquaye/uniwind"
 
 jobs:
   autoclose:

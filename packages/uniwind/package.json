@@ -1,12 +1,12 @@
 {
     "private": false,
-    "name": "uniwind",
-    "version": "1.2.2",
+    "name": "@niibase/uniwind",
+    "version": "1.0.0",
     "description": "The fastest Tailwind bindings for React Native",
     "homepage": "https://uniwind.dev",
     "author": "Unistack",
     "type": "module",
-    "repository": "https://github.com/uni-stack/uniwind",
+    "repository": "https://github.com/divineniiquaye/uniwind",
     "sideEffects": false,
     "scripts": {
         "precommit": "bun lint",

@@ -301,7 +301,7 @@ jobs:
             else
               echo "### ✅ Package published successfully!" >> $GITHUB_STEP_SUMMARY
               echo "" >> $GITHUB_STEP_SUMMARY
-              echo "- NPM: https://www.npmjs.com/package/uniwind/v/${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+              echo "- NPM: https://www.npmjs.com/package/@niibase/uniwind/v/${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
               echo "- GitHub: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
             fi
           fi
