@@ -11,6 +11,12 @@
   }
 }
 
+@media (min-width: 320px) {
+  :root {
+    --text-base: 1.5rem;
+  }
+}
+
 @media (min-width: 640px) {
   :root {
     --text-base: 2rem;
@@ -23,12 +29,6 @@
     --text-base: 3rem;
     --text-lg: 4rem;
     --text-xl: 5rem;
-  }
-}
-
-@media (min-width: 320px) {
-  :root {
-    --text-base: 1.5rem;
   }
 }
 

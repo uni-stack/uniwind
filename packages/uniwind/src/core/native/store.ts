@@ -54,6 +54,7 @@ class UniwindStoreBuilder {
         }
 
         const { scopedVars, stylesheet, vars } = config
+
         this.generateStyleSheetCallbackResult = config
         this.stylesheet = stylesheet
         this.vars = vars
@@ -81,9 +82,9 @@ class UniwindStoreBuilder {
 
     private resolveStyles(classNames: string, state?: ComponentState) {
         const result = {} as Record<string, any>
+        let vars = this.vars
         const dependencies = new Set<StyleDependency>()
         const bestBreakpoints = new Map<string, Style>()
-        let vars = this.vars
 
         for (const className of classNames.split(' ')) {
             if (!(className in this.stylesheet)) {

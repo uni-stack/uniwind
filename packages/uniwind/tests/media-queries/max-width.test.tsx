@@ -105,15 +105,15 @@ describe('CSS Variables - Max-Width Media Queries', () => {
     })
 
     test('updates when screen width changes from below to above threshold', () => {
-        UniwindStore.runtime.screen = { width: 600, height: 667 }
+        UniwindStore.runtime.screen = { width: 400, height: 667 }
         UniwindListener.notify([StyleDependency.Dimensions])
 
         let { getStylesFromId } = renderUniwind(
             <View className="p-spacing-sm" testID="spacing-sm" />,
         )
-        expect(getStylesFromId('spacing-sm').padding).toBe(8)
+        expect(getStylesFromId('spacing-sm').padding).toBe(4)
 
-        UniwindStore.runtime.screen = { width: 400, height: 667 }
+        UniwindStore.runtime.screen = { width: 600, height: 667 }
         act(() => {
             UniwindListener.notify([StyleDependency.Dimensions])
         })
@@ -121,6 +121,6 @@ describe('CSS Variables - Max-Width Media Queries', () => {
         const { getStylesFromId: getStylesFromId2 } = renderUniwind(
             <View className="p-spacing-sm" testID="spacing-sm" />,
         )
-        expect(getStylesFromId2('spacing-sm').padding).toBe(4)
+        expect(getStylesFromId2('spacing-sm').padding).toBe(8)
     })
 })
