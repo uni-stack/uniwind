@@ -12,7 +12,6 @@ export class ProcessorBuilder {
     stylesheets = {} as Record<string, Array<any>>
     vars = {} as Record<string, any>
     scopedVars = {} as Record<string, Record<string, any>>
-    varsWithMediaQueries = {} as Record<string, Array<any>>
     CSS = new CSS(this)
     RN = new RN(this)
     Var = new Var(this)
@@ -22,6 +21,8 @@ export class ProcessorBuilder {
     Functions = new Functions(this)
     meta = {} as ProcessMetaValues
 
+    private varsWithMediaQueries = {} as Record<string, Array<any>>
+    private pendingVarReferences = new Map<string, Array<string>>()
     private declarationConfig = this.getDeclarationConfig()
 
     constructor(private readonly themes: Array<string>, readonly polyfills: Polyfills | undefined) {
@@ -55,46 +56,14 @@ export class ProcessorBuilder {
         })
     }
 
-    private storeVarWithMediaQuery(varName: string, value: any, mq: MediaQueryResolver) {
-        if (!Array.isArray(this.varsWithMediaQueries[varName])) {
-            this.varsWithMediaQueries[varName] = []
-        }
-
-        this.varsWithMediaQueries[varName].push({
-            value,
-            minWidth: mq.minWidth,
-            maxWidth: mq.maxWidth,
-            orientation: mq.orientation ? `'${mq.orientation}'` : null,
-            colorScheme: mq.colorScheme ? `'${mq.colorScheme}'` : null,
-        })
-    }
-
     private hasMediaQuery(mq: MediaQueryResolver): boolean {
         return mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
-    }
-
-    private processDeclarationValue(
-        mq: MediaQueryResolver,
-        varName: string,
-        processedValue: any,
-        context: { isVar: boolean; style: any; important: boolean },
-    ) {
-        const { isVar, style, important } = context
-
-        if (isVar && this.hasMediaQuery(mq)) {
-            this.storeVarWithMediaQuery(varName, processedValue, mq)
-        } else {
-            style[varName] = processedValue
-        }
-
-        if (!isVar && important) {
-            style.importantProperties.push(varName)
-        }
     }
 
     private addDeclaration(declaration: Declaration, important = false) {
         const isVar = this.declarationConfig.root || this.declarationConfig.className === null
         const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries)
+        const { property, value } = this.parseDeclaration(declaration)
         const style = (() => {
             if (!isVar) {
                 return this.stylesheets[this.declarationConfig.className!]?.at(-1)
@@ -107,6 +76,12 @@ export class ProcessorBuilder {
                 return this.scopedVars[platformKey]
             }
 
+            if (this.hasMediaQuery(mq)) {
+                this.varsWithMediaQueries[property] ??= []
+                this.varsWithMediaQueries[property].push({})
+                return this.varsWithMediaQueries[property].at(-1)
+            }
+
             if (this.declarationConfig.theme === null) {
                 return this.vars
             }
@@ -117,38 +92,83 @@ export class ProcessorBuilder {
             return this.scopedVars[themeKey]
         })()
 
-        if (!isVar) {
+        if (!isVar || this.hasMediaQuery(mq)) {
             Object.assign(style, mq)
             style.importantProperties ??= []
             style.rtl = this.declarationConfig.rtl
             style.theme = mq.colorScheme ?? this.declarationConfig.theme
+            style.maxWidth = mq.maxWidth
+            style.minWidth = mq.minWidth
+            style.orientation = mq.orientation
             style.active = this.declarationConfig.active
             style.focus = this.declarationConfig.focus
             style.disabled = this.declarationConfig.disabled
             this.meta.className = this.declarationConfig.className
         }
 
-        const context = { isVar, style, important }
+        style[property] = value
+        if (!isVar && important) {
+            style.importantProperties.push(property)
+        }
 
+        // Track variable references that have media queries for later processing
+        const match = typeof value === 'string' ? value.match(/this\[`(.*?)`\]/) : null
+
+        if (match && this.varsWithMediaQueries[match[1]!] && !isVar) {
+            const className = this.declarationConfig.className
+            if (className === null) {
+                return
+            }
+
+            if (!this.pendingVarReferences.has(className)) {
+                this.pendingVarReferences.set(className, [])
+            }
+
+            const classVars = this.pendingVarReferences.get(className)!
+            const varName = match[1]!
+
+            if (!classVars.includes(varName)) {
+                classVars.push(varName)
+            }
+        }
+    }
+
+    private parseDeclaration(declaration: Declaration) {
         if (declaration.property === 'unparsed') {
-            const varName = declaration.value.propertyId.property
-            const processedValue = this.CSS.processValue(declaration.value.value)
-            this.processDeclarationValue(mq, varName, processedValue, context)
-
-            return
+            return {
+                property: declaration.value.propertyId.property,
+                value: this.CSS.processValue(declaration.value.value),
+            }
         }
 
         if (declaration.property === 'custom') {
-            const varName = declaration.value.name
-            const processedValue = this.CSS.processValue(declaration.value.value)
-            this.processDeclarationValue(mq, varName, processedValue, context)
+            return {
+                property: declaration.value.name,
+                value: this.CSS.processValue(declaration.value.value),
+            }
+        }
 
+        return {
+            property: declaration.property,
+            value: this.CSS.processValue(declaration.value),
+        }
+    }
+
+    private applyPendingVarReferences(className: string | null) {
+        if (className === null || !this.pendingVarReferences.has(className)) {
             return
         }
 
-        const varName = declaration.property
-        const processedValue = this.CSS.processValue(declaration.value)
-        this.processDeclarationValue(mq, varName, processedValue, context)
+        for (const varName of this.pendingVarReferences.get(className)!) {
+            const varStyles = this.varsWithMediaQueries[varName] ?? []
+
+            for (const varStyle of varStyles) {
+                this.stylesheets[className]!.push(varStyle)
+            }
+        }
+
+        // Clear processed references
+        // this.pendingVarReferences.delete(className)
     }
 
     private parseRuleRec(rule: Rule<Declaration, MediaQuery>) {
@@ -173,6 +193,8 @@ export class ProcessorBuilder {
                     rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                     rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+
+                    this.applyPendingVarReferences(newClassName)
 
                     return
                 }
@@ -222,6 +244,8 @@ export class ProcessorBuilder {
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                     rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
 
+                    this.applyPendingVarReferences(this.declarationConfig.className)
+
                     this.declarationConfig.rtl = null
                     this.declarationConfig.theme = null
                     this.declarationConfig.active = null
@@ -260,11 +284,6 @@ export class ProcessorBuilder {
                 this.declarationConfig = this.getDeclarationConfig()
             })
 
-            this.declarationConfig.mediaQueries.splice(
-                this.declarationConfig.mediaQueries.length - mediaQueries.length,
-                mediaQueries.length,
-            )
-
             return
         }
 
@@ -277,6 +296,8 @@ export class ProcessorBuilder {
         if (rule.type === 'nested-declarations') {
             rule.value.declarations.declarations?.forEach(declaration => this.addDeclaration(declaration))
             rule.value.declarations.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
+
+            this.applyPendingVarReferences(this.declarationConfig.className)
 
             return
         }

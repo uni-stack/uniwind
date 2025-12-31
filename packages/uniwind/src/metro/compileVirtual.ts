@@ -6,7 +6,7 @@ import { Logger } from './logger'
 import { polyfillWeb } from './polyfillWeb'
 import { ProcessorBuilder } from './processor'
 import { Platform, Polyfills } from './types'
-import { serialize, serializeJSObject } from './utils'
+import { serializeJSObject } from './utils'
 
 type CompileVirtualConfig = {
     cssPath: string
@@ -59,9 +59,6 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
                 serializeJSObject(scopedVars, (key, value) => `get "${key}"() { return ${value} }`),
             ]),
     )
-    const varsWithMediaQueries = Object.entries(Processor.varsWithMediaQueries)
-        .map(([key, value]) => `["${key}", ${serialize(value)}]`)
-        .join(',')
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
         .join('')
@@ -71,7 +68,6 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
         '({',
         `scopedVars: ({ ${serializedScopedVars} }),`,
         `vars: ({ ${currentColorVar} ${vars} }),`,
-        `varsWithMediaQueries: ([ ${varsWithMediaQueries} ]),`,
         `stylesheet: ({ ${stylesheet} }),`,
         '})',
     ].join('')

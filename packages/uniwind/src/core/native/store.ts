@@ -1,6 +1,6 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
-import { ColorScheme, Orientation, StyleDependency } from '../../types'
+import { Orientation, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName } from '../types'
 import { cloneWithAccessors } from './native-utils'
@@ -17,16 +17,6 @@ class UniwindStoreBuilder {
     vars = {} as Record<string, unknown>
     runtimeThemeVariables = new Map<ThemeName, CSSVariables>()
     private stylesheet = {} as StyleSheets
-    private varsWithMediaQueries = [] as Array<[
-        string,
-        Array<{
-            value: unknown
-            minWidth: number | null
-            maxWidth: number | null
-            orientation: Orientation | null
-            colorScheme: ColorScheme | null
-        }>,
-    ]>
     private cache = new Map<string, StylesResult>()
     private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
 
@@ -63,11 +53,10 @@ class UniwindStoreBuilder {
             return
         }
 
-        const { scopedVars, stylesheet, vars, varsWithMediaQueries } = config
-        this.vars = varsWithMediaQueries.length > 0 ? { ...vars } : vars
-        this.varsWithMediaQueries = varsWithMediaQueries
+        const { scopedVars, stylesheet, vars } = config
         this.generateStyleSheetCallbackResult = config
         this.stylesheet = stylesheet
+        this.vars = vars
 
         const themeVars = scopedVars[`__uniwind-theme-${this.runtime.currentThemeName}`]
         const platformVars = scopedVars[`__uniwind-platform-${Platform.OS}`]
@@ -90,47 +79,11 @@ class UniwindStoreBuilder {
         }
     }
 
-    private resolveMediaQueryVars(dependencies: Set<StyleDependency>) {
-        for (const [varName, mqVariants] of this.varsWithMediaQueries) {
-            let bestMatch: { value: unknown; minWidth: number | null } | null = null
-
-            for (const variant of mqVariants) {
-                if (variant.orientation !== null) dependencies.add(StyleDependency.Orientation)
-                if (variant.maxWidth !== null || variant.minWidth !== null) dependencies.add(StyleDependency.Dimensions)
-                if (variant.colorScheme !== null) {
-                    dependencies.add(StyleDependency.ColorScheme)
-                    dependencies.add(StyleDependency.Theme)
-                }
-
-                if (
-                    (variant.minWidth !== null && variant.minWidth > this.runtime.screen.width)
-                    || (variant.maxWidth !== null && variant.maxWidth !== Number.MAX_VALUE && variant.maxWidth < this.runtime.screen.width)
-                    || (variant.orientation !== null && this.runtime.orientation !== variant.orientation)
-                    || (variant.colorScheme !== null && this.runtime.currentThemeName !== variant.colorScheme)
-                ) {
-                    continue
-                }
-
-                if (bestMatch === null || (variant.minWidth ?? 0) > (bestMatch.minWidth ?? 0)) bestMatch = variant
-            }
-
-            if (bestMatch !== null) {
-                Object.defineProperty(this.vars, varName, {
-                    configurable: true,
-                    enumerable: true,
-                    get: () => bestMatch.value,
-                })
-            }
-        }
-
-        return this.vars
-    }
-
     private resolveStyles(classNames: string, state?: ComponentState) {
         const result = {} as Record<string, any>
         const dependencies = new Set<StyleDependency>()
         const bestBreakpoints = new Map<string, Style>()
-        let vars = this.resolveMediaQueryVars(dependencies)
+        let vars = this.vars
 
         for (const className of classNames.split(' ')) {
             if (!(className in this.stylesheet)) {
