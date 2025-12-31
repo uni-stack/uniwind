@@ -74,6 +74,8 @@ export const shouldBeSerialized = (value: string) => {
         /[*/+-]/.test(value),
         value.includes('"'),
         value.includes(' '),
+        value === '(',
+        value === ')',
     ].some(Boolean)
 }
 
