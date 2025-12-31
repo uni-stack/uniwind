@@ -1,5 +1,6 @@
 import * as React from 'react'
 import View from '../../src/components/native/View'
+import { SCREEN_WIDTH } from '../consts'
 import { renderUniwind } from '../utils'
 
 describe('Spacing', () => {
@@ -24,7 +25,7 @@ describe('Spacing', () => {
         expect(getStylesFromId('h-full').height).toBe('100%')
         expect(getStylesFromId('w-custom').width).toBe(100)
         expect(getStylesFromId('h-custom').height).toBe('50%')
-        expect(getStylesFromId('w-50vw').width).toBe(375)
+        expect(getStylesFromId('w-50vw').width).toBe(SCREEN_WIDTH / 2)
     })
 
     test('Padding', () => {
