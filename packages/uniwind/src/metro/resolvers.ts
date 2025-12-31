@@ -1,6 +1,6 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { basename, resolve, sep } from 'node:path'
-import { packageName } from './packageName'
+import { name as packageName } from '../../package.json'
 
 type ResolverConfig = {
     platform: string | null
@@ -11,8 +11,10 @@ type ResolverConfig = {
 
 const thisModuleDist = resolve(__dirname, '../../dist')
 const thisModuleSrc = resolve(__dirname, '../../src')
+const nodeModulesPath = resolve(__dirname, '../../../')
 
 const isFromThisModule = (filename: string) => filename.startsWith(thisModuleDist) || filename.startsWith(thisModuleSrc)
+const name = basename(nodeModulesPath) === 'node_modules' ? basename(resolve(__dirname, '../../')) : packageName
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
@@ -57,15 +59,15 @@ export const nativeResolver = (extraComponents: Record<string, string>) =>
     }
 
     if (moduleName === 'react-native') {
-        return resolver(context, `${packageName}/components`, platform)
+        return resolver(context, `${name}/components`, platform)
     }
 
     if (moduleName === 'react-native-gesture-handler') {
-        return resolver(context, `${packageName}/components/react-native-gesture-handler`, platform)
+        return resolver(context, `${name}/components/react-native-gesture-handler`, platform)
     }
 
     if (moduleName === 'react-native-svg') {
-        return resolver(context, `${packageName}/components/react-native-svg`, platform)
+        return resolver(context, `${name}/components/react-native-svg`, platform)
     }
 
     if (
@@ -75,7 +77,7 @@ export const nativeResolver = (extraComponents: Record<string, string>) =>
         const module = filename.split('.').at(0)
 
         if (module !== undefined && SUPPORTED_COMPONENTS.includes(module)) {
-            return resolver(context, `${packageName}/components/${module}`, platform)
+            return resolver(context, `${name}/components/${module}`, platform)
         }
     }
 
@@ -117,5 +119,5 @@ export const webResolver = (extraComponents: Record<string, string>) =>
         return resolution
     }
 
-    return resolver(context, `${packageName}/components/${module}`, platform)
+    return resolver(context, `${name}/components/${module}`, platform)
 }
