@@ -9,8 +9,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 // Get the package root (one level up from scripts/)
-const packageRoot = resolve(dirname(__dirname), '../')
-const isInNodeModules = packageRoot.endsWith('node_modules')
+const packageRoot = dirname(__dirname)
+const isInNodeModules = resolve(packageRoot, '../').endsWith('node_modules')
 
 if (isInNodeModules) {
     const packageJsonPath = join(packageRoot, 'package.json')
