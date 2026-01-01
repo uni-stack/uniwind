@@ -18,6 +18,7 @@
         "prepublishOnly": "bun run build",
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
         "build:css": "bun run src/css/index.ts",
+        "postinstall": "node scripts/postinstall.mjs",
         "test": "jest"
     },
     "keywords": [
@@ -70,6 +71,7 @@
         "dist",
         "metro",
         "vite",
+        "scripts",
         "uniwind.css",
         "types.d.ts",
         "readme.md",
