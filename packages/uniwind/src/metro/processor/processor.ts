@@ -34,11 +34,27 @@ export class ProcessorBuilder {
             filename: 'tailwind.css',
             code: Buffer.from(css),
             visitor: {
-                StyleSheet: styleSheet =>
+                StyleSheet: styleSheet => {
                     styleSheet.rules.forEach(rule => {
                         this.declarationConfig = this.getDeclarationConfig()
                         this.parseRuleRec(rule)
-                    }),
+                    })
+
+                    for (const [className, varNames] of this.pendingVarReferences) {
+                        for (const varName of varNames) {
+                            const varStyles = this.varsWithMediaQueries[varName]
+                            if (!varStyles || varStyles.length === 0) {
+                                continue
+                            }
+
+                            for (const varStyle of varStyles) {
+                                this.stylesheets[className]!.push(varStyle)
+                            }
+                        }
+
+                        this.pendingVarReferences.delete(className)
+                    }
+                },
             },
         })
     }
@@ -111,10 +127,10 @@ export class ProcessorBuilder {
             style.importantProperties.push(property)
         }
 
-        // Track variable references that have media queries for later processing
+        // Track variable references for later processing (even if media queries don't exist yet)
         const match = typeof value === 'string' ? value.match(/this\[`(.*?)`\]/) : null
 
-        if (match && this.varsWithMediaQueries[match[1]!] && !isVar) {
+        if (match && !isVar) {
             const className = this.declarationConfig.className
             if (className === null) {
                 return
@@ -154,23 +170,6 @@ export class ProcessorBuilder {
         }
     }
 
-    private applyPendingVarReferences(className: string | null) {
-        if (className === null || !this.pendingVarReferences.has(className)) {
-            return
-        }
-
-        for (const varName of this.pendingVarReferences.get(className)!) {
-            const varStyles = this.varsWithMediaQueries[varName] ?? []
-
-            for (const varStyle of varStyles) {
-                this.stylesheets[className]!.push(varStyle)
-            }
-        }
-
-        // Clear processed references
-        // this.pendingVarReferences.delete(className)
-    }
-
     private parseRuleRec(rule: Rule<Declaration, MediaQuery>) {
         if (this.declarationConfig.className !== null) {
             const lastStyle = this.stylesheets[this.declarationConfig.className]?.at(-1)
@@ -193,8 +192,6 @@ export class ProcessorBuilder {
                     rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                     rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-
-                    this.applyPendingVarReferences(newClassName)
 
                     return
                 }
@@ -243,8 +240,6 @@ export class ProcessorBuilder {
                     rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                     rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-
-                    this.applyPendingVarReferences(this.declarationConfig.className)
 
                     this.declarationConfig.rtl = null
                     this.declarationConfig.theme = null
@@ -296,8 +291,6 @@ export class ProcessorBuilder {
         if (rule.type === 'nested-declarations') {
             rule.value.declarations.declarations?.forEach(declaration => this.addDeclaration(declaration))
             rule.value.declarations.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-
-            this.applyPendingVarReferences(this.declarationConfig.className)
 
             return
         }
