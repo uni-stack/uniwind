@@ -274,10 +274,8 @@ export class ProcessorBuilder {
             const { mediaQueries } = rule.value.query
 
             this.declarationConfig.mediaQueries.push(...mediaQueries)
-            rule.value.rules.forEach(rule => {
-                this.parseRuleRec(rule)
-                this.declarationConfig = this.getDeclarationConfig()
-            })
+            rule.value.rules.forEach(rule => this.parseRuleRec(rule))
+            this.declarationConfig = this.getDeclarationConfig()
 
             return
         }
