@@ -1,4 +1,7 @@
+import { ComponentPropsWithRef, createElement, ElementType, useMemo } from 'react'
 import { Appearance, Insets, Platform } from 'react-native'
+import { ApplyUniwind } from '../../hoc/types'
+import { withUniwind } from '../../hoc/withUniwind'
 import { ColorScheme, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
@@ -33,6 +36,13 @@ export class UniwindConfigBuilder {
 
     private get colorScheme() {
         return Appearance.getColorScheme() ?? ColorScheme.Light
+    }
+
+    Wrapper<T extends ElementType>({ as, ...props }: {
+        as: T
+    } & ApplyUniwind<Omit<ComponentPropsWithRef<T>, 'as'>>) {
+        const StyledComponent = useMemo(() => withUniwind(as as any), [as])
+        return createElement(StyledComponent, props)
     }
 
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
