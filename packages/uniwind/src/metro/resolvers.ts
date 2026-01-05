@@ -51,7 +51,9 @@ export const nativeResolver = ({
         `react-native${sep}index.js`,
     )
 
-    if (isInternal || resolution.type !== 'sourceFile' || isReactNativeIndex) {
+    const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
+
+    if (isInternal || resolution.type !== 'sourceFile' || isReactNativeIndex || isFromReactNative) {
         return resolution
     }
 
