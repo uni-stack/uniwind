@@ -35,7 +35,7 @@
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     margin-right: calc(env(safe-area-inset-right) + --value([length]));
 }
-    
+
 @utility mx-safe {
     margin-left: env(safe-area-inset-left);
     margin-right: env(safe-area-inset-right);
@@ -54,7 +54,7 @@
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     margin-right: calc(env(safe-area-inset-right) + --value([length]));
 }
-    
+
 @utility my-safe {
     margin-top: env(safe-area-inset-top);
     margin-bottom: env(safe-area-inset-bottom);
@@ -73,7 +73,7 @@
     margin-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
     margin-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
 }
-    
+
 @utility mt-safe {
     margin-top: env(safe-area-inset-top);
 }
@@ -87,7 +87,7 @@
     margin-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
     margin-top: calc(env(safe-area-inset-top) + --value([length]));
 }
-    
+
 @utility mb-safe {
     margin-bottom: env(safe-area-inset-bottom);
 }
@@ -101,7 +101,7 @@
     margin-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
     margin-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
 }
-    
+
 @utility ml-safe {
     margin-left: env(safe-area-inset-left);
 }
@@ -115,7 +115,7 @@
     margin-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
     margin-left: calc(env(safe-area-inset-left) + --value([length]));
 }
-    
+
 @utility mr-safe {
     margin-right: env(safe-area-inset-right);
 }
@@ -129,7 +129,7 @@
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     margin-right: calc(env(safe-area-inset-right) + --value([length]));
 }
-    
+
 @utility p-safe {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -158,7 +158,7 @@
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     padding-right: calc(env(safe-area-inset-right) + --value([length]));
 }
-    
+
 @utility px-safe {
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
@@ -177,7 +177,7 @@
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     padding-right: calc(env(safe-area-inset-right) + --value([length]));
 }
-    
+
 @utility py-safe {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -196,7 +196,7 @@
     padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
     padding-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
 }
-    
+
 @utility pt-safe {
     padding-top: env(safe-area-inset-top);
 }
@@ -210,7 +210,7 @@
     padding-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
     padding-top: calc(env(safe-area-inset-top) + --value([length]));
 }
-    
+
 @utility pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
 }
@@ -224,7 +224,7 @@
     padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
     padding-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
 }
-    
+
 @utility pl-safe {
     padding-left: env(safe-area-inset-left);
 }
@@ -238,7 +238,7 @@
     padding-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
     padding-left: calc(env(safe-area-inset-left) + --value([length]));
 }
-    
+
 @utility pr-safe {
     padding-right: env(safe-area-inset-right);
 }
@@ -251,6 +251,129 @@
 @utility pr-safe-offset-* {
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     padding-right: calc(env(safe-area-inset-right) + --value([length]));
+}
+
+@utility inset-safe {
+    top: env(safe-area-inset-top);
+    bottom: env(safe-area-inset-bottom);
+    left: env(safe-area-inset-left);
+    right: env(safe-area-inset-right);
+}
+
+@utility inset-safe-or-* {
+    top: max(env(safe-area-inset-top), --spacing(--value(integer)));
+    top: max(env(safe-area-inset-top), --value([length]));
+    bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
+    bottom: max(env(safe-area-inset-bottom), --value([length]));
+    left: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    left: max(env(safe-area-inset-left), --value([length]));
+    right: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    right: max(env(safe-area-inset-right), --value([length]));
+}
+
+@utility inset-safe-offset-* {
+    top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
+    top: calc(env(safe-area-inset-top) + --value([length]));
+    bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    left: calc(env(safe-area-inset-left) + --value([length]));
+    right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    right: calc(env(safe-area-inset-right) + --value([length]));
+}
+
+@utility x-safe {
+    left: env(safe-area-inset-left);
+    right: env(safe-area-inset-right);
+}
+
+@utility x-safe-or-* {
+    left: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    left: max(env(safe-area-inset-left), --value([length]));
+    right: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    right: max(env(safe-area-inset-right), --value([length]));
+}
+
+@utility x-safe-offset-* {
+    left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    left: calc(env(safe-area-inset-left) + --value([length]));
+    right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    right: calc(env(safe-area-inset-right) + --value([length]));
+}
+
+@utility y-safe {
+    top: env(safe-area-inset-top);
+    bottom: env(safe-area-inset-bottom);
+}
+
+@utility y-safe-or-* {
+    top: max(env(safe-area-inset-top), --spacing(--value(integer)));
+    top: max(env(safe-area-inset-top), --value([length]));
+    bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
+    bottom: max(env(safe-area-inset-bottom), --value([length]));
+}
+
+@utility y-safe-offset-* {
+    top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
+    top: calc(env(safe-area-inset-top) + --value([length]));
+    bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+}
+
+@utility top-safe {
+    top: env(safe-area-inset-top);
+}
+
+@utility top-safe-or-* {
+    top: max(env(safe-area-inset-top), --spacing(--value(integer)));
+    top: max(env(safe-area-inset-top), --value([length]));
+}
+
+@utility top-safe-offset-* {
+    top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
+    top: calc(env(safe-area-inset-top) + --value([length]));
+}
+
+@utility bottom-safe {
+    bottom: env(safe-area-inset-bottom);
+}
+
+@utility bottom-safe-or-* {
+    bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
+    bottom: max(env(safe-area-inset-bottom), --value([length]));
+}
+
+@utility bottom-safe-offset-* {
+    bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+}
+
+@utility left-safe {
+    left: env(safe-area-inset-left);
+}
+
+@utility left-safe-or-* {
+    left: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    left: max(env(safe-area-inset-left), --value([length]));
+}
+
+@utility left-safe-offset-* {
+    left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    left: calc(env(safe-area-inset-left) + --value([length]));
+}
+
+@utility right-safe {
+    right: env(safe-area-inset-right);
+}
+
+@utility right-safe-or-* {
+    right: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    right: max(env(safe-area-inset-right), --value([length]));
+}
+
+@utility right-safe-offset-* {
+    right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    right: calc(env(safe-area-inset-right) + --value([length]));
 }
 
 @custom-variant light (&:where(.light, .light *));
