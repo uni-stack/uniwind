@@ -48,6 +48,7 @@ export const nativeResolver = ({
     const resolution = resolver(context, moduleName, platform)
     const isInternal = isFromThisModule(context.originModulePath)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
+        || context.originModulePath.includes(`${sep}@react-native${sep}`)
 
     if (isInternal || resolution.type !== 'sourceFile' || isFromReactNative) {
         return resolution
