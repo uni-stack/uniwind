@@ -75,11 +75,6 @@ export default defineBuildConfig({
             outDir: './',
             pattern: ['LICENSE', 'readme.md'],
         },
-        {
-            builder: 'copy',
-            input: '../../assets',
-            outDir: './assets',
-        },
         ...getConfig({
             input: './src/components',
             outDir: 'components',
