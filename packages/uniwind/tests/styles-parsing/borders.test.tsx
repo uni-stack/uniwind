@@ -20,14 +20,11 @@ describe('Borders', () => {
             </React.Fragment>,
         )
 
-        expect(getStylesFromId('border').borderTopWidth).toBe(1)
-        expect(getStylesFromId('border').borderBottomWidth).toBe(1)
-        expect(getStylesFromId('border').borderLeftWidth).toBe(1)
-        expect(getStylesFromId('border').borderRightWidth).toBe(1)
+        expect(getStylesFromId('border').borderWidth).toBe(1)
 
-        expect(getStylesFromId('border-0').borderTopWidth).toBe(0)
-        expect(getStylesFromId('border-2').borderTopWidth).toBe(2)
-        expect(getStylesFromId('border-4').borderTopWidth).toBe(4)
+        expect(getStylesFromId('border-0').borderWidth).toBe(0)
+        expect(getStylesFromId('border-2').borderWidth).toBe(2)
+        expect(getStylesFromId('border-4').borderWidth).toBe(4)
 
         expect(getStylesFromId('border-t').borderTopWidth).toBe(1)
         expect(getStylesFromId('border-r-2').borderRightWidth).toBe(2)
