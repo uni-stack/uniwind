@@ -1,0 +1,33 @@
+{
+    "git": {
+        "commit": true,
+        "tag": true,
+        "push": true,
+        "requireCleanWorkingDir": true,
+        "commitMessage": "chore: release v${version}",
+        "tagName": "v${version}",
+        "tagAnnotation": "Release v${version}"
+    },
+    "github": {
+        "release": true,
+        "draft": false,
+        "autoGenerate": true,
+        "preRelease": false
+    },
+    "npm": {
+        "publish": true,
+        "provenance": true,
+        "access": "public"
+    },
+    "plugins": {
+        "@release-it/conventional-changelog": {
+            "infile": "CHANGELOG.md",
+            "preset": "angular",
+            "strictSemVer": true
+        }
+    },
+    "hooks": {
+        "before:init": [],
+        "after:bump": "bun run build && bun run check:typescript && bun run lint && bun run test"
+    }
+}
