@@ -286,7 +286,7 @@ export class RN {
             const borderWidth = styles.borderTopWidth
 
             // Join border widths
-            if (keys.every(key => styles[key] === borderWidth)) {
+            if (BORDER_WIDTH_KEYS.every(key => styles[key] === borderWidth)) {
                 return {
                     ...removeKeys(styles, BORDER_WIDTH_KEYS),
                     borderWidth,
