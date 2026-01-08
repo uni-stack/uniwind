@@ -51,6 +51,7 @@ export class ProcessorBuilder {
             active: null as boolean | null,
             focus: null as boolean | null,
             disabled: null as boolean | null,
+            dataAttributes: null as Record<string, string> | null,
         })
     }
 
@@ -87,6 +88,7 @@ export class ProcessorBuilder {
             style.active = this.declarationConfig.active
             style.focus = this.declarationConfig.focus
             style.disabled = this.declarationConfig.disabled
+            style.dataAttributes = this.declarationConfig.dataAttributes
             this.meta.className = this.declarationConfig.className
         }
 
@@ -148,6 +150,7 @@ export class ProcessorBuilder {
                 let active = null as boolean | null
                 let focus = null as boolean | null
                 let disabled = null as boolean | null
+                let dataAttributes = null as Record<string, string> | null
 
                 selector.forEach(selector => {
                     if (selector.type === 'pseudo-class' && selector.kind === 'where') {
@@ -175,14 +178,20 @@ export class ProcessorBuilder {
                     if (selector.type === 'pseudo-class' && selector.kind === 'disabled') {
                         disabled = true
                     }
+
+                    if (selector.type === 'attribute' && selector.operation?.operator === 'equal') {
+                        dataAttributes ??= {}
+                        dataAttributes[selector.name] = `"${selector.operation.value}"`
+                    }
                 })
 
-                if ([rtl, theme, active, focus, disabled].some(Boolean)) {
+                if ([rtl, theme, active, focus, disabled, dataAttributes].some(Boolean)) {
                     this.declarationConfig.rtl = rtl
                     this.declarationConfig.theme = theme
                     this.declarationConfig.active = active
                     this.declarationConfig.focus = focus
                     this.declarationConfig.disabled = disabled
+                    this.declarationConfig.dataAttributes = dataAttributes
 
                     rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
@@ -193,6 +202,7 @@ export class ProcessorBuilder {
                     this.declarationConfig.active = null
                     this.declarationConfig.focus = null
                     this.declarationConfig.disabled = null
+                    this.declarationConfig.dataAttributes = null
 
                     return
                 }

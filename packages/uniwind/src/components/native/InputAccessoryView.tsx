@@ -1,14 +1,13 @@
 import { ForwardedRef } from 'react'
 import { InputAccessoryView as RNInputAccessoryView, InputAccessoryViewProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const InputAccessoryView = copyComponentProperties(
     RNInputAccessoryView,
     (props: InputAccessoryViewProps & { ref?: ForwardedRef<RNInputAccessoryView> }) => {
-        const style = useStyle(props.className)
-        const backgroundColor = useUniwindAccent(props.backgroundColorClassName)
+        const style = useStyle(props.className, props)
+        const backgroundColor = useStyle(props.backgroundColorClassName, props).accentColor
 
         return (
             <RNInputAccessoryView

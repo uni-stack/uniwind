@@ -77,6 +77,7 @@ export class MQ {
             active: null,
             focus: null,
             disabled: null,
+            dataAttributes: null,
         }
     }
 }

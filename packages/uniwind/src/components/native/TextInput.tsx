@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { TextInput as RNTextInput, TextInputProps } from 'react-native'
 import { ComponentState } from '../../core/types'
-import { useUniwindAccent } from '../../hooks/useUniwindAccent.native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
@@ -13,12 +12,12 @@ export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputP
         isFocused,
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
-    const cursorColor = useUniwindAccent(props.cursorColorClassName, state)
-    const selectionColor = useUniwindAccent(props.selectionColorClassName, state)
-    const placeholderTextColor = useUniwindAccent(props.placeholderTextColorClassName, state)
-    const selectionHandleColor = useUniwindAccent(props.selectionHandleColorClassName, state)
-    const underlineColorAndroid = useUniwindAccent(props.underlineColorAndroidClassName, state)
+    const style = useStyle(props.className, props, state)
+    const cursorColor = useStyle(props.cursorColorClassName, props, state).accentColor
+    const selectionColor = useStyle(props.selectionColorClassName, props, state).accentColor
+    const placeholderTextColor = useStyle(props.placeholderTextColorClassName, props, state).accentColor
+    const selectionHandleColor = useStyle(props.selectionHandleColorClassName, props, state).accentColor
+    const underlineColorAndroid = useStyle(props.underlineColorAndroidClassName, props, state).accentColor
 
     return (
         <RNTextInput

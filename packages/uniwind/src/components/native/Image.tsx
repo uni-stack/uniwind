@@ -1,11 +1,10 @@
 import { Image as RNImage, ImageProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
-    const style = useStyle(props.className)
-    const tintColor = useUniwindAccent(props.tintColorClassName)
+    const style = useStyle(props.className, props)
+    const tintColor = useStyle(props.tintColorClassName, props).accentColor
 
     return (
         <RNImage

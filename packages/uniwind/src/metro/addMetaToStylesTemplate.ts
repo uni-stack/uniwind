@@ -45,6 +45,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     active,
                     focus,
                     disabled,
+                    dataAttributes,
                     ...rest
                 } = style
 
@@ -121,6 +122,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     importantProperties: importantProperties
                         ?.map(property => property.startsWith('--') ? property : toCamelCase)
                         .map(makeSafeForSerialization) ?? [],
+                    dataAttributes,
                     complexity: [
                         minWidth !== 0,
                         theme !== null,
@@ -130,6 +132,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                         active !== null,
                         focus !== null,
                         disabled !== null,
+                        dataAttributes !== null,
                     ].filter(Boolean).length,
                 }
             })

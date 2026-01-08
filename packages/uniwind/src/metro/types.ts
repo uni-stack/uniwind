@@ -39,6 +39,7 @@ export type MediaQueryResolver = {
     disabled: boolean | null
     active: boolean | null
     focus: boolean | null
+    dataAttributes: Record<string, string> | null
 }
 
 export const enum Platform {

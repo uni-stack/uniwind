@@ -1,11 +1,10 @@
 import { Modal as RNModal, ModalProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Modal = copyComponentProperties(RNModal, (props: ModalProps) => {
-    const style = useStyle(props.className)
-    const backdropColor = useUniwindAccent(props.backdropColorClassName)
+    const style = useStyle(props.className, props)
+    const backdropColor = useStyle(props.backdropColorClassName, props).accentColor
 
     return (
         <RNModal

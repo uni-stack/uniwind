@@ -7,18 +7,18 @@ import { StyleDependency } from '../../types'
 
 const emptyState = { styles: {} as RNStyle, dependencies: [] as Array<StyleDependency> }
 
-export const useStyle = (className?: string, state?: ComponentState) => {
+export const useStyle = (className: string | undefined, componentProps: Record<string, any>, state?: ComponentState) => {
     const [_, rerender] = useReducer(() => ({}), {})
     const styleState = useMemo(
         () =>
             className
-                ? UniwindStore.getStyles(className, {
+                ? UniwindStore.getStyles(className, componentProps, {
                     isDisabled: state?.isDisabled,
                     isFocused: state?.isFocused,
                     isPressed: state?.isPressed,
                 })
                 : emptyState,
-        [className, _, state?.isDisabled, state?.isFocused, state?.isPressed],
+        [className, _, state?.isDisabled, state?.isFocused, state?.isPressed, componentProps],
     )
 
     useEffect(() => {

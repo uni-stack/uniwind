@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Text as RNText, TextProps } from 'react-native'
 import { ComponentState } from '../../core/types'
-import { useUniwindAccent } from '../../hooks/useUniwindAccent.native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
@@ -15,8 +14,8 @@ export const Text = copyComponentProperties(RNText, (props: TextProps) => {
         isPressed,
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
-    const selectionColor = useUniwindAccent(props.selectionColorClassName, state)
+    const style = useStyle(props.className, props, state)
+    const selectionColor = useStyle(props.selectionColorClassName, props, state).accentColor
 
     return (
         <RNText

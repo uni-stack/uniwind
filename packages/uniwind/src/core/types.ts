@@ -17,6 +17,7 @@ export type Style = {
     active: boolean | null
     focus: boolean | null
     disabled: boolean | null
+    dataAttributes: Record<string, string> | null
 }
 
 export type StyleSheets = Record<string, Array<Style>>

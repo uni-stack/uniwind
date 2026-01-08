@@ -1,9 +1,9 @@
 import { Button as RNButton, ButtonProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
+import { useStyle } from './useStyle'
 
 export const Button = copyComponentProperties(RNButton, (props: ButtonProps) => {
-    const color = useUniwindAccent(props.colorClassName)
+    const color = useStyle(props.colorClassName, props).accentColor
 
     return (
         <RNButton

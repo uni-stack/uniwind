@@ -4,9 +4,13 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Pressable = copyComponentProperties(RNPressable, (props: PressableProps) => {
-    const style = useStyle(props.className, {
-        isDisabled: Boolean(props.disabled),
-    })
+    const style = useStyle(
+        props.className,
+        props,
+        {
+            isDisabled: Boolean(props.disabled),
+        },
+    )
 
     return (
         <RNPressable
@@ -16,6 +20,7 @@ export const Pressable = copyComponentProperties(RNPressable, (props: PressableP
                     return [
                         UniwindStore.getStyles(
                             props.className,
+                            props,
                             { isDisabled: Boolean(props.disabled), isPressed: true },
                         ).styles,
                         typeof props.style === 'function' ? props.style(state) : props.style,

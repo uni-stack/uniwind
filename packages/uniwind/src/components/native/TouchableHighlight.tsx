@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { TouchableHighlight as RNTouchableHighlight, TouchableHighlightProps } from 'react-native'
 import { ComponentState } from '../../core/types'
-import { useUniwindAccent } from '../../hooks/useUniwindAccent.native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
@@ -11,8 +10,8 @@ export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, 
         isDisabled: Boolean(props.disabled),
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
-    const underlayColor = useUniwindAccent(props.underlayColorClassName, state)
+    const style = useStyle(props.className, props, state)
+    const underlayColor = useStyle(props.underlayColorClassName, props, state).accentColor
 
     return (
         <RNTouchableHighlight

@@ -10,7 +10,7 @@ export const TouchableOpacity = copyComponentProperties(RNTouchableOpacity, (pro
         isDisabled: Boolean(props.disabled),
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
+    const style = useStyle(props.className, props, state)
 
     return (
         <RNTouchableOpacity
