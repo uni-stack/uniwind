@@ -11,24 +11,6 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         super()
     }
 
-    onThemeChange() {
-        if (typeof document === 'undefined') {
-            return
-        }
-
-        document.documentElement.removeAttribute('style')
-
-        const runtimeCSSVariables = this.runtimeCSSVariables.get(this.currentTheme)
-
-        if (!runtimeCSSVariables) {
-            return
-        }
-
-        Object.entries(runtimeCSSVariables).forEach(([varName, varValue]) => {
-            this.applyCSSVariable(varName, varValue)
-        })
-    }
-
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
         Object.entries(variables).forEach(([varName, varValue]) => {
             if (!varName.startsWith('--') && __DEV__) {
@@ -47,6 +29,24 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         if (theme === this.currentTheme) {
             UniwindListener.notify([StyleDependency.Variables])
         }
+    }
+
+    protected onThemeChange() {
+        if (typeof document === 'undefined') {
+            return
+        }
+
+        document.documentElement.removeAttribute('style')
+
+        const runtimeCSSVariables = this.runtimeCSSVariables.get(this.currentTheme)
+
+        if (!runtimeCSSVariables) {
+            return
+        }
+
+        Object.entries(runtimeCSSVariables).forEach(([varName, varValue]) => {
+            this.applyCSSVariable(varName, varValue)
+        })
     }
 
     private applyCSSVariable(varName: keyof CSSVariables, varValue: CSSVariables[keyof CSSVariables]) {
