@@ -31,6 +31,11 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
                 pattern: '**/*',
                 base: path.dirname(cssPath),
             },
+            {
+                negated: true,
+                pattern: '**/*.{txt,md}',
+                base: path.dirname(cssPath),
+            },
         ],
     })
     const tailwindCSS = compiler.build(candidates ?? scanner.scan())
