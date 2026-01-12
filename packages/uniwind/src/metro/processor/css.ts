@@ -330,7 +330,7 @@ export class CSS {
                 return this.processValue(declarationValue[0]!)
             }
 
-            const t = this.addComaBetweenTokens(declarationValue).reduce<string | number>((acc, value, index, array) => {
+            return this.addComaBetweenTokens(declarationValue).reduce<string | number>((acc, value, index, array) => {
                 if (typeof value === 'object') {
                     const nextValue = array.at(index + 1)
 
@@ -348,8 +348,6 @@ export class CSS {
 
                 return acc + value
             }, '')
-
-            return t
         }
 
         if ('property' in declarationValue) {
