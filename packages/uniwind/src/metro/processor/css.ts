@@ -163,6 +163,11 @@ export class CSS {
                 case 'srgb':
                     return this.Processor.Color.processColor(declarationValue)
                 case 'delim':
+                    if (declarationValue.value === '.') {
+                        return '.'
+                    }
+
+                    // +, - etc.
                     return ` ${declarationValue.value} `
                 case 'ident':
                     if (this.Processor.Color.isColor(declarationValue.value)) {
@@ -325,7 +330,7 @@ export class CSS {
                 return this.processValue(declarationValue[0]!)
             }
 
-            return this.addComaBetweenTokens(declarationValue).reduce<string | number>((acc, value, index, array) => {
+            const t = this.addComaBetweenTokens(declarationValue).reduce<string | number>((acc, value, index, array) => {
                 if (typeof value === 'object') {
                     const nextValue = array.at(index + 1)
 
@@ -343,6 +348,8 @@ export class CSS {
 
                 return acc + value
             }, '')
+
+            return t
         }
 
         if ('property' in declarationValue) {
