@@ -13,6 +13,7 @@ env:
 jobs:
   autoclose:
     runs-on: ubuntu-latest
+    if: ${{ contains(github.event.issue.labels.*.name, 'uniwind-oss') }}
     permissions:
       issues: write
     steps:

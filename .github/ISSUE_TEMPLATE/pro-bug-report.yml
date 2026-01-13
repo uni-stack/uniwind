@@ -1,13 +1,16 @@
-name: Bug report
-description: Report Uniwind bug
+name: Bug report (Uniwind Pro)
+description: Report Uniwind bug (Pro users only)
 labels:
   - triage
-  - uniwind-oss
+  - priority
+  - uniwind-pro
 body:
   - type: markdown
     attributes:
       value: |
-        ## Required Information
+        ## Pro User Bug Report
+
+        Thank you for being a Pro user! Your issue will receive priority attention.
 
   - type: textarea
     id: description
@@ -32,16 +35,10 @@ body:
   - type: input
     id: repro
     attributes:
-      label: Snack or Repository Link
+      label: Snack or Repository Link (Optional)
       description: |
-        Provide a link to a GitHub repository or Snack that reproduces the issue.
-        Repro will confirm that:
-         - Issue is not related to your app that has multiple dependencies
-         - Can isolate the problem
-         - Allow us to reproduce in minutes
-      placeholder: https://github.com (without reproduction the issue will be automatically closed)
-    validations:
-      required: true
+        Providing a link to a GitHub repository or Snack that reproduces the issue helps us resolve it faster.
+      placeholder: https://github.com
 
   - type: input
     id: uniwind-version
@@ -89,4 +86,6 @@ body:
         description: Please check all the boxes that apply
         options:
           - label: I've searched for [similar issues in this repository](https://github.com/uni-stack/uniwind/issues) and found none
+            required: true
+          - label: I am a Uniwind Pro user
             required: true
