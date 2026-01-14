@@ -1,66 +1,35 @@
 // @ts-expect-error - Importing internal react-native-web module
 import originalCreateOrderedCSSStyleSheet from 'react-native-web/dist/exports/StyleSheet/dom/createOrderedCSSStyleSheet'
 
-type CSSStyleSheet = {
-    cssRules: CSSRuleList
-    insertRule: (rule: string, index: number) => number
-}
-
 type OrderedCSSStyleSheet = {
     getTextContent: () => string
-    insert: (cssText: string, groupValue: number) => void
 }
 
 /**
- * Wraps a CSS rule in @layer rnw if it starts with .css-
- * This ensures react-native-web default styles have lower specificity than Tailwind styles
- */
-const wrapInLayer = (cssText: string): string => {
-    const trimmed = cssText.trim()
-
-    // Only wrap rules that start with .css- (react-native-web generated classes)
-    if (trimmed.startsWith('.css-')) {
-        return `@layer rnw{${trimmed}}`
-    }
-
-    return cssText
-}
-
-/**
- * Custom createOrderedCSSStyleSheet that wraps .css- rules in @layer rnw
- * This ensures proper CSS cascade ordering with Tailwind styles
+ * Custom createOrderedCSSStyleSheet that wraps RNW rules in @layer rnw
+ * This ensures proper CSS cascade ordering with Tailwind v4 styles.
  */
 const createOrderedCSSStyleSheet = (sheet: CSSStyleSheet | null): OrderedCSSStyleSheet => {
-    const original = originalCreateOrderedCSSStyleSheet(sheet) as OrderedCSSStyleSheet
+    let layerRule: CSSLayerBlockRule | null = null
+
+    if (sheet !== null) {
+        // Create @layer rnw {} at the start of the stylesheet
+        // All RNW rules will be inserted inside this layer
+        const layerIndex = sheet.insertRule('@layer rnw {}', 0)
+        layerRule = sheet.cssRules[layerIndex] as CSSLayerBlockRule
+    }
+
+    // Pass the layer rule to the original - it has the same interface
+    // (cssRules, insertRule) so the original works inside the layer
+    const original = originalCreateOrderedCSSStyleSheet(layerRule) as OrderedCSSStyleSheet
 
     return {
+        ...original,
         getTextContent: () => {
-            const textContent = original.getTextContent()
-
-            // Process the text content to wrap .css- rules in @layer rnw
-            return textContent
-                .split('\n')
-                .map(line => {
-                    const trimmed = line.trim()
-
-                    if (trimmed.startsWith('.css-')) {
-                        return `@layer rnw{${trimmed}}`
-                    }
-
-                    return line
-                })
-                .join('\n')
-        },
-
-        insert: (cssText: string, groupValue: number) => {
-            // Wrap .css- rules in @layer rnw before insertion
-            const wrappedCssText = wrapInLayer(cssText)
-
-            original.insert(wrappedCssText, groupValue)
+            // Wrap SSR output in @layer rnw for hydration consistency
+            return `@layer rnw { ${original.getTextContent()} }`
         },
     }
 }
 
 export default createOrderedCSSStyleSheet
-
-export { createOrderedCSSStyleSheet }
