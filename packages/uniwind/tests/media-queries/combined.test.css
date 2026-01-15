@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    --text-xl: 1.5rem;
+    --border-width: 1px;
+  }
+}
+
+@media (min-width: 768px) and (orientation: landscape) {
+  :root {
+    --text-xl: 6rem;
+  }
+}
+
+@media (min-width: 640px) and (prefers-color-scheme: dark) {
+  :root {
+    --border-width: 2px;
+  }
+}
+
+.text-xl {
+  font-size: var(--text-xl);
+}
+
+.border-custom {
+  border-width: var(--border-width);
+}
+
