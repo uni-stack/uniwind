@@ -53,6 +53,7 @@ export type UniwindRuntime = {
     colorMix: (color: string, weight: number | string, mixColor: string) => string
     cubicBezier: (x1: number, y1: number, x2: number, y2: number) => string
     lightDark: (light: string, dark: string) => string
+    parseColor: (type: string, color: string) => string
 }
 
 export type RNStyle = ViewStyle & TextStyle & ImageStyle & {

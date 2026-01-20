@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "uniwind";
 
+:root {
+  --foo: 120 50% 50%;
+  --bar: 0.7 0.1 141;
+}
+
 @theme {
-    --spacing-test: 123px;
+  --color-foo: hsl(var(--foo));
+  --color-bar: oklch(var(--bar));
+  --spacing-test: 123px;
 }

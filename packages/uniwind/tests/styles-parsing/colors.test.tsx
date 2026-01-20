@@ -66,6 +66,14 @@ describe('Colors', () => {
                     className="bg-[rgba(255,0,0,0.5)]"
                     testID="custom-rgba-red-alpha"
                 />
+                <View
+                    className="bg-foo"
+                    testID="custom-hsl-foo"
+                />
+                <View
+                    className="bg-bar"
+                    testID="custom-oklch-bar"
+                />
             </React.Fragment>,
         )
 
@@ -80,5 +88,11 @@ describe('Colors', () => {
 
         const customRgbaRedAlphaStyles = getStylesFromId('custom-rgba-red-alpha')
         expect(customRgbaRedAlphaStyles.backgroundColor).toBe('#ff000080')
+
+        const customHslFooStyles = getStylesFromId('custom-hsl-foo')
+        expect(customHslFooStyles.backgroundColor).toBe('#40bf40')
+
+        const customOklchBarStyles = getStylesFromId('custom-oklch-bar')
+        expect(customOklchBarStyles.backgroundColor).toBe('#7bae73')
     })
 })

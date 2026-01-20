@@ -18,9 +18,17 @@ export class Color {
             const parsed = parse(color)
 
             if (parsed === undefined) {
-                this.logger.error(`Failed to convert color ${color}`)
+                const colorFunction = color.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(/)?.[1]
 
-                return this.black
+                if (colorFunction === undefined) {
+                    this.logger.error(`Failed to convert color ${color}`)
+
+                    return this.black
+                }
+
+                const colorValue = color.replace(colorFunction, '').slice(1, -1)
+
+                return `rt.parseColor("${colorFunction}", ${colorValue})`
             }
 
             return this.format(parsed)

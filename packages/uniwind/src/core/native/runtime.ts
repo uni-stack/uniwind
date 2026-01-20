@@ -1,7 +1,7 @@
 import { Appearance, Dimensions, I18nManager, PixelRatio, StyleSheet } from 'react-native'
 import { ColorScheme, Orientation } from '../../types'
 import type { UniwindRuntime as UniwindRuntimeType } from '../types'
-import { colorMix, lightDark } from './native-utils'
+import { colorMix, lightDark, parseColor } from './native-utils'
 
 const window = Dimensions.get('window')
 const initialColorScheme = Appearance.getColorScheme() ?? ColorScheme.Light
@@ -27,6 +27,7 @@ export const UniwindRuntime = {
     pixelRatio: value => value * PixelRatio.get(),
     cubicBezier: () => '',
     lightDark: () => '',
+    parseColor,
 } as UniwindRuntimeType
 
 UniwindRuntime.lightDark = lightDark.bind(UniwindRuntime)
