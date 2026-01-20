@@ -39,3 +39,21 @@ export const cloneWithAccessors = <T extends object>(obj: T) => {
 
     return clone
 }
+
+export const parseColor = (type: string, color: string) => {
+    try {
+        const parsedColor = parse(`${type}(${color})`)
+
+        if (parsedColor === undefined) {
+            return color
+        }
+
+        if (parsedColor.alpha === 1 || parsedColor.alpha === undefined) {
+            return formatHex(parsedColor)
+        }
+
+        return formatHex8(parsedColor)
+    } catch {
+        return '#000000'
+    }
+}
