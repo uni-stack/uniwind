@@ -1,2 +1,6 @@
 @import "tailwindcss";
 @import "uniwind";
+
+@theme {
+    --spacing-test: 123px;
+}
