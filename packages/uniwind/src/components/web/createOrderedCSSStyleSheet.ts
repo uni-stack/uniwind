@@ -3,31 +3,50 @@ import originalCreateOrderedCSSStyleSheet from 'react-native-web/dist/exports/St
 
 type OrderedCSSStyleSheet = {
     getTextContent: () => string
+    insert: (cssText: string, groupValue: number) => void
 }
 
 /**
  * Custom createOrderedCSSStyleSheet that wraps RNW rules in @layer rnw
  * This ensures proper CSS cascade ordering with Tailwind v4 styles.
  */
-const createOrderedCSSStyleSheet = (sheet: CSSStyleSheet | null): OrderedCSSStyleSheet => {
-    let layerRule: CSSLayerBlockRule | null = null
+const createOrderedCSSStyleSheet = (sheet: CSSStyleSheet | null) => {
+    let layerRule = null
+    let fakeSheet = null
 
     if (sheet !== null) {
-        // Create @layer rnw {} at the start of the stylesheet
-        // All RNW rules will be inserted inside this layer
-        const layerIndex = sheet.insertRule('@layer rnw {}', 0)
-        layerRule = sheet.cssRules[layerIndex] as CSSLayerBlockRule
+        // Use existing layer rule if it already exists
+        if (sheet.cssRules[0] instanceof CSSLayerBlockRule) {
+            layerRule = sheet.cssRules[0]
+        } else {
+            // otherwise insert a layer rule
+            const layerIndex = sheet.insertRule('@layer rnw {}', 0)
+            layerRule = sheet.cssRules[layerIndex]
+        }
+
+        // Create a fake sheet that excludes the layer rule
+        fakeSheet = {
+            // Increment index by 1 to skip the layer rule
+            insertRule: (text: string, index?: number) => sheet.insertRule(text, index === undefined ? 1 : index + 1),
+            cssRules: Array.from(sheet.cssRules).slice(1),
+        }
     }
 
-    // Pass the layer rule to the original - it has the same interface
-    // (cssRules, insertRule) so the original works inside the layer
-    const original = originalCreateOrderedCSSStyleSheet(layerRule) as OrderedCSSStyleSheet
+    const originalLayered: OrderedCSSStyleSheet = originalCreateOrderedCSSStyleSheet(layerRule)
+    const original: OrderedCSSStyleSheet = originalCreateOrderedCSSStyleSheet(fakeSheet)
 
     return {
-        ...original,
         getTextContent: () => {
-            // Wrap SSR output in @layer rnw for hydration consistency
-            return `@layer rnw { ${original.getTextContent()} }`
+            return `@layer rnw { ${originalLayered.getTextContent()} }\n${original.getTextContent()}`
+        },
+        insert: (cssText: string, groupValue: number) => {
+            if (groupValue <= 1) {
+                originalLayered.insert(cssText, groupValue)
+
+                return
+            }
+
+            original.insert(cssText, groupValue)
         },
     }
 }
