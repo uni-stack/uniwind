@@ -1,6 +1,5 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
-import { basename, resolve, sep } from 'node:path'
-import { name } from '../../package.json'
+import { basename, dirname, sep } from 'node:path'
 
 type ResolverConfig = {
     platform: string | null
@@ -9,10 +8,7 @@ type ResolverConfig = {
     moduleName: string
 }
 
-const thisModuleDist = resolve(__dirname, '../../dist')
-const thisModuleSrc = resolve(__dirname, '../../src')
-
-const isFromThisModule = (filename: string) => filename.startsWith(thisModuleDist) || filename.startsWith(thisModuleSrc)
+let cachedComponentsBasePath: string | null = null
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
@@ -46,7 +42,16 @@ export const nativeResolver = ({
     resolver,
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
-    const isInternal = isFromThisModule(context.originModulePath)
+
+    if (cachedComponentsBasePath === null) {
+        const componentsResolution = resolver(context, 'uniwind/components', platform)
+
+        cachedComponentsBasePath = componentsResolution.type === 'sourceFile'
+            ? dirname(componentsResolution.filePath)
+            : ''
+    }
+
+    const isInternal = cachedComponentsBasePath !== '' && context.originModulePath.startsWith(cachedComponentsBasePath)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
     const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
@@ -56,7 +61,7 @@ export const nativeResolver = ({
     }
 
     if (moduleName === 'react-native') {
-        return resolver(context, `${name}/components`, platform)
+        return resolver(context, `uniwind/components`, platform)
     }
 
     if (
@@ -66,7 +71,7 @@ export const nativeResolver = ({
         const module = filename.split('.').at(0)
 
         if (module !== undefined && SUPPORTED_COMPONENTS.includes(module)) {
-            return resolver(context, `${name}/components/${module}`, platform)
+            return resolver(context, `uniwind/components/${module}`, platform)
         }
     }
 
@@ -81,8 +86,15 @@ export const webResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
+    if (cachedComponentsBasePath === null) {
+        const componentsResolution = resolver(context, 'uniwind/components', platform)
+
+        cachedComponentsBasePath = componentsResolution.type === 'sourceFile'
+            ? dirname(componentsResolution.filePath)
+            : ''
+    }
     if (
-        isFromThisModule(context.originModulePath)
+        (cachedComponentsBasePath !== '' && context.originModulePath.startsWith(cachedComponentsBasePath))
         || resolution.type !== 'sourceFile'
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {
@@ -97,5 +109,5 @@ export const webResolver = ({
         return resolution
     }
 
-    return resolver(context, `${name}/components/${module}`, platform)
+    return resolver(context, `uniwind/components/${module}`, platform)
 }
