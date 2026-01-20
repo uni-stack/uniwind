@@ -163,6 +163,11 @@ export class CSS {
                 case 'srgb':
                     return this.Processor.Color.processColor(declarationValue)
                 case 'delim':
+                    if (declarationValue.value === '.') {
+                        return '.'
+                    }
+
+                    // +, - etc.
                     return ` ${declarationValue.value} `
                 case 'ident':
                     if (this.Processor.Color.isColor(declarationValue.value)) {
