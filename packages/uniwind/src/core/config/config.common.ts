@@ -57,7 +57,7 @@ export class UniwindConfigBuilder {
                 this.#currentTheme = this.colorScheme
 
                 if (Platform.OS !== 'web') {
-                    Appearance.setColorScheme(undefined)
+                    Appearance.setColorScheme('unspecified' as ColorScheme)
                 }
 
                 return
@@ -71,7 +71,7 @@ export class UniwindConfigBuilder {
             this.#currentTheme = theme
 
             if (Platform.OS !== 'web') {
-                Appearance.setColorScheme(isAdaptiveTheme ? this.#currentTheme as ColorScheme : undefined)
+                Appearance.setColorScheme(isAdaptiveTheme ? this.#currentTheme as ColorScheme : 'unspecified' as ColorScheme)
             }
         } finally {
             if (prevTheme !== this.#currentTheme) {
