@@ -52,11 +52,16 @@ export const nativeResolver = ({
     }
 
     const isInternal = cachedComponentsBasePath !== '' && context.originModulePath.startsWith(cachedComponentsBasePath)
+    const isFromNodeModules = context.originModulePath.includes(`${sep}node_modules${sep}`)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
     const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
 
-    if (isInternal || resolution.type !== 'sourceFile' || (isFromReactNative && !isReactNativeAnimated)) {
+    if (
+        isInternal // Is from uniwind
+        || resolution.type !== 'sourceFile' // Is not a source file
+        || (isFromReactNative && isFromNodeModules && !isReactNativeAnimated) // Is from react-native but not Animated
+    ) {
         return resolution
     }
 
