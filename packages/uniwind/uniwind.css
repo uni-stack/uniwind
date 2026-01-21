@@ -16,24 +16,24 @@
 
 @utility m-safe-or-* {
     margin-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    margin-top: max(env(safe-area-inset-top), --value([length]));
+    margin-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     margin-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    margin-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    margin-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
     margin-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    margin-left: max(env(safe-area-inset-left), --value([length]));
+    margin-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     margin-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    margin-right: max(env(safe-area-inset-right), --value([length]));
+    margin-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility m-safe-offset-* {
     margin-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    margin-top: calc(env(safe-area-inset-top) + --value([length]));
+    margin-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     margin-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
     margin-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    margin-left: calc(env(safe-area-inset-left) + --value([length]));
+    margin-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    margin-right: calc(env(safe-area-inset-right) + --value([length]));
+    margin-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility mx-safe {
@@ -43,16 +43,16 @@
 
 @utility mx-safe-or-* {
     margin-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    margin-left: max(env(safe-area-inset-left), --value([length]));
+    margin-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     margin-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    margin-right: max(env(safe-area-inset-right), --value([length]));
+    margin-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility mx-safe-offset-* {
     margin-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    margin-left: calc(env(safe-area-inset-left) + --value([length]));
+    margin-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    margin-right: calc(env(safe-area-inset-right) + --value([length]));
+    margin-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility my-safe {
@@ -62,16 +62,16 @@
 
 @utility my-safe-or-* {
     margin-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    margin-top: max(env(safe-area-inset-top), --value([length]));
+    margin-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     margin-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    margin-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    margin-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility my-safe-offset-* {
     margin-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    margin-top: calc(env(safe-area-inset-top) + --value([length]));
+    margin-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     margin-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility mt-safe {
@@ -80,12 +80,12 @@
 
 @utility mt-safe-or-* {
     margin-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    margin-top: max(env(safe-area-inset-top), --value([length]));
+    margin-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
 }
 
 @utility mt-safe-offset-* {
     margin-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    margin-top: calc(env(safe-area-inset-top) + --value([length]));
+    margin-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
 }
 
 @utility mb-safe {
@@ -94,12 +94,12 @@
 
 @utility mb-safe-or-* {
     margin-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    margin-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    margin-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility mb-safe-offset-* {
     margin-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    margin-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility ml-safe {
@@ -108,12 +108,12 @@
 
 @utility ml-safe-or-* {
     margin-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    margin-left: max(env(safe-area-inset-left), --value([length]));
+    margin-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
 }
 
 @utility ml-safe-offset-* {
     margin-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    margin-left: calc(env(safe-area-inset-left) + --value([length]));
+    margin-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
 }
 
 @utility mr-safe {
@@ -122,12 +122,12 @@
 
 @utility mr-safe-or-* {
     margin-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    margin-right: max(env(safe-area-inset-right), --value([length]));
+    margin-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility mr-safe-offset-* {
     margin-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    margin-right: calc(env(safe-area-inset-right) + --value([length]));
+    margin-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility p-safe {
@@ -139,24 +139,24 @@
 
 @utility p-safe-or-* {
     padding-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    padding-top: max(env(safe-area-inset-top), --value([length]));
+    padding-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     padding-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    padding-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    padding-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
     padding-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    padding-left: max(env(safe-area-inset-left), --value([length]));
+    padding-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     padding-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    padding-right: max(env(safe-area-inset-right), --value([length]));
+    padding-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility p-safe-offset-* {
     padding-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    padding-top: calc(env(safe-area-inset-top) + --value([length]));
+    padding-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
     padding-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    padding-left: calc(env(safe-area-inset-left) + --value([length]));
+    padding-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    padding-right: calc(env(safe-area-inset-right) + --value([length]));
+    padding-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility px-safe {
@@ -166,16 +166,16 @@
 
 @utility px-safe-or-* {
     padding-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    padding-left: max(env(safe-area-inset-left), --value([length]));
+    padding-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     padding-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    padding-right: max(env(safe-area-inset-right), --value([length]));
+    padding-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility px-safe-offset-* {
     padding-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    padding-left: calc(env(safe-area-inset-left) + --value([length]));
+    padding-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    padding-right: calc(env(safe-area-inset-right) + --value([length]));
+    padding-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility py-safe {
@@ -185,16 +185,16 @@
 
 @utility py-safe-or-* {
     padding-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    padding-top: max(env(safe-area-inset-top), --value([length]));
+    padding-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     padding-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    padding-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    padding-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility py-safe-offset-* {
     padding-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    padding-top: calc(env(safe-area-inset-top) + --value([length]));
+    padding-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility pt-safe {
@@ -203,12 +203,12 @@
 
 @utility pt-safe-or-* {
     padding-top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    padding-top: max(env(safe-area-inset-top), --value([length]));
+    padding-top: max(env(safe-area-inset-top), --value([length], --spacing-*));
 }
 
 @utility pt-safe-offset-* {
     padding-top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    padding-top: calc(env(safe-area-inset-top) + --value([length]));
+    padding-top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
 }
 
 @utility pb-safe {
@@ -217,12 +217,12 @@
 
 @utility pb-safe-or-* {
     padding-bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    padding-bottom: max(env(safe-area-inset-bottom), --value([length]));
+    padding-bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility pb-safe-offset-* {
     padding-bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    padding-bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility pl-safe {
@@ -231,12 +231,12 @@
 
 @utility pl-safe-or-* {
     padding-left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    padding-left: max(env(safe-area-inset-left), --value([length]));
+    padding-left: max(env(safe-area-inset-left), --value([length], --spacing-*));
 }
 
 @utility pl-safe-offset-* {
     padding-left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    padding-left: calc(env(safe-area-inset-left) + --value([length]));
+    padding-left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
 }
 
 @utility pr-safe {
@@ -245,12 +245,12 @@
 
 @utility pr-safe-or-* {
     padding-right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    padding-right: max(env(safe-area-inset-right), --value([length]));
+    padding-right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility pr-safe-offset-* {
     padding-right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    padding-right: calc(env(safe-area-inset-right) + --value([length]));
+    padding-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility inset-safe {
@@ -262,24 +262,24 @@
 
 @utility inset-safe-or-* {
     top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    top: max(env(safe-area-inset-top), --value([length]));
+    top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    bottom: max(env(safe-area-inset-bottom), --value([length]));
+    bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
     left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    left: max(env(safe-area-inset-left), --value([length]));
+    left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    right: max(env(safe-area-inset-right), --value([length]));
+    right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility inset-safe-offset-* {
     top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    top: calc(env(safe-area-inset-top) + --value([length]));
+    top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
     left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    left: calc(env(safe-area-inset-left) + --value([length]));
+    left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    right: calc(env(safe-area-inset-right) + --value([length]));
+    right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility x-safe {
@@ -289,16 +289,16 @@
 
 @utility x-safe-or-* {
     left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    left: max(env(safe-area-inset-left), --value([length]));
+    left: max(env(safe-area-inset-left), --value([length], --spacing-*));
     right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    right: max(env(safe-area-inset-right), --value([length]));
+    right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility x-safe-offset-* {
     left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    left: calc(env(safe-area-inset-left) + --value([length]));
+    left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
     right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    right: calc(env(safe-area-inset-right) + --value([length]));
+    right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @utility y-safe {
@@ -308,16 +308,16 @@
 
 @utility y-safe-or-* {
     top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    top: max(env(safe-area-inset-top), --value([length]));
+    top: max(env(safe-area-inset-top), --value([length], --spacing-*));
     bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    bottom: max(env(safe-area-inset-bottom), --value([length]));
+    bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility y-safe-offset-* {
     top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    top: calc(env(safe-area-inset-top) + --value([length]));
+    top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
     bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility top-safe {
@@ -326,12 +326,12 @@
 
 @utility top-safe-or-* {
     top: max(env(safe-area-inset-top), --spacing(--value(integer)));
-    top: max(env(safe-area-inset-top), --value([length]));
+    top: max(env(safe-area-inset-top), --value([length], --spacing-*));
 }
 
 @utility top-safe-offset-* {
     top: calc(env(safe-area-inset-top) + --spacing(--value(integer)));
-    top: calc(env(safe-area-inset-top) + --value([length]));
+    top: calc(env(safe-area-inset-top) + --value([length], --spacing-*));
 }
 
 @utility bottom-safe {
@@ -340,12 +340,12 @@
 
 @utility bottom-safe-or-* {
     bottom: max(env(safe-area-inset-bottom), --spacing(--value(integer)));
-    bottom: max(env(safe-area-inset-bottom), --value([length]));
+    bottom: max(env(safe-area-inset-bottom), --value([length], --spacing-*));
 }
 
 @utility bottom-safe-offset-* {
     bottom: calc(env(safe-area-inset-bottom) + --spacing(--value(integer)));
-    bottom: calc(env(safe-area-inset-bottom) + --value([length]));
+    bottom: calc(env(safe-area-inset-bottom) + --value([length], --spacing-*));
 }
 
 @utility left-safe {
@@ -354,12 +354,12 @@
 
 @utility left-safe-or-* {
     left: max(env(safe-area-inset-left), --spacing(--value(integer)));
-    left: max(env(safe-area-inset-left), --value([length]));
+    left: max(env(safe-area-inset-left), --value([length], --spacing-*));
 }
 
 @utility left-safe-offset-* {
     left: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
-    left: calc(env(safe-area-inset-left) + --value([length]));
+    left: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
 }
 
 @utility right-safe {
@@ -368,12 +368,12 @@
 
 @utility right-safe-or-* {
     right: max(env(safe-area-inset-right), --spacing(--value(integer)));
-    right: max(env(safe-area-inset-right), --value([length]));
+    right: max(env(safe-area-inset-right), --value([length], --spacing-*));
 }
 
 @utility right-safe-offset-* {
     right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
-    right: calc(env(safe-area-inset-right) + --value([length]));
+    right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
 @custom-variant light (&:where(.light, .light *));

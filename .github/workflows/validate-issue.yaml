@@ -4,15 +4,22 @@ on:
   issues:
     types: 
       - opened
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to validate'
+        required: true
+        type: number
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NUMBER: ${{ github.event.issue.number }}
+  NUMBER: ${{ inputs.issue_number || github.event.issue.number }}
   REPO: "uni-stack/uniwind"
 
 jobs:
   autoclose:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.issue.labels.*.name, 'uniwind-pro') }}
     permissions:
       issues: write
     steps:
@@ -21,7 +28,7 @@ jobs:
         env:
           BODY: ${{ github.event.issue.body }}
         run: |
-          if echo "$BODY" | grep -qP "github\.com(?!\/uni-stack)"; then
+          if echo "$BODY" | grep -qP "github\.com(?!\/(uni-stack|user-attachments))"; then
             echo "valid=true" >> $GITHUB_OUTPUT
           else
             echo "valid=false" >> $GITHUB_OUTPUT

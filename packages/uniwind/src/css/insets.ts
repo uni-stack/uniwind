@@ -2,7 +2,7 @@ const types = ['margin', 'padding', 'inset'] as const
 const sides = ['inset', 'x', 'y', 'top', 'bottom', 'left', 'right'] as const
 const safeAreaTypes = ['safe', 'safe-or-*', 'safe-offset-*'] as const
 const spacing = '--spacing(--value(integer))'
-const length = '--value([length])'
+const length = '--value([length], --spacing-*)'
 
 type Side = (typeof sides)[number]
 type TypeName = (typeof types)[number]

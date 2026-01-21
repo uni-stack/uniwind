@@ -12,6 +12,7 @@ describe('Safe Area', () => {
                 <View className="mb-safe-or-4" testID="mb-safe-or-4" />
                 <View className="inset-safe-offset-[10px]" testID="inset-safe" />
                 <View className="h-screen-safe" testID="h-screen-safe" />
+                <View className="p-safe-or-test" testID="p-or-test-spacing" />
             </React.Fragment>,
         )
 
@@ -24,5 +25,6 @@ describe('Safe Area', () => {
         expect(getStylesFromId('inset-safe').bottom).toBe(SAFE_AREA_INSET_BOTTOM + 10)
         expect(getStylesFromId('inset-safe').left).toBe(10)
         expect(getStylesFromId('inset-safe').right).toBe(10)
+        expect(getStylesFromId('p-or-test-spacing').paddingTop).toBe(123)
     })
 })

@@ -103,3 +103,8 @@ export const deepEqual = <T>(a: T, b: T): boolean => {
 
     return keysA.every(key => deepEqual(a[key], b[key]) && Object.prototype.hasOwnProperty.call(b, key))
 }
+
+export const removeKeys = <TObj extends Record<PropertyKey, any>, TKey extends keyof TObj>(obj: TObj, keysToRemove: Array<TKey>) =>
+    Object.fromEntries(
+        Object.entries(obj).filter(([key]) => !keysToRemove.includes(key as TKey)),
+    ) as Omit<TObj, TKey>

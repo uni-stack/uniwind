@@ -1,4 +1,4 @@
-import { addMissingSpaces, isDefined, pipe, toCamelCase } from '../utils'
+import { addMissingSpaces, isDefined, pipe, removeKeys, toCamelCase } from '../utils'
 import type { ProcessorBuilder } from './processor'
 
 const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
@@ -164,6 +164,8 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
     }),
 }
 
+const BORDER_WIDTH_KEYS = ['borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth']
+
 export class RN {
     constructor(private readonly Processor: ProcessorBuilder) {}
 
@@ -187,8 +189,9 @@ export class RN {
             transformedProperty,
             typeof value === 'string' ? addMissingSpaces(value) : value,
         )
+        const joinedStyles = this.joinStyles(rn)
 
-        return Object.entries(rn).filter(([, value]) => isDefined(value)) as Array<[string, any]>
+        return Object.entries(joinedStyles).filter(([, value]) => isDefined(value)) as Array<[string, any]>
     }
 
     private transformProperty(property: string, value: any) {
@@ -273,5 +276,24 @@ export class RN {
                 [wrapProperty('Color')]: value.color,
             }
         }
+    }
+
+    // Used when they're multiple styles with the same value that could be joined
+    private joinStyles(styles: Record<string, any>) {
+        const keys = Object.keys(styles)
+
+        if (BORDER_WIDTH_KEYS.every(key => keys.includes(key))) {
+            const borderWidth = styles.borderTopWidth
+
+            // Join border widths
+            if (BORDER_WIDTH_KEYS.every(key => styles[key] === borderWidth)) {
+                return {
+                    ...removeKeys(styles, BORDER_WIDTH_KEYS),
+                    borderWidth,
+                }
+            }
+        }
+
+        return styles
     }
 }
