@@ -1,5 +1,5 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
-import { basename, dirname, sep } from 'node:path'
+import { basename, dirname, join, sep } from 'node:path'
 
 type ResolverConfig = {
     platform: string | null
@@ -8,7 +8,7 @@ type ResolverConfig = {
     moduleName: string
 }
 
-let cachedComponentsBasePath: string | null = null
+let cachedInternalBasePath: string | null = null
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
@@ -43,15 +43,16 @@ export const nativeResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
-    if (cachedComponentsBasePath === null) {
+    if (cachedInternalBasePath === null) {
         const componentsResolution = resolver(context, 'uniwind/components', platform)
 
-        cachedComponentsBasePath = componentsResolution.type === 'sourceFile'
-            ? dirname(componentsResolution.filePath)
+        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
+            // Go from src/components to root
+            ? join(dirname(componentsResolution.filePath), '../..')
             : ''
     }
 
-    const isInternal = cachedComponentsBasePath !== '' && context.originModulePath.startsWith(cachedComponentsBasePath)
+    const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
     const isFromNodeModules = context.originModulePath.includes(`${sep}node_modules${sep}`)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
@@ -91,15 +92,16 @@ export const webResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
-    if (cachedComponentsBasePath === null) {
+    if (cachedInternalBasePath === null) {
         const componentsResolution = resolver(context, 'uniwind/components', platform)
 
-        cachedComponentsBasePath = componentsResolution.type === 'sourceFile'
-            ? dirname(componentsResolution.filePath)
+        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
+            // Go from dist/module/components/web to root
+            ? join(dirname(componentsResolution.filePath), '../../../..')
             : ''
     }
     if (
-        (cachedComponentsBasePath !== '' && context.originModulePath.startsWith(cachedComponentsBasePath))
+        (cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath))
         || resolution.type !== 'sourceFile'
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {

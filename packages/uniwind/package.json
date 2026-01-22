@@ -44,7 +44,9 @@
         },
         "./components": {
             "types": "./no-types.d.ts",
-            "default": "./src/components/index.ts"
+            "react-native": "./src/components/index.ts",
+            "import": "./dist/module/components/web/index.js",
+            "default": "./dist/common/components/web/index.js"
         },
         "./components/*": {
             "types": "./no-types.d.ts",
