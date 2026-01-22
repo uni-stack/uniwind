@@ -1,5 +1,6 @@
 export * from 'react-native'
 export { ActivityIndicator } from './ActivityIndicator'
+export { Animated } from './Animated'
 export { Button } from './Button'
 export { FlatList } from './FlatList'
 export { Image } from './Image'
