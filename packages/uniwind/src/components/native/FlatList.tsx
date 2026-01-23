@@ -4,7 +4,7 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProps<unknown>) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNFlatList, props.className)
     const styleColumnWrapper = useStyle(props.columnWrapperClassName)
     const styleContentContainer = useStyle(props.contentContainerClassName)
     const styleListFooterComponent = useStyle(props.ListFooterComponentClassName)
@@ -13,7 +13,7 @@ export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProp
     const hasSingleColumn = !('numColumns' in props) || props.numColumns === 1
 
     return (
-        <RNFlatList
+        <Component
             {...props}
             style={[style, props.style]}
             columnWrapperStyle={hasSingleColumn ? undefined : [styleColumnWrapper, props.columnWrapperStyle]}
