@@ -28,12 +28,12 @@ class UniwindStoreBuilder {
             }
         }
 
-        const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}`
+        // eslint-disable-next-line no-bitwise
+        const stateFlags = (state?.isDisabled ? 4 : 0) | (state?.isFocused ? 2 : 0) | (state?.isPressed ? 1 : 0)
+        const cacheKey = `${className}:${stateFlags}`
+        const cached = this.cache.get(cacheKey)
 
-        if (this.cache.has(cacheKey)) {
-            return this.cache.get(cacheKey)!
-        }
-
+        if (cached) return cached
         const result = this.resolveStyles(className, state)
 
         this.cache.set(cacheKey, result)
