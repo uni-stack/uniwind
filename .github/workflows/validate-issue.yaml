@@ -2,7 +2,7 @@ name: Validate issue
 
 on:
   issues:
-    types: 
+    types:
       - opened
   workflow_dispatch:
     inputs:
@@ -29,7 +29,7 @@ jobs:
         env:
           BODY: ${{ github.event.issue.body }}
         run: |
-          if echo "$BODY" | grep -qP "github\.com(?!\/(uni-stack|user-attachments))"; then
+          if echo "$BODY" | grep -qP "github\.com\/(?!(uni-stack|user-attachments)\/)[\w\-\.]+\/[\w\-\.]+"; then
             echo "valid=true" >> $GITHUB_OUTPUT
           else
             echo "valid=false" >> $GITHUB_OUTPUT
