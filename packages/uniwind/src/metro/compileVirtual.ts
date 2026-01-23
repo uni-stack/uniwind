@@ -59,6 +59,10 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
                 serializeJSObject(scopedVars, (key, value) => `get "${key}"() { return ${value} }`),
             ]),
     )
+    const keyframes = serializeJSObject(
+        Processor.keyframes,
+        (key, value) => `get "${key}"() { return ${value} }`,
+    )
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
         .join('')
@@ -69,6 +73,7 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
         `scopedVars: ({ ${serializedScopedVars} }),`,
         `vars: ({ ${currentColorVar} ${vars} }),`,
         `stylesheet: ({ ${stylesheet} }),`,
+        `keyframes: ({ ${keyframes} }),`,
         '})',
     ].join('')
 }

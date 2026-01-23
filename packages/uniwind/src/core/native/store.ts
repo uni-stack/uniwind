@@ -1,10 +1,19 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
+import { CSSAnimationKeyframes } from 'react-native-reanimated'
 import { Orientation, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName } from '../types'
 import { cloneWithAccessors } from './native-utils'
-import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
+import {
+    parseAnimationsMutation,
+    parseBoxShadow,
+    parseFontVariant,
+    parseTextShadowMutation,
+    parseTransformsMutation,
+    parseTransitionsMutation,
+    resolveGradient,
+} from './parsers'
 import { UniwindRuntime } from './runtime'
 
 type StylesResult = {
@@ -17,6 +26,7 @@ class UniwindStoreBuilder {
     vars = {} as Record<string, unknown>
     runtimeThemeVariables = new Map<ThemeName, CSSVariables>()
     private stylesheet = {} as StyleSheets
+    private keyframes = {} as Record<string, CSSAnimationKeyframes>
     private cache = new Map<string, StylesResult>()
     private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
 
@@ -53,10 +63,11 @@ class UniwindStoreBuilder {
             return
         }
 
-        const { scopedVars, stylesheet, vars } = config
+        const { scopedVars, stylesheet, vars, keyframes } = config
 
         this.generateStyleSheetCallbackResult = config
         this.stylesheet = stylesheet
+        this.keyframes = keyframes
         this.vars = vars
 
         const themeVars = scopedVars[`__uniwind-theme-${this.runtime.currentThemeName}`]
@@ -200,6 +211,17 @@ class UniwindStoreBuilder {
         }
 
         parseTransformsMutation(result)
+        parseTransitionsMutation(result)
+
+        if (typeof result.animationName === 'string') {
+            parseAnimationsMutation(result, this.keyframes, this.runtime)
+        } else if (Array.isArray(result.animationName)) {
+            Object.defineProperty(result, 'animationName', {
+                value: result.animationName.map(animationName => this.keyframes[animationName] ?? undefined).filter(Boolean),
+                configurable: true,
+                enumerable: true,
+            })
+        }
 
         if (result.experimental_backgroundImage !== undefined) {
             Object.defineProperty(result, 'experimental_backgroundImage', {
