@@ -1,4 +1,5 @@
 import { Appearance, Dimensions, I18nManager, PixelRatio, StyleSheet } from 'react-native'
+import { cubicBezier, linear, steps } from 'react-native-reanimated'
 import { initialWindowMetrics } from 'react-native-safe-area-context'
 import { ColorScheme, Orientation } from '../../types'
 import type { UniwindRuntime as UniwindRuntimeType } from '../types'
@@ -21,7 +22,9 @@ export const UniwindRuntime = {
     insets: initialWindowMetrics?.insets ?? { top: 0, left: 0, bottom: 0, right: 0 },
     colorMix,
     pixelRatio: value => value * PixelRatio.get(),
-    cubicBezier: () => '',
+    cubicBezier,
+    steps,
+    linear,
     lightDark: () => '',
 } as UniwindRuntimeType
 

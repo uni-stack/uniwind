@@ -1,4 +1,6 @@
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import { CSSAnimationKeyframes } from 'react-native-reanimated'
+import { ControlPoint, CubicBezierEasing, LinearEasing, StepsEasing, StepsModifier } from 'react-native-reanimated/lib/typescript/css/easing'
 import { ColorScheme, Orientation, StyleDependency, UniwindConfig } from '../types'
 
 export type Style = {
@@ -24,6 +26,7 @@ export type StyleSheets = Record<string, Array<Style>>
 export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
     stylesheet: StyleSheets
     vars: Record<string, unknown>
+    keyframes: Record<string, CSSAnimationKeyframes>
     scopedVars: Partial<Record<string, Record<string, unknown>>>
 }
 
@@ -51,7 +54,9 @@ export type UniwindRuntime = {
     pixelRatio: (value: number) => number
     fontScale: (value: number) => number
     colorMix: (color: string, weight: number | string, mixColor: string) => string
-    cubicBezier: (x1: number, y1: number, x2: number, y2: number) => string
+    cubicBezier: (x1: number, y1: number, x2: number, y2: number) => CubicBezierEasing
+    steps: (count: number, position: StepsModifier) => StepsEasing
+    linear: (...points: ControlPoint[]) => LinearEasing
     lightDark: (light: string, dark: string) => string
 }
 

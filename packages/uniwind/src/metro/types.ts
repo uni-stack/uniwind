@@ -70,6 +70,8 @@ export type ProcessMetaValues = {
     className?: string | null
 }
 
+export type AnimationFrame = [Array<string | number>, Array<Record<string, any>>]
+
 export type StyleSheetTemplate = {
     [K: string]: Array<MediaQueryResolver & Record<string, unknown>>
 }
