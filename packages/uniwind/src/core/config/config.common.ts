@@ -5,7 +5,7 @@ import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
 const RN_VERSION = Platform.constants.reactNativeVersion.minor
-const UNSPECIFIED_THEME = RN_VERSION >= 0.82 ? 'unspecified' : undefined
+const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
 
 export class UniwindConfigBuilder {
     protected themes = ['light', 'dark']
