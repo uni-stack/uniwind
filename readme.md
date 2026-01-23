@@ -21,13 +21,24 @@
 
 ```sh
 # Install from the fork (recommended - includes pro features for free)
-bun add @niibase/uniwind tailwindcss
+bun add @niibase/uniwind tailwindcss react-native-safe-area-context react-native-reanimated
 
 # Or install from the original package
-bun add uniwind tailwindcss
+bun add uniwind tailwindcss react-native-safe-area-context react-native-reanimated
 
 # Or install @niibase/uniwind as alias for uniwind
-bun add uniwind@npm:@niibase/uniwind tailwindcss
+bun add uniwind@npm:@niibase/uniwind tailwindcss react-native-safe-area-context react-native-reanimated
+```
+
+**Important:** Add the Reanimated Babel plugin to your `babel.config.js`:
+
+```js
+module.exports = {
+  presets: ['babel-preset-expo'], // or your preset
+  plugins: [
+    'react-native-reanimated/plugin', // must be last!
+  ],
+}
 ```
 
 Then follow [installation guides](https://docs.uniwind.dev/quickstart)
@@ -43,6 +54,7 @@ Then follow [installation guides](https://docs.uniwind.dev/quickstart)
 
 - ⚛️ Out‑of‑the‑box `className` bindings for every React Native component  
 - ⚡ Styles are computed at build time for maximum performance  
+- 🎬 **CSS animations and transitions** powered by Reanimated 4
 - 🌙 Dark mode and 🎨 fully customizable themes
 - 🧩 Pseudo‑classes support — `focus`, `active`, `disabled`, and more
 - 📱 Responsive design with media queries
@@ -51,7 +63,7 @@ Then follow [installation guides](https://docs.uniwind.dev/quickstart)
 
 ## Roadmap
 
-- [ ] **Reanimated 4 support** - Full compatibility with React Native Reanimated v4
+- [x] **Reanimated 4 support** - Full compatibility with React Native Reanimated v4 ✅
 - [ ] **Babel support to extend beyond React Native components** - Enable className support for custom components and third-party libraries
 - [ ] **Unistyles (future)** - Integration with Unistyles for enhanced styling capabilities
 
