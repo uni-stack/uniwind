@@ -4,14 +4,16 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const RefreshControl = copyComponentProperties(RNRefreshControl, (props: RefreshControlProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNRefreshControl, props.className, {
+        isPressed: Boolean(props.refreshing),
+    })
     const color = useUniwindAccent(props.colorsClassName)
     const tintColor = useUniwindAccent(props.tintColorClassName)
     const titleColor = useUniwindAccent(props.titleColorClassName)
     const progressBackgroundColor = useUniwindAccent(props.progressBackgroundColorClassName)
 
     return (
-        <RNRefreshControl
+        <Component
             {...props}
             style={[style, props.style]}
             colors={props.colors ?? (color !== undefined ? [color] : undefined)}

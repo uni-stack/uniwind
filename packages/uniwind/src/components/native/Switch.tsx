@@ -7,15 +7,16 @@ import { useStyle } from './useStyle'
 export const Switch = copyComponentProperties(RNSwitch, (props: SwitchProps) => {
     const state = {
         isDisabled: Boolean(props.disabled),
+        isFocused: Boolean(props.value),
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
+    const { Component, style } = useStyle(RNSwitch, props.className, state)
     const trackColorOn = useUniwindAccent(props.trackColorOnClassName, state)
     const trackColorOff = useUniwindAccent(props.trackColorOffClassName, state)
     const thumbColor = useUniwindAccent(props.thumbColorClassName, state)
     const ios_backgroundColor = useUniwindAccent(props.ios_backgroundColorClassName, state)
 
     return (
-        <RNSwitch
+        <Component
             {...props}
             style={[style, props.style]}
             thumbColor={props.thumbColor ?? thumbColor}
