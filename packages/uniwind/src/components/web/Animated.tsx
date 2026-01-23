@@ -10,7 +10,7 @@ import { View } from './View'
 
 export const Animated = {
     ...RNAnimated,
-    Flatlist: RNAnimated.createAnimatedComponent((props) => <FlatList scrollEventThrottle={0.0001} {...props} />),
+    FlatList: RNAnimated.createAnimatedComponent((props) => <FlatList scrollEventThrottle={0.0001} {...props} />),
     ScrollView: RNAnimated.createAnimatedComponent((props) => <ScrollView scrollEventThrottle={0.0001} {...props} />),
     SectionList: RNAnimated.createAnimatedComponent((props) => <SectionList scrollEventThrottle={0.0001} {...props} />),
     Image: RNAnimated.createAnimatedComponent(Image),
