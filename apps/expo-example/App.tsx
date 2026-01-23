@@ -1,6 +1,6 @@
 import './global.css'
 import React from 'react'
-import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const TailwindTestPage = () => {
     return (
@@ -647,6 +647,175 @@ const TailwindTestPage = () => {
                     <View className="bg-linear-150 from-orange-500 to-indigo-600 rounded h-32 mb-4" />
                     <Text className="text-lg font-semibold mb-4 text-gray-700">Linear custom multiple colors</Text>
                     <View className="bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal] rounded h-32 mb-4" />
+                </View>
+            </View>
+
+            {/* Transitions */}
+            <View className="px-4 mb-8">
+                <Text className="text-2xl font-bold mb-4 text-gray-800">Transitions</Text>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">Pressable with Active State</Text>
+
+                    <Pressable className="bg-blue-500 active:bg-blue-700 p-4 rounded-lg mb-4 transition-colors duration-200">
+                        <Text className="text-white text-center font-semibold">Press me (bg transition)</Text>
+                    </Pressable>
+
+                    <Pressable className="bg-green-500 active:bg-green-700 active:scale-95 p-4 rounded-lg mb-4 transition-all duration-150">
+                        <Text className="text-white text-center font-semibold">Press me (scale + bg)</Text>
+                    </Pressable>
+
+                    <Pressable className="bg-purple-500 active:bg-purple-700 active:opacity-80 p-4 rounded-lg mb-4 transition-all duration-300">
+                        <Text className="text-white text-center font-semibold">Press me (opacity + bg)</Text>
+                    </Pressable>
+
+                    <Pressable className="border-2 border-red-500 active:border-red-700 active:bg-red-50 p-4 rounded-lg mb-4 transition-all duration-200">
+                        <Text className="text-red-500 active:text-red-700 text-center font-semibold">Outlined (border transition)</Text>
+                    </Pressable>
+
+                    <Pressable className="bg-orange-500 active:bg-orange-600 active:translate-y-1 p-4 rounded-lg mb-4 shadow-lg active:shadow-md transition-all duration-150">
+                        <Text className="text-white text-center font-semibold">Press down effect</Text>
+                    </Pressable>
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">TextInput Focus Transitions</Text>
+
+                    <TextInput
+                        className="border-2 border-gray-300 focus:border-blue-500 p-3 rounded-lg mb-4 transition-colors duration-200"
+                        placeholder="Focus me (border color)"
+                    />
+
+                    <TextInput
+                        className="border-2 border-gray-300 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 p-3 rounded-lg mb-4 transition-all duration-200"
+                        placeholder="Focus me (border + ring)"
+                    />
+
+                    <TextInput
+                        className="bg-gray-100 focus:bg-white border-2 border-transparent focus:border-green-500 p-3 rounded-lg mb-4 transition-all duration-300"
+                        placeholder="Focus me (bg + border)"
+                    />
+
+                    <TextInput
+                        className="border-b-2 border-gray-300 focus:border-indigo-500 p-3 mb-4 transition-colors duration-200"
+                        placeholder="Underline input"
+                    />
+
+                    <TextInput
+                        className="bg-gray-50 focus:bg-blue-50 border border-gray-200 focus:border-blue-400 focus:shadow-md p-3 rounded-xl mb-4 transition-all duration-250"
+                        placeholder="Focus me (shadow effect)"
+                    />
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">Combined Transitions</Text>
+
+                    <Pressable className="flex-row items-center bg-slate-100 active:bg-slate-200 p-4 rounded-xl mb-4 transition-all duration-200">
+                        <View className="w-12 h-12 bg-blue-500 active:bg-blue-600 rounded-full mr-4 transition-colors duration-200" />
+                        <View className="flex-1">
+                            <Text className="text-gray-800 font-semibold">List Item</Text>
+                            <Text className="text-gray-500 text-sm">Tap to see transition</Text>
+                        </View>
+                    </Pressable>
+
+                    <Pressable className="bg-gradient-to-r from-pink-500 to-purple-500 active:from-pink-600 active:to-purple-600 active:scale-98 p-4 rounded-2xl shadow-lg active:shadow-xl transition-all duration-200">
+                        <Text className="text-white text-center font-bold text-lg">Gradient Button</Text>
+                    </Pressable>
+                </View>
+            </View>
+
+            {/* Animations */}
+            <View className="px-4 mb-8">
+                <Text className="text-2xl font-bold mb-4 text-gray-800">Animations</Text>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">animate-spin</Text>
+                    <View className="flex-row items-center justify-around mb-4">
+                        <View className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full" />
+                        <View className="animate-spin w-16 h-16 border-4 border-purple-500 border-t-transparent border-r-transparent rounded-full" />
+                        <View className="animate-spin w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg" />
+                    </View>
+                    <Text className="text-gray-500 text-center text-sm">Continuous rotation animation</Text>
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">animate-bounce</Text>
+                    <View className="flex-row items-end justify-around h-24 mb-4">
+                        <View className="animate-bounce w-10 h-10 bg-red-500 rounded-full" />
+                        <View className="animate-bounce w-12 h-12 bg-yellow-500 rounded-lg" />
+                        <View className="animate-bounce w-8 h-8 bg-green-500 rounded" />
+                    </View>
+                    <Text className="text-gray-500 text-center text-sm">Bouncing effect for attention</Text>
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">animate-pulse</Text>
+                    <View className="flex-row items-center mb-4">
+                        <View className="animate-pulse w-12 h-12 bg-gray-300 rounded-full mr-4" />
+                        <View className="flex-1">
+                            <View className="animate-pulse h-4 bg-gray-300 rounded mb-2" />
+                            <View className="animate-pulse h-4 bg-gray-300 rounded w-3/4" />
+                        </View>
+                    </View>
+                    <View className="animate-pulse bg-gray-200 h-32 rounded-lg mb-4" />
+                    <Text className="text-gray-500 text-center text-sm">Skeleton loading placeholder</Text>
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">animate-ping</Text>
+                    <View className="flex-row items-center justify-around mb-4">
+                        <View className="relative">
+                            <View className="animate-ping absolute w-10 h-10 bg-blue-400 rounded-full opacity-75" />
+                            <View className="w-10 h-10 bg-blue-500 rounded-full" />
+                        </View>
+                        <View className="relative">
+                            <View className="animate-ping absolute w-8 h-8 bg-red-400 rounded-full opacity-75" />
+                            <View className="w-8 h-8 bg-red-500 rounded-full" />
+                        </View>
+                        <View className="relative">
+                            <View className="animate-ping absolute w-6 h-6 bg-green-400 rounded-full opacity-75" />
+                            <View className="w-6 h-6 bg-green-500 rounded-full" />
+                        </View>
+                    </View>
+                    <Text className="text-gray-500 text-center text-sm">Notification/alert ping effect</Text>
+                </View>
+
+                <View className="bg-white p-4 rounded-lg mb-4">
+                    <Text className="text-lg font-semibold mb-4 text-gray-700">Animation Use Cases</Text>
+
+                    <Pressable className="flex-row items-center bg-blue-500 active:bg-blue-600 p-4 rounded-lg mb-4">
+                        <View className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-3" />
+                        <Text className="text-white font-semibold">Loading...</Text>
+                    </Pressable>
+
+                    <View className="flex-row items-center bg-green-100 p-4 rounded-lg mb-4">
+                        <View className="relative mr-3">
+                            <View className="animate-ping absolute w-3 h-3 bg-green-400 rounded-full" />
+                            <View className="w-3 h-3 bg-green-500 rounded-full" />
+                        </View>
+                        <Text className="text-green-800 font-medium">Online - Connected</Text>
+                    </View>
+
+                    <View className="flex-row items-center bg-yellow-100 p-4 rounded-lg mb-4">
+                        <View className="animate-bounce mr-3">
+                            <Text className="text-2xl">👇</Text>
+                        </View>
+                        <Text className="text-yellow-800 font-medium">Scroll down for more</Text>
+                    </View>
+
+                    <View className="bg-gray-100 p-4 rounded-lg">
+                        <View className="flex-row items-center mb-3">
+                            <View className="animate-pulse w-10 h-10 bg-gray-300 rounded-full mr-3" />
+                            <View className="flex-1">
+                                <View className="animate-pulse h-3 bg-gray-300 rounded mb-2 w-24" />
+                                <View className="animate-pulse h-2 bg-gray-300 rounded w-16" />
+                            </View>
+                        </View>
+                        <View className="animate-pulse h-3 bg-gray-300 rounded mb-2" />
+                        <View className="animate-pulse h-3 bg-gray-300 rounded mb-2 w-5/6" />
+                        <View className="animate-pulse h-3 bg-gray-300 rounded w-4/6" />
+                        <Text className="text-gray-500 text-center text-xs mt-3">Loading content...</Text>
+                    </View>
                 </View>
             </View>
         </ScrollView>
