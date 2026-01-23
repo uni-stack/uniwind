@@ -1,28 +1,29 @@
+import { useReducer } from 'react'
 import { Pressable as RNPressable, PressableProps } from 'react-native'
-import { UniwindStore } from '../../core/native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Pressable = copyComponentProperties(RNPressable, (props: PressableProps) => {
-    const style = useStyle(props.className, {
+    const [isPressed, setIsPressed] = useReducer((state: boolean) => !state, false)
+    const { Component, style } = useStyle(RNPressable, props.className, {
         isDisabled: Boolean(props.disabled),
+        isPressed,
     })
 
     return (
-        <RNPressable
+        <Component
             {...props}
-            style={state => {
-                if (state.pressed) {
-                    return [
-                        UniwindStore.getStyles(
-                            props.className,
-                            { isDisabled: Boolean(props.disabled), isPressed: true },
-                        ).styles,
-                        typeof props.style === 'function' ? props.style(state) : props.style,
-                    ]
-                }
-
-                return [style, typeof props.style === 'function' ? props.style(state) : props.style]
+            style={[
+                style,
+                typeof props.style === 'function' ? props.style({ pressed: isPressed }) : props.style,
+            ]}
+            onPressIn={event => {
+                setIsPressed()
+                props.onPressIn?.(event)
+            }}
+            onPressOut={event => {
+                setIsPressed()
+                props.onPressOut?.(event)
             }}
         />
     )

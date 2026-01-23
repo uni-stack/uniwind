@@ -1,27 +1,27 @@
-import { useState } from 'react'
+import { useReducer } from 'react'
 import { TouchableWithoutFeedback as RNTouchableWithoutFeedback, TouchableWithoutFeedbackProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const TouchableWithoutFeedback = copyComponentProperties(RNTouchableWithoutFeedback, (props: TouchableWithoutFeedbackProps) => {
-    const [isPressed, setIsPressed] = useState(false)
+    const [isPressed, setIsPressed] = useReducer((state: boolean) => !state, false)
     const state = {
         isDisabled: Boolean(props.disabled),
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
+    const { Component, style } = useStyle(RNTouchableWithoutFeedback, props.className, state)
 
     return (
-        <RNTouchableWithoutFeedback
+        <Component
             {...props}
             style={[style, props.style]}
             onPressIn={event => {
-                setIsPressed(true)
+                setIsPressed()
                 props.onPressIn?.(event)
             }}
             onPressOut={event => {
-                setIsPressed(false)
+                setIsPressed()
                 props.onPressOut?.(event)
             }}
         />
