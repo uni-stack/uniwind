@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useReducer } from 'react'
 import { Text as RNText, TextProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { useUniwindAccent } from '../../hooks/useUniwindAccent.native'
@@ -10,26 +10,26 @@ type StyleWithWebkitLineClamp = {
 }
 
 export const Text = copyComponentProperties(RNText, (props: TextProps) => {
-    const [isPressed, setIsPressed] = useState(false)
+    const [isPressed, setIsPressed] = useReducer((state: boolean) => !state, false)
     const state = {
         isPressed,
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
+    const { Component, style } = useStyle(RNText, props.className, state)
     const selectionColor = useUniwindAccent(props.selectionColorClassName, state)
 
     return (
-        <RNText
+        <Component
             {...props}
             style={[style, props.style]}
             selectionColor={props.selectionColor ?? selectionColor}
             numberOfLines={(style as StyleWithWebkitLineClamp).WebkitLineClamp ?? props.numberOfLines}
             onPressIn={event => {
-                setIsPressed(true)
+                setIsPressed()
                 props.onPressIn?.(event)
             }}
             onPressOut={event => {
-                setIsPressed(false)
+                setIsPressed()
                 props.onPressOut?.(event)
             }}
         />

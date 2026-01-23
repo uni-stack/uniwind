@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useReducer } from 'react'
 import { TextInput as RNTextInput, TextInputProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { useUniwindAccent } from '../../hooks/useUniwindAccent.native'
@@ -6,14 +6,14 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputProps) => {
-    const [isFocused, setIsFocused] = useState(false)
-    const [isPressed, setIsPressed] = useState(false)
+    const [isFocused, setIsFocused] = useReducer((state: boolean) => !state, false)
+    const [isPressed, setIsPressed] = useReducer((state: boolean) => !state, false)
     const state = {
         isDisabled: props.editable === false,
         isFocused,
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, state)
+    const { Component, style } = useStyle(RNTextInput, props.className, state)
     const cursorColor = useUniwindAccent(props.cursorColorClassName, state)
     const selectionColor = useUniwindAccent(props.selectionColorClassName, state)
     const placeholderTextColor = useUniwindAccent(props.placeholderTextColorClassName, state)
@@ -21,7 +21,7 @@ export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputP
     const underlineColorAndroid = useUniwindAccent(props.underlineColorAndroidClassName, state)
 
     return (
-        <RNTextInput
+        <Component
             {...props}
             style={[style, props.style]}
             cursorColor={props.cursorColor ?? cursorColor}
@@ -30,19 +30,19 @@ export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputP
             selectionHandleColor={props.selectionHandleColor ?? selectionHandleColor}
             underlineColorAndroid={props.underlineColorAndroid ?? underlineColorAndroid}
             onFocus={event => {
-                setIsFocused(true)
+                setIsFocused()
                 props.onFocus?.(event)
             }}
             onBlur={event => {
-                setIsFocused(false)
+                setIsFocused()
                 props.onBlur?.(event)
             }}
             onPressIn={event => {
-                setIsPressed(true)
+                setIsPressed()
                 props.onPressIn?.(event)
             }}
             onPressOut={event => {
-                setIsPressed(false)
+                setIsPressed()
                 props.onPressOut?.(event)
             }}
         />
