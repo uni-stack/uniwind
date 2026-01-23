@@ -53,6 +53,24 @@ export class Functions {
             return `rt.cubicBezier(${cubicArguments})`
         }
 
+        if (fn.name === 'steps') {
+            const stepsArguments = pipe(this.Processor.CSS.processValue(fn.arguments))(
+                String,
+                x => x.replace(/,\s/g, ','),
+            )
+
+            return `rt.steps(${stepsArguments})`
+        }
+
+        if (fn.name === 'linear') {
+            const linearArguments = pipe(this.Processor.CSS.processValue(fn.arguments))(
+                String,
+                x => x.replace(/,\s/g, ','),
+            )
+
+            return `rt.linear(${linearArguments})`
+        }
+
         if (fn.name === 'max') {
             return `Math.max(${this.Processor.CSS.processValue(fn.arguments)})`
         }
@@ -63,6 +81,20 @@ export class Functions {
 
         if (fn.name === 'color-mix') {
             return this.processColorMix(fn)
+        }
+
+        if (fn.name === 'translate3d') {
+            const [x, y, z] = this.Processor.CSS.processValue(fn.arguments).split(', ')
+            return `"translateX($\{${x}})""translateY($\{${y}})""translateZ($\{${z}})"`
+        }
+
+        if (fn.name === 'scale3d') {
+            const [x, y, z] = this.Processor.CSS.processValue(fn.arguments).split(', ')
+            return `"scaleX($\{${x}})""scaleY($\{${y}})""scaleZ($\{${z}})"`
+        }
+
+        if (fn.name === 'rotate') {
+            return `"rotate($\{${this.Processor.CSS.processValue(fn.arguments)}})"`
         }
 
         if (

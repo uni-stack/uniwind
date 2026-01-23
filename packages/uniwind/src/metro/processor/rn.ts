@@ -1,6 +1,8 @@
 import { addMissingSpaces, isDefined, pipe, removeKeys, toCamelCase } from '../utils'
 import type { ProcessorBuilder } from './processor'
 
+const transitions: Record<string, any> = { overlay: '"overlayColor"' }
+
 const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
     backgroundSize: value => {
         return {
@@ -8,12 +10,61 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
         }
     },
     transitionProperty: (value: string) => {
+        const properties = value
+            .replace(/"/g, '')
+            .split(',')
+            .filter(token => token !== '' && !token.startsWith('--'))
+            .map(token => transitions[token.trim()] ?? `"${toCamelCase(token.trim())}"`)
+
+        if (
+            properties.length === 1
+            && ['"allowDiscrete"', '"normal"'].includes(properties[0])
+        ) {
+            const behavior = properties[0] === '"allowDiscrete"' ? 'allow-discrete' : 'normal'
+            return {
+                transitionBehavior: `"${behavior}"`,
+            }
+        }
+
         return {
-            transitionProperty: value
-                .replace(/"/g, '')
-                .split(',')
-                .filter(token => token !== '' && !token.startsWith('--'))
-                .map(token => `"${toCamelCase(token)}"`),
+            transitionProperty: properties,
+        }
+    },
+    transitionDuration: (value: string) => {
+        return {
+            transitionDuration: value.includes('""') ? value.replace(/""/g, ',') : value,
+        }
+    },
+    transitionTimingFunction: (value: string) => {
+        return {
+            transitionTimingFunction: value.includes('""') ? value.replace(/""/g, ',') : value,
+        }
+    },
+    animation: (value: any) => {
+        if (Array.isArray(value)) {
+            const result: Record<string, any> = {}
+
+            for (const [key, val] of value) {
+                if (val === '"none"') {
+                    continue
+                }
+
+                const keyName = toCamelCase(`animation-${key.replace(/^"|"$/g, '')}`)
+
+                if (key === 'name') {
+                    result[keyName] = typeof val === 'string'
+                        ? val.split(',').map((v: string) => v.startsWith('"') ? v : `"${v}"`)
+                        : val
+                } else {
+                    result[keyName] = val
+                }
+            }
+
+            return result
+        }
+
+        return {
+            animationName: value,
         }
     },
     flex: (value: any) => {

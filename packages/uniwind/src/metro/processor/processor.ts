@@ -1,5 +1,7 @@
 import { Declaration, MediaQuery, Rule, transform } from 'lightningcss'
-import { MediaQueryResolver, Polyfills, ProcessMetaValues } from '../types'
+import { CSSAnimationKeyframes } from 'react-native-reanimated'
+import { parseTransformsMutation } from '../../core/native/parsers/transforms'
+import { AnimationFrame, MediaQueryResolver, Polyfills, ProcessMetaValues } from '../types'
 import { Color } from './color'
 import { CSS } from './css'
 import { Functions } from './functions'
@@ -12,6 +14,7 @@ export class ProcessorBuilder {
     stylesheets = {} as Record<string, Array<any>>
     vars = {} as Record<string, any>
     scopedVars = {} as Record<string, Record<string, any>>
+    keyframes = {} as Record<string, CSSAnimationKeyframes>
     CSS = new CSS(this)
     RN = new RN(this)
     Var = new Var(this)
@@ -149,24 +152,80 @@ export class ProcessorBuilder {
         }
     }
 
+    private parseKeyFrames(animationFrames: AnimationFrame): CSSAnimationKeyframes {
+        const [selectors, styles] = animationFrames
+        const result: CSSAnimationKeyframes = {}
+
+        for (let i = 0; i < selectors.length; i++) {
+            const selectorString = selectors[i]!
+            const styleObj = styles[i]!
+
+            // Split selector string by comma to handle multiple selectors like "0%, 100%"
+            const individualSelectors = typeof selectorString === 'string'
+                ? selectorString.split(',').map(s => s.trim()).filter(Boolean)
+                : [selectorString]
+
+            // Resolve styles using cssToRN
+            const resolvedStyles: Record<string, any> = {}
+
+            for (const [property, value] of Object.entries(styleObj)) {
+                const resolved = this.RN.cssToRN(property, value)
+
+                for (const [resolvedProperty, resolvedValue] of resolved) {
+                    resolvedStyles[resolvedProperty] = resolvedValue
+                }
+
+                if (property === 'transform') {
+                    parseTransformsMutation(resolvedStyles)
+                }
+            }
+
+            // Assign resolved styles to each individual selector
+            for (const selector of individualSelectors) {
+                if (result[selector] !== undefined) {
+                    result[selector] = {
+                        ...result[selector],
+                        ...resolvedStyles,
+                    }
+                } else {
+                    result[selector] = { ...resolvedStyles }
+                }
+            }
+        }
+
+        return result
+    }
+
     private parseDeclaration(declaration: Declaration) {
+        const parseValue = (property: string, value: any) => {
+            if (property === 'animation') {
+                return this.CSS.processAnimation(value)
+            }
+
+            return this.CSS.processValue(value)
+        }
+
         if (declaration.property === 'unparsed') {
+            const property = declaration.value.propertyId.property
+
             return {
-                property: declaration.value.propertyId.property,
-                value: this.CSS.processValue(declaration.value.value),
+                property,
+                value: parseValue(property, declaration.value.value),
             }
         }
 
         if (declaration.property === 'custom') {
+            const property = declaration.value.name
+
             return {
-                property: declaration.value.name,
-                value: this.CSS.processValue(declaration.value.value),
+                property,
+                value: parseValue(property, declaration.value.value),
             }
         }
 
         return {
             property: declaration.property,
-            value: this.CSS.processValue(declaration.value),
+            value: parseValue(declaration.property, declaration.value),
         }
     }
 
@@ -278,6 +337,42 @@ export class ProcessorBuilder {
             this.declarationConfig = this.getDeclarationConfig()
 
             return
+        }
+
+        if (rule.type === 'keyframes') {
+            const keyframes: AnimationFrame = [[], []]
+            rule.value.keyframes.forEach((keyframe) => {
+                const selectors = keyframe.selectors.map((selector) => {
+                    switch (selector.type) {
+                        case 'percentage':
+                            return keyframe.selectors.length > 0
+                                ? `${selector.value * 100}%`
+                                : selector.value
+                        case 'from':
+                        case 'to':
+                            return selector.type
+                        case 'timeline-range-percentage':
+                            return keyframe.selectors.length > 0
+                                ? `${selector.value.percentage}%`
+                                : selector.value.percentage
+                        default:
+                            return ''
+                    }
+                })
+
+                keyframes[0].push(selectors.join(', '))
+
+                const keyframeStyle: Record<string, any> = {}
+                keyframe.declarations.declarations?.forEach((declaration) => {
+                    keyframeStyle[declaration.property] = !Array.isArray(declaration.value) || declaration.property.startsWith('animation-')
+                        ? this.CSS.processValue(declaration.value)
+                        : declaration.value.flatMap(value => this.CSS.processValue(value))
+                })
+
+                keyframes[1].push(keyframeStyle)
+            })
+
+            this.keyframes[rule.value.name.value] = this.parseKeyFrames(keyframes)
         }
 
         if (rule.type === 'layer-block') {

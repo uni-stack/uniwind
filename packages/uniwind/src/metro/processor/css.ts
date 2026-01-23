@@ -1,7 +1,10 @@
-import { OverflowKeyword } from 'lightningcss'
+/* eslint-disable max-lines */
+
+import { Animation, Filter, OverflowKeyword, TokenOrValue } from 'lightningcss'
 import { Logger } from '../logger'
 import { DeclarationValues } from '../types'
-import { deepEqual, isDefined, pipe, roundToPrecision, shouldBeSerialized } from '../utils'
+import { deepEqual, isDefined, pipe, roundToPrecision, shouldBeSerialized, toCamelCase } from '../utils'
+import { getProcessedAnimation } from './animation'
 import type { ProcessorBuilder } from './processor'
 
 export class CSS {
@@ -47,6 +50,55 @@ export class CSS {
         return processedValue
     }
 
+    processAnimation(declarationValue: Array<TokenOrValue | Animation>) {
+        if (declarationValue.length === 0) {
+            return []
+        }
+
+        if (declarationValue.length === 1) {
+            const token = declarationValue[0]! as TokenOrValue
+
+            if (token.type === 'var') {
+                return this.Processor.Var.processVar(token.value)
+            }
+
+            return Object.entries(token).map(([key, value]) => [toCamelCase(key), this.processValue(value)])
+        }
+
+        return getProcessedAnimation(
+            declarationValue as Array<TokenOrValue>,
+            this.getProcessedValue.bind(this),
+        )
+    }
+
+    private processFilters(filters: Filter[]) {
+        return Object.fromEntries(
+            filters.map(filter => {
+                const filterKey = toCamelCase(filter.type)
+
+                if (filter.type === 'hue-rotate') {
+                    return [filterKey, `"${filter.value.value}${filter.value.type}"`]
+                }
+
+                if (filter.type === 'url') {
+                    return [filterKey, `"${filter.value.url}"`]
+                }
+
+                if (filter.type === 'drop-shadow') {
+                    const processedValue = Object.fromEntries(
+                        Object.entries(filter.value).map(([k, v]) => {
+                            const camelKey = k === 'xOffset' ? 'offsetX' : k === 'yOffset' ? 'offsetY' : toCamelCase(k)
+                            return [camelKey, this.processValue(v)]
+                        }),
+                    )
+                    return [filterKey, processedValue]
+                }
+
+                return [filterKey, this.processValue(filter.value)]
+            }),
+        )
+    }
+
     private getProcessedValue(declarationValue: DeclarationValues): any {
         if (typeof declarationValue !== 'object') {
             return declarationValue
@@ -59,6 +111,7 @@ export class CSS {
                 case 'var':
                     return this.Processor.Var.processVar(declarationValue.value)
                 case 'number':
+                case 'integer':
                     return declarationValue.value
                 case 'token':
                     return this.processValue(declarationValue.value)
@@ -66,8 +119,6 @@ export class CSS {
                     return this.Processor.Units.processAnyLength(declarationValue.value)
                 case 'color':
                     return this.Processor.Color.processColor(declarationValue.value)
-                case 'integer':
-                    return declarationValue.value
                 case 'comma':
                     return ', '
                 case 'dimension':
@@ -99,6 +150,15 @@ export class CSS {
                         translateZ: this.processValue(declarationValue.value),
                     }
                 }
+                case 'translate3d': {
+                    const [translateX, translateY, translateZ] = declarationValue.value.map(x => this.processValue(x))
+
+                    return [
+                        { translateX },
+                        { translateY },
+                        { translateZ },
+                    ]
+                }
                 case 'rotate':
                     return {
                         rotate: `${declarationValue.value.value}${declarationValue.value.type}`,
@@ -115,6 +175,17 @@ export class CSS {
                     return {
                         rotateZ: `${declarationValue.value.value}${declarationValue.value.type}`,
                     }
+                case 'rotate3d': {
+                    const [x, y, z, angle] = declarationValue.value
+                    const v = angle.value
+                    const t = angle.type
+
+                    return {
+                        rotateX: `${(x as number) * v}${t}`,
+                        rotateY: `${(y as number) * v}${t}`,
+                        rotateZ: `${(z as number) * v}${t}`,
+                    }
+                }
                 case 'scale': {
                     const [scaleX, scaleY] = declarationValue.value.map(x => this.processValue(x))
 
@@ -145,6 +216,25 @@ export class CSS {
                     return {
                         scaleZ: this.processValue(declarationValue.value),
                     }
+                case 'scale3d': {
+                    const [scaleX, scaleY, scaleZ] = declarationValue.value.map(x => this.processValue(x))
+
+                    return [
+                        { scaleX },
+                        { scaleY },
+                        { scaleZ },
+                    ]
+                }
+                case 'skew': {
+                    const [skewX, skewY] = declarationValue.value.map(x => `"${x.value}${x.type}"`)
+
+                    return [
+                        { skewX },
+                        { skewY },
+                    ]
+                }
+                case 'filters':
+                    return this.processFilters(declarationValue.value)
                 case 'percentage':
                     return `${declarationValue.value * 100}%`
                 case 'token-list':
@@ -165,6 +255,10 @@ export class CSS {
                 case 'delim':
                     if (declarationValue.value === '.') {
                         return '.'
+                    }
+
+                    if (declarationValue.value === '|') {
+                        return '|'
                     }
 
                     // +, - etc.
@@ -203,6 +297,14 @@ export class CSS {
                     ]
 
                     return `rt.cubicBezier(${bezier.join(',')})`
+                }
+                case 'steps': {
+                    const steps = [
+                        declarationValue.count,
+                        declarationValue.position ? `"${declarationValue.position.type}"` : undefined,
+                    ]
+
+                    return `rt.steps(${steps.join(',')})`
                 }
                 case 'seconds':
                     return `${declarationValue.value}s`
@@ -261,8 +363,6 @@ export class CSS {
                     return declarationValue.type
                 case 'hash':
                     return `#${declarationValue.value}`
-                case 'line-style':
-                    return declarationValue.value
                 case 'parenthesis-block':
                     return '('
                 case 'close-parenthesis':
@@ -284,6 +384,7 @@ export class CSS {
                 case 'self-position':
                 case 'content-distribution':
                 case 'content-position':
+                case 'line-style':
                     return declarationValue.value
                 case 'baseline-position':
                     return 'baseline'
@@ -468,17 +569,7 @@ export class CSS {
         }
 
         if ('duration' in declarationValue) {
-            return [
-                this.processValue(declarationValue.name),
-                this.processValue(declarationValue.duration),
-                this.processValue(declarationValue.timingFunction),
-                this.processValue(declarationValue.delay),
-                this.processValue(declarationValue.iterationCount),
-                declarationValue.direction,
-                declarationValue.fillMode,
-                declarationValue.playState,
-                this.processValue(declarationValue.timeline),
-            ].filter(Boolean).join(' ')
+            return Object.entries(declarationValue).map(([key, value]) => [toCamelCase(key), this.processValue(value)])
         }
 
         this.logUnsupported(`Unsupported value - ${JSON.stringify(declarationValue)}`)
