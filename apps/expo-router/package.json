@@ -36,7 +36,7 @@
         "react-native": "catalog:",
         "react-native-gesture-handler": "2.28.0",
         "react-native-mmkv": "4.0.0",
-        "react-native-reanimated": "4.1.1",
+        "react-native-reanimated": "catalog:",
         "react-native-safe-area-context": "5.6.0",
         "react-native-screens": "4.16.0",
         "react-native-web": "catalog:",

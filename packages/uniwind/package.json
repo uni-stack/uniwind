@@ -87,12 +87,15 @@
         "react": ">=19.0.0",
         "react-native": ">=0.81.0",
         "react-native-gesture-handler": ">=2.28.0",
+        "react-native-reanimated": ">=4",
+        "react-native-safe-area-context": ">=5.6.0",
         "tailwindcss": ">=4"
     },
     "devDependencies": {
         "@types/bun": "catalog:",
         "@types/culori": "4.0.1",
         "@types/react": "catalog:",
+        "react-native-reanimated": "catalog:",
         "typescript": "catalog:",
         "metro": "0.83.3",
         "dpdm": "3.14.0",

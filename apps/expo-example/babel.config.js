@@ -7,14 +7,7 @@ module.exports = function(api) {
     return {
         presets: ['babel-preset-expo'],
         plugins: [
-            [
-                'module-resolver',
-                {
-                    alias: {
-                        'culori': 'culori/require',
-                    },
-                },
-            ],
+            'react-native-reanimated/plugin',
         ],
     }
 }
