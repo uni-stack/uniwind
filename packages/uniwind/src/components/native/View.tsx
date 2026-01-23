@@ -3,10 +3,10 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const View = copyComponentProperties(RNView, (props: ViewProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNView, props.className)
 
     return (
-        <RNView
+        <Component
             {...props}
             style={[style, props.style]}
         />

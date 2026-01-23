@@ -4,12 +4,12 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const ScrollView = copyComponentProperties(RNScrollView, (props: ScrollViewProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNScrollView, props.className)
     const contentContainerStyle = useStyle(props.contentContainerClassName)
     const endFillColor = useUniwindAccent(props.endFillColorClassName)
 
     return (
-        <RNScrollView
+        <Component
             {...props}
             style={[style, props.style]}
             contentContainerStyle={[contentContainerStyle, props.contentContainerStyle]}

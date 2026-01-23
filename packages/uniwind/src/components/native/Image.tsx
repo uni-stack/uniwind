@@ -4,11 +4,11 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNImage, props.className)
     const tintColor = useUniwindAccent(props.tintColorClassName)
 
     return (
-        <RNImage
+        <Component
             {...props}
             style={[style, props.style]}
             tintColor={props.tintColor ?? tintColor}

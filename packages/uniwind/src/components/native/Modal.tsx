@@ -4,11 +4,11 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const Modal = copyComponentProperties(RNModal, (props: ModalProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNModal, props.className)
     const backdropColor = useUniwindAccent(props.backdropColorClassName)
 
     return (
-        <RNModal
+        <Component
             {...props}
             style={[style, props.style]}
             backdropColor={props.backdropColor ?? backdropColor}

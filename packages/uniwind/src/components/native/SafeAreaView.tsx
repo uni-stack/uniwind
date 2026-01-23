@@ -3,10 +3,10 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const SafeAreaView = copyComponentProperties(RNSafeAreaView, (props: ViewProps) => {
-    const style = useStyle(props.className)
+    const { Component, style } = useStyle(RNSafeAreaView, props.className)
 
     return (
-        <RNSafeAreaView
+        <Component
             {...props}
             style={[style, props.style]}
         />
