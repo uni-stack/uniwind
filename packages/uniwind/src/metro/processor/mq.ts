@@ -1,4 +1,4 @@
-import { MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
+import { MediaCondition, MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
 import { ColorScheme, Orientation } from '../../types'
 import { MediaQueryResolver, Platform } from '../types'
 import type { ProcessorBuilder } from './processor'
@@ -18,10 +18,18 @@ export class MQ {
                 return
             }
 
-            if (condition?.type !== 'feature') {
-                return
-            }
+            if (condition) this.processCondition(condition, mq)
+        })
 
+        return mq
+    }
+
+    private processCondition(condition: MediaCondition, mq: MediaQueryResolver) {
+        if (condition.type === 'operation') {
+            condition.conditions.forEach(nestedCondition => {
+                this.processCondition(nestedCondition, mq)
+            })
+        } else if (condition.type === 'feature') {
             if (condition.value.type === 'range') {
                 this.processWidthMediaQuery(condition.value, mq)
             }
@@ -29,9 +37,7 @@ export class MQ {
             if (condition.value.type === 'plain') {
                 this.processPlainMediaQuery(condition.value, mq)
             }
-        })
-
-        return mq
+        }
     }
 
     private processWidthMediaQuery(query: QueryFeatureFor_MediaFeatureId & { type: 'range' }, mq: MediaQueryResolver) {

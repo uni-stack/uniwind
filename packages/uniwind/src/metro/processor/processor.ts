@@ -1,5 +1,5 @@
 import { Declaration, MediaQuery, Rule, transform } from 'lightningcss'
-import { Polyfills, ProcessMetaValues } from '../types'
+import { MediaQueryResolver, Polyfills, ProcessMetaValues } from '../types'
 import { Color } from './color'
 import { CSS } from './css'
 import { Functions } from './functions'
@@ -21,6 +21,9 @@ export class ProcessorBuilder {
     Functions = new Functions(this)
     meta = {} as ProcessMetaValues
 
+    private varsWithMediaQueries = {} as Record<string, Array<any>>
+    private pendingVarReferences = new Map<string, Array<string>>()
+
     private declarationConfig = this.getDeclarationConfig()
 
     constructor(private readonly themes: Array<string>, readonly polyfills: Polyfills | undefined) {
@@ -32,11 +35,27 @@ export class ProcessorBuilder {
             filename: 'tailwind.css',
             code: Buffer.from(css),
             visitor: {
-                StyleSheet: styleSheet =>
+                StyleSheet: styleSheet => {
                     styleSheet.rules.forEach(rule => {
                         this.declarationConfig = this.getDeclarationConfig()
                         this.parseRuleRec(rule)
-                    }),
+                    })
+
+                    for (const [className, varNames] of this.pendingVarReferences) {
+                        for (const varName of varNames) {
+                            const varStyles = this.varsWithMediaQueries[varName]
+                            if (!varStyles || varStyles.length === 0) {
+                                continue
+                            }
+
+                            for (const varStyle of varStyles) {
+                                this.stylesheets[className]!.push(varStyle)
+                            }
+                        }
+
+                        this.pendingVarReferences.delete(className)
+                    }
+                },
             },
         })
     }
@@ -54,9 +73,14 @@ export class ProcessorBuilder {
         })
     }
 
+    private hasMediaQuery(mq: MediaQueryResolver): boolean {
+        return mq.minWidth !== 0 || mq.maxWidth !== Number.MAX_VALUE || mq.orientation !== null || mq.colorScheme !== null
+    }
+
     private addDeclaration(declaration: Declaration, important = false) {
         const isVar = this.declarationConfig.root || this.declarationConfig.className === null
         const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries)
+        const { property, value } = this.parseDeclaration(declaration)
         const style = (() => {
             if (!isVar) {
                 return this.stylesheets[this.declarationConfig.className!]?.at(-1)
@@ -69,6 +93,12 @@ export class ProcessorBuilder {
                 return this.scopedVars[platformKey]
             }
 
+            if (this.hasMediaQuery(mq)) {
+                this.varsWithMediaQueries[property] ??= []
+                this.varsWithMediaQueries[property].push({})
+                return this.varsWithMediaQueries[property].at(-1)
+            }
+
             if (this.declarationConfig.theme === null) {
                 return this.vars
             }
@@ -79,41 +109,65 @@ export class ProcessorBuilder {
             return this.scopedVars[themeKey]
         })()
 
-        if (!isVar) {
+        if (!isVar || this.hasMediaQuery(mq)) {
             Object.assign(style, mq)
             style.importantProperties ??= []
             style.rtl = this.declarationConfig.rtl
             style.theme = mq.colorScheme ?? this.declarationConfig.theme
+            style.maxWidth = mq.maxWidth
+            style.minWidth = mq.minWidth
+            style.orientation = mq.orientation
             style.active = this.declarationConfig.active
             style.focus = this.declarationConfig.focus
             style.disabled = this.declarationConfig.disabled
             this.meta.className = this.declarationConfig.className
         }
 
-        if (declaration.property === 'unparsed') {
-            style[declaration.value.propertyId.property] = this.CSS.processValue(declaration.value.value)
+        style[property] = value
+        if (!isVar && important) {
+            style.importantProperties.push(property)
+        }
 
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.propertyId.property)
+        // Track variable references for later processing (even if media queries don't exist yet)
+        const match = typeof value === 'string' ? value.match(/this\[`(.*?)`\]/) : null
+
+        if (match && !isVar) {
+            const className = this.declarationConfig.className
+            if (className === null) {
+                return
             }
 
-            return
+            if (!this.pendingVarReferences.has(className)) {
+                this.pendingVarReferences.set(className, [])
+            }
+
+            const classVars = this.pendingVarReferences.get(className)!
+            const varName = match[1]!
+
+            if (!classVars.includes(varName)) {
+                classVars.push(varName)
+            }
+        }
+    }
+
+    private parseDeclaration(declaration: Declaration) {
+        if (declaration.property === 'unparsed') {
+            return {
+                property: declaration.value.propertyId.property,
+                value: this.CSS.processValue(declaration.value.value),
+            }
         }
 
         if (declaration.property === 'custom') {
-            style[declaration.value.name] = this.CSS.processValue(declaration.value.value)
-
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.name)
+            return {
+                property: declaration.value.name,
+                value: this.CSS.processValue(declaration.value.value),
             }
-
-            return
         }
 
-        style[declaration.property] = this.CSS.processValue(declaration.value)
-
-        if (!isVar && important) {
-            style.importantProperties.push(declaration.property)
+        return {
+            property: declaration.property,
+            value: this.CSS.processValue(declaration.value),
         }
     }
 
@@ -221,10 +275,8 @@ export class ProcessorBuilder {
             const { mediaQueries } = rule.value.query
 
             this.declarationConfig.mediaQueries.push(...mediaQueries)
-            rule.value.rules.forEach(rule => {
-                this.parseRuleRec(rule)
-                this.declarationConfig = this.getDeclarationConfig()
-            })
+            rule.value.rules.forEach(rule => this.parseRuleRec(rule))
+            this.declarationConfig = this.getDeclarationConfig()
 
             return
         }
