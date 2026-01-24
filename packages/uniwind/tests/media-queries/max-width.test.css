@@ -1,0 +1,30 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --text-base: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-sm: 0.25rem;
+    --spacing-md: 0.75rem;
+  }
+}
+
+.p-spacing-sm {
+  padding: var(--spacing-sm);
+}
+
+.p-spacing-md {
+  padding: var(--spacing-md);
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+

@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    --text-base: 1rem;
+    --text-lg: 1.25rem;
+  }
+}
+
+@media (min-width: 640px) {
+  :root {
+    --text-base: 2rem;
+    --text-lg: 3rem;
+  }
+}
