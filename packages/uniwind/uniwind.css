@@ -376,5 +376,26 @@
     right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
-@custom-variant light (&:where(.light, .light *));
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light {
+   &:where(.light, .light *) {
+       @slot;
+   }
+
+   @media (prefers-color-scheme: light) {
+       &:not(:where(.light, .light *, .dark, .dark *, .premium, .premium *)) {
+           @slot;
+       }
+   }
+}
+
+@custom-variant dark {
+   &:where(.dark, .dark *) {
+       @slot;
+   }
+
+   @media (prefers-color-scheme: dark) {
+       &:not(:where(.light, .light *, .dark, .dark *, .premium, .premium *)) {
+           @slot;
+       }
+   }
+}

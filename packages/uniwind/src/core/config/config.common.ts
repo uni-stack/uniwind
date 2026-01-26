@@ -4,7 +4,9 @@ import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
-const RN_VERSION = Platform.constants.reactNativeVersion.minor
+// Platform.constants is not defined in RNW
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+const RN_VERSION = Platform.constants?.reactNativeVersion?.minor ?? 0
 const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
 
 export class UniwindConfigBuilder {

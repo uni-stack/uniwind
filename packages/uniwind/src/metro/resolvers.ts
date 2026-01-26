@@ -116,7 +116,7 @@ export const webResolver = ({
 
     // Handle createOrderedCSSStyleSheet which is in StyleSheet/dom/ subdirectory
     if (filename.startsWith('createOrderedCSSStyleSheet.')) {
-        return resolver(context, `${name}/components/createOrderedCSSStyleSheet`, platform)
+        return resolver(context, `uniwind/components/createOrderedCSSStyleSheet`, platform)
     }
 
     if (!isIndex || module === undefined || !SUPPORTED_COMPONENTS.includes(module) || context.originModulePath.endsWith(`${module}${sep}index.js`)) {
