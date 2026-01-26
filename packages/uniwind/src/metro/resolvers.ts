@@ -1,6 +1,5 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
-import { basename, resolve, sep } from 'node:path'
-import { name } from '../../package.json'
+import { basename, dirname, join, sep } from 'node:path'
 
 type ResolverConfig = {
     platform: string | null
@@ -9,10 +8,7 @@ type ResolverConfig = {
     moduleName: string
 }
 
-const thisModuleDist = resolve(__dirname, '../../dist')
-const thisModuleSrc = resolve(__dirname, '../../src')
-
-const isFromThisModule = (filename: string) => filename.startsWith(thisModuleDist) || filename.startsWith(thisModuleSrc)
+let cachedInternalBasePath: string | null = null
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
@@ -47,17 +43,32 @@ export const nativeResolver = ({
     resolver,
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
-    const isInternal = isFromThisModule(context.originModulePath)
+
+    if (cachedInternalBasePath === null) {
+        const componentsResolution = resolver(context, 'uniwind/components', platform)
+
+        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
+            // Go from src/components to root
+            ? join(dirname(componentsResolution.filePath), '../..')
+            : ''
+    }
+
+    const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
+    const isFromNodeModules = context.originModulePath.includes(`${sep}node_modules${sep}`)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
     const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
 
-    if (isInternal || resolution.type !== 'sourceFile' || (isFromReactNative && !isReactNativeAnimated)) {
+    if (
+        isInternal // Is from uniwind
+        || resolution.type !== 'sourceFile' // Is not a source file
+        || (isFromReactNative && isFromNodeModules && !isReactNativeAnimated) // Is from react-native but not Animated
+    ) {
         return resolution
     }
 
     if (moduleName === 'react-native') {
-        return resolver(context, `${name}/components`, platform)
+        return resolver(context, `uniwind/components`, platform)
     }
 
     if (
@@ -67,7 +78,7 @@ export const nativeResolver = ({
         const module = filename.split('.').at(0)
 
         if (module !== undefined && SUPPORTED_COMPONENTS.includes(module)) {
-            return resolver(context, `${name}/components/${module}`, platform)
+            return resolver(context, `uniwind/components/${module}`, platform)
         }
     }
 
@@ -82,8 +93,16 @@ export const webResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
+    if (cachedInternalBasePath === null) {
+        const componentsResolution = resolver(context, 'uniwind/components', platform)
+
+        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
+            // Go from dist/module/components/web to root
+            ? join(dirname(componentsResolution.filePath), '../../../..')
+            : ''
+    }
     if (
-        isFromThisModule(context.originModulePath)
+        (cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath))
         || resolution.type !== 'sourceFile'
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {
@@ -104,5 +123,5 @@ export const webResolver = ({
         return resolution
     }
 
-    return resolver(context, `${name}/components/${module}`, platform)
+    return resolver(context, `uniwind/components/${module}`, platform)
 }

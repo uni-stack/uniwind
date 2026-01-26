@@ -34,7 +34,7 @@ body:
     attributes:
       label: Snack or Repository Link
       description: |
-        Provide a link to a GitHub repository or Snack that reproduces the issue.
+        Provide a link to a GitHub repository with minimal code that reproduces the issue.
         Repro will confirm that:
          - Issue is not related to your app that has multiple dependencies
          - Can isolate the problem

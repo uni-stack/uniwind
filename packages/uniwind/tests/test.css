@@ -9,4 +9,5 @@
 @theme {
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
+  --spacing-test: 123px;
 }

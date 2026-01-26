@@ -4,6 +4,8 @@ import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
+const RN_VERSION = Platform.constants.reactNativeVersion.minor
+const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
 
 export class UniwindConfigBuilder {
     protected themes = ['light', 'dark']
@@ -12,7 +14,10 @@ export class UniwindConfigBuilder {
 
     constructor() {
         Appearance.addChangeListener(event => {
-            const colorScheme = event.colorScheme ?? ColorScheme.Light
+            // @ts-expect-error RN >0.82 - breaking change
+            const colorScheme = event.colorScheme === 'unspecified'
+                ? ColorScheme.Light
+                : event.colorScheme ?? ColorScheme.Light
             const prevTheme = this.#currentTheme
 
             if (this.#hasAdaptiveThemes && prevTheme !== colorScheme) {
@@ -32,7 +37,14 @@ export class UniwindConfigBuilder {
     }
 
     private get colorScheme() {
-        return Appearance.getColorScheme() ?? ColorScheme.Light
+        const colorScheme = Appearance.getColorScheme()
+
+        // @ts-expect-error RN >0.82 - breaking change
+        if (colorScheme === 'unspecified') {
+            return ColorScheme.Light
+        }
+
+        return colorScheme ?? ColorScheme.Light
     }
 
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -47,7 +59,8 @@ export class UniwindConfigBuilder {
                 this.#currentTheme = this.colorScheme
 
                 if (Platform.OS !== 'web') {
-                    Appearance.setColorScheme(undefined)
+                    // @ts-expect-error RN >0.82 - breaking change
+                    Appearance.setColorScheme(UNSPECIFIED_THEME)
                 }
 
                 return
@@ -61,7 +74,12 @@ export class UniwindConfigBuilder {
             this.#currentTheme = theme
 
             if (Platform.OS !== 'web') {
-                Appearance.setColorScheme(isAdaptiveTheme ? this.#currentTheme as ColorScheme : undefined)
+                Appearance.setColorScheme(
+                    // @ts-expect-error RN >0.82 - breaking change
+                    isAdaptiveTheme
+                        ? this.#currentTheme as ColorScheme
+                        : UNSPECIFIED_THEME,
+                )
             }
         } finally {
             if (prevTheme !== this.#currentTheme) {
