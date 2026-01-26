@@ -50,7 +50,7 @@ export const uniwind = ({
             optimizeDeps: {
                 exclude: [UNIWIND_PACKAGE_NAME, 'react-native'],
                 esbuildOptions: {
-                    plugins: {
+                    plugins: [{
                         name: 'uniwind-esbuild-plugin',
                         setup: build => {
                             build.onResolve(
@@ -62,7 +62,7 @@ export const uniwind = ({
                                 },
                             )
                         },
-                    },
+                    }],
                 },
             },
             resolve: {
