@@ -16,7 +16,7 @@ const createOrderedCSSStyleSheet = (sheet: CSSStyleSheet | null) => {
 
     if (sheet !== null) {
         // Use existing layer rule if it already exists
-        if (sheet.cssRules[0] instanceof CSSLayerBlockRule) {
+        if (typeof CSSLayerBlockRule !== 'undefined' && sheet.cssRules[0] instanceof CSSLayerBlockRule) {
             layerRule = sheet.cssRules[0]
         } else {
             // otherwise insert a layer rule
@@ -28,7 +28,9 @@ const createOrderedCSSStyleSheet = (sheet: CSSStyleSheet | null) => {
         fakeSheet = {
             // Increment index by 1 to skip the layer rule
             insertRule: (text: string, index?: number) => sheet.insertRule(text, index === undefined ? 1 : index + 1),
-            cssRules: Array.from(sheet.cssRules).slice(1),
+            get cssRules() {
+                return Array.from(sheet.cssRules).slice(1)
+            },
         }
     }
 

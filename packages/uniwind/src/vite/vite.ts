@@ -56,7 +56,7 @@ export const uniwind = ({
                             build.onResolve(
                                 { filter: /^\.\/createOrderedCSSStyleSheet$/ },
                                 args => {
-                                    if (args.importer.includes('react-native-web/dist/exports/StyleSheet')) {
+                                    if (normalizePath(args.importer).includes('react-native-web/dist/exports/StyleSheet')) {
                                         return { path: styleSheetPath }
                                     }
                                 },
