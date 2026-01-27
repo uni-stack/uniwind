@@ -2,33 +2,41 @@ name: Validate issue
 
 on:
   issues:
-    types: 
+    types:
       - opened
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: 'Issue number to validate'
+        required: true
+        type: number
 
 env:
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  NUMBER: ${{ github.event.issue.number }}
+  NUMBER: ${{ inputs.issue_number || github.event.issue.number }}
   REPO: "uni-stack/uniwind"
 
 jobs:
   autoclose:
     runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.issue.labels.*.name, 'uniwind-pro') }}
     permissions:
       issues: write
     steps:
       - name: Check for valid reproduction
         id: check
+        if: github.event_name != 'workflow_dispatch'
         env:
           BODY: ${{ github.event.issue.body }}
         run: |
-          if echo "$BODY" | grep -qP "github\.com(?!\/uni-stack)"; then
+          if echo "$BODY" | grep -qP "github\.com\/(?!(uni-stack|user-attachments)\/)[\w\-\.]+\/[\w\-\.]+"; then
             echo "valid=true" >> $GITHUB_OUTPUT
           else
             echo "valid=false" >> $GITHUB_OUTPUT
           fi
       - name: Close Issue
-        if: steps.check.outputs.valid == 'false'
+        if: github.event_name == 'workflow_dispatch' || steps.check.outputs.valid == 'false'
         run: gh issue close "$NUMBER" --comment "This issue has been automatically closed because it **lacks a clear, minimal reproduction** that we can use to verify the reported bug." --repo "$REPO"
       - name: Label Issue
-        if: steps.check.outputs.valid == 'false'
+        if: github.event_name == 'workflow_dispatch' || steps.check.outputs.valid == 'false'
         run: gh issue edit "$NUMBER" --add-label "repro-required" --repo "$REPO"

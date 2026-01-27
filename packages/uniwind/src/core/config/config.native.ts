@@ -12,16 +12,6 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         super()
     }
 
-    __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
-        super.__reinit(generateStyleSheetCallback, themes)
-        UniwindStore.reinit(generateStyleSheetCallback)
-    }
-
-    onThemeChange() {
-        UniwindStore.runtime.currentThemeName = this.currentTheme
-        UniwindStore.reinit()
-    }
-
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
         Object.entries(variables).forEach(([varName, varValue]) => {
             if (!varName.startsWith('--') && __DEV__) {
@@ -73,6 +63,16 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         UniwindStore.runtime.insets.left = insets.left ?? 0
         UniwindStore.runtime.insets.right = insets.right ?? 0
         UniwindListener.notify([StyleDependency.Insets])
+    }
+
+    protected __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
+        super.__reinit(generateStyleSheetCallback, themes)
+        UniwindStore.reinit(generateStyleSheetCallback)
+    }
+
+    protected onThemeChange() {
+        UniwindStore.runtime.currentThemeName = this.currentTheme
+        UniwindStore.reinit()
     }
 }
 

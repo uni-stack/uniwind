@@ -122,7 +122,28 @@ export const generateCSSForThemes = async (themes: Array<string>, input: string)
         ]
         : []
     const uniwindCSS = [
-        ...themes.map(theme => `@custom-variant ${theme} (&:where(.${theme}, .${theme} *));`),
+        ...themes.map(theme => {
+            const notOtherThemes = themes.map(t => `.${t}, .${t} *`)
+
+            if (theme === 'dark' || theme === 'light') {
+                return [
+                    `@custom-variant ${theme} {`,
+                    `   &:where(.${theme}, .${theme} *) {`,
+                    '       @slot;',
+                    '   }',
+                    '',
+                    `   @media (prefers-color-scheme: ${theme}) {`,
+                    `       &:not(:where(${notOtherThemes.join(', ')})) {`,
+                    '           @slot;',
+                    '       }',
+                    '   }',
+                    '}',
+                    '',
+                ].join('\n')
+            }
+
+            return `@custom-variant ${theme} (&:where(.${theme}, .${theme} *));`
+        }),
         ...variablesCSS,
     ].join('\n')
 
