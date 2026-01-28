@@ -100,7 +100,6 @@ class UniwindStoreBuilder {
                 if (style.dependencies) {
                     style.dependencies.forEach(dep => {
                         dependencies.add(dep)
-                        // eslint-disable-next-line no-bitwise
                         dependencySum |= 1 << dep
                     })
                 }

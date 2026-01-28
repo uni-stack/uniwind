@@ -5,7 +5,6 @@ import { ComponentState } from '../../core/types'
 
 export const useStyle = (className: string | undefined, componentProps: Record<string, any>, state?: ComponentState) => {
     'use no memo'
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, rerender] = useReducer(() => ({}), {})
     const styleState = UniwindStore.getStyles(className, componentProps, state)
 

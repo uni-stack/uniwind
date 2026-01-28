@@ -17,6 +17,12 @@ export default [
             'nested-if/nested-if-statements': 'off',
             'no-continue': 'off',
             '@typescript-eslint/array-type': 'off',
+            '@typescript-eslint/no-unused-vars': ['error', {
+                'argsIgnorePattern': '^_',
+                'varsIgnorePattern': '^_',
+                'caughtErrorsIgnorePattern': '^_',
+            }],
+            'no-bitwise': 'off',
         },
     },
     {
