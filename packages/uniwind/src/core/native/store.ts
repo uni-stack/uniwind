@@ -240,11 +240,19 @@ class UniwindStoreBuilder {
             const attributeValue = props[attribute]
 
             if (expectedAttributeValue === 'true') {
-                return attributeValue === true || attributeValue === 'true'
+                if (attributeValue !== true && attributeValue !== 'true') {
+                    return false
+                }
+
+                continue
             }
 
             if (expectedAttributeValue === 'false') {
-                return attributeValue === false || attributeValue === 'false'
+                if (attributeValue !== false && attributeValue !== 'false') {
+                    return false
+                }
+
+                continue
             }
 
             if (attributeValue !== expectedAttributeValue) {
