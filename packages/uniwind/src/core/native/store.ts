@@ -10,7 +10,10 @@ import { UniwindRuntime } from './runtime'
 type StylesResult = {
     styles: RNStyle
     dependencies: Array<StyleDependency>
+    dependencySum: number
 }
+
+const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
@@ -22,10 +25,7 @@ class UniwindStoreBuilder {
 
     getStyles(className: string | undefined, componentProps?: Record<string, any>, state?: ComponentState): StylesResult {
         if (className === undefined || className === '') {
-            return {
-                styles: {},
-                dependencies: [],
-            }
+            return emptyState
         }
 
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}`
@@ -88,6 +88,7 @@ class UniwindStoreBuilder {
         let vars = this.vars
         let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()
+        let dependencySum = 0
         const bestBreakpoints = new Map<string, Style>()
 
         for (const className of classNames.split(' ')) {
@@ -97,7 +98,11 @@ class UniwindStoreBuilder {
 
             for (const style of this.stylesheet[className] as Array<Style>) {
                 if (style.dependencies) {
-                    style.dependencies.forEach(dep => dependencies.add(dep))
+                    style.dependencies.forEach(dep => {
+                        dependencies.add(dep)
+                        // eslint-disable-next-line no-bitwise
+                        dependencySum |= 1 << dep
+                    })
                 }
 
                 if (style.dataAttributes !== null) {
@@ -225,6 +230,7 @@ class UniwindStoreBuilder {
         return {
             styles: { ...result } as RNStyle,
             dependencies: Array.from(dependencies),
+            dependencySum,
             hasDataAttributes,
         }
     }

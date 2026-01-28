@@ -1,14 +1,11 @@
 import { useEffect, useReducer } from 'react'
 import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
-import { RNStyle } from '../core/types'
-
-const emptyState = { styles: {} as RNStyle, dependencies: [] }
 
 export const useResolveClassNames = (className: string) => {
     const [uniwindState, recreate] = useReducer(
-        () => className !== '' ? UniwindStore.getStyles(className) : emptyState,
-        className !== '' ? UniwindStore.getStyles(className) : emptyState,
+        () => UniwindStore.getStyles(className),
+        UniwindStore.getStyles(className),
     )
 
     useEffect(() => {
