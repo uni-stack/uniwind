@@ -23,7 +23,10 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
             runtimeCSSVariables[varName] = varValue
             this.runtimeCSSVariables.set(theme, runtimeCSSVariables)
-            this.applyCSSVariable(varName, varValue)
+
+            if (theme === this.currentTheme) {
+                this.applyCSSVariable(varName, varValue)
+            }
         })
 
         if (theme === this.currentTheme) {
