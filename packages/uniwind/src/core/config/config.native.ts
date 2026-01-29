@@ -39,11 +39,14 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             const value = getValue()
             const runtimeThemeVariables = UniwindStore.runtimeThemeVariables.get(theme) ?? {}
 
-            Object.defineProperty(UniwindStore.vars, varName, {
-                configurable: true,
-                enumerable: true,
-                get: () => value,
-            })
+            if (theme === this.currentTheme) {
+                Object.defineProperty(UniwindStore.vars, varName, {
+                    configurable: true,
+                    enumerable: true,
+                    get: () => value,
+                })
+            }
+
             Object.defineProperty(runtimeThemeVariables, varName, {
                 configurable: true,
                 enumerable: true,
