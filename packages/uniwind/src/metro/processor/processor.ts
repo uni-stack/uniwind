@@ -179,6 +179,13 @@ export class ProcessorBuilder {
                         disabled = true
                     }
 
+                    // data-x
+                    if (selector.type === 'attribute' && selector.operation === null) {
+                        dataAttributes ??= {}
+                        dataAttributes[selector.name] = `"true"`
+                    }
+
+                    // data-x=
                     if (selector.type === 'attribute' && selector.operation?.operator === 'equal') {
                         dataAttributes ??= {}
                         dataAttributes[selector.name] = `"${selector.operation.value}"`
