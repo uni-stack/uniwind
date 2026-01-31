@@ -384,6 +384,10 @@
     &[aria-disabled="true"] {
         @slot;
     }
+
+    &[readonly] {
+        @slot;
+    }
 }
 
 @custom-variant light {

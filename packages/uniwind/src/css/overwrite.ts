@@ -6,6 +6,10 @@ const overwriteDisabled = `@custom-variant disabled {
     &[aria-disabled="true"] {
         @slot;
     }
+
+    &[readonly] {
+        @slot;
+    }
 }
 `
 

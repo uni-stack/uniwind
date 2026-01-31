@@ -180,13 +180,13 @@ export class ProcessorBuilder {
                     }
 
                     // data-x
-                    if (selector.type === 'attribute' && selector.operation === null) {
+                    if (selector.type === 'attribute' && selector.operation === null && selector.name.startsWith('data-')) {
                         dataAttributes ??= {}
                         dataAttributes[selector.name] = `"true"`
                     }
 
                     // data-x=
-                    if (selector.type === 'attribute' && selector.operation?.operator === 'equal') {
+                    if (selector.type === 'attribute' && selector.operation?.operator === 'equal' && selector.name.startsWith('data-')) {
                         dataAttributes ??= {}
                         dataAttributes[selector.name] = `"${selector.operation.value}"`
                     }
