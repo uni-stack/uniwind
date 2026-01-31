@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { generateCSSForInsets } from './insets'
+import { overwrite } from './overwrite'
 import { generateCSSForThemes } from './themes'
 import { generateCSSForVariants } from './variants'
 
@@ -18,6 +19,7 @@ export const buildCSS = async (themes: Array<string>, input: string) => {
     const newCssFile = [
         variants,
         insets,
+        overwrite,
         themesCSS,
     ].join('\n')
 
