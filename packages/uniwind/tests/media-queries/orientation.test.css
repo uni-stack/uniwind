@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@layer theme {
+  :root {
+    --text-base: 1rem;
+    --spacing-md: 1rem;
+  }
+}
+
+@media (orientation: landscape) {
+  :root {
+    --text-base: 2.5rem;
+    --spacing-md: 1.5rem;
+  }
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+
+.p-spacing-md {
+  padding: var(--spacing-md);
+}
+

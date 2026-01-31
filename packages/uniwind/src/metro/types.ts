@@ -27,8 +27,8 @@ export type UniwindConfig = {
 }
 
 export type MediaQueryResolver = {
-    maxWidth: any
-    minWidth: any
+    maxWidth: number | null
+    minWidth: number | null
     platform: Platform | null
     rtl: boolean | null
     important: boolean
