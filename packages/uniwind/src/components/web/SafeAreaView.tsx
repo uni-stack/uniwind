@@ -1,8 +1,8 @@
-import { SafeAreaView as RNSafeAreaView, ViewProps } from 'react-native'
+import { SafeAreaView as RNSafeAreaView, type SafeAreaViewProps } from 'react-native-safe-area-context'
 import { copyComponentProperties } from '../utils'
 import { toRNWClassName } from './rnw'
 
-export const SafeAreaView = copyComponentProperties(RNSafeAreaView, (props: ViewProps) => {
+export const SafeAreaView = copyComponentProperties(RNSafeAreaView, (props: SafeAreaViewProps) => {
     return (
         <RNSafeAreaView
             {...props}
