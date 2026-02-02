@@ -85,4 +85,19 @@ describe('Spacing', () => {
         expect(getStylesFromId('ml-1').marginLeft).toBe(4)
         expect(getStylesFromId('-ml-1').marginLeft).toBe(-4)
     })
+
+    test('Insets', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="inset-4" testID="inset-4" />
+                <View className="inset-[11px]" testID="inset-[11px]" />
+                <View className="inset-[10px_5px]" testID="inset-[10px_5px]" />
+            </React.Fragment>,
+        )
+
+        expect(getStylesFromId('inset-4').inset).toBe(16)
+        expect(getStylesFromId('inset-[11px]').inset).toBe(11)
+        expect(getStylesFromId('inset-[10px_5px]').top).toBe(10)
+        expect(getStylesFromId('inset-[10px_5px]').right).toBe(5)
+    })
 })

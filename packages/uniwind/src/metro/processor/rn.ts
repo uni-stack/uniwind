@@ -252,6 +252,14 @@ export class RN {
         }
 
         if (properties.every(property => ['top', 'right', 'bottom', 'left'].includes(property))) {
+            if (transformedProperty === 'inset') {
+                const isEverySideSame = properties.every(property => value[property] === value.top)
+
+                return isEverySideSame
+                    ? { inset: value.top }
+                    : value
+            }
+
             return {
                 [wrapProperty('Top')]: value.top,
                 [wrapProperty('Right')]: value.right,
