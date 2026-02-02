@@ -1,7 +1,7 @@
 {
     "private": false,
     "name": "uniwind",
-    "version": "1.2.7",
+    "version": "1.3.0",
     "description": "The fastest Tailwind bindings for React Native",
     "homepage": "https://uniwind.dev",
     "author": "Unistack",
