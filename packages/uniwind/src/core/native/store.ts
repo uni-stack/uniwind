@@ -28,12 +28,11 @@ class UniwindStoreBuilder {
             return emptyState
         }
 
-        const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}`
+        const stateFlags = (state?.isDisabled ? 4 : 0) | (state?.isFocused ? 2 : 0) | (state?.isPressed ? 1 : 0)
+        const cacheKey = `${className}:${stateFlags}`
+        const cached = this.cache.get(cacheKey)
 
-        if (this.cache.has(cacheKey)) {
-            return this.cache.get(cacheKey)!
-        }
-
+        if (cached) return cached
         const result = this.resolveStyles(className, componentProps, state)
 
         // Don't cache styles that depend on data attributes
