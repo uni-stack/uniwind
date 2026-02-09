@@ -38,6 +38,16 @@ export const uniwind = ({
 
     return {
         name: 'uniwind',
+        enforce: 'pre',
+        resolveId: (source, importer) => {
+            const normalizedSource = normalizePath(source)
+            const isTarget = source === './createOrderedCSSStyleSheet'
+                || normalizedSource.endsWith('react-native-web/dist/exports/StyleSheet/dom/createOrderedCSSStyleSheet.js')
+
+            if (isTarget && importer !== undefined && normalizePath(importer).includes('react-native-web/dist/exports/StyleSheet')) {
+                return styleSheetPath
+            }
+        },
         config: () => ({
             css: {
                 transformer: 'lightningcss',
