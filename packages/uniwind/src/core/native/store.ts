@@ -11,9 +11,10 @@ type StylesResult = {
     styles: RNStyle
     dependencies: Array<StyleDependency>
     dependencySum: number
+    hasDataAttributes: boolean
 }
 
-const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
+const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0, hasDataAttributes: false }
 
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
@@ -28,11 +29,16 @@ class UniwindStoreBuilder {
             return emptyState
         }
 
-        const stateFlags = (state?.isDisabled ? 4 : 0) | (state?.isFocused ? 2 : 0) | (state?.isPressed ? 1 : 0)
+        const stateFlags = (state ? 8 : 0)
+            | (state?.isDisabled ? 4 : 0)
+            | (state?.isFocused ? 2 : 0)
+            | (state?.isPressed ? 1 : 0)
         const cacheKey = `${className}:${stateFlags}`
-        const cached = this.cache.get(cacheKey)
 
-        if (cached) return cached
+        if (this.cache.has(cacheKey)) {
+            return this.cache.get(cacheKey)!
+        }
+
         const result = this.resolveStyles(className, componentProps, state)
 
         // Don't cache styles that depend on data attributes
