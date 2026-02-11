@@ -93,9 +93,24 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         }
 
         const { styles, dependencies } = UniwindStore.getStyles(className)
+        acc.dependencies.push(...dependencies)
+
+        if (!isStyleProperty(propName)) {
+            acc.generatedProps[propName] = styles
+
+            return acc
+        }
+
+        const existingStyle = props[propName]
+
+        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
+        if (existingStyle) {
+            acc.generatedProps[propName] = [styles, existingStyle]
+
+            return acc
+        }
 
         acc.generatedProps[propName] = styles
-        acc.dependencies.push(...dependencies)
 
         return acc
     }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
