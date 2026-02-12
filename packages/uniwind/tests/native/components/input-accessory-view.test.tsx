@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { InputAccessoryView as RNInputAccessoryView, Platform, StyleSheet } from 'react-native'
 import InputAccessoryView from '../../../src/components/native/InputAccessoryView'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 
 describe('InputAccessoryView', () => {
     beforeAll(() => {

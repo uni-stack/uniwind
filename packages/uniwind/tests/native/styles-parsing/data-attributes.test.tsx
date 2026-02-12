@@ -1,6 +1,6 @@
 import * as React from 'react'
 import View from '../../../src/components/native/View'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 import { renderUniwind } from '../utils'
 
 describe('Data attributes', () => {

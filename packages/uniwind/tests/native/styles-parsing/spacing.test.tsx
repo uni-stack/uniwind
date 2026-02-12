@@ -1,6 +1,6 @@
 import * as React from 'react'
 import View from '../../../src/components/native/View'
-import { SCREEN_WIDTH } from '../consts'
+import { SCREEN_WIDTH } from '../../consts'
 import { renderUniwind } from '../utils'
 
 describe('Spacing', () => {

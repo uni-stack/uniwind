@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import ActivityIndicator from '../../../src/components/native/ActivityIndicator'
-import { TW_RED_500 } from '../consts'
+import { TW_RED_500 } from '../../consts'
 
 describe('ActivityIndicator', () => {
     test('Basic rendering with colorClassName', () => {

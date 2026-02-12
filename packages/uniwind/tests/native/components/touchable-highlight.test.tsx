@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet, TouchableHighlight as RNTouchableHighlight, View } from 'react-native'
 import TouchableHighlight from '../../../src/components/native/TouchableHighlight'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('TouchableHighlight', () => {
     test('Basic rendering with className and underlayColorClassName', () => {

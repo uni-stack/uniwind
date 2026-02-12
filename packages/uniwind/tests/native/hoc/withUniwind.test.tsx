@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { ActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import { withUniwind } from '../../../src/hoc/withUniwind.native'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 import { renderUniwind } from '../utils'
 
 const Component: React.FC<ActivityIndicatorProps> = (props) => <ActivityIndicator {...props} />

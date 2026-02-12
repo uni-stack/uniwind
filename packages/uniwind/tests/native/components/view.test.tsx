@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import View from '../../../src/components/native/View'
-import { TW_RED_500 } from '../consts'
+import { TW_RED_500 } from '../../consts'
 
 describe('View', () => {
     test('Basic rendering', () => {

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Button from '../../../src/components/native/Button'
-import { TW_RED_500 } from '../consts'
+import { TW_RED_500 } from '../../consts'
 
 describe('Button', () => {
     test('Basic rendering', () => {

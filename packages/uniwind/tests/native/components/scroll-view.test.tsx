@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { ScrollView as RNScrollView, StyleSheet } from 'react-native'
 import ScrollView from '../../../src/components/native/ScrollView'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 
 describe('ScrollView', () => {
     test('Basic rendering with className, contentContainerClassName and endFillColorClassName', () => {

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import FlatList from '../../../src/components/native/FlatList'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('FlatList', () => {
     test('Basic rendering with classNames and colors', () => {

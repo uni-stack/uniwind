@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet, TouchableWithoutFeedback as RNTouchableWithoutFeedback, View } from 'react-native'
 import TouchableWithoutFeedback from '../../../src/components/native/TouchableWithoutFeedback'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('TouchableWithoutFeedback', () => {
     test('Basic rendering with className', () => {

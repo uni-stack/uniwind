@@ -2,7 +2,7 @@ import { fireEvent, render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet, TouchableOpacity as RNTouchableOpacity, View } from 'react-native'
 import TouchableOpacity from '../../../src/components/native/TouchableOpacity'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('TouchableOpacity', () => {
     test('Basic rendering with className', () => {

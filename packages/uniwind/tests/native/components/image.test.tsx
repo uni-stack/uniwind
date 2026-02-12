@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import Image from '../../../src/components/native/Image'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 
 describe('Image', () => {
     test('Basic rendering with className and tintColorClassName', () => {

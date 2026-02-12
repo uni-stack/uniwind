@@ -1,6 +1,6 @@
 import * as React from 'react'
 import View from '../../../src/components/native/View'
-import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, TW_SPACING } from '../consts'
+import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, TW_SPACING } from '../../consts'
 import { renderUniwind } from '../utils'
 
 describe('Safe Area', () => {

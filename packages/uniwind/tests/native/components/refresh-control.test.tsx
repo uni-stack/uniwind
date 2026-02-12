@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { RefreshControl as RNRefreshControl, StyleSheet } from 'react-native'
 import RefreshControl from '../../../src/components/native/RefreshControl'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('RefreshControl', () => {
     test('Basic rendering with className and color props', () => {

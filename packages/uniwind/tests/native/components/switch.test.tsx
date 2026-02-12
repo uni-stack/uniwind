@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { Switch as RNSwitch } from 'react-native'
 import Switch from '../../../src/components/native/Switch'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500 } from '../../consts'
 
 describe('Switch', () => {
     test('Basic rendering with className and color props', () => {

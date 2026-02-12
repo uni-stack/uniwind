@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { KeyboardAvoidingView as RNKeyboardAvoidingView, StyleSheet } from 'react-native'
 import KeyboardAvoidingView from '../../../src/components/native/KeyboardAvoidingView'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 
 describe('KeyboardAvoidingView', () => {
     test('Basic rendering with className and contentContainerClassName', () => {

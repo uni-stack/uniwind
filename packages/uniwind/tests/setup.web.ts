@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom'
-
 // Mock CSS-related globals that JSDOM doesn't define
 if (typeof CSSRuleList === 'undefined') {
     global.CSSRuleList = class CSSRuleList {} as any

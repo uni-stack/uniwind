@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { Modal as RNModal, StyleSheet } from 'react-native'
 import Modal from '../../../src/components/native/Modal'
-import { TW_BLUE_500, TW_RED_500 } from '../consts'
+import { TW_BLUE_500, TW_RED_500 } from '../../consts'
 
 describe('Modal', () => {
     test('Basic rendering with className and backdropColorClassName', () => {

@@ -2,7 +2,7 @@ import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet, Text, VirtualizedList as RNVirtualizedList } from 'react-native'
 import VirtualizedList from '../../../src/components/native/VirtualizedList'
-import { TW_BLUE_500, TW_GREEN_500, TW_RED_500, TW_YELLOW_500 } from '../consts'
+import { TW_BLUE_500, TW_GREEN_500, TW_RED_500, TW_YELLOW_500 } from '../../consts'
 
 describe('VirtualizedList', () => {
     const data = ['Item 1', 'Item 2']
