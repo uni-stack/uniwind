@@ -18,7 +18,8 @@
         "prepublishOnly": "bun run build",
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
         "build:css": "bun run src/css/index.ts",
-        "test": "jest"
+        "test:native": "jest --config jest.config.native.js",
+        "test:web": "jest --config jest.config.web.js"
     },
     "keywords": [
         "unistyles",
@@ -88,20 +89,25 @@
         "tailwindcss": ">=4"
     },
     "devDependencies": {
+        "@react-native/babel-preset": "0.83.0",
+        "@testing-library/jest-dom": "6.9.1",
+        "@testing-library/jest-native": "5.4.3",
+        "@testing-library/react": "16.3.2",
+        "@testing-library/react-native": "13.3.3",
         "@types/bun": "catalog:",
         "@types/culori": "4.0.1",
+        "@types/jest": "30.0.0",
         "@types/react": "catalog:",
-        "typescript": "catalog:",
-        "metro": "0.83.3",
         "dpdm": "3.14.0",
-        "unbuild": "3.6.1",
-        "vite": "7.2.7",
         "jest": "30.2.0",
-        "react-test-renderer": "19.1.0",
-        "@react-native/babel-preset": "0.83.0",
-        "@testing-library/jest-native": "5.4.3",
-        "@testing-library/react-native": "13.3.3",
+        "jest-environment-jsdom": "30.2.0",
+        "metro": "0.83.3",
         "prettier": "3.7.4",
-        "@types/jest": "30.0.0"
+        "react-native-web": "catalog:",
+        "react-test-renderer": "19.1.0",
+        "ts-jest": "29.4.6",
+        "typescript": "catalog:",
+        "unbuild": "3.6.1",
+        "vite": "7.2.7"
     }
 }

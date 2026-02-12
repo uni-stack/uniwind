@@ -14,9 +14,15 @@
         "//#check:format": {},
         "circular:check": {},
         "precommit": {
-            "dependsOn": ["lint", "check:typescript", "circular:check", "test", "//#check:format"]
+            "dependsOn": ["lint", "check:typescript", "circular:check", "test:native", "test:web", "//#check:format"]
         },
         "test": {
+            "dependsOn": ["test:native", "test:web"]
+        },
+        "test:native": {
+            "cache": false
+        },
+        "test:web": {
             "cache": false
         }
     }
