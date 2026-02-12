@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useLayoutEffect, useReducer } from 'react'
 import { RNStyle } from '../core/types'
 import { CSSListener, getWebStyles } from '../core/web'
 
@@ -10,7 +10,7 @@ export const useResolveClassNames = (className: string) => {
         className !== '' ? getWebStyles(className) : emptyState,
     )
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (className === '') {
             return
         }

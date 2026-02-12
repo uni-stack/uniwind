@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useLayoutEffect, useReducer } from 'react'
 import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
 
@@ -8,13 +8,13 @@ export const useResolveClassNames = (className: string) => {
         UniwindStore.getStyles(className),
     )
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (className !== '') {
             recreate()
         }
     }, [className])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (uniwindState.dependencies.length > 0) {
             const dispose = UniwindListener.subscribe(recreate, uniwindState.dependencies)
 

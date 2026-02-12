@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useLayoutEffect, useReducer } from 'react'
 import { UniwindListener } from '../../core/listener'
 import { UniwindStore } from '../../core/native'
 import { ComponentState } from '../../core/types'
@@ -8,7 +8,7 @@ export const useStyle = (className: string | undefined, componentProps: Record<s
     const [_, rerender] = useReducer(() => ({}), {})
     const styleState = UniwindStore.getStyles(className, componentProps, state)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (__DEV__ || styleState.dependencies.length > 0) {
             const dispose = UniwindListener.subscribe(rerender, styleState.dependencies)
 

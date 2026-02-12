@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useReducer } from 'react'
+import { ComponentProps, useLayoutEffect, useReducer } from 'react'
 import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
 import { StyleDependency } from '../types'
@@ -56,7 +56,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
     const deps = Array.from(new Set(dependencies))
     const [, rerender] = useReducer(() => ({}), {})
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const dispose = UniwindListener.subscribe(rerender, deps)
 
         return dispose
@@ -118,7 +118,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
     const deps = Array.from(new Set(dependencies))
     const [, rerender] = useReducer(() => ({}), {})
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const dispose = UniwindListener.subscribe(rerender, deps)
 
         return dispose

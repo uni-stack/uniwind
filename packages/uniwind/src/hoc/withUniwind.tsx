@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useReducer } from 'react'
+import { ComponentProps, useLayoutEffect, useReducer } from 'react'
 import { CSSListener, formatColor, getWebStyles } from '../core/web'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
@@ -54,7 +54,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
     const [, rerender] = useReducer(() => ({}), {})
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const dispose = CSSListener.subscribeToClassName(classNames, rerender)
 
         return dispose
@@ -100,7 +100,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
 
     const [, rerender] = useReducer(() => ({}), {})
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const dispose = CSSListener.subscribeToClassName(classNames, rerender)
 
         return dispose

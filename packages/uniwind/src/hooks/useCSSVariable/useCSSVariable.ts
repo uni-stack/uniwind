@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
 import { StyleDependency } from '../../types'
@@ -45,7 +45,7 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
     const [value, setValue] = useState(getValue(name))
     const nameRef = useRef(name)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (Array.isArray(name) && Array.isArray(nameRef.current)) {
             if (arrayEquals(name, nameRef.current)) {
                 return
@@ -63,7 +63,7 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
         }
     }, [name])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const updateValue = () => setValue(getValue(nameRef.current))
         const dispose = UniwindListener.subscribe(
             updateValue,

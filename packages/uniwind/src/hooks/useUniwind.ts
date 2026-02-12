@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { Uniwind } from '../core'
 import { UniwindListener } from '../core/listener'
 import { ThemeName } from '../core/types'
@@ -8,7 +8,7 @@ export const useUniwind = () => {
     const [theme, setTheme] = useState(Uniwind.currentTheme)
     const [hasAdaptiveThemes, setHasAdaptiveThemes] = useState(Uniwind.hasAdaptiveThemes)
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const dispose = UniwindListener.subscribe(() => {
             setTheme(Uniwind.currentTheme)
             setHasAdaptiveThemes(Uniwind.hasAdaptiveThemes)
