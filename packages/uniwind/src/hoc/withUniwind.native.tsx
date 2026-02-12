@@ -53,14 +53,17 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         return acc
     }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
 
-    const deps = Array.from(new Set(dependencies))
+    const dependencySum = dependencies.reduce((acc, dependency) => {
+        acc |= 1 << dependency
+        return acc
+    }, 0)
     const [, rerender] = useReducer(() => ({}), {})
 
     useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, deps)
+        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
 
         return dispose
-    }, [deps])
+    }, [dependencySum])
 
     return (
         <Component
@@ -115,14 +118,17 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         return acc
     }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
 
-    const deps = Array.from(new Set(dependencies))
+    const dependencySum = dependencies.reduce((acc, dependency) => {
+        acc |= 1 << dependency
+        return acc
+    }, 0)
     const [, rerender] = useReducer(() => ({}), {})
 
     useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, deps)
+        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
 
         return dispose
-    }, [deps])
+    }, [dependencySum])
 
     return (
         <Component

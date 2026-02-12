@@ -20,7 +20,7 @@ export const useResolveClassNames = (className: string) => {
 
             return dispose
         }
-    }, [uniwindState.dependencies, className])
+    }, [uniwindState.dependencySum, className])
 
     return uniwindState.styles
 }
