@@ -1,5 +1,5 @@
 ---
-name: Migrate NativeWind to Uniwind
+name: migrate-nativewind-to-uniwind
 description: >
   Migrate a React Native project from NativeWind to Uniwind. Use when the user wants to
   replace NativeWind with Uniwind, upgrade from NativeWind, switch to Uniwind, or mentions
@@ -37,7 +37,7 @@ bun remove nativewind react-native-css-interop
 
 **CRITICAL**: `react-native-css-interop` is a NativeWind dependency that must be removed. It is commonly missed during migration. Search the entire codebase for any imports from it:
 ```bash
-grep -r "react-native-css-interop" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"
+rg "react-native-css-interop" -g "*.{ts,tsx,js,jsx}"
 ```
 
 Remove every import and usage found.
@@ -176,7 +176,7 @@ Font families must specify a **single font** — React Native doesn't support fo
 **This is the most commonly missed step.** Search the entire codebase:
 
 ```bash
-grep -rn "cssInterop\|remapProps" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx"
+rg "cssInterop|remapProps" -g "*.{ts,tsx,js,jsx}"
 ```
 
 Replace every `cssInterop()` / `remapProps()` call with Uniwind's `withUniwind()`:
@@ -361,11 +361,11 @@ NativeWind uses 14px as the base rem, Uniwind defaults to 16px. Step 4 already s
 
 ## Step 13: Handle className Deduplication
 
-Uniwind does NOT auto-deduplicate conflicting classNames (NativeWind did). If your codebase relies on override patterns like `className={`p-4 ${overrideClass}`}`, set up a `cn` utility.
+Uniwind does NOT auto-deduplicate conflicting classNames (NativeWind did). If your codebase relies on override patterns like ``className={`p-4 ${overrideClass}`}``, set up a `cn` utility.
 
 First, check if the project already has a `cn` helper (common in shadcn/ui projects):
 ```bash
-grep -rn "export function cn\|export const cn" --include="*.ts" --include="*.tsx" --include="*.js"
+rg "export function cn|export const cn" -g "*.{ts,tsx,js}"
 ```
 
 If it exists, keep it as-is. If not, install dependencies and create it:
@@ -394,12 +394,19 @@ import { cn } from '@/lib/cn';
 
 Use `cn` instead of raw `twMerge` — it handles conditional classes, arrays, and falsy values via `clsx` before deduplicating with `tailwind-merge`.
 
-## Step 14: Clean Up Remaining NativeWind References
+## Step 14: Update Animated Class Names
+
+If the project used NativeWind `animated-*` / transition class patterns, migrate those to explicit `react-native-reanimated` usage. Uniwind OSS does not provide NativeWind-style animated class behavior.
+
+Use this migration guide section as the source of truth:
+- https://docs.uniwind.dev/migration-from-nativewind
+
+## Step 15: Clean Up Remaining NativeWind References
 
 Final sweep — search for and remove any remaining references:
 
 ```bash
-grep -rn "nativewind\|NativeWind\|native-wind" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.json" --include="*.css"
+rg "nativewind|NativeWind|native-wind" -g "*.{ts,tsx,js,jsx,json,css}"
 ```
 
 Check for:
@@ -554,13 +561,13 @@ Update theme variables at runtime, e.g. based on user preferences or API respons
 import { Uniwind } from 'uniwind';
 
 // Preconfigure theme based on user input or API response
-Uniwind.updateCSSVariables({
+Uniwind.updateCSSVariables('light', {
   '--color-primary': '#ff6600',
   '--color-background': '#1a1a2e',
 });
 ```
 
-This pattern should be used only if user has such functionality in the app eg. user selects colors / api response etc.
+This pattern should be used only when the app has real runtime theming needs (for example, user-selected brand colors or API-driven themes).
 
 ### Variants with tailwind-variants
 
@@ -592,7 +599,7 @@ const button = tv({
 
 Docs: https://docs.uniwind.dev/monorepos
 
-If the project is a monorepo, add `@source` directives in `global.css` so Tailwind scans packages outside the CSS entry file's directory (only if this director has components with tailwind classes):
+If the project is a monorepo, add `@source` directives in `global.css` so Tailwind scans packages outside the CSS entry file's directory (only if that directory has components with Tailwind classes):
 
 ```css
 @import 'tailwindcss';
