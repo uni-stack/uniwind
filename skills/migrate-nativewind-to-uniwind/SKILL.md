@@ -88,6 +88,17 @@ module.exports = withUniwindConfig(config, {
 });
 ```
 
+`cssEntryFile` must be a **relative path string** from project root (e.g. `./global.css` or `./app/global.css`).
+Do **not** use absolute paths or `path.resolve(...)` / `path.join(...)` for this option.
+
+```js
+// ❌ Broken
+cssEntryFile: path.resolve(__dirname, 'app', 'global.css')
+
+// ✅ Correct
+cssEntryFile: './app/global.css'
+```
+
 **Always set `polyfills.rem` to 14** to match NativeWind's default rem value and prevent spacing/sizing differences after migration.
 
 If the project uses custom themes beyond `light`/`dark` (e.g. defined via NativeWind's `vars()` or a custom ThemeProvider), register them with `extraThemes`. Do NOT include `light` or `dark` — they are added automatically:
@@ -101,7 +112,7 @@ module.exports = withUniwindConfig(config, {
 ```
 
 Options:
-- `cssEntryFile` (required): path to CSS entry file
+- `cssEntryFile` (required): relative path string to CSS entry file (from project root)
 - `polyfills.rem` (required for migration): set to `14` to match NativeWind's rem base
 - `extraThemes` (required if project has custom themes): array of custom theme names — do NOT include `light`/`dark`
 - `dtsFile` (optional): path for generated TypeScript types, defaults to `./uniwind-types.d.ts`
