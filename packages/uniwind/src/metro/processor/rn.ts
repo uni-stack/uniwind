@@ -177,6 +177,8 @@ export class RN {
                 x => {
                     if (x.includes('padding') || x.includes('margin')) {
                         return x
+                            .replace('InlineStart', 'Start')
+                            .replace('InlineEnd', 'End')
                             .replace('Inline', 'Horizontal')
                             .replace('Block', 'Vertical')
                     }
