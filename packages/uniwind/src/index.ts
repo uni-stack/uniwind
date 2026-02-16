@@ -1,3 +1,4 @@
+export * from './components/ScopedTheme'
 export { Uniwind } from './core'
 export { withUniwind } from './hoc'
 export type { ApplyUniwind, ApplyUniwindOptions } from './hoc/types'
