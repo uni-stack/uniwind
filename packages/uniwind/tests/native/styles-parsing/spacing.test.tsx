@@ -38,6 +38,8 @@ describe('Spacing', () => {
                 <View className="pr-1" testID="pr-1" />
                 <View className="pb-1" testID="pb-1" />
                 <View className="pl-1" testID="pl-1" />
+                <View className="ps-1" testID="ps-1" />
+                <View className="pe-1" testID="pe-1" />
             </React.Fragment>,
         )
 
@@ -54,6 +56,8 @@ describe('Spacing', () => {
         expect(getStylesFromId('pr-1').paddingRight).toBe(4)
         expect(getStylesFromId('pb-1').paddingBottom).toBe(4)
         expect(getStylesFromId('pl-1').paddingLeft).toBe(4)
+        expect(getStylesFromId('ps-1').paddingStart).toBe(4)
+        expect(getStylesFromId('pe-1').paddingEnd).toBe(4)
     })
 
     test('Margin', () => {
@@ -67,6 +71,8 @@ describe('Spacing', () => {
                 <View className="mb-1" testID="mb-1" />
                 <View className="ml-1" testID="ml-1" />
                 <View className="-ml-1" testID="-ml-1" />
+                <View className="ms-1" testID="ms-1" />
+                <View className="me-1" testID="me-1" />
             </React.Fragment>,
         )
 
@@ -84,6 +90,8 @@ describe('Spacing', () => {
         expect(getStylesFromId('mb-1').marginBottom).toBe(4)
         expect(getStylesFromId('ml-1').marginLeft).toBe(4)
         expect(getStylesFromId('-ml-1').marginLeft).toBe(-4)
+        expect(getStylesFromId('ms-1').marginStart).toBe(4)
+        expect(getStylesFromId('me-1').marginEnd).toBe(4)
     })
 
     test('Insets', () => {
