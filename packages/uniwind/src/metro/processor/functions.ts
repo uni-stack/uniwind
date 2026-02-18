@@ -110,10 +110,18 @@ export class Functions {
         }
 
         if (fn.name === 'pixelRatio') {
+            if (fn.arguments.length === 0) {
+                return 'rt.pixelRatio(1)'
+            }
+
             return `rt.pixelRatio(${this.Processor.CSS.processValue(fn.arguments)})`
         }
 
         if (fn.name === 'fontScale') {
+            if (fn.arguments.length === 0) {
+                return 'rt.fontScale(1)'
+            }
+
             return `rt.fontScale(${this.Processor.CSS.processValue(fn.arguments)})`
         }
 
