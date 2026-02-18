@@ -1,77 +1,38 @@
 import { transform } from 'lightningcss'
 import { processFunctions } from '../css/processFunctions'
 
-export const polyfillWeb = (css: string) => {
+export const polyfillWeb = (css: string, themes: Array<string>) => {
+    const processedClassNames = new Set<string>()
+
     const result = transform({
         code: Buffer.from(css),
         filename: 'uniwind.css',
         visitor: {
             Function: processFunctions,
             Rule: {
-                'layer-block': layer => {
-                    if (layer.value.name?.at(0) !== 'theme') {
+                style: styleRule => {
+                    const firstSelector = styleRule.value.selectors.at(0)?.at(0)
+
+                    if (firstSelector?.type !== 'class') {
                         return
                     }
 
-                    const firstRule = layer.value.rules.at(0)
+                    const selectedVariant = themes.find(theme => firstSelector.name.includes(`${theme}:`))
 
-                    if (firstRule?.type !== 'style') {
+                    if (selectedVariant === undefined || processedClassNames.has(selectedVariant)) {
                         return
                     }
 
-                    const firstSelector = firstRule.value.selectors.at(0)?.at(0)
+                    processedClassNames.add(selectedVariant)
 
-                    if (firstSelector?.type !== 'pseudo-class' || firstSelector.kind !== 'root') {
-                        return
+                    return {
+                        type: 'scope',
+                        value: {
+                            loc: styleRule.value.loc,
+                            scopeStart: [[{ type: 'class', name: selectedVariant }]],
+                            rules: [styleRule],
+                        },
                     }
-
-                    const firstNestedRule = firstRule.value.rules?.at(0)
-
-                    if (firstNestedRule?.type !== 'style') {
-                        return
-                    }
-
-                    const firstNestedSelector = firstNestedRule.value.selectors.at(0)?.at(0)
-
-                    if (firstNestedSelector?.type !== 'nesting') {
-                        return
-                    }
-
-                    firstRule.value.rules?.forEach((rule) => {
-                        if (rule.type !== 'style') {
-                            return
-                        }
-
-                        const variantSelector = rule.value.selectors.at(0)?.at(1)
-
-                        if (variantSelector?.type !== 'pseudo-class' || variantSelector.kind !== 'where') {
-                            return
-                        }
-
-                        const variant = variantSelector.selectors.at(0)?.at(0)
-
-                        if (variant?.type !== 'class') {
-                            return
-                        }
-
-                        layer.value.rules.push({
-                            type: 'scope',
-                            value: {
-                                scopeStart: [[variant]],
-                                loc: { column: 0, line: 0, source_index: 0 },
-                                rules: [{
-                                    type: 'style',
-                                    value: {
-                                        loc: { column: 0, line: 0, source_index: 0 },
-                                        selectors: [[{ type: 'pseudo-class', kind: 'scope' }]],
-                                        declarations: rule.value.declarations,
-                                    },
-                                }],
-                            },
-                        })
-                    })
-
-                    return layer
                 },
             },
         },

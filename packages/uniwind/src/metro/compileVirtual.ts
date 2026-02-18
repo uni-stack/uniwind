@@ -36,7 +36,7 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
     const tailwindCSS = compiler.build(candidates ?? scanner.scan())
 
     if (platform === Platform.Web) {
-        return polyfillWeb(tailwindCSS)
+        return polyfillWeb(tailwindCSS, themes)
     }
 
     const Processor = new ProcessorBuilder(themes, polyfills)
