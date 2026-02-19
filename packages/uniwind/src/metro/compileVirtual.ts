@@ -1,9 +1,10 @@
 import { compile } from '@tailwindcss/node'
 import { Scanner } from '@tailwindcss/oxide'
+import { transform } from 'lightningcss'
 import path from 'path'
+import { UniwindCSSVisitor } from '../css-visitor'
 import { addMetaToStylesTemplate } from './addMetaToStylesTemplate'
 import { Logger } from './logger'
-import { polyfillWeb } from './polyfillWeb'
 import { ProcessorBuilder } from './processor'
 import { Platform, Polyfills } from './types'
 import { serializeJSObject } from './utils'
@@ -36,7 +37,11 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
     const tailwindCSS = compiler.build(candidates ?? scanner.scan())
 
     if (platform === Platform.Web) {
-        return polyfillWeb(tailwindCSS, themes)
+        return transform({
+            code: Buffer.from(tailwindCSS),
+            filename: 'uniwind.css',
+            visitor: new UniwindCSSVisitor(themes),
+        }).code.toString()
     }
 
     const Processor = new ProcessorBuilder(themes, polyfills)
