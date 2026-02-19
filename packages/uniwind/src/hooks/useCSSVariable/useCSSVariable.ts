@@ -1,13 +1,14 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useContext, useLayoutEffect, useRef, useState } from 'react'
+import { UniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
 import { StyleDependency } from '../../types'
 import { getVariableValue } from './getVariableValue'
 
-const getValue = (name: string | Array<string>) =>
+const getValue = (name: string | Array<string>, uniwindContext: React.ContextType<typeof UniwindContext>) =>
     Array.isArray(name)
-        ? name.map(getVariableValue)
-        : getVariableValue(name)
+        ? name.map(name => getVariableValue(name, uniwindContext))
+        : getVariableValue(name, uniwindContext)
 
 const arrayEquals = <T>(a: Array<T>, b: Array<T>) => {
     if (a.length !== b.length) {
@@ -42,7 +43,8 @@ type UseCSSVariable = {
  * @returns Value / Values of the CSS variable. On web it is always a string (1rem, #ff0000, etc.), but on native it can be a string or a number (16px, #ff0000)
  */
 export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => {
-    const [value, setValue] = useState(getValue(name))
+    const uniwindContext = useContext(UniwindContext)
+    const [value, setValue] = useState(getValue(name, uniwindContext))
     const nameRef = useRef(name)
 
     useLayoutEffect(() => {
@@ -51,20 +53,20 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
                 return
             }
 
-            setValue(getValue(name))
+            setValue(getValue(name, uniwindContext))
             nameRef.current = name
 
             return
         }
 
         if (name !== nameRef.current) {
-            setValue(getValue(name))
+            setValue(getValue(name, uniwindContext))
             nameRef.current = name
         }
     }, [name])
 
     useLayoutEffect(() => {
-        const updateValue = () => setValue(getValue(nameRef.current))
+        const updateValue = () => setValue(getValue(nameRef.current, uniwindContext))
         const dispose = UniwindListener.subscribe(
             updateValue,
             [StyleDependency.Theme, StyleDependency.Variables],

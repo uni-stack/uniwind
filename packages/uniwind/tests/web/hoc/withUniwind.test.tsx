@@ -3,7 +3,7 @@ import * as React from 'react'
 import { ActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import * as webCore from '../../../src/core/web'
 import { withUniwind } from '../../../src/hoc/withUniwind'
-import { TW_BLUE_500, TW_RED_500 } from '../../consts'
+import { TW_BLUE_500, TW_RED_500, UNIWIND_CONTEXT_MOCK } from '../../consts'
 
 const Component: React.FC<ActivityIndicatorProps> = (props) => <ActivityIndicator {...props} />
 
@@ -42,7 +42,7 @@ describe('withUniwind', () => {
 
         render(<AutoWithUniwind colorClassName="accent-red-500" testID="test-component" />)
 
-        expect(mockGetWebStyles).toHaveBeenCalledWith('accent-red-500')
+        expect(mockGetWebStyles).toHaveBeenCalledWith('accent-red-500', UNIWIND_CONTEXT_MOCK)
 
         const receivedProps = ComponentWithSpy.mock.calls[0][0]
 

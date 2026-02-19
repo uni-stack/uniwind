@@ -1,13 +1,15 @@
-import { useLayoutEffect, useReducer } from 'react'
+import { useContext, useLayoutEffect, useReducer } from 'react'
+import { UniwindContext } from '../core/context'
 import { RNStyle } from '../core/types'
 import { CSSListener, getWebStyles } from '../core/web'
 
 const emptyState = {} as RNStyle
 
 export const useResolveClassNames = (className: string) => {
+    const uniwindContext = useContext(UniwindContext)
     const [styles, recreate] = useReducer(
-        () => className !== '' ? getWebStyles(className) : emptyState,
-        className !== '' ? getWebStyles(className) : emptyState,
+        () => className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
+        className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
     )
 
     useLayoutEffect(() => {

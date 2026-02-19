@@ -1,4 +1,5 @@
-import { ComponentProps, useLayoutEffect, useReducer } from 'react'
+import { ComponentProps, useContext, useLayoutEffect, useReducer } from 'react'
+import { UniwindContext } from '../core/context'
 import { CSSListener, formatColor, getWebStyles } from '../core/web'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
@@ -14,6 +15,8 @@ export const withUniwind: WithUniwind = <
     : withAutoUniwind(Component)
 
 const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
+    const uniwindContext = useContext(UniwindContext)
+
     const { classNames, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
@@ -23,7 +26,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
             }
 
             const className = propValue
-            const color = getWebStyles(className).accentColor
+            const color = getWebStyles(className, uniwindContext).accentColor
 
             acc.generatedProps[colorProp] = color !== undefined
                 ? formatColor(color)
@@ -69,6 +72,8 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 }
 
 const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
+    const uniwindContext = useContext(UniwindContext)
+
     const { generatedProps, classNames } = Object.entries(options).reduce((acc, [propName, option]) => {
         const className = props[option.fromClassName]
 
@@ -82,7 +87,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
                 return acc
             }
 
-            const value = getWebStyles(className)[option.styleProperty]
+            const value = getWebStyles(className, uniwindContext)[option.styleProperty]
             const transformedValue = value !== undefined && option.styleProperty.toLowerCase().includes('color')
                 ? formatColor(value as string)
                 : value

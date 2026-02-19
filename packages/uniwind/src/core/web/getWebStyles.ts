@@ -1,14 +1,19 @@
+import { UniwindContext } from '../../core/context'
 import { RNStyle } from '../types'
 import { parseCSSValue } from './parseCSSValue'
 
-const dummy = typeof document !== 'undefined'
+const dummyParent = typeof document !== 'undefined'
     ? Object.assign(document.createElement('div'), {
         style: 'display: none',
     })
     : null
+const dummy = typeof document !== 'undefined'
+    ? document.createElement('div')
+    : null
 
-if (dummy) {
-    document.body.appendChild(dummy)
+if (dummyParent && dummy) {
+    document.body.appendChild(dummyParent)
+    dummyParent.appendChild(dummy)
 }
 
 const getComputedStyles = () => {
@@ -47,13 +52,19 @@ const getObjectDifference = <T extends object>(obj1: T, obj2: T): T => {
     return diff
 }
 
-export const getWebStyles = (className?: string): RNStyle => {
+export const getWebStyles = (className: string | undefined, uniwindContext: React.ContextType<typeof UniwindContext>): RNStyle => {
     if (className === undefined) {
         return {}
     }
 
     if (!dummy) {
         return {}
+    }
+
+    if (uniwindContext.scopedTheme !== null) {
+        dummyParent?.setAttribute('class', uniwindContext.scopedTheme)
+    } else {
+        dummyParent?.removeAttribute('class')
     }
 
     dummy.className = className
@@ -73,4 +84,20 @@ export const getWebStyles = (className?: string): RNStyle => {
                 ]
             }),
     )
+}
+
+export const getWebVariable = (name: string, uniwindContext: React.ContextType<typeof UniwindContext>) => {
+    if (!dummyParent) {
+        return undefined
+    }
+
+    if (uniwindContext.scopedTheme !== null) {
+        dummyParent.setAttribute('class', uniwindContext.scopedTheme)
+    } else {
+        dummyParent.removeAttribute('class')
+    }
+
+    const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
+
+    return parseCSSValue(variable)
 }
