@@ -1,5 +1,4 @@
-import * as React from 'react'
-import type { UniwindContext } from '../src/core/context'
+import { UniwindContextType } from '../src/core/types'
 
 export const TW_RED_500 = '#fb2c36'
 export const TW_GREEN_500 = '#00c950'
@@ -15,4 +14,4 @@ export const SCREEN_HEIGHT = 844
 
 export const UNIWIND_CONTEXT_MOCK = {
     scopedTheme: null,
-} satisfies React.ContextType<typeof UniwindContext>
+} satisfies UniwindContextType

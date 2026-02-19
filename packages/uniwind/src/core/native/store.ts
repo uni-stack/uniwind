@@ -2,7 +2,7 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
-import { ComponentState, CSSVariables, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName } from '../types'
+import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
 import { cloneWithAccessors } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
@@ -17,30 +17,38 @@ const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 
 
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
-    vars = {} as Record<string, unknown>
-    runtimeThemeVariables = new Map<ThemeName, CSSVariables>()
+    vars = {} as Record<ThemeName, Record<string, unknown>>
     private stylesheet = {} as StyleSheets
-    private cache = new Map<string, StylesResult>()
-    private generateStyleSheetCallbackResult: ReturnType<GenerateStyleSheetsCallback> | null = null
+    private cache = {} as Record<ThemeName, Map<string, StylesResult>>
 
-    getStyles(className: string | undefined, componentProps?: Record<string, any>, state?: ComponentState): StylesResult {
+    getStyles(
+        className: string | undefined,
+        componentProps: Record<string, any> | undefined,
+        state: ComponentState | undefined,
+        uniwindContext: UniwindContextType,
+    ): StylesResult {
         if (className === undefined || className === '') {
             return emptyState
         }
 
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}`
+        const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
-        if (this.cache.has(cacheKey)) {
-            return this.cache.get(cacheKey)!
+        if (!cache) {
+            return emptyState
         }
 
-        const result = this.resolveStyles(className, componentProps, state)
+        if (cache.has(cacheKey)) {
+            return cache.get(cacheKey)!
+        }
+
+        const result = this.resolveStyles(className, componentProps, state, uniwindContext)
 
         // Don't cache styles that depend on data attributes
         if (!result.hasDataAttributes) {
-            this.cache.set(cacheKey, result)
+            cache.set(cacheKey, result)
             UniwindListener.subscribe(
-                () => this.cache.delete(cacheKey),
+                () => cache.delete(cacheKey),
                 result.dependencies,
                 { once: true },
             )
@@ -49,47 +57,49 @@ class UniwindStoreBuilder {
         return result
     }
 
-    reinit = (generateStyleSheetCallback?: GenerateStyleSheetsCallback) => {
-        const config = generateStyleSheetCallback?.(this.runtime) ?? this.generateStyleSheetCallbackResult
-
-        if (!config) {
-            return
-        }
-
+    reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
+        const config = generateStyleSheetCallback(this.runtime)
         const { scopedVars, stylesheet, vars } = config
-
-        this.generateStyleSheetCallbackResult = config
-        this.stylesheet = stylesheet
-        this.vars = vars
-
-        const themeVars = scopedVars[`__uniwind-theme-${this.runtime.currentThemeName}`]
         const platformVars = scopedVars[`__uniwind-platform-${Platform.OS}`]
-        const runtimeThemeVars = this.runtimeThemeVariables.get(this.runtime.currentThemeName)
-
-        if (themeVars) {
-            Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(themeVars))
-        }
 
         if (platformVars) {
-            Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(platformVars))
+            Object.defineProperties(vars, Object.getOwnPropertyDescriptors(platformVars))
         }
 
-        if (runtimeThemeVars) {
-            Object.defineProperties(this.vars, Object.getOwnPropertyDescriptors(runtimeThemeVars))
-        }
+        this.stylesheet = stylesheet
+        this.vars = Object.fromEntries(themes.map(theme => {
+            const clonedVars = cloneWithAccessors(vars)
+            const themeVars = scopedVars[`__uniwind-theme-${theme}`]
 
-        if (__DEV__ && generateStyleSheetCallback) {
+            if (themeVars) {
+                Object.defineProperties(clonedVars, Object.getOwnPropertyDescriptors(themeVars))
+            }
+
+            return [theme, clonedVars]
+        }))
+        this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
+
+        if (__DEV__) {
             UniwindListener.notifyAll()
         }
     }
 
-    private resolveStyles(classNames: string, componentProps?: Record<string, any>, state?: ComponentState) {
+    private resolveStyles(
+        classNames: string,
+        componentProps: Record<string, any> | undefined,
+        state: ComponentState | undefined,
+        uniwindContext: UniwindContextType,
+    ) {
         const result = {} as Record<string, any>
-        let vars = this.vars
+        // At this point we're sure that theme is correct
+        const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
+        let vars = this.vars[theme]!
+        const originalVars = vars
         let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()
         let dependencySum = 0
         const bestBreakpoints = new Map<string, Style>()
+        const isScopedTheme = uniwindContext.scopedTheme !== null
 
         for (const className of classNames.split(' ')) {
             if (!(className in this.stylesheet)) {
@@ -99,6 +109,10 @@ class UniwindStoreBuilder {
             for (const style of this.stylesheet[className] as Array<Style>) {
                 if (style.dependencies) {
                     style.dependencies.forEach(dep => {
+                        if (dep === StyleDependency.Theme && isScopedTheme) {
+                            return
+                        }
+
                         dependencies.add(dep)
                         dependencySum |= 1 << dep
                     })
@@ -111,7 +125,7 @@ class UniwindStoreBuilder {
                 if (
                     style.minWidth > this.runtime.screen.width
                     || style.maxWidth < this.runtime.screen.width
-                    || (style.theme !== null && this.runtime.currentThemeName !== style.theme)
+                    || (style.theme !== null && theme !== style.theme)
                     || (style.orientation !== null && this.runtime.orientation !== style.orientation)
                     || (style.rtl !== null && this.runtime.rtl !== style.rtl)
                     || (style.active !== null && state?.isPressed !== style.active)
@@ -138,8 +152,8 @@ class UniwindStoreBuilder {
 
                     if (property[0] === '-') {
                         // Clone vars object if we are adding inline variables
-                        if (vars === this.vars) {
-                            vars = cloneWithAccessors(this.vars)
+                        if (vars === originalVars) {
+                            vars = cloneWithAccessors(originalVars)
                         }
 
                         Object.defineProperty(vars, property, {

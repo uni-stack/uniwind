@@ -1,5 +1,7 @@
+import React from 'react'
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import { ColorScheme, Orientation, StyleDependency, UniwindConfig } from '../types'
+import type { UniwindContext } from './context'
 
 export type Style = {
     entries: Array<[string, () => unknown]>
@@ -92,3 +94,5 @@ export type ComponentState = {
 }
 
 export type CSSVariables = Record<string, string | number>
+
+export type UniwindContextType = React.ContextType<typeof UniwindContext>

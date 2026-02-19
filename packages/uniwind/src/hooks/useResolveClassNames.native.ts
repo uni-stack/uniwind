@@ -1,11 +1,13 @@
 import { useLayoutEffect, useReducer } from 'react'
+import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
 
 export const useResolveClassNames = (className: string) => {
+    const uniwindContext = useUniwindContext()
     const [uniwindState, recreate] = useReducer(
-        () => UniwindStore.getStyles(className),
-        UniwindStore.getStyles(className),
+        () => UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
+        UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
     )
 
     useLayoutEffect(() => {

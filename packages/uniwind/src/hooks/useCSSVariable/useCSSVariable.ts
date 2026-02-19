@@ -1,11 +1,12 @@
-import { useContext, useLayoutEffect, useRef, useState } from 'react'
-import { UniwindContext } from '../../core/context'
+import { useLayoutEffect, useRef, useState } from 'react'
+import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
+import { UniwindContextType } from '../../core/types'
 import { StyleDependency } from '../../types'
 import { getVariableValue } from './getVariableValue'
 
-const getValue = (name: string | Array<string>, uniwindContext: React.ContextType<typeof UniwindContext>) =>
+const getValue = (name: string | Array<string>, uniwindContext: UniwindContextType) =>
     Array.isArray(name)
         ? name.map(name => getVariableValue(name, uniwindContext))
         : getVariableValue(name, uniwindContext)
@@ -43,7 +44,7 @@ type UseCSSVariable = {
  * @returns Value / Values of the CSS variable. On web it is always a string (1rem, #ff0000, etc.), but on native it can be a string or a number (16px, #ff0000)
  */
 export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => {
-    const uniwindContext = useContext(UniwindContext)
+    const uniwindContext = useUniwindContext()
     const [value, setValue] = useState(getValue(name, uniwindContext))
     const nameRef = useRef(name)
 

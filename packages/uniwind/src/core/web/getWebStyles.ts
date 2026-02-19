@@ -1,5 +1,4 @@
-import { UniwindContext } from '../../core/context'
-import { RNStyle } from '../types'
+import { RNStyle, UniwindContextType } from '../types'
 import { parseCSSValue } from './parseCSSValue'
 
 const dummyParent = typeof document !== 'undefined'
@@ -52,7 +51,7 @@ const getObjectDifference = <T extends object>(obj1: T, obj2: T): T => {
     return diff
 }
 
-export const getWebStyles = (className: string | undefined, uniwindContext: React.ContextType<typeof UniwindContext>): RNStyle => {
+export const getWebStyles = (className: string | undefined, uniwindContext: UniwindContextType): RNStyle => {
     if (className === undefined) {
         return {}
     }
@@ -86,7 +85,7 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Reac
     )
 }
 
-export const getWebVariable = (name: string, uniwindContext: React.ContextType<typeof UniwindContext>) => {
+export const getWebVariable = (name: string, uniwindContext: UniwindContextType) => {
     if (!dummyParent) {
         return undefined
     }
