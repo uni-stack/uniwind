@@ -7,14 +7,15 @@ export const useResolveClassNames = (className: string) => {
     const uniwindContext = useUniwindContext()
     const [uniwindState, recreate] = useReducer(
         () => UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
-        UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
+        undefined,
+        () => UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
     )
 
     useLayoutEffect(() => {
         if (className !== '') {
             recreate()
         }
-    }, [className])
+    }, [className, uniwindContext])
 
     useLayoutEffect(() => {
         if (uniwindState.dependencies.length > 0) {

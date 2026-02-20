@@ -9,7 +9,8 @@ export const useResolveClassNames = (className: string) => {
     const uniwindContext = useUniwindContext()
     const [styles, recreate] = useReducer(
         () => className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
-        className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
+        undefined,
+        () => className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
     )
 
     useLayoutEffect(() => {
@@ -22,7 +23,7 @@ export const useResolveClassNames = (className: string) => {
         const dispose = CSSListener.subscribeToClassName(className, recreate)
 
         return dispose
-    }, [className])
+    }, [className, uniwindContext])
 
     return styles
 }

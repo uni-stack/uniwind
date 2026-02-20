@@ -1,13 +1,13 @@
 import { ReturnedDeclaration, ReturnedMediaQuery, ReturnedRule, Rule, SelectorComponent } from 'lightningcss'
 
 type LightningRuleVisitor = Rule<ReturnedDeclaration, ReturnedMediaQuery>
-type LightingRuleVisitors = Partial<
+type LightningRuleVisitors = Partial<
     {
         [K in LightningRuleVisitor['type']]: (rule: Extract<LightningRuleVisitor, { type: K }>) => ReturnedRule | Array<ReturnedRule> | void
     }
 >
 
-export class RuleVisitor implements LightingRuleVisitors {
+export class RuleVisitor implements LightningRuleVisitors {
     processedClassNames = new Set<string>()
     processedVariables = new Set<string>()
     currentLayerName = ''

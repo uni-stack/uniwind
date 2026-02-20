@@ -92,8 +92,8 @@ class UniwindStoreBuilder {
         uniwindContext: UniwindContextType,
     ) {
         const result = {} as Record<string, any>
-        // At this point we're sure that theme is correct
         const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
+        // At this point we're sure that theme is correct
         let vars = this.vars[theme]!
         const originalVars = vars
         let hasDataAttributes = false

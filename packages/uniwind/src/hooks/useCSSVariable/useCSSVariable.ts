@@ -74,7 +74,7 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
         )
 
         return dispose
-    }, [])
+    }, [uniwindContext])
 
     if (Array.isArray(value)) {
         value.forEach((val, index) => {

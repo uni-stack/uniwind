@@ -36,6 +36,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
                 return varValue
             }
 
+            UniwindStore.vars[theme] ??= {}
             Object.defineProperty(UniwindStore.vars[theme], varName, {
                 configurable: true,
                 enumerable: true,
