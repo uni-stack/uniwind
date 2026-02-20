@@ -1,18 +1,24 @@
+import { act } from '@testing-library/react-native'
 import * as React from 'react'
 import { ActivityIndicator, ActivityIndicatorProps, StyleSheet } from 'react-native'
 import Button from '../../../src/components/native/Button'
 import View from '../../../src/components/native/View'
 import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
+import { Uniwind } from '../../../src/core'
 import { withUniwind } from '../../../src/hoc/withUniwind.native'
 import { useCSSVariable } from '../../../src/hooks/useCSSVariable'
 import { useResolveClassNames } from '../../../src/hooks/useResolveClassNames.native'
 import { renderUniwind } from '../utils'
 
 describe('ScopedTheme', () => {
+    afterEach(() => {
+        Uniwind.setTheme('light')
+    })
+
     test('Component styles', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
-                <View className="bg-background" testID="light" />
+                <View className="bg-background" testID="base" />
                 <ScopedTheme theme="dark">
                     <View className="bg-background" testID="nested-dark" />
                     <ScopedTheme theme="light">
@@ -22,19 +28,23 @@ describe('ScopedTheme', () => {
             </React.Fragment>,
         )
 
-        const light = getStylesFromId('light')
-        const nestedDark = getStylesFromId('nested-dark')
-        const nestedLightInDark = getStylesFromId('nested-light-in-dark')
+        expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+        expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
 
-        expect(light.backgroundColor).toEqual('#ffffff')
-        expect(nestedDark.backgroundColor).toEqual('#000000')
-        expect(nestedLightInDark.backgroundColor).toEqual('#ffffff')
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(getStylesFromId('base').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
     })
 
     test('Component accents', () => {
         const { getByText } = renderUniwind(
             <React.Fragment>
-                <Button colorClassName="accent-background" title="light" />
+                <Button colorClassName="accent-background" title="base" />
                 <ScopedTheme theme="dark">
                     <Button colorClassName="accent-background" title="nested-dark" />
                     <ScopedTheme theme="light">
@@ -44,13 +54,19 @@ describe('ScopedTheme', () => {
             </React.Fragment>,
         )
 
-        const light = StyleSheet.flatten(getByText('light').props.style)
-        const nestedDark = StyleSheet.flatten(getByText('nested-dark').props.style)
-        const nestedLightInDark = StyleSheet.flatten(getByText('nested-light-in-dark').props.style)
+        const getColor = (text: string) => StyleSheet.flatten(getByText(text).props.style).color
 
-        expect(light.color).toEqual('#ffffff')
-        expect(nestedDark.color).toEqual('#000000')
-        expect(nestedLightInDark.color).toEqual('#ffffff')
+        expect(getColor('base')).toEqual('#ffffff')
+        expect(getColor('nested-dark')).toEqual('#000000')
+        expect(getColor('nested-light-in-dark')).toEqual('#ffffff')
+
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(getColor('base')).toEqual('#000000')
+        expect(getColor('nested-dark')).toEqual('#000000')
+        expect(getColor('nested-light-in-dark')).toEqual('#ffffff')
     })
 
     test('withUniwind', () => {
@@ -59,7 +75,7 @@ describe('ScopedTheme', () => {
 
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
-                <WithUniwind className="bg-background" testID="light" />
+                <WithUniwind className="bg-background" testID="base" />
                 <ScopedTheme theme="dark">
                     <WithUniwind className="bg-background" testID="nested-dark" />
                     <ScopedTheme theme="light">
@@ -69,17 +85,21 @@ describe('ScopedTheme', () => {
             </React.Fragment>,
         )
 
-        const light = getStylesFromId('light')
-        const nestedDark = getStylesFromId('nested-dark')
-        const nestedLightInDark = getStylesFromId('nested-light-in-dark')
+        expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+        expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
 
-        expect(light.backgroundColor).toEqual('#ffffff')
-        expect(nestedDark.backgroundColor).toEqual('#000000')
-        expect(nestedLightInDark.backgroundColor).toEqual('#ffffff')
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(getStylesFromId('base').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+        expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
     })
 
     test('useResolveClassNames', () => {
-        const light = jest.fn()
+        const base = jest.fn()
         const nestedDark = jest.fn()
         const nestedLightInDark = jest.fn()
 
@@ -93,7 +113,7 @@ describe('ScopedTheme', () => {
 
         renderUniwind(
             <React.Fragment>
-                <Component test={light} />
+                <Component test={base} />
                 <ScopedTheme theme="dark">
                     <Component test={nestedDark} />
                     <ScopedTheme theme="light">
@@ -103,13 +123,21 @@ describe('ScopedTheme', () => {
             </React.Fragment>,
         )
 
-        expect(light).toHaveBeenCalledWith('#ffffff')
+        expect(base).toHaveBeenCalledWith('#ffffff')
         expect(nestedDark).toHaveBeenCalledWith('#000000')
         expect(nestedLightInDark).toHaveBeenCalledWith('#ffffff')
+
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(base).toHaveBeenLastCalledWith('#000000')
+        expect(nestedDark).toHaveBeenLastCalledWith('#000000')
+        expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
     })
 
     test('useCSSVariable', () => {
-        const light = jest.fn()
+        const base = jest.fn()
         const nestedDark = jest.fn()
         const nestedLightInDark = jest.fn()
 
@@ -123,7 +151,7 @@ describe('ScopedTheme', () => {
 
         renderUniwind(
             <React.Fragment>
-                <Component test={light} />
+                <Component test={base} />
                 <ScopedTheme theme="dark">
                     <Component test={nestedDark} />
                     <ScopedTheme theme="light">
@@ -133,8 +161,16 @@ describe('ScopedTheme', () => {
             </React.Fragment>,
         )
 
-        expect(light).toHaveBeenCalledWith('#ffffff')
+        expect(base).toHaveBeenCalledWith('#ffffff')
         expect(nestedDark).toHaveBeenCalledWith('#000000')
         expect(nestedLightInDark).toHaveBeenCalledWith('#ffffff')
+
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(base).toHaveBeenLastCalledWith('#000000')
+        expect(nestedDark).toHaveBeenLastCalledWith('#000000')
+        expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
     })
 })
