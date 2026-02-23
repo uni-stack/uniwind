@@ -45,6 +45,7 @@ export const addMissingSpaces = (str: string) =>
         x => x.trim(),
         x => x.replace(/([^ {])this/g, '$1 this'),
         x => x.replace(/\](?=\d)/g, '] '),
+        x => x.replace(/\](?=")/g, '] '),
         x => x.replace(/\)(?=\S)/g, ') '),
         x => x.replace(/(?<!^)(?<!\s)"(?=\d)/g, '" '),
     )

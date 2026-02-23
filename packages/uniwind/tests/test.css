@@ -4,6 +4,7 @@
 :root {
   --foo: 120 50% 50%;
   --bar: 0.7 0.1 141;
+  --my-gradient: linear-gradient(90deg, var(--color-foo) 0%, var(--color-bar) 100%);
 }
 
 @theme {
