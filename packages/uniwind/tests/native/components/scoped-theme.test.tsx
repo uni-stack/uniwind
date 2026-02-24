@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react-native'
 import * as React from 'react'
 import { ActivityIndicator, ActivityIndicatorProps, StyleSheet } from 'react-native'
+import { useUniwind } from '../../../src'
 import Button from '../../../src/components/native/Button'
 import View from '../../../src/components/native/View'
 import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
@@ -172,5 +173,43 @@ describe('ScopedTheme', () => {
         expect(base).toHaveBeenLastCalledWith('#000000')
         expect(nestedDark).toHaveBeenLastCalledWith('#000000')
         expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
+    })
+
+    test('useUniwind', () => {
+        const base = jest.fn()
+        const nestedDark = jest.fn()
+        const nestedLightInDark = jest.fn()
+
+        const Component = (props: { test: jest.Mock }) => {
+            const { theme } = useUniwind()
+
+            props.test(theme)
+
+            return null
+        }
+
+        renderUniwind(
+            <React.Fragment>
+                <Component test={base} />
+                <ScopedTheme theme="dark">
+                    <Component test={nestedDark} />
+                    <ScopedTheme theme="light">
+                        <Component test={nestedLightInDark} />
+                    </ScopedTheme>
+                </ScopedTheme>
+            </React.Fragment>,
+        )
+
+        expect(base).toHaveBeenCalledWith('light')
+        expect(nestedDark).toHaveBeenCalledWith('dark')
+        expect(nestedLightInDark).toHaveBeenCalledWith('light')
+
+        act(() => {
+            Uniwind.setTheme('dark')
+        })
+
+        expect(base).toHaveBeenLastCalledWith('dark')
+        expect(nestedDark).toHaveBeenLastCalledWith('dark')
+        expect(nestedLightInDark).toHaveBeenLastCalledWith('light')
     })
 })
