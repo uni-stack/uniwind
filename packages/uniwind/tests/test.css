@@ -11,4 +11,17 @@
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
   --spacing-test: 123px;
+  --color-background: unset;
+}
+
+@layer theme {
+    :root {
+        @variant dark {
+            --color-background: black;
+        }
+
+        @variant light {
+            --color-background: white;
+        }
+    }
 }

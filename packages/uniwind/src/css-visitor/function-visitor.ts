@@ -1,12 +1,14 @@
-import { CustomAtRules, TokenOrValue, Visitor } from 'lightningcss'
+import { Function as LightningCSSFunction, TokenOrValue } from 'lightningcss'
 
 const ONE_PX = {
     type: 'token',
     value: { type: 'dimension', unit: 'px', value: 1 },
 } satisfies TokenOrValue
 
-export const processFunctions: Visitor<CustomAtRules>['Function'] = {
-    pixelRatio: (fn) => {
+export class FunctionVisitor {
+    [name: string]: (fn: LightningCSSFunction) => TokenOrValue
+
+    pixelRatio(fn: LightningCSSFunction): TokenOrValue {
         return {
             type: 'function',
             value: {
@@ -17,9 +19,10 @@ export const processFunctions: Visitor<CustomAtRules>['Function'] = {
                     ONE_PX,
                 ],
             },
-        } satisfies TokenOrValue
-    },
-    fontScale: (fn) => {
+        }
+    }
+
+    fontScale(fn: LightningCSSFunction): TokenOrValue {
         return {
             type: 'function',
             value: {
@@ -33,7 +36,10 @@ export const processFunctions: Visitor<CustomAtRules>['Function'] = {
                     },
                 ],
             },
-        } satisfies TokenOrValue
-    },
-    hairlineWidth: () => ONE_PX,
+        }
+    }
+
+    hairlineWidth(): TokenOrValue {
+        return ONE_PX
+    }
 }

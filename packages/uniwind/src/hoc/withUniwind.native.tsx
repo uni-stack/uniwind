@@ -1,4 +1,5 @@
 import { ComponentProps, useLayoutEffect, useReducer } from 'react'
+import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
 import { UniwindStore } from '../core/native'
 import { StyleDependency } from '../types'
@@ -16,6 +17,7 @@ export const withUniwind: WithUniwind = <
     : withAutoUniwind(Component)
 
 const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
+    const uniwindContext = useUniwindContext()
     const { dependencies, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
@@ -24,7 +26,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(propValue)
+            const { styles, dependencies } = UniwindStore.getStyles(propValue, undefined, undefined, uniwindContext)
 
             acc.dependencies.push(...dependencies)
             acc.generatedProps[colorProp] = styles.accentColor
@@ -34,7 +36,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
         if (isClassProperty(propName)) {
             const styleProp = classToStyle(propName)
-            const { styles, dependencies } = UniwindStore.getStyles(propValue)
+            const { styles, dependencies } = UniwindStore.getStyles(propValue, undefined, undefined, uniwindContext)
 
             acc.dependencies.push(...dependencies)
             acc.generatedProps[styleProp] ??= []
@@ -74,6 +76,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 }
 
 const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
+    const uniwindContext = useUniwindContext()
     const { generatedProps, dependencies } = Object.entries(options).reduce((acc, [propName, option]) => {
         const className = props[option.fromClassName]
 
@@ -87,7 +90,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(className)
+            const { styles, dependencies } = UniwindStore.getStyles(className, undefined, undefined, uniwindContext)
 
             acc.generatedProps[propName] = styles[option.styleProperty]
             acc.dependencies.push(...dependencies)
@@ -95,7 +98,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
             return acc
         }
 
-        const { styles, dependencies } = UniwindStore.getStyles(className)
+        const { styles, dependencies } = UniwindStore.getStyles(className, undefined, undefined, uniwindContext)
         acc.dependencies.push(...dependencies)
 
         if (!isStyleProperty(propName)) {

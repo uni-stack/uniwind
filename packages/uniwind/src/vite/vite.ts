@@ -3,7 +3,7 @@ import path from 'path'
 import type { Plugin } from 'vite'
 import { name as UNIWIND_PACKAGE_NAME } from '../../package.json'
 import { buildCSS } from '../css'
-import { processFunctions } from '../css/processFunctions'
+import { UniwindCSSVisitor } from '../css-visitor'
 import { uniq } from '../metro/utils'
 import { buildDtsFile } from '../utils/buildDtsFile'
 import { stringifyThemes } from '../utils/stringifyThemes'
@@ -52,9 +52,7 @@ export const uniwind = ({
             css: {
                 transformer: 'lightningcss',
                 lightningcss: {
-                    visitor: {
-                        Function: processFunctions,
-                    },
+                    visitor: new UniwindCSSVisitor(themes),
                 },
             },
             optimizeDeps: {

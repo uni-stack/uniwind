@@ -1,0 +1,19 @@
+# Exclude HTML
+*.html linguist-detectable=false
+*.htm linguist-detectable=false
+
+# Exclude Kotlin
+*.kt linguist-detectable=false
+*.kts linguist-detectable=false
+
+# Exclude JavaScript
+*.js linguist-detectable=false
+*.jsx linguist-detectable=false
+*.mjs linguist-detectable=false
+*.cjs linguist-detectable=false
+
+# Exclude Ruby
+*.rb linguist-detectable=false
+
+# Exclude Swift
+*.swift linguist-detectable=false

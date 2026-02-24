@@ -36,23 +36,12 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
                 return varValue
             }
 
-            const value = getValue()
-            const runtimeThemeVariables = UniwindStore.runtimeThemeVariables.get(theme) ?? {}
-
-            if (theme === this.currentTheme) {
-                Object.defineProperty(UniwindStore.vars, varName, {
-                    configurable: true,
-                    enumerable: true,
-                    get: () => value,
-                })
-            }
-
-            Object.defineProperty(runtimeThemeVariables, varName, {
+            UniwindStore.vars[theme] ??= {}
+            Object.defineProperty(UniwindStore.vars[theme], varName, {
                 configurable: true,
                 enumerable: true,
-                get: () => value,
+                get: getValue,
             })
-            UniwindStore.runtimeThemeVariables.set(theme, runtimeThemeVariables)
         })
 
         if (theme === this.currentTheme) {
@@ -70,12 +59,11 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
     protected __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
         super.__reinit(generateStyleSheetCallback, themes)
-        UniwindStore.reinit(generateStyleSheetCallback)
+        UniwindStore.reinit(generateStyleSheetCallback, themes)
     }
 
     protected onThemeChange() {
         UniwindStore.runtime.currentThemeName = this.currentTheme
-        UniwindStore.reinit()
     }
 }
 
