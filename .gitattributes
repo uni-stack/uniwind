@@ -14,6 +14,8 @@
 
 # Exclude Ruby
 *.rb linguist-detectable=false
+Podfile linguist-detectable=false
+Gemfile linguist-detectable=false
 
 # Exclude Swift
 *.swift linguist-detectable=false

@@ -29,10 +29,16 @@ const parseStringValue = (value: string) => {
 
         // Expressions that need to be wrapped with ${}
         const endsWithComma = token.endsWith(',')
+        const expr = endsWithComma ? token.slice(0, -1) : token
+
+        // Only wrap in ${} if the expression is valid JS — otherwise treat as plain string
+        if (!isValidJSValue(expr)) {
+            return token
+        }
 
         return [
             '${',
-            endsWithComma ? token.slice(0, -1) : token,
+            expr,
             '}',
             endsWithComma ? ',' : '',
         ].join('')
