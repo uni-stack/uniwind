@@ -545,7 +545,7 @@ Uniwind.setTheme('system');   // follow system (default)
 Uniwind.setTheme('ocean');    // custom theme (must be in extraThemes)
 ```
 
-### ScopedTheme (Uniwind Pro) — Theme a Subtree Only
+### ScopedTheme — Theme a Subtree Only
 
 Docs: https://docs.uniwind.dev/api/scoped-themes
 
