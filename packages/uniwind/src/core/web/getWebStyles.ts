@@ -34,9 +34,18 @@ const getComputedStyles = () => {
     return styles
 }
 
-const initialStyles = typeof document !== 'undefined'
-    ? getComputedStyles()
-    : {} as CSSStyleDeclaration
+// Capture initialStyles lazily on first call to ensure CSS is loaded
+// Module-level capture can happen before Metro/Expo injects the CSS
+let initialStyles: CSSStyleDeclaration | undefined
+
+const getInitialStyles = (): CSSStyleDeclaration => {
+    if (!initialStyles) {
+        initialStyles = typeof document !== 'undefined'
+            ? getComputedStyles()
+            : {} as CSSStyleDeclaration
+    }
+    return initialStyles
+}
 
 const getObjectDifference = <T extends object>(obj1: T, obj2: T): T => {
     const diff = {} as T
@@ -68,7 +77,7 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 
     dummy.className = className
 
-    const computedStyles = getObjectDifference(initialStyles, getComputedStyles())
+    const computedStyles = getObjectDifference(getInitialStyles(), getComputedStyles())
 
     return Object.fromEntries(
         Object.entries(computedStyles)
