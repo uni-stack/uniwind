@@ -34,6 +34,12 @@ export class RuleVisitor implements LightningRuleVisitors {
         }
     }
 
+    cleanup() {
+        this.currentLayerName = ''
+        this.processedClassNames.clear()
+        this.processedVariables.clear()
+    }
+
     private processThemeStyle(
         styleRule: Extract<LightningRuleVisitor, { type: 'style' }>,
         secondSelector: Extract<SelectorComponent, { type: 'pseudo-class'; kind: 'where' }>,
