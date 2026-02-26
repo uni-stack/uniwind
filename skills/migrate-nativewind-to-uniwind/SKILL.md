@@ -320,6 +320,15 @@ export const themes = {
 
 No ThemeProvider wrapper needed. Remove the NativeWind `<ThemeProvider>` or `vars()` wrapper from JSX. Keep React Navigation's `<ThemeProvider>` if used.
 
+If the project used nested theme wrappers to preview or force a theme for a specific subtree (for example a demo card, settings preview, or side-by-side theme comparison), use Uniwind Pro's `ScopedTheme` instead of changing the global theme:
+```tsx
+import { ScopedTheme } from 'uniwind';
+
+<ScopedTheme theme="dark">
+  <PreviewCard />
+</ScopedTheme>
+```
+
 If the project has **custom themes beyond light/dark** (e.g. `ocean`, `premium`), you must:
 1. Define them in CSS using `@variant`:
 ```css
@@ -535,6 +544,34 @@ Uniwind.setTheme('light');    // force light
 Uniwind.setTheme('system');   // follow system (default)
 Uniwind.setTheme('ocean');    // custom theme (must be in extraThemes)
 ```
+
+### ScopedTheme (Uniwind Pro) — Theme a Subtree Only
+
+Docs: https://docs.uniwind.dev/api/scoped-themes
+
+Use `ScopedTheme` when the project needs a different theme for only part of the UI (component previews, themed sections, nested demos) without changing the app-wide theme:
+
+```tsx
+import { ScopedTheme } from 'uniwind';
+
+<View className="gap-3">
+  <PreviewCard />
+
+  <ScopedTheme theme="light">
+    <PreviewCard />
+  </ScopedTheme>
+
+  <ScopedTheme theme="dark">
+    <PreviewCard />
+  </ScopedTheme>
+</View>
+```
+
+Important behavior:
+- Nearest `ScopedTheme` wins (nested scopes are supported)
+- Hooks like `useUniwind`, `useResolveClassNames`, and `useCSSVariable` resolve against the nearest scoped theme
+- `withUniwind`-wrapped third-party components inside the scope also resolve themed values from that scope
+- Custom theme names can be used in `ScopedTheme` (must be defined in `extraThemes`)
 
 ### Style Based on Themes — Prefer CSS Variables
 
