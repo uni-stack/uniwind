@@ -6,9 +6,11 @@ import { useStyle } from './useStyle'
 
 export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, (props: TouchableHighlightProps) => {
     const [isPressed, setIsPressed] = useState(false)
+    const [isFocused, setIsFocused] = useState(false)
     const state = {
         isDisabled: Boolean(props.disabled),
         isPressed,
+        isFocused,
     } satisfies ComponentState
     const style = useStyle(props.className, props, state)
     const underlayColor = useStyle(props.underlayColorClassName, props, state).accentColor
@@ -25,6 +27,14 @@ export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, 
             onPressOut={event => {
                 setIsPressed(false)
                 props.onPressOut?.(event)
+            }}
+            onFocus={event => {
+                setIsFocused(true)
+                props.onFocus?.(event)
+            }}
+            onBlur={event => {
+                setIsFocused(false)
+                props.onBlur?.(event)
             }}
         />
     )
