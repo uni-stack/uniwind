@@ -20,13 +20,9 @@ export class RuleVisitor implements LightningRuleVisitors {
 
     style = (styleRule: Extract<LightningRuleVisitor, { type: 'style' }>) => {
         const firstSelector = styleRule.value.selectors.at(0)?.at(0)
-        const secondSelector = styleRule.value.selectors.at(0)?.at(1)
 
-        if (
-            this.currentLayerName === 'theme' && firstSelector?.type === 'nesting' && secondSelector?.type === 'pseudo-class'
-            && secondSelector.kind === 'where'
-        ) {
-            return this.processThemeStyle(styleRule, secondSelector)
+        if (this.currentLayerName === 'theme' && firstSelector?.type === 'pseudo-class' && firstSelector.kind === 'root') {
+            return this.removeNulls(this.processThemeRoot(styleRule)) as Array<ReturnedRule>
         }
 
         if (firstSelector?.type === 'class') {
@@ -40,20 +36,60 @@ export class RuleVisitor implements LightningRuleVisitors {
         this.processedVariables.clear()
     }
 
+    private processThemeRoot(styleRule: Extract<LightningRuleVisitor, { type: 'style' }>): Array<ReturnedRule> {
+        const themeScopedRules = styleRule.value.rules?.filter(rule => {
+            if (rule.type !== 'style') {
+                return false
+            }
+
+            const firstSelector = rule.value.selectors.at(0)?.at(0)
+            const secondSelector = rule.value.selectors.at(0)?.at(1)
+
+            return firstSelector?.type === 'nesting' && secondSelector?.type === 'pseudo-class' && secondSelector.kind === 'where'
+        }) ?? []
+        const nonThemeRules = styleRule.value.rules?.filter(rule => !themeScopedRules.includes(rule))
+        const processedThemeScopedRules = themeScopedRules.map(rule => {
+            if (rule.type !== 'style') {
+                return rule
+            }
+
+            const secondSelector = rule.value.selectors.at(0)?.at(1)
+
+            if (secondSelector?.type === 'pseudo-class' && secondSelector.kind === 'where') {
+                return this.processThemeStyle(rule, secondSelector)
+            }
+
+            return rule
+        })
+
+        return [
+            {
+                type: 'style',
+                value: {
+                    loc: styleRule.value.loc,
+                    selectors: styleRule.value.selectors,
+                    rules: nonThemeRules,
+                    declarations: styleRule.value.declarations,
+                },
+            },
+            ...processedThemeScopedRules,
+        ]
+    }
+
     private processThemeStyle(
         styleRule: Extract<LightningRuleVisitor, { type: 'style' }>,
         secondSelector: Extract<SelectorComponent, { type: 'pseudo-class'; kind: 'where' }>,
-    ): ReturnedRule | void {
+    ): ReturnedRule {
         const whereSelector = secondSelector.selectors.at(0)?.at(0)
 
         if (whereSelector?.type !== 'class') {
-            return
+            return styleRule
         }
 
         const selectedVariant = this.themes.find(theme => whereSelector.name === theme)
 
         if (selectedVariant === undefined || this.processedVariables.has(selectedVariant)) {
-            return
+            return styleRule
         }
 
         this.processedVariables.add(selectedVariant)
@@ -92,5 +128,28 @@ export class RuleVisitor implements LightningRuleVisitors {
                     .map(theme => [{ type: 'class', name: theme }]),
             },
         }
+    }
+
+    // Fixes lightningcss serialization bug
+    private removeNulls(value: unknown): unknown {
+        if (Array.isArray(value)) {
+            return value.map(v => this.removeNulls(v))
+        }
+
+        if (typeof value === 'object' && value !== null) {
+            return Object.fromEntries(
+                Object.entries(value)
+                    .filter(([_, value]) => {
+                        if (value === null) {
+                            return false
+                        }
+
+                        return true
+                    })
+                    .map(([key, value]) => [key, this.removeNulls(value)]),
+            )
+        }
+
+        return value
     }
 }
