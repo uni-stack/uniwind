@@ -4,6 +4,12 @@ import { UniwindStore } from '../../core/native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
+declare module 'react-native' {
+    interface PressableStateCallbackType {
+        focused?: boolean
+    }
+}
+
 export const Pressable = copyComponentProperties(RNPressable, (props: PressableProps) => {
     const style = useStyle(
         props.className,
@@ -18,12 +24,12 @@ export const Pressable = copyComponentProperties(RNPressable, (props: PressableP
         <RNPressable
             {...props}
             style={state => {
-                if (state.pressed) {
+                if (state.pressed || state.focused) {
                     return [
                         UniwindStore.getStyles(
                             props.className,
                             props,
-                            { isDisabled: Boolean(props.disabled), isPressed: true },
+                            { isDisabled: Boolean(props.disabled), isPressed: state.pressed, isFocused: state.focused },
                             uniwindContext,
                         ).styles,
                         typeof props.style === 'function' ? props.style(state) : props.style,
