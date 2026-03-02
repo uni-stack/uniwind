@@ -12,7 +12,16 @@ export class MQ {
         mediaQueries.forEach(mediaQuery => {
             const { condition, mediaType } = mediaQuery
 
-            if ([Platform.Android, Platform.iOS, Platform.Native].includes(mediaType as Platform)) {
+            if (
+                [
+                    Platform.Android,
+                    Platform.iOS,
+                    Platform.Native,
+                    Platform.AndroidTV,
+                    Platform.AppleTV,
+                    Platform.TV,
+                ].includes(mediaType as Platform)
+            ) {
                 mq.platform = mediaType as Platform
 
                 return

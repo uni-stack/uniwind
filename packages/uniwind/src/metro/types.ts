@@ -24,6 +24,7 @@ export type UniwindConfig = {
     dtsFile?: string
     polyfills?: Polyfills
     debug?: boolean
+    isTV?: boolean
 }
 
 export type MediaQueryResolver = {
@@ -47,6 +48,9 @@ export const enum Platform {
     iOS = 'ios',
     Web = 'web',
     Native = 'native',
+    TV = 'tv',
+    AndroidTV = 'android-tv',
+    AppleTV = 'apple-tv',
 }
 
 type TakeArray<T> = T extends Array<any> ? T : never

@@ -19,4 +19,5 @@ module.exports = withUniwindConfig(config, {
     extraThemes: ['premium'],
     polyfills: { rem: 14 },
     debug: true,
+    isTV: false,
 })

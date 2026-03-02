@@ -53,8 +53,13 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     .flatMap(([property, value]) => Processor.RN.cssToRN(property, value))
                     .map(([property, value]) => [`"${property}"`, `function() { return ${serialize(value)} }`])
 
-                if (platform && platform !== Platform.Native && platform !== currentPlatform) {
-                    return null
+                if (platform) {
+                    const isTV = currentPlatform === Platform.AndroidTV || currentPlatform === Platform.AppleTV
+                    const commonPlatform = isTV ? Platform.TV : Platform.Native
+
+                    if (platform !== commonPlatform && platform !== currentPlatform) {
+                        return null
+                    }
                 }
 
                 if (entries.length === 0) {
