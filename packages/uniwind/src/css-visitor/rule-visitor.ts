@@ -22,7 +22,7 @@ export class RuleVisitor implements LightningRuleVisitors {
         const firstSelector = styleRule.value.selectors.at(0)?.at(0)
 
         if (this.currentLayerName === 'theme' && firstSelector?.type === 'pseudo-class' && firstSelector.kind === 'root') {
-            return this.processThemeRoot(styleRule)
+            return this.removeNulls(this.processThemeRoot(styleRule)) as Array<ReturnedRule>
         }
 
         if (firstSelector?.type === 'class') {
@@ -69,7 +69,7 @@ export class RuleVisitor implements LightningRuleVisitors {
                     loc: styleRule.value.loc,
                     selectors: styleRule.value.selectors,
                     rules: nonThemeRules,
-                    declarations: this.removeNulls(styleRule.value.declarations) as typeof styleRule.value.declarations,
+                    declarations: styleRule.value.declarations,
                 },
             },
             ...processedThemeScopedRules,
