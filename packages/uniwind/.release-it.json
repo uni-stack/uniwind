@@ -1,0 +1,29 @@
+{
+    "$schema": "https://unpkg.com/release-it@19/schema/release-it.json",
+    "git": {
+        "commitMessage": "chore: release v${version}",
+        "tagName": "v${version}",
+        "tagAnnotation": "Release v${version}",
+        "requireCleanWorkingDir": false,
+        "requireUpstream": false,
+        "pushRepo": "origin"
+    },
+    "github": {
+        "release": true,
+        "releaseName": "Release v${version}",
+        "releaseNotes": "./changelog.sh stdout",
+        "comments": {
+            "submit": true,
+            "issue": ":rocket: _This issue has been resolved in v${version}. See [${releaseName}](${releaseUrl}) for release notes._",
+            "pr": ":rocket: _This pull request is included in v${version}. See [${releaseName}](${releaseUrl}) for release notes._"
+        }
+    },
+    "npm": {
+        "publish": true,
+        "publishArgs": ["--provenance", "--access", "public"],
+        "skipChecks": true
+    },
+    "hooks": {
+        "after:bump": "./changelog.sh"
+    }
+}

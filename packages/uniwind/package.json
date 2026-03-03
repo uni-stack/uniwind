@@ -18,7 +18,8 @@
         "prepublishOnly": "bun run build",
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
         "test:native": "jest --config jest.config.native.js",
-        "test:web": "jest --config jest.config.web.js"
+        "test:web": "jest --config jest.config.web.js",
+        "release": "release-it"
     },
     "keywords": [
         "unistyles",
@@ -107,6 +108,8 @@
         "ts-jest": "29.4.6",
         "typescript": "catalog:",
         "unbuild": "3.6.1",
-        "vite": "7.2.7"
+        "vite": "7.2.7",
+        "git-cliff": "2.12.0",
+        "release-it": "19.2.4"
     }
 }
