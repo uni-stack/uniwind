@@ -14,7 +14,7 @@ export const resolveGradient = (value: string) => {
 
         return {
             color: color!,
-            positions: position !== undefined ? [position] as unknown as Array<Array<string>> : undefined,
+            positions: position !== undefined ? [position] : undefined,
         } satisfies InferFromReadonlyArray<GradientValue['colorStops']>
     })
 

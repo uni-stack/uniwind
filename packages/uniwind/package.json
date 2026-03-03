@@ -104,7 +104,7 @@
         "metro": "0.84.2",
         "prettier": "3.8.1",
         "react-native-web": "catalog:",
-        "react-test-renderer": "19.1.0",
+        "react-test-renderer": "19.2.4",
         "ts-jest": "29.4.6",
         "typescript": "catalog:",
         "unbuild": "3.6.1",

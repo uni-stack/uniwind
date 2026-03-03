@@ -16,9 +16,9 @@ export class UniwindConfigBuilder {
 
     constructor() {
         Appearance.addChangeListener(event => {
-            // @ts-expect-error RN >0.82 - breaking change
             const colorScheme = event.colorScheme === 'unspecified'
                 ? ColorScheme.Light
+                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 : event.colorScheme ?? ColorScheme.Light
             const prevTheme = this.#currentTheme
 
@@ -41,7 +41,6 @@ export class UniwindConfigBuilder {
     private get colorScheme() {
         const colorScheme = Appearance.getColorScheme()
 
-        // @ts-expect-error RN >0.82 - breaking change
         if (colorScheme === 'unspecified') {
             return ColorScheme.Light
         }

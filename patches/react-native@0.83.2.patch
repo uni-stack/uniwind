@@ -1,0 +1,12 @@
+diff --git a/jest/mockComponent.js b/jest/mockComponent.js
+index a218d5feb2e22bfa314136292dc26478f79fd390..291e9744c1556d3275fad27b749385bb941f4212 100644
+--- a/jest/mockComponent.js
++++ b/jest/mockComponent.js
+@@ -39,6 +39,7 @@ export default function mockComponent<
+ 
+   const SuperClass: typeof React.Component<{...}> =
+     typeof RealComponent === 'function' &&
++    RealComponent.prototype != null &&
+     RealComponent.prototype.constructor instanceof React.Component
+       ? RealComponent
+       : React.Component;
