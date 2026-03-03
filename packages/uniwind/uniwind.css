@@ -2,6 +2,9 @@
 @custom-variant android (@media android);
 @custom-variant web (html &);
 @custom-variant native (@media native);
+@custom-variant tv (@media tv);
+@custom-variant android-tv (@media android-tv);
+@custom-variant apple-tv (@media apple-tv);
 
 @utility h-screen-safe {
     height: calc(100vh - (env(safe-area-inset-top) + env(safe-area-inset-bottom)));
@@ -396,7 +399,7 @@
    }
 
    @media (prefers-color-scheme: light) {
-       &:not(:where(.light, .light *, .dark, .dark *, .premium, .premium *)) {
+       &:not(:where(.light, .light *, .dark, .dark *)) {
            @slot;
        }
    }
@@ -408,7 +411,7 @@
    }
 
    @media (prefers-color-scheme: dark) {
-       &:not(:where(.light, .light *, .dark, .dark *, .premium, .premium *)) {
+       &:not(:where(.light, .light *, .dark, .dark *)) {
            @slot;
        }
    }

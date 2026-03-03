@@ -17,7 +17,6 @@
         "format": "dprint fmt",
         "prepublishOnly": "bun run build",
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
-        "build:css": "bun run src/css/index.ts",
         "test:native": "jest --config jest.config.native.js",
         "test:web": "jest --config jest.config.web.js"
     },
