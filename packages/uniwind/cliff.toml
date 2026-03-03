@@ -65,6 +65,7 @@ commit_parsers = [
   { message = "^docs?", group = "Documentation" },
   { message = "^test", group = "Testing" },
   { message = "^chore\\(release\\)", skip = true },
+  { message = "^chore:\\s*release\\b", skip = true },
   { message = "^chore", group = "Chores" },
   { body = ".*", group = "Other" },
 ]

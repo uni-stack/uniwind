@@ -6,8 +6,8 @@ INCLUDE_PATH="packages/uniwind/**"
 
 if [ "${1:-}" = "stdout" ]; then
     npx git-cliff --config cliff.toml --include-path "$INCLUDE_PATH" \
-        --unreleased --tag "$VERSION" --output -
+        --unreleased --tag "v$VERSION" --output -
 else
     npx git-cliff --config cliff.toml --include-path "$INCLUDE_PATH" \
-        --tag "$VERSION" --output CHANGELOG.md
+        --tag "v$VERSION" --output CHANGELOG.md
 fi
