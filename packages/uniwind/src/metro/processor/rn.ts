@@ -163,9 +163,9 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
         fontVariant: value,
     }),
     display: value => {
-        if (value === 'box') {
+        if (value === '"box"') {
             return {
-                display: 'flex',
+                display: '"flex"',
             }
         }
         return {

@@ -76,6 +76,7 @@ describe('Layout', () => {
             <React.Fragment>
                 {/* <View className="hidden" testID="hidden" /> */}
                 <View className="flex" testID="flex" />
+                <View className="[display:-webkit-box]" testID="box" />
                 <View className="overflow-hidden" testID="overflow-hidden" />
                 <View className="overflow-visible" testID="overflow-visible" />
             </React.Fragment>,
@@ -83,6 +84,7 @@ describe('Layout', () => {
 
         // expect(getStylesFromId('hidden').display).toBe('none')
         expect(getStylesFromId('flex').display).toBe('flex')
+        expect(getStylesFromId('box').display).toBe('flex')
         expect(getStylesFromId('overflow-hidden').overflow).toBe('hidden')
         expect(getStylesFromId('overflow-visible').overflow).toBe('visible')
     })
