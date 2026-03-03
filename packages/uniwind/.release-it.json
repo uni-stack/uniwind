@@ -11,6 +11,7 @@
     "github": {
         "release": true,
         "releaseName": "Release v${version}",
+        "releaseNotes": "./changelog.sh stdout",
         "comments": {
             "submit": true,
             "issue": ":rocket: _This issue has been resolved in v${version}. See [${releaseName}](${releaseUrl}) for release notes._",
@@ -22,12 +23,7 @@
         "publishArgs": ["--provenance", "--access", "public"],
         "skipChecks": true
     },
-    "plugins": {
-        "@release-it/conventional-changelog": {
-            "preset": {
-                "name": "angular"
-            },
-            "infile": "CHANGELOG.md"
-        }
+    "hooks": {
+        "after:bump": "./changelog.sh"
     }
 }
