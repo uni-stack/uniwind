@@ -8,16 +8,20 @@ on:
         required: true
         type: boolean
         default: true
-      npm_tag:
-        description: 'NPM tag (e.g., latest, beta, next)'
+      increment:
+        description: 'Version increment (patch, minor, major)'
         required: true
-        type: string
-        default: 'latest'
-      version:
-        description: 'Version override (optional, e.g., 1.0.0, or "auto" to auto-increment)'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+      pre_release:
+        description: 'Pre-release identifier (e.g. beta, alpha, rc) — leave empty for a stable release'
         required: false
         type: string
-        default: 'auto'
+        default: ''
 
 jobs:
   release:
@@ -27,6 +31,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -69,239 +75,24 @@ jobs:
       - name: Run tests
         run: bun run test
 
-      - name: Determine version
-        id: determine_version
+      - name: Release
         working-directory: packages/uniwind
         run: |
-          PACKAGE_NAME=$(cat package.json | grep '"name"' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | xargs)
-          CURRENT_VERSION=$(cat package.json | grep '"version"' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | xargs)
+          PRE_RELEASE="${{ inputs.pre_release }}"
+          INCREMENT="${{ inputs.increment }}"
+          DRY_RUN="${{ inputs.dry_run }}"
 
-          VERSION_INPUT="${{ inputs.version }}"
+          ARGS="--ci $INCREMENT"
 
-          if [ "$VERSION_INPUT" = "auto" ]; then
-            echo "Auto-increment mode enabled"
-
-            # Check if current version is already published
-            if npm view "$PACKAGE_NAME@$CURRENT_VERSION" version 2>/dev/null; then
-              echo "⚠️ Version $CURRENT_VERSION is already published, auto-incrementing..."
-
-              # Parse version (supports beta.X format)
-              if [[ $CURRENT_VERSION =~ ^(.+)-beta\.([0-9]+)$ ]]; then
-                BASE="${BASH_REMATCH[1]}"
-                BETA_NUM="${BASH_REMATCH[2]}"
-                NEW_BETA=$((BETA_NUM + 1))
-                NEW_VERSION="$BASE-beta.$NEW_BETA"
-                echo "Incrementing beta version: $CURRENT_VERSION -> $NEW_VERSION"
-              elif [[ $CURRENT_VERSION =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-                MAJOR="${BASH_REMATCH[1]}"
-                MINOR="${BASH_REMATCH[2]}"
-                PATCH="${BASH_REMATCH[3]}"
-                NEW_PATCH=$((PATCH + 1))
-                NEW_VERSION="$MAJOR.$MINOR.$NEW_PATCH"
-                echo "Incrementing patch version: $CURRENT_VERSION -> $NEW_VERSION"
-              else
-                echo "❌ Unable to parse version format: $CURRENT_VERSION"
-                exit 1
-              fi
-
-              # Update package.json
-              sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" package.json
-              echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-              echo "version_changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "✅ Version $CURRENT_VERSION is not yet published, using as-is"
-              echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-              echo "version_changed=false" >> $GITHUB_OUTPUT
-            fi
-          elif [ -n "$VERSION_INPUT" ]; then
-            echo "Using specified version: $VERSION_INPUT"
-            sed -i "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$VERSION_INPUT\"/" package.json
-            echo "version=$VERSION_INPUT" >> $GITHUB_OUTPUT
-            echo "version_changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "Using version from package.json: $CURRENT_VERSION"
-            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
-            echo "version_changed=false" >> $GITHUB_OUTPUT
+          if [ -n "$PRE_RELEASE" ]; then
+            ARGS="$ARGS --preRelease=$PRE_RELEASE"
           fi
 
-      - name: Check if version already published
-        id: check_published
-        working-directory: packages/uniwind
-        run: |
-          PACKAGE_NAME=$(cat package.json | grep '"name"' | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g' | xargs)
-          VERSION="${{ steps.determine_version.outputs.version }}"
-
-          if npm view "$PACKAGE_NAME@$VERSION" version 2>/dev/null; then
-            echo "published=true" >> $GITHUB_OUTPUT
-            echo "⚠️ Version $VERSION is already published to NPM"
-          else
-            echo "published=false" >> $GITHUB_OUTPUT
-            echo "✅ Version $VERSION is not yet published"
+          if [ "$DRY_RUN" = "true" ]; then
+            ARGS="$ARGS --dry-run"
           fi
 
-      - name: Generate release notes
-        id: release_notes
-        run: |
-          VERSION="${{ steps.determine_version.outputs.version }}"
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-          # Get commits and save to temp file
-          if [ -z "$PREV_TAG" ]; then
-            echo "No previous tag found, using all commits"
-            git log --pretty=format:"%s (%h)" --no-merges > commits.txt
-          else
-            echo "Generating changelog from $PREV_TAG to HEAD"
-            git log $PREV_TAG..HEAD --pretty=format:"%s (%h)" --no-merges > commits.txt
-          fi
-
-          # Categorize commits into separate files
-          touch features.txt fixes.txt docs.txt chores.txt refactors.txt others.txt
-
-          while IFS= read -r commit; do
-            if [[ $commit =~ ^feat(\(|:) ]]; then
-              echo "- $commit" >> features.txt
-            elif [[ $commit =~ ^fix(\(|:) ]]; then
-              echo "- $commit" >> fixes.txt
-            elif [[ $commit =~ ^docs?(\(|:) ]]; then
-              echo "- $commit" >> docs.txt
-            elif [[ $commit =~ ^chore(\(|:) ]]; then
-              echo "- $commit" >> chores.txt
-            elif [[ $commit =~ ^refactor(\(|:) ]]; then
-              echo "- $commit" >> refactors.txt
-            else
-              echo "- $commit" >> others.txt
-            fi
-          done < commits.txt
-
-          # Build release notes
-          echo "## What's Changed" > release_notes.txt
-          echo "" >> release_notes.txt
-
-          if [ -s features.txt ]; then
-            echo "### ✨ Features" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat features.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          if [ -s fixes.txt ]; then
-            echo "### 🐛 Bug Fixes" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat fixes.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          if [ -s refactors.txt ]; then
-            echo "### ♻️ Refactors" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat refactors.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          if [ -s docs.txt ]; then
-            echo "### 📚 Documentation" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat docs.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          if [ -s chores.txt ]; then
-            echo "### 🧹 Chores" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat chores.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          if [ -s others.txt ]; then
-            echo "### 📦 Other Changes" >> release_notes.txt
-            echo "" >> release_notes.txt
-            cat others.txt >> release_notes.txt
-            echo "" >> release_notes.txt
-            echo "" >> release_notes.txt
-          fi
-
-          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...v${VERSION}" >> release_notes.txt
-
-          # Cleanup temp files
-          rm -f commits.txt features.txt fixes.txt docs.txt chores.txt refactors.txt others.txt
-
-          echo "notes_file=release_notes.txt" >> $GITHUB_OUTPUT
-
-      - name: Commit version bump (if version was updated)
-        if: ${{ steps.determine_version.outputs.version_changed == 'true' && !inputs.dry_run }}
-        run: |
-          git add packages/uniwind/package.json
-          git commit -m "chore: bump version to ${{ steps.determine_version.outputs.version }}" || echo "No changes to commit"
-          git push origin main
-
-      - name: Create Git tag
-        if: ${{ !inputs.dry_run }}
-        run: |
-          VERSION="${{ steps.determine_version.outputs.version }}"
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
-
-      - name: Publish to NPM (Dry Run)
-        if: ${{ inputs.dry_run }}
-        working-directory: packages/uniwind
-        run: |
-          echo "🔍 DRY RUN MODE - Would publish with:"
-          echo "  Version: ${{ steps.determine_version.outputs.version }}"
-          echo "  Tag: ${{ inputs.npm_tag }}"
-          echo "  Already published: ${{ steps.check_published.outputs.published }}"
-          npm pack --dry-run
-
-      - name: Publish to NPM
-        if: ${{ !inputs.dry_run && steps.check_published.outputs.published == 'false' }}
-        working-directory: packages/uniwind
-        run: |
-          npm publish --tag ${{ inputs.npm_tag }} --provenance --access public
-
-      - name: Create GitHub Release (Dry Run)
-        if: ${{ inputs.dry_run }}
-        run: |
-          echo "🔍 DRY RUN MODE - Would create GitHub release:"
-          echo "  Tag: v${{ steps.determine_version.outputs.version }}"
-          echo "  Title: Release v${{ steps.determine_version.outputs.version }}"
-          echo ""
-          echo "Release notes:"
-          cat ${{ steps.release_notes.outputs.notes_file }}
-
-      - name: Create GitHub Release
-        if: ${{ !inputs.dry_run }}
+          npx release-it $ARGS
         env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          VERSION="${{ steps.determine_version.outputs.version }}"
-          gh release create "v$VERSION" \
-            --title "Release v$VERSION" \
-            --notes-file ${{ steps.release_notes.outputs.notes_file }} \
-            --verify-tag
-
-      - name: Summary
-        run: |
-          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version:** ${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **NPM Tag:** ${{ inputs.npm_tag }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Dry Run:** ${{ inputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Already Published:** ${{ steps.check_published.outputs.published }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          if [ "${{ inputs.dry_run }}" == "true" ]; then
-            echo "### ℹ️ This was a dry run - no changes were published" >> $GITHUB_STEP_SUMMARY
-          else
-            if [ "${{ steps.check_published.outputs.published }}" == "true" ]; then
-              echo "### ⚠️ Version already published - skipped NPM publish" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "### ✅ Package published successfully!" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-              echo "- NPM: https://www.npmjs.com/package/uniwind/v/${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-              echo "- GitHub: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.determine_version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-            fi
-          fi
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
