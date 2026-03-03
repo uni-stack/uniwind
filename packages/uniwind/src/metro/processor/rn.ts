@@ -162,6 +162,16 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
     fontVariantNumeric: value => ({
         fontVariant: value,
     }),
+    display: value => {
+        if (value === 'box') {
+            return {
+                display: 'flex',
+            }
+        }
+        return {
+            display: value,
+        }
+    },
 }
 
 const BORDER_WIDTH_KEYS = ['borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth']
