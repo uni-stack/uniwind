@@ -2,9 +2,10 @@ import fs from 'fs'
 import type { JsTransformerConfig, JsTransformOptions } from 'metro-transform-worker'
 import path from 'path'
 import { name } from '../../package.json'
+import { Platform } from '../common/consts'
 import { compileVirtual } from './compileVirtual'
 import { injectThemes } from './injectThemes'
-import { Platform, UniwindConfig } from './types'
+import { UniwindConfig } from './types'
 
 let worker: typeof import('metro-transform-worker')
 

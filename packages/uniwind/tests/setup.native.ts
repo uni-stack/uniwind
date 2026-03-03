@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 import { Dimensions } from 'react-native'
+import { Platform } from '../src/common/consts'
 import { compileVirtual } from '../src/metro/compileVirtual'
-import { Platform } from '../src/metro/types'
 import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, SCREEN_WIDTH } from './consts'
 
 jest.spyOn(Dimensions, 'get').mockReturnValue({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, scale: 1, fontScale: 1 })

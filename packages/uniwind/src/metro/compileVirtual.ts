@@ -2,11 +2,12 @@ import { compile } from '@tailwindcss/node'
 import { Scanner } from '@tailwindcss/oxide'
 import { transform } from 'lightningcss'
 import path from 'path'
+import { Platform } from '../common/consts'
 import { UniwindCSSVisitor } from '../css-visitor'
 import { addMetaToStylesTemplate } from './addMetaToStylesTemplate'
 import { Logger } from './logger'
 import { ProcessorBuilder } from './processor'
-import { Platform, Polyfills } from './types'
+import { Polyfills } from './types'
 import { serializeJSObject } from './utils'
 
 type CompileVirtualConfig = {

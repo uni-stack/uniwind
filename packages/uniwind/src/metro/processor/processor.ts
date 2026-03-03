@@ -1,4 +1,5 @@
 import { Declaration, MediaQuery, Rule, transform } from 'lightningcss'
+import { UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { Polyfills, ProcessMetaValues } from '../types'
 import { Color } from './color'
 import { CSS } from './css'
@@ -64,7 +65,7 @@ export class ProcessorBuilder {
             }
 
             if (mq.platform !== null) {
-                const platformKey = `__uniwind-platform-${mq.platform}`
+                const platformKey = `${UNIWIND_PLATFORM_VARIABLES}${mq.platform}`
                 this.scopedVars[platformKey] ??= {}
 
                 return this.scopedVars[platformKey]
@@ -74,7 +75,7 @@ export class ProcessorBuilder {
                 return this.vars
             }
 
-            const themeKey = `__uniwind-theme-${this.declarationConfig.theme}`
+            const themeKey = `${UNIWIND_THEME_VARIABLES}${this.declarationConfig.theme}`
             this.scopedVars[themeKey] ??= {}
 
             return this.scopedVars[themeKey]

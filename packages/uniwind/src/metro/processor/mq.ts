@@ -1,6 +1,7 @@
 import { MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
+import { Platform } from '../../common/consts'
 import { ColorScheme, Orientation } from '../../types'
-import { MediaQueryResolver, Platform } from '../types'
+import { MediaQueryResolver } from '../types'
 import type { ProcessorBuilder } from './processor'
 
 export class MQ {

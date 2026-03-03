@@ -1,7 +1,8 @@
 import type { MetroConfig } from 'metro-config'
+import { Platform } from '../common/consts'
 import { cacheStore, patchMetroGraphToSupportUncachedModules } from './metro-css-patches'
 import { nativeResolver, webResolver } from './resolvers'
-import { Platform, UniwindConfig } from './types'
+import { UniwindConfig } from './types'
 import { uniq } from './utils'
 
 export const withUniwindConfig = <T extends MetroConfig>(

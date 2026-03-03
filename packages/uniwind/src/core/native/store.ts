@@ -1,5 +1,6 @@
 /* eslint-disable max-depth */
 import { Dimensions, Platform } from 'react-native'
+import { Platform as UniwindPlatform, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { Orientation, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
@@ -61,7 +62,14 @@ class UniwindStoreBuilder {
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
         const config = generateStyleSheetCallback(this.runtime)
         const { scopedVars, stylesheet, vars } = config
-        const platformVars = scopedVars[`__uniwind-platform-${Platform.OS}`]
+        const platform = this.getCurrentPlatform()
+        const commonPlatform = platform.includes('tv') ? UniwindPlatform.TV : UniwindPlatform.Native
+        const commonPlatformVars = scopedVars[`${UNIWIND_PLATFORM_VARIABLES}${commonPlatform}`]
+        const platformVars = scopedVars[`${UNIWIND_PLATFORM_VARIABLES}${platform}`]
+
+        if (commonPlatformVars) {
+            Object.defineProperties(vars, Object.getOwnPropertyDescriptors(commonPlatformVars))
+        }
 
         if (platformVars) {
             Object.defineProperties(vars, Object.getOwnPropertyDescriptors(platformVars))
@@ -70,7 +78,7 @@ class UniwindStoreBuilder {
         this.stylesheet = stylesheet
         this.vars = Object.fromEntries(themes.map(theme => {
             const clonedVars = cloneWithAccessors(vars)
-            const themeVars = scopedVars[`__uniwind-theme-${theme}`]
+            const themeVars = scopedVars[`${UNIWIND_THEME_VARIABLES}${theme}`]
 
             if (themeVars) {
                 Object.defineProperties(clonedVars, Object.getOwnPropertyDescriptors(themeVars))
@@ -275,6 +283,20 @@ class UniwindStoreBuilder {
         }
 
         return true
+    }
+
+    private getCurrentPlatform() {
+        const platform = Platform.OS
+
+        if (platform === 'android') {
+            return Platform.isTV ? UniwindPlatform.AndroidTV : UniwindPlatform.Android
+        }
+
+        if (platform === 'ios') {
+            return Platform.isTV ? UniwindPlatform.AppleTV : UniwindPlatform.iOS
+        }
+
+        return platform
     }
 }
 
