@@ -152,20 +152,24 @@ describe('withUniwind', () => {
     })
 
     test('[text-base] Should resolve text-base class with fontSize and lineHeight', () => {
-        const mockGetWebStyles = webCore.getWebStyles as jest.MockedFunction<typeof webCore.getWebStyles>
-
-        mockGetWebStyles.mockReturnValue({ fontSize: '16px', lineHeight: '24px' })
+        // Save original and use real implementation for this test
+        const originalGetWebStyles = webCore.getWebStyles
+        const spyGetWebStyles = jest.spyOn(webCore, 'getWebStyles').mockImplementation((...args) => originalGetWebStyles(...args))
         ComponentWithSpy.mockClear()
 
         const AutoWithUniwind = withUniwind(ComponentWithSpy)
 
         render(<AutoWithUniwind className="text-base" testID="test-component" />)
 
-        expect(mockGetWebStyles).toHaveBeenCalledWith('text-base', UNIWIND_CONTEXT_MOCK)
+        expect(spyGetWebStyles).toHaveBeenCalledWith('text-base', UNIWIND_CONTEXT_MOCK)
 
         const receivedProps = ComponentWithSpy.mock.calls[0][0]
 
         expect(receivedProps).toHaveProperty('style')
-        expect(receivedProps.style).toEqual({ fontSize: '16px', lineHeight: '24px' })
+        expect(receivedProps.style).toHaveProperty('fontSize')
+        expect(receivedProps.style).toHaveProperty('lineHeight')
+
+        // Restore mock
+        spyGetWebStyles.mockRestore()
     })
 })

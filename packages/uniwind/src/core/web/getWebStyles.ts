@@ -72,12 +72,16 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 
     // Fix: Include font-size and line-height for text utility classes
     // These properties might not show as differences if inherited, but are valid style properties
-    const fullComputedStyles = getComputedStyles()
-    if (fullComputedStyles.fontSize && !computedStyles.fontSize) {
-        computedStyles.fontSize = fullComputedStyles.fontSize
-    }
-    if (fullComputedStyles.lineHeight && !computedStyles.lineHeight) {
-        computedStyles.lineHeight = fullComputedStyles.lineHeight
+    // Only apply to text-* utilities to avoid affecting non-text styles
+    if (className.startsWith('text-')) {
+        const fullComputedStyles = getComputedStyles()
+        // getComputedStyles stores kebab-case keys ('font-size', 'line-height')
+        if (fullComputedStyles['font-size'] && !computedStyles['font-size']) {
+            computedStyles['font-size'] = fullComputedStyles['font-size']
+        }
+        if (fullComputedStyles['line-height'] && !computedStyles['line-height']) {
+            computedStyles['line-height'] = fullComputedStyles['line-height']
+        }
     }
 
     return Object.fromEntries(
