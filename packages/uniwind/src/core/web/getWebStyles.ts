@@ -68,20 +68,23 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 
     dummy.className = className
 
-    const computedStyles = getObjectDifference(initialStyles, getComputedStyles())
+    // Single snapshot of computed styles for efficiency
+    const computedSnapshot = getComputedStyles()
+    const computedStyles = getObjectDifference(initialStyles, computedSnapshot)
 
     // Fix: Include font-size and line-height for text-related utility classes
     // These properties might not show as differences if they match inherited defaults,
     // but users expect text utilities to expose these values
-    const isTextUtility = /\b(text-|font-|leading-)/.test(className)
+    // Check individual tokens to avoid matching substrings in custom class names
+    const tokens = className.split(/\s+/)
+    const isTextUtility = tokens.some(token => /^((text|font|leading)-)/.test(token))
     if (isTextUtility) {
-        const fullComputedStyles = getComputedStyles()
-        // getComputedStyles stores kebab-case keys ('font-size', 'line-height')
-        if (fullComputedStyles['font-size'] && !computedStyles['font-size']) {
-            computedStyles['font-size'] = fullComputedStyles['font-size']
+        // Reuse computedSnapshot instead of calling getComputedStyles() again
+        if (computedSnapshot['font-size'] && !computedStyles['font-size']) {
+            computedStyles['font-size'] = computedSnapshot['font-size']
         }
-        if (fullComputedStyles['line-height'] && !computedStyles['line-height']) {
-            computedStyles['line-height'] = fullComputedStyles['line-height']
+        if (computedSnapshot['line-height'] && !computedStyles['line-height']) {
+            computedStyles['line-height'] = computedSnapshot['line-height']
         }
     }
 
