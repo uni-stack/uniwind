@@ -150,4 +150,22 @@ describe('withUniwind', () => {
         expect(component).toHaveClass('bg-red-500')
         expect(component).toHaveStyle({ backgroundColor: TW_BLUE_500 })
     })
+
+    test('[text-base] Should resolve text-base class with fontSize and lineHeight', () => {
+        const mockGetWebStyles = webCore.getWebStyles as jest.MockedFunction<typeof webCore.getWebStyles>
+
+        mockGetWebStyles.mockReturnValue({ fontSize: '16px', lineHeight: '24px' })
+        ComponentWithSpy.mockClear()
+
+        const AutoWithUniwind = withUniwind(ComponentWithSpy)
+
+        render(<AutoWithUniwind className="text-base" testID="test-component" />)
+
+        expect(mockGetWebStyles).toHaveBeenCalledWith('text-base', UNIWIND_CONTEXT_MOCK)
+
+        const receivedProps = ComponentWithSpy.mock.calls[0][0]
+
+        expect(receivedProps).toHaveProperty('style')
+        expect(receivedProps.style).toEqual({ fontSize: '16px', lineHeight: '24px' })
+    })
 })

@@ -70,6 +70,16 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 
     const computedStyles = getObjectDifference(initialStyles, getComputedStyles())
 
+    // Fix: Include font-size and line-height for text utility classes
+    // These properties might not show as differences if inherited, but are valid style properties
+    const fullComputedStyles = getComputedStyles()
+    if (fullComputedStyles.fontSize && !computedStyles.fontSize) {
+        computedStyles.fontSize = fullComputedStyles.fontSize
+    }
+    if (fullComputedStyles.lineHeight && !computedStyles.lineHeight) {
+        computedStyles.lineHeight = fullComputedStyles.lineHeight
+    }
+
     return Object.fromEntries(
         Object.entries(computedStyles)
             .map(([key, value]) => {
