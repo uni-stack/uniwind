@@ -76,8 +76,13 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
     // These properties might not show as differences if they match inherited defaults,
     // but users expect text utilities to expose these values
     // Check individual tokens to avoid matching substrings in custom class names
+    // Handles both base utilities (text-base) and variant-prefixed (dark:text-base, sm:leading-6)
     const tokens = className.split(/\s+/)
-    const isTextUtility = tokens.some(token => /^((text|font|leading)-)/.test(token))
+    const isTextUtility = tokens.some(token => {
+        // Get the base utility after any variant prefixes (e.g., "dark:text-base" -> "text-base")
+        const baseUtility = token.split(':').pop() || token
+        return /^(text|font|leading)-/.test(baseUtility)
+    })
     if (isTextUtility) {
         // Reuse computedSnapshot instead of calling getComputedStyles() again
         if (computedSnapshot['font-size'] && !computedStyles['font-size']) {
