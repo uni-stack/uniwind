@@ -72,20 +72,14 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
     const computedSnapshot = getComputedStyles()
     const computedStyles = getObjectDifference(initialStyles, computedSnapshot)
 
-    // Fix: Include font-size and line-height for text-related utility classes
-    // These properties might not show as differences if they match inherited defaults,
-    // but users expect text utilities to expose these values
-    // Check individual tokens to avoid matching substrings in custom class names
-    const tokens = className.split(/\s+/)
-    const isTextUtility = tokens.some(token => /^((text|font|leading)-)/.test(token))
-    if (isTextUtility) {
-        // Reuse computedSnapshot instead of calling getComputedStyles() again
-        if (computedSnapshot['font-size'] && !computedStyles['font-size']) {
-            computedStyles['font-size'] = computedSnapshot['font-size']
-        }
-        if (computedSnapshot['line-height'] && !computedStyles['line-height']) {
-            computedStyles['line-height'] = computedSnapshot['line-height']
-        }
+    // Approach #2: Include font-size and line-height for ANY class that changes them
+    // This handles Tailwind utilities AND custom CSS classes like .test { font-size: 16px; }
+    // Check if computed values differ from initial/inherited values
+    if (computedSnapshot['font-size'] !== initialStyles['font-size']) {
+        computedStyles['font-size'] = computedSnapshot['font-size']
+    }
+    if (computedSnapshot['line-height'] !== initialStyles['line-height']) {
+        computedStyles['line-height'] = computedSnapshot['line-height']
     }
 
     return Object.fromEntries(
