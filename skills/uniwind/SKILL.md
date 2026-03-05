@@ -6,7 +6,7 @@ description: >
   Triggers on: className on React Native components, Tailwind classes in RN code,
   global.css with @import 'uniwind', withUniwindConfig, metro.config.js with Uniwind,
   withUniwind for third-party components, useResolveClassNames, useCSSVariable,
-  useUniwind, useUniwindAccent, dark:/light: theming, platform selectors
+  useUniwind, dark:/light: theming, platform selectors
   (ios:/android:/native:/web:/tv:), data-[prop=value] selectors, responsive breakpoints
   (sm:/md:/lg:), tailwind-variants, tv() component variants, ScopedTheme,
   Uniwind.setTheme, Uniwind.updateCSSVariables, Uniwind.updateInsets,
@@ -607,17 +607,6 @@ const cardStyle = useResolveClassNames('bg-card dark:bg-card rounded-lg shadow-s
 
 // React Navigation screen options
 <Stack.Navigator screenOptions={{ headerStyle, cardStyle }} />
-```
-
-### useUniwindAccent
-
-Resolves an accent- className to a color value string:
-
-```tsx
-import { useUniwindAccent } from 'uniwind';
-
-const tintColor = useUniwindAccent('accent-primary dark:accent-blue-400');
-// Returns the resolved color string, e.g., '#3b82f6'
 ```
 
 ### Comparison
