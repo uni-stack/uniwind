@@ -139,7 +139,7 @@ If user has some typescript errors related to classNames, just run metro server 
 
 ### Expo Router Placement
 
-```
+```text
 project/
 ├── app/_layout.tsx    ← import '../global.css' here
 ├── components/
@@ -1566,7 +1566,7 @@ Package: `"uniwind": "npm:uniwind-pro@rc"` in `package.json`.
    npm install react-native-nitro-modules react-native-reanimated react-native-worklets
    ```
 
-3. Authenticate: `npx uniwind-pro` (interactive — select "Login with Github")
+3. Authenticate: `npx uniwind-pro` (interactive — select "Login with GitHub")
 
 4. Add Babel plugin:
    ```js
