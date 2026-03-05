@@ -1,92 +1,103 @@
 import { RNStyle, UniwindContextType } from '../types'
 import { parseCSSValue } from './parseCSSValue'
 
-const dummyParent = typeof document !== 'undefined'
-    ? Object.assign(document.createElement('div'), {
-        style: 'display: none',
+// Create two dummy elements: one for baseline (no class), one for target (with class)
+// We need fresh elements each time to avoid state pollution
+const getDummyElements = () => {
+    if (typeof document === 'undefined') {
+        return null
+    }
+    
+    const parent = Object.assign(document.createElement('div'), {
+        style: 'display: none;',
     })
-    : null
-const dummy = typeof document !== 'undefined'
-    ? document.createElement('div')
-    : null
-
-if (dummyParent && dummy) {
-    document.body.appendChild(dummyParent)
-    dummyParent.appendChild(dummy)
+    const baseline = document.createElement('div')
+    const target = document.createElement('div')
+    
+    document.body.appendChild(parent)
+    parent.appendChild(baseline)
+    parent.appendChild(target)
+    
+    return { parent, baseline, target }
 }
 
-const getComputedStyles = () => {
-    if (!dummy) {
-        return {} as CSSStyleDeclaration
-    }
+const dummies = getDummyElements()
 
-    const computedStyles = window.getComputedStyle(dummy)
+const getComputedStyles = (element: HTMLDivElement): CSSStyleDeclaration => {
+    const computedStyles = window.getComputedStyle(element)
     const styles = {} as CSSStyleDeclaration
 
     // eslint-disable-next-line @typescript-eslint/prefer-for-of
     for (let i = 0; i < computedStyles.length; i++) {
-        // Typescript is unable to infer it properly
         const prop = computedStyles[i] as any
-
         styles[prop] = computedStyles.getPropertyValue(prop)
     }
 
     return styles
 }
 
-const initialStyles = typeof document !== 'undefined'
-    ? getComputedStyles()
-    : {} as CSSStyleDeclaration
-
-const getObjectDifference = <T extends object>(obj1: T, obj2: T): T => {
+const getObjectDifference = <T extends object>(baseline: T, target: T): T => {
     const diff = {} as T
-    const keys = Object.keys(obj2) as Array<keyof T>
+    const keys = Object.keys(target) as Array<keyof T>
 
     keys.forEach(key => {
-        if (obj2[key] !== obj1[key]) {
-            diff[key] = obj2[key]
+        if (target[key] !== baseline[key]) {
+            diff[key] = target[key]
         }
     })
 
     return diff
 }
 
+/**
+ * Returns computed styles for a given className.
+ * 
+ * This function compares styles with and WITHOUT the class applied,
+ * returning ONLY the differences explicitly caused by the class.
+ * 
+ * - Works with Tailwind utilities, custom CSS, media queries, scoped themes
+ * - Returns empty object for classes that don't change any computed styles
+ * - Includes styles even if they match browser defaults (as long as class explicitly sets them)
+ */
 export const getWebStyles = (className: string | undefined, uniwindContext: UniwindContextType): RNStyle => {
-    if (className === undefined) {
+    if (className === undefined || !dummies) {
         return {}
     }
 
-    if (!dummy) {
-        return {}
-    }
+    const { parent, baseline, target } = dummies
 
+    // Apply scoped theme to parent (affects both children via inheritance)
     if (uniwindContext.scopedTheme !== null) {
-        dummyParent?.setAttribute('class', uniwindContext.scopedTheme)
+        parent.setAttribute('class', uniwindContext.scopedTheme)
     } else {
-        dummyParent?.removeAttribute('class')
+        parent.removeAttribute('class')
     }
 
-    dummy.className = className
+    // Clear any previous classes
+    baseline.className = ''
+    target.className = ''
+    
+    // Force reflow to ensure clean state
+    void baseline.offsetHeight
+    void target.offsetHeight
 
-    // Single snapshot of computed styles for efficiency
-    const computedSnapshot = getComputedStyles()
-    const computedStyles = getObjectDifference(initialStyles, computedSnapshot)
+    // Get baseline styles (no class applied, but WITH scoped theme context)
+    const baselineStyles = getComputedStyles(baseline)
 
-    // Approach #2: Include font-size and line-height for ANY class that changes them
-    // This handles:
-    // - Tailwind utilities: text-base, text-lg, font-medium, etc.
-    // - Variant-prefixed: dark:text-base, sm:leading-6, etc.
-    // - Custom CSS classes: .test { font-size: 16px; }
-    // Check if computed values differ from initial/inherited values
-    if (computedSnapshot['font-size'] !== initialStyles['font-size']) {
-        computedStyles['font-size'] = computedSnapshot['font-size']
-    }
-    if (computedSnapshot['line-height'] !== initialStyles['line-height']) {
-        computedStyles['line-height'] = computedSnapshot['line-height']
-    }
+    // Apply the target className
+    target.className = className
+    
+    // Force reflow
+    void target.offsetHeight
+
+    // Get target styles (with class applied)
+    const targetStyles = getComputedStyles(target)
+
+    // Return only the differences caused by the class
+    const diff = getObjectDifference(baselineStyles, targetStyles)
 
     return Object.fromEntries(
-        Object.entries(computedStyles)
+        Object.entries(diff)
             .map(([key, value]) => {
                 const parsedKey = key[0] === '-'
                     ? key
@@ -101,17 +112,19 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 }
 
 export const getWebVariable = (name: string, uniwindContext: UniwindContextType) => {
-    if (!dummyParent) {
+    if (!dummies) {
         return undefined
     }
 
+    const { parent } = dummies
+
     if (uniwindContext.scopedTheme !== null) {
-        dummyParent.setAttribute('class', uniwindContext.scopedTheme)
+        parent.setAttribute('class', uniwindContext.scopedTheme)
     } else {
-        dummyParent.removeAttribute('class')
+        parent.removeAttribute('class')
     }
 
-    const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
+    const variable = window.getComputedStyle(parent).getPropertyValue(name)
 
     return parseCSSValue(variable)
 }
