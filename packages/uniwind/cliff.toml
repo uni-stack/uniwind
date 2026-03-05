@@ -13,9 +13,11 @@ body = """
   ## Unreleased
 {% endif -%}
 
-{% for group, commits in commits | group_by(attribute="group") %}
+{% set order = ["🚀 Features", "🐛 Bug Fixes", "🔨 Refactoring", "⚡ Performance", "📚 Documentation", "🧪 Testing", "🏠 Chores", "📦 Other"] %}
+{% set grouped = commits | group_by(attribute="group") %}
+{% for group in order %}{% if group in grouped %}
   ### {{ group }}
-  {% for commit in commits %}
+  {% for commit in grouped[group] %}
     {%- if commit.remote.pr_title -%}
       {%- set commit_message = commit.remote.pr_title -%}
     {%- else -%}
@@ -27,7 +29,7 @@ body = """
         [#{{ commit.remote.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.remote.pr_number }})\
       {%- endif %}
   {%- endfor %}
-{% endfor -%}
+{% endif %}{% endfor -%}
 
 {%- if github -%}
   {%- if github.contributors | filter(attribute="is_first_time", value=true) | length != 0 %}
@@ -58,16 +60,16 @@ filter_unconventional = false
 split_commits = false
 commit_preprocessors = []
 commit_parsers = [
-  { message = "^feat", group = "Features" },
-  { message = "^fix", group = "Bug Fixes" },
-  { message = "^refactor", group = "Refactoring" },
-  { message = "^perf", group = "Performance" },
-  { message = "^docs?", group = "Documentation" },
-  { message = "^test", group = "Testing" },
+  { message = "^feat", group = "🚀 Features" },
+  { message = "^fix", group = "🐛 Bug Fixes" },
+  { message = "^refactor", group = "🔨 Refactoring" },
+  { message = "^perf", group = "⚡ Performance" },
+  { message = "^docs?", group = "📚 Documentation" },
+  { message = "^test", group = "🧪 Testing" },
   { message = "^chore\\(release\\)", skip = true },
   { message = "^chore:\\s*release\\b", skip = true },
-  { message = "^chore", group = "Chores" },
-  { body = ".*", group = "Other" },
+  { message = "^chore", group = "🏠 Chores" },
+  { body = ".*", group = "📦 Other" },
 ]
 filter_commits = false
 topo_order = false
