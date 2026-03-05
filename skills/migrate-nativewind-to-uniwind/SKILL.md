@@ -506,7 +506,7 @@ Use for: animations, third-party library configs, calculations with design token
 
 Docs: https://docs.uniwind.dev/api/css-functions
 
-Define custom utilities using device-aware CSS functions like `hairlineWidth()`, `fontScale()`, `pixelRatio()`. These must be defined as `@utility` in `global.css` — they cannot be used inside `@theme {}` (which only accepts static values):
+Define custom utilities using device-aware CSS functions like `hairlineWidth()`, `fontScale()`, `pixelRatio()`. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). Use `@utility` to create reusable Tailwind-style classes:
 
 ```css
 @utility w-hairline { width: hairlineWidth(); }
@@ -661,13 +661,13 @@ If the project is a monorepo, add `@source` directives in `global.css` so Tailwi
 
 Docs: https://docs.uniwind.dev/faq
 
-**Custom Fonts**: Uniwind maps className to font-family only — font files must be loaded separately (expo-font plugin in `app.json` or `react-native-asset` for bare RN). Font family names in `@theme` must exactly match filenames (without extension). Use platform media queries for per-platform fonts (must be inside `@layer theme { :root { } }` — `@theme {}` does not support `@media`):
+**Custom Fonts**: Uniwind maps className to font-family only — font files must be loaded separately (expo-font plugin in `app.json` or `react-native-asset` for bare RN). Font family names in `@theme` must exactly match filenames (without extension). Use `@variant` for per-platform fonts (must be inside `@layer theme { :root { } }`):
 ```css
 @layer theme {
   :root {
-    @media ios { --font-sans: 'SF Pro Text'; }
-    @media android { --font-sans: 'Roboto-Regular'; }
-    @media web { --font-sans: 'system-ui'; }
+    @variant ios { --font-sans: 'SF Pro Text'; }
+    @variant android { --font-sans: 'Roboto-Regular'; }
+    @variant web { --font-sans: 'system-ui'; }
   }
 }
 ```

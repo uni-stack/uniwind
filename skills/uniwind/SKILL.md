@@ -1014,14 +1014,14 @@ Apply platform-specific styles directly in className:
 <View className="p-4 ios:pt-12 android:pt-6 web:pt-4" />
 ```
 
-Platform media queries in `@theme` / `@layer theme` for global values:
+Platform variants in `@layer theme` for global values (use `@variant`, not `@media`):
 
 ```css
 @layer theme {
   :root {
-    @media ios { --font-sans: 'SF Pro Text'; }
-    @media android { --font-sans: 'Roboto-Regular'; }
-    @media web { --font-sans: 'Inter'; }
+    @variant ios { --font-sans: 'SF Pro Text'; }
+    @variant android { --font-sans: 'Roboto-Regular'; }
+    @variant web { --font-sans: 'Inter'; }
   }
 }
 ```
@@ -1220,7 +1220,7 @@ export default function App() {
 
 ## CSS Functions
 
-Uniwind provides CSS functions for device-aware and theme-aware styling. These functions **must** be wrapped in `@utility` in `global.css` — they cannot be used directly in `className`.
+Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). Use `@utility` to create reusable Tailwind-style utility classes:
 
 ### hairlineWidth()
 
@@ -1424,14 +1424,14 @@ Font name must **exactly match** the font file name (without extension).
 
 **Bare RN**: Use `react-native-asset` to link fonts, same CSS config.
 
-**Platform-specific fonts**:
+**Platform-specific fonts** (use `@variant`, not `@media`):
 
 ```css
 @layer theme {
   :root {
-    @media ios { --font-sans: 'SF Pro Text'; }
-    @media android { --font-sans: 'Roboto-Regular'; }
-    @media web { --font-sans: 'system-ui'; }
+    @variant ios { --font-sans: 'SF Pro Text'; }
+    @variant android { --font-sans: 'Roboto-Regular'; }
+    @variant web { --font-sans: 'system-ui'; }
   }
 }
 ```
@@ -1446,15 +1446,47 @@ Built-in support — no extra dependencies:
 </View>
 ```
 
-For `expo-linear-gradient`, use `useCSSVariable` to get colors — `withUniwind` won't work since gradient props are arrays:
+For `expo-linear-gradient`, you can wrap it with `withUniwind` for className-based layout and styling (padding, border-radius, flex, etc.), but the `colors` prop is an array that cannot be resolved via className — it must be provided explicitly. Use `useCSSVariable` to get theme-aware colors:
 
 ```tsx
 import { useCSSVariable } from 'uniwind';
-import { LinearGradient } from 'expo-linear-gradient';
+import { withUniwind } from 'uniwind';
+import { LinearGradient as RNLinearGradient } from 'expo-linear-gradient';
 
-const primary = useCSSVariable('--color-primary');
-const secondary = useCSSVariable('--color-secondary');
-<LinearGradient colors={[primary, secondary]} style={{ flex: 1 }} />
+const LinearGradient = withUniwind(RNLinearGradient);
+
+function GradientCard() {
+  const primary = useCSSVariable('--color-primary');
+  const secondary = useCSSVariable('--color-secondary');
+
+  return (
+    <LinearGradient
+      className="flex-1 rounded-2xl p-6"
+      colors={[primary, secondary]}
+    >
+      <Text className="text-white font-bold">Themed gradient</Text>
+    </LinearGradient>
+  );
+}
+```
+
+Alternatively, export a wrapped component from a shared module for reuse:
+
+```tsx
+// components/styled.ts
+import { withUniwind } from 'uniwind';
+import { LinearGradient as RNLinearGradient } from 'expo-linear-gradient';
+
+export const LinearGradient = withUniwind(RNLinearGradient);
+```
+
+```tsx
+// usage — className handles layout, colors still passed manually
+import { LinearGradient } from '@/components/styled';
+
+<LinearGradient className="rounded-xl p-4" colors={['#ff6b6b', '#4ecdc4']}>
+  <Text className="text-white">Static gradient</Text>
+</LinearGradient>
 ```
 
 ## React Navigation Integration
@@ -1769,7 +1801,7 @@ When styles aren't working, check in this order:
 | `active:` not working with `withUniwind` | `withUniwind` does NOT support interactive state selectors | Only core RN `Pressable`/`TextInput`/`Switch` support `active:`/`focus:`/`disabled:`. Third-party pressables wrapped with `withUniwind` won't get states |
 | `withUniwind` custom mapping overrides `className`+`style` merging | When manual mapping is provided, `style` prop is not merged | Use auto mapping (no second arg) for `className`+`style` merge. For manual mapping + `className`, double-wrap: `withUniwind(withUniwind(Comp), { mapping })` |
 | `withUniwind` loses generic types on `ref` (e.g., `FlashList<T>`) | TypeScript limitation with HOCs | Cast the ref manually: `ref={scrollRef as any}` |
-| Platform-specific fonts: `@theme` block error | `@media ios/android` inside `@theme {}` | Use `@layer theme { :root { @media ios { ... } } }` instead — `@theme` only accepts custom properties |
+| Platform-specific fonts: `@theme` block error | `@media ios/android` inside `@theme {}` | Use `@layer theme { :root { @variant ios { ... } } }` instead — `@theme` only accepts custom properties, and platform selection uses `@variant` not `@media` |
 | `Uniwind.setTheme('system')` crash on Android (RN 0.82+) | RN 0.82 changed Appearance API | Update to latest Uniwind (fixed). Avoid `setTheme('system')` on older Uniwind + RN 0.82+ |
 | Styles flash/disappear on initial load (Android) | `SafeAreaListener` fires before component listeners mount | Fixed in recent versions. If persists, ensure Uniwind is latest |
 | `useTVEventHandler` is undefined | Uniwind module replacement interferes with tvOS exports | Fixed in v1.2.1+. Update Uniwind |
@@ -1861,7 +1893,7 @@ No. `withUniwind` does NOT support interactive state selectors (`active:`, `focu
 Not via `@layer base`. The default `borderColor` from `border` class is hardcoded to `#000000`. Use `border border-gray-300` explicitly or define `--color-border` in `@theme` and use `border-border`.
 
 **Can I use platform-specific fonts in `@theme {}`?**
-No. `@theme {}` only accepts custom properties. Use `@layer theme { :root { @media ios { --font-sans: '...'; } } }` instead.
+No. `@theme {}` only accepts custom properties. Use `@layer theme { :root { @variant ios { --font-sans: '...'; } } }` instead. Note: use `@variant` (not `@media`) for platform selection in CSS.
 
 **Does Uniwind work with ESM metro config (`metro.config.mjs` or `metro.config.ts`)?**
 Yes since v1.3.0+. If you hit `Class extends value is not a constructor`, update Uniwind or use CommonJS `metro.config.js`.
