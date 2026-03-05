@@ -17,12 +17,15 @@
             "dependsOn": ["lint", "check:typescript", "circular:check", "test:native", "test:web", "//#check:format"]
         },
         "test": {
-            "dependsOn": ["test:native", "test:web"]
+            "dependsOn": ["test:native", "test:web", "test:e2e"]
         },
         "test:native": {
             "cache": false
         },
         "test:web": {
+            "cache": false
+        },
+        "test:e2e": {
             "cache": false
         }
     }
