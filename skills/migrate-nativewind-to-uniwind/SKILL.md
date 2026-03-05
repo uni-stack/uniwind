@@ -506,15 +506,16 @@ Use for: animations, third-party library configs, calculations with design token
 
 Docs: https://docs.uniwind.dev/api/css-functions
 
-Define custom utilities using device-aware CSS functions like `hairlineWidth()`, `fontScale()`, `pixelRatio()`:
+Define custom utilities using device-aware CSS functions like `hairlineWidth()`, `fontScale()`, `pixelRatio()`. These must be defined as `@utility` in `global.css` — they cannot be used inside `@theme {}` (which only accepts static values):
 
 ```css
-@theme {
-  --width-hairline: hairlineWidth();
-}
+@utility w-hairline { width: hairlineWidth(); }
+@utility h-hairline { height: hairlineWidth(); }
+@utility border-hairline { border-width: hairlineWidth(); }
+@utility text-scaled { font-size: fontScale(); }
 ```
 
-Then use as: `<View className="w-hairline" />`
+Then use as: `<View className="w-hairline h-hairline" />`
 
 ### Platform Selectors
 
@@ -660,10 +661,15 @@ If the project is a monorepo, add `@source` directives in `global.css` so Tailwi
 
 Docs: https://docs.uniwind.dev/faq
 
-**Custom Fonts**: Uniwind maps className to font-family only — font files must be loaded separately (expo-font plugin in `app.json` or `react-native-asset` for bare RN). Font family names in `@theme` must exactly match filenames (without extension). Use platform media queries for per-platform fonts:
+**Custom Fonts**: Uniwind maps className to font-family only — font files must be loaded separately (expo-font plugin in `app.json` or `react-native-asset` for bare RN). Font family names in `@theme` must exactly match filenames (without extension). Use platform media queries for per-platform fonts (must be inside `@layer theme { :root { } }` — `@theme {}` does not support `@media`):
 ```css
-@media ios { --font-sans: 'SF Pro Text'; }
-@media android { --font-sans: 'Roboto-Regular'; }
+@layer theme {
+  :root {
+    @media ios { --font-sans: 'SF Pro Text'; }
+    @media android { --font-sans: 'Roboto-Regular'; }
+    @media web { --font-sans: 'system-ui'; }
+  }
+}
 ```
 
 **Data Selectors**: Use `data-[prop=value]:utility` for prop-based styling. Only equality checks supported:
