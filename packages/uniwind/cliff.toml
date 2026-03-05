@@ -58,16 +58,16 @@ filter_unconventional = false
 split_commits = false
 commit_preprocessors = []
 commit_parsers = [
-  { message = "^feat", group = "Features" },
-  { message = "^fix", group = "Bug Fixes" },
-  { message = "^refactor", group = "Refactoring" },
-  { message = "^perf", group = "Performance" },
-  { message = "^docs?", group = "Documentation" },
-  { message = "^test", group = "Testing" },
+  { message = "^feat", group = "🚀 Features" },
+  { message = "^fix", group = "🐛 Bug Fixes" },
+  { message = "^refactor", group = "🔨 Refactoring" },
+  { message = "^perf", group = "⚡ Performance" },
+  { message = "^docs?", group = "📚 Documentation" },
+  { message = "^test", group = "🧪 Testing" },
   { message = "^chore\\(release\\)", skip = true },
   { message = "^chore:\\s*release\\b", skip = true },
-  { message = "^chore", group = "Chores" },
-  { body = ".*", group = "Other" },
+  { message = "^chore", group = "🏠 Chores" },
+  { body = ".*", group = "📦 Other" },
 ]
 filter_commits = false
 topo_order = false
