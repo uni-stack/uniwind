@@ -757,7 +757,6 @@ import { cn } from '@/lib/cn';
 
 - Static className with no conflicts: `<View className="flex-1 p-4 bg-white" />`
 - Single custom CSS class with no overlapping Tailwind: `<View className="card-shadow mt-4" />` (if card-shadow only sets box-shadow which no Tailwind class also sets)
-```
 
 ## Theming
 
