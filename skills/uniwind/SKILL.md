@@ -1456,13 +1456,19 @@ import { LinearGradient as RNLinearGradient } from 'expo-linear-gradient';
 const LinearGradient = withUniwind(RNLinearGradient);
 
 function GradientCard() {
+  // useCSSVariable returns string | number | undefined
   const primary = useCSSVariable('--color-primary');
   const secondary = useCSSVariable('--color-secondary');
+
+  // Guard against undefined — LinearGradient.colors requires valid ColorValues
+  if (!primary || !secondary) {
+    return null;
+  }
 
   return (
     <LinearGradient
       className="flex-1 rounded-2xl p-6"
-      colors={[primary, secondary]}
+      colors={[primary as string, secondary as string]}
     >
       <Text className="text-white font-bold">Themed gradient</Text>
     </LinearGradient>
