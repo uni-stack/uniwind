@@ -9,7 +9,6 @@ export default {
     preset: 'ts-jest',
     moduleNameMapper: {
         '^react-native$': 'react-native-web',
-        '\\.css$': '<rootDir>/tests/__mocks__/styleMock.js',
     },
     transformIgnorePatterns: [
         'node_modules/(?!(react-native-web)/)',
