@@ -38,5 +38,9 @@ jobs:
       - name: Check circular dependencies
         run: bun run circular:check
       
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium
+        working-directory: packages/uniwind
+
       - name: Run tests
         run: bun run test
