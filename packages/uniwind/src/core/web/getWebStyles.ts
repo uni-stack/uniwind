@@ -73,7 +73,10 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
     const computedStyles = getObjectDifference(initialStyles, computedSnapshot)
 
     // Approach #2: Include font-size and line-height for ANY class that changes them
-    // This handles Tailwind utilities AND custom CSS classes like .test { font-size: 16px; }
+    // This handles:
+    // - Tailwind utilities: text-base, text-lg, font-medium, etc.
+    // - Variant-prefixed: dark:text-base, sm:leading-6, etc.
+    // - Custom CSS classes: .test { font-size: 16px; }
     // Check if computed values differ from initial/inherited values
     if (computedSnapshot['font-size'] !== initialStyles['font-size']) {
         computedStyles['font-size'] = computedSnapshot['font-size']
