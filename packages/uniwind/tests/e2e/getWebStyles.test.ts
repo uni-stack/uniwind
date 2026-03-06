@@ -74,5 +74,11 @@ test.describe('getWebStyles - html default styles', () => {
     test('text-base -> fontSize 16px', async ({ page }) => {
         const styles = await getWebStyles(page, 'text-base')
         expect(styles.fontSize).toBe('16px')
+        expect(styles.lineHeight).toBe('24px')
+    })
+
+    test('max-w-0:text-base -> empty object', async ({ page }) => {
+        const styles = await getWebStyles(page, 'max-w-0:text-base')
+        expect(styles).toEqual({})
     })
 })

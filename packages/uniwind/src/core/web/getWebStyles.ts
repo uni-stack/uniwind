@@ -17,7 +17,7 @@ if (dummyParent && dummy) {
 }
 
 const getActiveStylesForClass = (className: string) => {
-    const extractedStyles = {} as Record<string, any>
+    const extractedStyles = {} as Record<string, string>
 
     if (!dummy) {
         return extractedStyles
@@ -28,7 +28,7 @@ const getActiveStylesForClass = (className: string) => {
 
     CSSListener.registeredRules.forEach(rule => {
         const selector = rule.selectorText
-        const mightMatch = classNames.some((cls) => selector.includes(`.${cls}`))
+        const mightMatch = classNames.some((cls) => selector.includes(`.${CSS.escape(cls)}`))
 
         if (!mightMatch) {
             return
@@ -41,10 +41,7 @@ const getActiveStylesForClass = (className: string) => {
         try {
             if (safeSelector !== '' && dummy.matches(safeSelector)) {
                 for (const propertyName of rule.style) {
-                    const propertyValue = computedStyles.getPropertyValue(propertyName)
-                    const camelCaseName = propertyName.replace(/-([a-z])/g, (g) => (g[1] ?? '').toUpperCase())
-
-                    extractedStyles[camelCaseName] = propertyValue
+                    extractedStyles[propertyName] = computedStyles.getPropertyValue(propertyName)
                 }
             }
         } catch {

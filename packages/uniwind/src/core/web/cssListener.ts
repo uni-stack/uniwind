@@ -16,7 +16,7 @@ class CSSListenerBuilder {
 
         const observer = new MutationObserver(mutations => {
             for (const mutation of mutations) {
-                if (mutation.type === 'childList') {
+                if (mutation.type === 'childList' || mutation.type === 'attributes') {
                     this.scheduleInitialization()
                 }
             }
@@ -84,8 +84,19 @@ class CSSListenerBuilder {
         }
     }
 
+    private pruneStaleRules() {
+        const activeSheets = new Set(Array.from(document.styleSheets))
+
+        for (const rule of this.registeredRules) {
+            if (!rule.parentStyleSheet || !activeSheets.has(rule.parentStyleSheet)) {
+                this.registeredRules.delete(rule)
+            }
+        }
+    }
+
     private initialize() {
         this.pendingInitialization = undefined
+        this.pruneStaleRules()
 
         for (const sheet of Array.from(document.styleSheets)) {
             // Skip already processed stylesheets
@@ -143,12 +154,12 @@ class CSSListenerBuilder {
     private addMediaQueriesDeep(rules: CSSRuleList) {
         for (const rule of Array.from(rules)) {
             if (this.isStyleRule(rule)) {
-                this.registeredRules.add(rule)
-
                 const mediaQueries = this.collectParentMediaQueries(rule)
 
+                this.registeredRules.add(rule)
+
                 if (mediaQueries.length > 0) {
-                    this.addMediaQuery(mediaQueries, rule.selectorText)
+                    this.addMediaQuery(mediaQueries, rule)
                 }
 
                 continue
@@ -162,7 +173,8 @@ class CSSListenerBuilder {
         }
     }
 
-    private addMediaQuery(mediaQueries: Array<CSSMediaRule>, className: string) {
+    private addMediaQuery(mediaQueries: Array<CSSMediaRule>, rule: CSSStyleRule) {
+        const className = rule.selectorText
         const rules = mediaQueries.map(mediaQuery => mediaQuery.conditionText).sort().join(' and ')
         const parsedClassName = className.replace('.', '').replace('\\', '')
         const cachedMediaQueryList = this.registeredRulesMediaQueries.get(rules)
@@ -175,12 +187,24 @@ class CSSListenerBuilder {
 
         const mediaQueryList = window.matchMedia(rules)
 
+        if (mediaQueryList.matches) {
+            this.registeredRules.add(rule)
+        } else {
+            this.registeredRules.delete(rule)
+        }
+
         this.registeredRulesMediaQueries.set(rules, mediaQueryList)
         this.listeners.set(mediaQueryList, new Set())
         this.classNameMediaQueryListeners.set(parsedClassName, mediaQueryList)
 
         mediaQueryList.addEventListener('change', () => {
             this.listeners.get(mediaQueryList)!.forEach(listener => listener())
+
+            if (mediaQueryList.matches) {
+                this.registeredRules.add(rule)
+            } else {
+                this.registeredRules.delete(rule)
+            }
         })
     }
 }
