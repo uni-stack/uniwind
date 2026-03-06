@@ -1,5 +1,5 @@
 export const generateDataSet = (props: Record<PropertyKey, any>) => {
-    const dataSet: DataSet = props.dataSet ?? {}
+    const dataSet: DataSet = props.dataSet !== undefined ? { ...props.dataSet } : {}
 
     Object.entries(props).forEach(([key, value]) => {
         if (key.startsWith('data-')) {

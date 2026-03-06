@@ -13,4 +13,14 @@ describe('View', () => {
         expect(view).toBeInTheDocument()
         expect(view).toHaveClass('bg-red-500')
     })
+
+    test('Passed data attribute correctly', () => {
+        const { getByTestId } = render(
+            <View data-x="test" testID="view-1" />,
+        )
+
+        const view = getByTestId('view-1')
+
+        expect(view).toHaveAttribute('data-x', 'test')
+    })
 })

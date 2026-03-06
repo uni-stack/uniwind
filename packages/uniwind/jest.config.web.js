@@ -15,11 +15,7 @@ export default {
     ],
     transform: {
         '^.+\\.tsx?$': ['ts-jest', {
-            tsconfig: {
-                jsx: 'react-jsx',
-                esModuleInterop: true,
-                allowSyntheticDefaultImports: true,
-            },
+            tsconfig: './tsconfig.test.json',
         }],
     },
 }

@@ -1,6 +1,5 @@
 import { Animated as RNAnimated } from 'react-native'
 import { FlatList } from './FlatList'
-import { generateDataSet } from './generateDataSet'
 import { Image } from './Image'
 import { ScrollView } from './ScrollView'
 import { SectionList } from './SectionList'
@@ -11,17 +10,9 @@ import { View } from './View'
 
 export const Animated = {
     ...RNAnimated,
-    FlatList: RNAnimated.createAnimatedComponent((props) => <FlatList scrollEventThrottle={0.0001} {...props} dataSet={generateDataSet(props)} />),
-    ScrollView: RNAnimated.createAnimatedComponent((props) => (
-        <ScrollView
-            scrollEventThrottle={0.0001}
-            {...props}
-            dataSet={generateDataSet(props)}
-        />
-    )),
-    SectionList: RNAnimated.createAnimatedComponent((props) => (
-        <SectionList scrollEventThrottle={0.0001} {...props} dataSet={generateDataSet(props)} />
-    )),
+    FlatList: RNAnimated.createAnimatedComponent((props) => <FlatList scrollEventThrottle={0.0001} {...props} />),
+    ScrollView: RNAnimated.createAnimatedComponent((props) => <ScrollView scrollEventThrottle={0.0001} {...props} />),
+    SectionList: RNAnimated.createAnimatedComponent((props) => <SectionList scrollEventThrottle={0.0001} {...props} />),
     Image: RNAnimated.createAnimatedComponent(Image),
     Text: RNAnimated.createAnimatedComponent(Text),
     View: RNAnimated.createAnimatedComponent(View),
