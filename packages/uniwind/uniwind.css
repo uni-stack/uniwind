@@ -397,6 +397,10 @@
   border-curve: continuous;
 }
 
+@utility border-circular {
+  border-curve: circular;
+}
+
 @custom-variant light {
    &:where(.light, .light *) {
        @slot;

@@ -18,6 +18,9 @@ const EXTRA_UTILITIES_MAP = {
     'border-continuous': {
         borderCurve: 'continuous',
     },
+    'border-circular': {
+        borderCurve: 'circular',
+    },
 } satisfies Record<string, RNStyle>
 
 export const EXTRA_UTILITIES_CSS = generateExtraUtilities(EXTRA_UTILITIES_MAP)
