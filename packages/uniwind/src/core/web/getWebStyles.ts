@@ -26,7 +26,7 @@ const getActiveStylesForClass = (className: string) => {
     const classNames = className.split(/\s+/).filter(Boolean)
     const computedStyles = window.getComputedStyle(dummy)
 
-    CSSListener.registeredRules.forEach(rule => {
+    CSSListener.activeRules.forEach(rule => {
         const selector = rule.selectorText
         const mightMatch = classNames.some((cls) => selector.includes(`.${CSS.escape(cls)}`))
 

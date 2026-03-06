@@ -2,7 +2,7 @@ import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 
 class CSSListenerBuilder {
-    registeredRules = new Set<CSSStyleRule>()
+    activeRules = new Set<CSSStyleRule>()
     private classNameMediaQueryListeners = new Map<string, MediaQueryList>()
     private listeners = new Map<MediaQueryList, Set<VoidFunction>>()
     private registeredRulesMediaQueries = new Map<string, MediaQueryList>()
@@ -87,9 +87,9 @@ class CSSListenerBuilder {
     private pruneStaleRules() {
         const activeSheets = new Set(Array.from(document.styleSheets))
 
-        for (const rule of this.registeredRules) {
+        for (const rule of this.activeRules) {
             if (!rule.parentStyleSheet || !activeSheets.has(rule.parentStyleSheet)) {
-                this.registeredRules.delete(rule)
+                this.activeRules.delete(rule)
             }
         }
     }
@@ -133,6 +133,10 @@ class CSSListenerBuilder {
         return rule.constructor.name === 'CSSMediaRule'
     }
 
+    private isSupportsRule(rule: CSSRule): rule is CSSSupportsRule {
+        return rule.constructor.name === 'CSSSupportsRule'
+    }
+
     private collectParentMediaQueries(rule: CSSRule, acc = [] as Array<CSSMediaRule>): Array<CSSMediaRule> {
         const { parentRule } = rule
 
@@ -156,13 +160,21 @@ class CSSListenerBuilder {
             if (this.isStyleRule(rule)) {
                 const mediaQueries = this.collectParentMediaQueries(rule)
 
-                this.registeredRules.add(rule)
+                this.activeRules.add(rule)
 
                 if (mediaQueries.length > 0) {
                     this.addMediaQuery(mediaQueries, rule)
                 }
 
                 continue
+            }
+
+            if (this.isSupportsRule(rule)) {
+                if (!CSS.supports(rule.conditionText)) {
+                    continue
+                }
+
+                this.addMediaQueriesDeep(rule.cssRules)
             }
 
             if ('cssRules' in rule && rule.cssRules instanceof CSSRuleList) {
@@ -181,31 +193,34 @@ class CSSListenerBuilder {
 
         if (cachedMediaQueryList) {
             this.classNameMediaQueryListeners.set(parsedClassName, cachedMediaQueryList)
+            this.toggleRule(cachedMediaQueryList, rule)
+
+            cachedMediaQueryList.addEventListener('change', () => {
+                this.toggleRule(cachedMediaQueryList, rule)
+            })
 
             return
         }
 
         const mediaQueryList = window.matchMedia(rules)
 
-        if (mediaQueryList.matches) {
-            this.registeredRules.add(rule)
-        } else {
-            this.registeredRules.delete(rule)
-        }
-
+        this.toggleRule(mediaQueryList, rule)
         this.registeredRulesMediaQueries.set(rules, mediaQueryList)
         this.listeners.set(mediaQueryList, new Set())
         this.classNameMediaQueryListeners.set(parsedClassName, mediaQueryList)
 
         mediaQueryList.addEventListener('change', () => {
             this.listeners.get(mediaQueryList)!.forEach(listener => listener())
-
-            if (mediaQueryList.matches) {
-                this.registeredRules.add(rule)
-            } else {
-                this.registeredRules.delete(rule)
-            }
+            this.toggleRule(mediaQueryList, rule)
         })
+    }
+
+    private toggleRule(mqList: MediaQueryList, rule: CSSStyleRule) {
+        if (mqList.matches) {
+            this.activeRules.add(rule)
+        } else {
+            this.activeRules.delete(rule)
+        }
     }
 }
 
