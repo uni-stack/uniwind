@@ -175,6 +175,8 @@ class CSSListenerBuilder {
                 }
 
                 this.addMediaQueriesDeep(rule.cssRules)
+
+                continue
             }
 
             if ('cssRules' in rule && rule.cssRules instanceof CSSRuleList) {
@@ -210,7 +212,9 @@ class CSSListenerBuilder {
         this.classNameMediaQueryListeners.set(parsedClassName, mediaQueryList)
 
         mediaQueryList.addEventListener('change', () => {
-            this.listeners.get(mediaQueryList)!.forEach(listener => listener())
+            this.listeners.get(mediaQueryList)!.forEach(listener => {
+                listener()
+            })
             this.toggleRule(mediaQueryList, rule)
         })
     }
