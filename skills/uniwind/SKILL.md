@@ -3,23 +3,17 @@ name: uniwind
 description: >
   Uniwind — Tailwind CSS v4 styling for React Native. Use when adding, building,
   or styling components in a React Native project that uses Tailwind with className.
-  Triggers on: className on React Native components, Tailwind classes in RN code,
-  global.css with @import 'uniwind', withUniwindConfig, metro.config.js with Uniwind,
-  withUniwind for third-party components, useResolveClassNames, useCSSVariable,
-  useUniwind, dark:/light: theming, platform selectors
-  (ios:/android:/native:/web:/tv:), data-[prop=value] selectors, responsive breakpoints
-  (sm:/md:/lg:), tailwind-variants, tv() component variants, ScopedTheme,
-  Uniwind.setTheme, Uniwind.updateCSSVariables, Uniwind.updateInsets,
-  @layer theme, @variant, @theme directive, @theme static, @utility,
-  CSS variables in React Native, accent- prefix pattern, colorClassName,
-  tintColorClassName, contentContainerClassName, Uniwind Pro (animations, transitions,
-  shadow tree, native insets), safe area utilities (p-safe/pt-safe/-safe-or-/-safe-offset-),
-  gradients in RN, custom CSS classes, hairlineWidth(), fontScale(), pixelRatio(),
-  light-dark(), OKLCH colors, cn utility, tailwind-merge, HeroUI Native,
-  react-native-reusables, Gluestack. Also triggers on: "styles not applying",
-  "className not working", "audit Uniwind setup", "check my config",
-  "add a component", "style a component". Does NOT handle NativeWind-to-Uniwind
-  migration — use the migrate-nativewind-to-uniwind skill for that.
+  Triggers on: className on RN components, Tailwind classes in RN, global.css with
+  @import 'uniwind', withUniwindConfig, withUniwind, metro.config.js with Uniwind,
+  useResolveClassNames, useCSSVariable, useUniwind, dark:/light: theming, platform
+  selectors (ios:/android:/native:/web:/tv:), data-[prop=value], responsive breakpoints
+  (sm:/md:/lg:), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
+  Uniwind.updateCSSVariables, @theme, @utility, @variant, CSS variables in RN,
+  colorClassName, tintColorClassName, contentContainerClassName, Uniwind Pro
+  (animations, transitions, shadow tree, native insets), safe area utilities,
+  gradients, hairlineWidth(), fontScale(), pixelRatio(), light-dark(), OKLCH,
+  cn, tailwind-merge, HeroUI Native, react-native-reusables, Gluestack.
+  Does NOT handle migration — use migrate-nativewind-to-uniwind skill.
 ---
 
 # Uniwind — Complete Reference
