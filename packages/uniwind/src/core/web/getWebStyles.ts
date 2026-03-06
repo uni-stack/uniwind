@@ -17,7 +17,7 @@ if (dummyParent && dummy) {
 }
 
 const getActiveStylesForClass = (className: string) => {
-    const extractedStyles = {} as Record<string, any>
+    const extractedStyles = {} as CSSStyleDeclaration
 
     if (!dummy) {
         return extractedStyles
