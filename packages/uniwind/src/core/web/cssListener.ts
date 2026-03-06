@@ -2,9 +2,10 @@ import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 
 class CSSListenerBuilder {
+    registeredRules = new Set<CSSStyleRule>()
     private classNameMediaQueryListeners = new Map<string, MediaQueryList>()
     private listeners = new Map<MediaQueryList, Set<VoidFunction>>()
-    private registeredRules = new Map<string, MediaQueryList>()
+    private registeredRulesMediaQueries = new Map<string, MediaQueryList>()
     private processedStyleSheets = new WeakSet<CSSStyleSheet>()
     private pendingInitialization: number | undefined = undefined
 
@@ -142,6 +143,8 @@ class CSSListenerBuilder {
     private addMediaQueriesDeep(rules: CSSRuleList) {
         for (const rule of Array.from(rules)) {
             if (this.isStyleRule(rule)) {
+                this.registeredRules.add(rule)
+
                 const mediaQueries = this.collectParentMediaQueries(rule)
 
                 if (mediaQueries.length > 0) {
@@ -162,7 +165,7 @@ class CSSListenerBuilder {
     private addMediaQuery(mediaQueries: Array<CSSMediaRule>, className: string) {
         const rules = mediaQueries.map(mediaQuery => mediaQuery.conditionText).sort().join(' and ')
         const parsedClassName = className.replace('.', '').replace('\\', '')
-        const cachedMediaQueryList = this.registeredRules.get(rules)
+        const cachedMediaQueryList = this.registeredRulesMediaQueries.get(rules)
 
         if (cachedMediaQueryList) {
             this.classNameMediaQueryListeners.set(parsedClassName, cachedMediaQueryList)
@@ -172,7 +175,7 @@ class CSSListenerBuilder {
 
         const mediaQueryList = window.matchMedia(rules)
 
-        this.registeredRules.set(rules, mediaQueryList)
+        this.registeredRulesMediaQueries.set(rules, mediaQueryList)
         this.listeners.set(mediaQueryList, new Set())
         this.classNameMediaQueryListeners.set(parsedClassName, mediaQueryList)
 

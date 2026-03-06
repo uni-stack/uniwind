@@ -1,4 +1,5 @@
 import { RNStyle, UniwindContextType } from '../types'
+import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
 
 const dummyParent = typeof document !== 'undefined'
@@ -15,40 +16,43 @@ if (dummyParent && dummy) {
     dummyParent.appendChild(dummy)
 }
 
-const getComputedStyles = () => {
+const getActiveStylesForClass = (className: string) => {
+    const extractedStyles = {} as Record<string, any>
+
     if (!dummy) {
-        return {} as CSSStyleDeclaration
+        return extractedStyles
     }
 
+    const classNames = className.split(/\s+/).filter(Boolean)
     const computedStyles = window.getComputedStyle(dummy)
-    const styles = {} as CSSStyleDeclaration
 
-    // eslint-disable-next-line @typescript-eslint/prefer-for-of
-    for (let i = 0; i < computedStyles.length; i++) {
-        // Typescript is unable to infer it properly
-        const prop = computedStyles[i] as any
+    CSSListener.registeredRules.forEach(rule => {
+        const selector = rule.selectorText
+        const mightMatch = classNames.some((cls) => selector.includes(`.${cls}`))
 
-        styles[prop] = computedStyles.getPropertyValue(prop)
-    }
+        if (!mightMatch) {
+            return
+        }
 
-    return styles
-}
+        // element.matches() throws errors if it sees pseudo-elements like ::before
+        // So we strip them out safely just for the matching test
+        const safeSelector = selector.replace(/::[a-z-]+/gi, '')
 
-const initialStyles = typeof document !== 'undefined'
-    ? getComputedStyles()
-    : {} as CSSStyleDeclaration
+        try {
+            if (safeSelector !== '' && dummy.matches(safeSelector)) {
+                for (const propertyName of rule.style) {
+                    const propertyValue = computedStyles.getPropertyValue(propertyName)
+                    const camelCaseName = propertyName.replace(/-([a-z])/g, (g) => (g[1] ?? '').toUpperCase())
 
-const getObjectDifference = <T extends object>(obj1: T, obj2: T): T => {
-    const diff = {} as T
-    const keys = Object.keys(obj2) as Array<keyof T>
-
-    keys.forEach(key => {
-        if (obj2[key] !== obj1[key]) {
-            diff[key] = obj2[key]
+                    extractedStyles[camelCaseName] = propertyValue
+                }
+            }
+        } catch {
+            // Failsafe for unparseable selectors
         }
     })
 
-    return diff
+    return extractedStyles
 }
 
 export const getWebStyles = (className: string | undefined, uniwindContext: UniwindContextType): RNStyle => {
@@ -68,7 +72,7 @@ export const getWebStyles = (className: string | undefined, uniwindContext: Uniw
 
     dummy.className = className
 
-    const computedStyles = getObjectDifference(initialStyles, getComputedStyles())
+    const computedStyles = getActiveStylesForClass(className)
 
     return Object.fromEntries(
         Object.entries(computedStyles)
