@@ -13,4 +13,4 @@ const overwriteDisabled = `@custom-variant disabled {
 }
 `
 
-export const overwrite = overwriteDisabled
+export const OVERWRITE_CSS = overwriteDisabled

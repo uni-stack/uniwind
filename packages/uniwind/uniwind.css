@@ -393,6 +393,10 @@
     }
 }
 
+@utility border-continuous {
+  border-curve: continuous;
+}
+
 @custom-variant light {
    &:where(.light, .light *) {
        @slot;

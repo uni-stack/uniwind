@@ -17,6 +17,7 @@ describe('Borders', () => {
                 <View className="border-l-8" testID="border-l-8" />
                 <View className="border-x-2" testID="border-x-2" />
                 <View className="border-y-4" testID="border-y-4" />
+                <View className="border-continuous" testID="border-continuous" />
             </React.Fragment>,
         )
 
@@ -38,6 +39,8 @@ describe('Borders', () => {
         const borderY = getStylesFromId('border-y-4')
         expect(borderY.borderTopWidth).toBe(4)
         expect(borderY.borderBottomWidth).toBe(4)
+
+        expect(getStylesFromId('border-continuous').borderCurve).toBe('continuous')
     })
 
     test('Border Color', () => {
