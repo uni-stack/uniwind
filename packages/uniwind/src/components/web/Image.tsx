@@ -1,6 +1,7 @@
 import { Image as RNImage, ImageProps } from 'react-native'
 import { useResolveClassNames, useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
+import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
 export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
@@ -18,6 +19,7 @@ export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
             {...props}
             style={[toRNWClassName(props.className), styleReset, props.style]}
             tintColor={props.tintColor ?? tintColor}
+            dataSet={generateDataSet(props)}
         />
     )
 })

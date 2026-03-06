@@ -1,5 +1,6 @@
 import { SectionList as RNSectionList, SectionListProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
 export const SectionList = copyComponentProperties(RNSectionList, (props: SectionListProps<unknown, unknown>) => {
@@ -10,6 +11,7 @@ export const SectionList = copyComponentProperties(RNSectionList, (props: Sectio
             contentContainerStyle={[toRNWClassName(props.contentContainerClassName), props.contentContainerStyle]}
             ListFooterComponentStyle={[toRNWClassName(props.ListFooterComponentClassName), props.ListFooterComponentStyle]}
             ListHeaderComponentStyle={[toRNWClassName(props.ListHeaderComponentClassName), props.ListHeaderComponentStyle]}
+            dataSet={generateDataSet(props)}
         />
     )
 })

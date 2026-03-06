@@ -1,6 +1,7 @@
 import { ActivityIndicator as RNActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
+import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
 export const ActivityIndicator = copyComponentProperties(RNActivityIndicator, (props: ActivityIndicatorProps) => {
@@ -11,6 +12,7 @@ export const ActivityIndicator = copyComponentProperties(RNActivityIndicator, (p
             {...props}
             style={[toRNWClassName(props.className), props.style]}
             color={props.color ?? color}
+            dataSet={generateDataSet(props)}
         />
     )
 })

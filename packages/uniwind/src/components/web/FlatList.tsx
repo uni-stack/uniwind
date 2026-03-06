@@ -1,5 +1,6 @@
 import { FlatList as RNFlatList, FlatListProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
 export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProps<unknown>) => {
@@ -13,6 +14,7 @@ export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProp
             contentContainerStyle={[toRNWClassName(props.contentContainerClassName), props.contentContainerStyle]}
             ListFooterComponentStyle={[toRNWClassName(props.ListFooterComponentClassName), props.ListFooterComponentStyle]}
             ListHeaderComponentStyle={[toRNWClassName(props.ListHeaderComponentClassName), props.ListHeaderComponentStyle]}
+            dataSet={generateDataSet(props)}
         />
     )
 })

@@ -1,5 +1,6 @@
 import { Text as RNText, TextProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
 export const Text = copyComponentProperties(RNText, (props: TextProps) => {
@@ -7,6 +8,7 @@ export const Text = copyComponentProperties(RNText, (props: TextProps) => {
         <RNText
             {...props}
             style={[toRNWClassName(props.className), props.style]}
+            dataSet={generateDataSet(props)}
         />
     )
 })
