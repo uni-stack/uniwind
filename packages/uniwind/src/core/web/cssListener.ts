@@ -16,7 +16,23 @@ class CSSListenerBuilder {
 
         const observer = new MutationObserver(mutations => {
             for (const mutation of mutations) {
-                if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                if (mutation.type === 'attributes') {
+                    const el = mutation.target as HTMLLinkElement | HTMLStyleElement
+
+                    if (!('sheet' in el)) {
+                        continue
+                    }
+
+                    const sheet = el.sheet
+
+                    if (sheet) {
+                        this.processedStyleSheets.delete(sheet)
+                    }
+
+                    this.scheduleInitialization()
+                }
+
+                if (mutation.type === 'childList') {
                     this.scheduleInitialization()
                 }
             }
@@ -219,8 +235,13 @@ class CSSListenerBuilder {
         })
     }
 
+    private isRuleLive(rule: CSSStyleRule) {
+        const sheet = rule.parentStyleSheet
+        return sheet !== null && Array.from(document.styleSheets).includes(sheet)
+    }
+
     private toggleRule(mqList: MediaQueryList, rule: CSSStyleRule) {
-        if (mqList.matches) {
+        if (mqList.matches && this.isRuleLive(rule)) {
             this.activeRules.add(rule)
         } else {
             this.activeRules.delete(rule)
