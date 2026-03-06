@@ -9,7 +9,7 @@ type TypeName = (typeof types)[number]
 type SafeAreaType = (typeof safeAreaTypes)[number]
 type Inset = 'top' | 'bottom' | 'left' | 'right'
 
-export const generateCSSForInsets = () => {
+const generateCSSForInsets = () => {
     let css = `@utility h-screen-safe {
     height: calc(100vh - (env(safe-area-inset-top) + env(safe-area-inset-bottom)));
 }\n\n`
@@ -104,3 +104,5 @@ export const generateCSSForInsets = () => {
     // Remove the last newline character
     return css.slice(0, -1)
 }
+
+export const INSETS_CSS = generateCSSForInsets()

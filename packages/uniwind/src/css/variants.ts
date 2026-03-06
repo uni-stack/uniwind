@@ -1,6 +1,6 @@
 const variants = ['ios', 'android', 'web', 'native', 'tv', 'android-tv', 'apple-tv']
 
-export const generateCSSForVariants = () => {
+const generateCSSForVariants = () => {
     let css = ''
 
     variants.forEach(variant => {
@@ -9,3 +9,5 @@ export const generateCSSForVariants = () => {
 
     return css
 }
+
+export const VARIANTS_CSS = generateCSSForVariants()

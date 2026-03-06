@@ -1,15 +1,14 @@
 import fs from 'fs'
 import path from 'path'
-import { generateCSSForInsets } from './insets'
-import { overwrite } from './overwrite'
+import { EXTRA_UTILITIES_CSS } from './extraUtilities'
+import { INSETS_CSS } from './insets'
+import { OVERWRITE_CSS } from './overwrite'
 import { generateCSSForThemes } from './themes'
-import { generateCSSForVariants } from './variants'
+import { VARIANTS_CSS } from './variants'
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
 
 export const buildCSS = async (themes: Array<string>, input: string) => {
-    const variants = generateCSSForVariants()
-    const insets = generateCSSForInsets()
     const themesCSS = await generateCSSForThemes(themes, input)
     const cssFilePath = path.join(dirname, '../../uniwind.css')
     const oldCSSFile = fs.existsSync(cssFilePath)
@@ -17,9 +16,10 @@ export const buildCSS = async (themes: Array<string>, input: string) => {
         : ''
 
     const newCssFile = [
-        variants,
-        insets,
-        overwrite,
+        VARIANTS_CSS,
+        INSETS_CSS,
+        OVERWRITE_CSS,
+        EXTRA_UTILITIES_CSS,
         themesCSS,
     ].join('\n')
 
