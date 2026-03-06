@@ -10,6 +10,8 @@
 @theme {
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
+  --color-red: #ff0000;
+  --color-custom-rgb: rgb(from var(--color-red) r g b / 0.8);
   --spacing-test: 123px;
   --color-background: unset;
 }

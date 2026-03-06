@@ -18,22 +18,6 @@ describe('Colors', () => {
                     className="bg-black"
                     testID="black"
                 />
-                <View
-                    className="bg-[#00ff00]"
-                    testID="custom-hex-green"
-                />
-                <View
-                    className="bg-[#00ff0080]"
-                    testID="custom-hex-green-alpha"
-                />
-                <View
-                    className="bg-[rgb(255,0,0)]"
-                    testID="custom-rgb-red"
-                />
-                <View
-                    className="bg-[rgba(255,0,0,0.5)]"
-                    testID="custom-rgba-red-alpha"
-                />
             </React.Fragment>,
         )
 
@@ -74,6 +58,10 @@ describe('Colors', () => {
                     className="bg-bar"
                     testID="custom-oklch-bar"
                 />
+                <View
+                    className="bg-custom-rgb"
+                    testID="custom-from-rgb"
+                />
             </React.Fragment>,
         )
 
@@ -94,5 +82,8 @@ describe('Colors', () => {
 
         const customOklchBarStyles = getStylesFromId('custom-oklch-bar')
         expect(customOklchBarStyles.backgroundColor).toBe('#7bae73')
+
+        const customRgbStyles = getStylesFromId('custom-from-rgb')
+        expect(customRgbStyles.backgroundColor).toBe('#ff0000cc')
     })
 })
