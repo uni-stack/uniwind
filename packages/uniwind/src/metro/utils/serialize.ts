@@ -1,5 +1,5 @@
 import { Logger } from '../logger'
-import { addMissingSpaces, isNumber, isValidJSValue, pipe, roundToPrecision, smartSplit } from './common'
+import { addMissingSpaces, isNumber, isValidJSValue, roundToPrecision, smartSplit } from './common'
 
 const parseStringValue = (value: string) => {
     if (isValidJSValue(value)) {
@@ -97,26 +97,25 @@ export const serialize = (value: any): string => {
 }
 
 export const serializeJSObject = (obj: Record<string, any>, serializer: (key: string, value: string) => string) => {
-    const serializedObject = pipe(obj)(
-        Object.entries,
-        entries => entries.map(([key, value]) => serializer(key, serialize(value))),
-        entries => entries.join(','),
-        result => {
-            if (result === '') {
-                return ''
-            }
+    const entries = Object.entries(obj).map(([key, value]) => serializer(key, serialize(value)))
 
-            return `${result},`
-        },
-    )
+    const validEntries = entries.filter(entry => {
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+            new Function(`function v() { const o = ({ ${entry} }) }`)
+            return true
+        } catch {
+            return false
+        }
+    })
 
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-        new Function(`function validateJS() { const obj = ({ ${serializedObject} }) }`)
-    } catch {
-        Logger.error('Failed to serialize javascript object')
+    if (validEntries.length < entries.length) {
+        Logger.warn(`Skipped ${entries.length - validEntries.length} invalid style entries during serialization`)
+    }
+
+    if (validEntries.length === 0) {
         return ''
     }
 
-    return serializedObject
+    return `${validEntries.join(',')},`
 }
