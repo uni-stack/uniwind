@@ -25,3 +25,7 @@
         }
     }
 }
+
+@utility multiple-transform {
+  transform: translateX(10px) translateY(10px);
+}
