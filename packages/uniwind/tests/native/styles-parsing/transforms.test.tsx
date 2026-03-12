@@ -86,4 +86,17 @@ describe('Transforms', () => {
             { skewX: '12deg' },
         ])
     })
+
+    test('Multiple Transforms in single token', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="multiple-transform" testID="multiple-transform" />
+            </React.Fragment>,
+        )
+
+        expect(getStylesFromId('multiple-transform').transform).toEqual([
+            { translateX: 10 },
+            { translateY: 10 },
+        ])
+    })
 })

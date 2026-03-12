@@ -330,6 +330,14 @@ export class CSS {
                 return this.processValue(declarationValue[0]!)
             }
 
+            if (this.isTransformArray(declarationValue)) {
+                return declarationValue.flatMap(value => {
+                    const result = this.processValue(value)
+
+                    return Array.isArray(result) ? result : [result]
+                })
+            }
+
             return this.addComaBetweenTokens(declarationValue).reduce<string | number>((acc, value, index, array) => {
                 if (typeof value === 'object') {
                     const nextValue = array.at(index + 1)
@@ -484,6 +492,33 @@ export class CSS {
         this.logUnsupported(`Unsupported value - ${JSON.stringify(declarationValue)}`)
 
         return undefined
+    }
+
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    private static readonly TRANSFORM_TYPES = new Set([
+        'translate',
+        'translateX',
+        'translateY',
+        'translateZ',
+        'rotate',
+        'rotateX',
+        'rotateY',
+        'rotateZ',
+        'scale',
+        'scaleX',
+        'scaleY',
+        'scaleZ',
+        'skew',
+        'skewX',
+        'skewY',
+        'matrix',
+        'perspective',
+    ])
+
+    private isTransformArray(values: Array<any>) {
+        return values.every(
+            value => typeof value === 'object' && 'type' in value && CSS.TRANSFORM_TYPES.has(value.type),
+        )
     }
 
     private isOverflow(value: any): value is { x: OverflowKeyword; y: OverflowKeyword } {
