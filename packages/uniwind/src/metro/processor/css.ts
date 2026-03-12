@@ -517,7 +517,7 @@ export class CSS {
 
     private isTransformArray(values: Array<any>) {
         return values.every(
-            value => typeof value === 'object' && 'type' in value && CSS.TRANSFORM_TYPES.has(value.type),
+            value => typeof value === 'object' && value !== null && 'type' in value && CSS.TRANSFORM_TYPES.has(value.type),
         )
     }
 
