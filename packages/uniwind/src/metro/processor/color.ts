@@ -26,9 +26,10 @@ export class Color {
                     return this.black
                 }
 
-                const colorValue = color.replace(colorFunction, '').slice(1, -1)
+                const colorValueRaw = this.clearColorFunctionValue(color, colorFunction)
+                const { colorValue, alpha } = this.extractAlphaFromColorFunctionValue(colorValueRaw)
 
-                return `rt.parseColor("${colorFunction}", ${colorValue})`
+                return `rt.parseColor("${colorFunction}", ${colorValue}, ${alpha})`
             }
 
             return this.format(parsed)
@@ -80,5 +81,45 @@ export class Color {
         }
 
         return formatHex8(color)
+    }
+
+    private clearColorFunctionValue(color: string, colorFunction: string) {
+        return color
+            .replace(colorFunction, '')
+            .replace('"from"', '')
+            .replace('"r" "g" "b"', '')
+            .slice(1, -1)
+            .trim()
+    }
+
+    private extractAlphaFromColorFunctionValue(color: string) {
+        // This regex matches a string that may contain an optional alpha value at the end, separated by a slash.
+        // this[`--color-red-500`] / 0.5 => color: this[`--color-red-500`], alpha: 0.5
+        // this[`--color-red-500`] / "25%" => color: this[`--color-red-500`], alpha: 0.25
+        const regex = /^(.*?)(?:\s*\/\s*(["']?)(\d+(?:\.\d+)?)(%?)\2)?$/
+        const match = color.match(regex)
+
+        if (!match) {
+            return { color: color.trim(), alpha: 1 }
+        }
+
+        const colorStr = match[1]?.trim() ?? ''
+        const alphaStr = match[3]
+        const isPercentage = match[4] === '%'
+
+        let alpha = 1
+
+        if (alphaStr !== undefined) {
+            alpha = Number(alphaStr)
+
+            if (isPercentage) {
+                alpha = alpha / 100
+            }
+        }
+
+        return {
+            colorValue: colorStr,
+            alpha,
+        }
     }
 }

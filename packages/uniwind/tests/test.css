@@ -12,6 +12,8 @@
   --color-bar: oklch(var(--bar));
   --spacing-test: 123px;
   --color-background: unset;
+  --color-custom-rgb-function-dec: rgb(from var(--color-red-500) r g b / 0.5);
+  --color-custom-rgb-function-percentage: rgb(from var(--color-red-500) r g b / 25%);
 }
 
 @layer theme {

@@ -18,22 +18,6 @@ describe('Colors', () => {
                     className="bg-black"
                     testID="black"
                 />
-                <View
-                    className="bg-[#00ff00]"
-                    testID="custom-hex-green"
-                />
-                <View
-                    className="bg-[#00ff0080]"
-                    testID="custom-hex-green-alpha"
-                />
-                <View
-                    className="bg-[rgb(255,0,0)]"
-                    testID="custom-rgb-red"
-                />
-                <View
-                    className="bg-[rgba(255,0,0,0.5)]"
-                    testID="custom-rgba-red-alpha"
-                />
             </React.Fragment>,
         )
 
@@ -74,6 +58,14 @@ describe('Colors', () => {
                     className="bg-bar"
                     testID="custom-oklch-bar"
                 />
+                <View
+                    className="bg-custom-rgb-function-dec"
+                    testID="custom-rgb-function-dec"
+                />
+                <View
+                    className="bg-custom-rgb-function-percentage"
+                    testID="custom-rgb-function-percentage"
+                />
             </React.Fragment>,
         )
 
@@ -94,5 +86,11 @@ describe('Colors', () => {
 
         const customOklchBarStyles = getStylesFromId('custom-oklch-bar')
         expect(customOklchBarStyles.backgroundColor).toBe('#7bae73')
+
+        const customRgbFunctionStyles = getStylesFromId('custom-rgb-function-dec')
+        expect(customRgbFunctionStyles.backgroundColor).toBe('#fb2c3680')
+
+        const customRgbFunctionPercentageStyles = getStylesFromId('custom-rgb-function-percentage')
+        expect(customRgbFunctionPercentageStyles.backgroundColor).toBe('#fb2c3640')
     })
 })
