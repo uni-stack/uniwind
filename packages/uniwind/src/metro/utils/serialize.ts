@@ -100,6 +100,19 @@ export const serializeJSObject = (obj: Record<string, any>, serializer: (key: st
     const serializedObject = pipe(obj)(
         Object.entries,
         entries => entries.map(([key, value]) => serializer(key, serialize(value))),
+        serializedValues =>
+            serializedValues.filter(serializedValue => {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
+                    new Function(`function validateJS() { const obj = ({ ${serializedValue} }) }`)
+
+                    return true
+                } catch {
+                    Logger.error(`Failed to serialize ${serializedValue} as a valid JS object entry. Skipping.`)
+
+                    return false
+                }
+            }),
         entries => entries.join(','),
         result => {
             if (result === '') {
@@ -109,14 +122,6 @@ export const serializeJSObject = (obj: Record<string, any>, serializer: (key: st
             return `${result},`
         },
     )
-
-    try {
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-        new Function(`function validateJS() { const obj = ({ ${serializedObject} }) }`)
-    } catch {
-        Logger.error('Failed to serialize javascript object')
-        return ''
-    }
 
     return serializedObject
 }

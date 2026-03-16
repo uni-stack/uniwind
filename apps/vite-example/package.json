@@ -24,7 +24,7 @@
         "@vitejs/plugin-react": "5.1.1",
         "globals": "16.5.0",
         "typescript": "catalog:",
-        "vite": "7.2.6",
+        "vite": "catalog:",
         "vite-plugin-rnw": "0.0.10"
     }
 }

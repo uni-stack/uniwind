@@ -20,7 +20,7 @@
         "bun.lockb"
     ],
     "plugins": [
-        "https://plugins.dprint.dev/typescript-0.88.7.wasm",
+        "https://plugins.dprint.dev/typescript-0.95.15.wasm",
         "https://plugins.dprint.dev/json-0.19.1.wasm"
     ]
 }
