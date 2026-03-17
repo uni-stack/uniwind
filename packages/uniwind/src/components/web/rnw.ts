@@ -4,7 +4,7 @@ import { StyleDependency } from '../../types'
 import './metro-injected'
 
 type UniwindWithThemes = {
-    themes: typeof Uniwind['themes']
+    themes: typeof Uniwind['_themes']
 }
 
 const addClassNameToRoot = () => {

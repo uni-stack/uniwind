@@ -10,7 +10,7 @@ const RN_VERSION = Platform.constants?.reactNativeVersion?.minor ?? 0
 const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
 
 export class UniwindConfigBuilder {
-    protected themes = ['light', 'dark']
+    protected _themes = ['light', 'dark']
     #hasAdaptiveThemes = true
     #currentTheme = this.colorScheme as ThemeName
 
@@ -28,6 +28,10 @@ export class UniwindConfigBuilder {
                 UniwindListener.notify([StyleDependency.Theme])
             }
         })
+    }
+
+    get themes() {
+        return this._themes as Array<ThemeName>
     }
 
     get hasAdaptiveThemes() {
@@ -67,7 +71,7 @@ export class UniwindConfigBuilder {
                 return
             }
 
-            if (!this.themes.includes(theme)) {
+            if (!this._themes.includes(theme)) {
                 throw new Error(`Uniwind: You're trying to setTheme to '${theme}', but it was not registered.`)
             }
 
@@ -106,7 +110,7 @@ export class UniwindConfigBuilder {
     }
 
     protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {
-        this.themes = themes
+        this._themes = themes
     }
 
     protected onThemeChange() {
