@@ -1362,14 +1362,63 @@ import { cn } from '@/lib/cn';
 
 ### Custom Utilities (@utility)
 
-The `@utility` directive creates utility classes that work exactly like built-in Tailwind classes. Use for CSS functions and patterns Tailwind doesn't support natively:
+The `@utility` directive creates utility classes that work exactly like built-in Tailwind classes. Three main use cases:
+
+#### 1. Variable-driven utilities (runtime-injected values)
+
+Create a utility whose value comes from a CSS variable injected at runtime via `updateCSSVariables`. Use `@theme static` to declare the variable so Uniwind tracks it even before it is updated:
+
+```css
+/* global.css */
+@theme static {
+  --header-height: 0px;
+}
+
+@utility p-safe-header {
+  padding-top: var(--header-height);
+}
+```
+
+Inject the real value at runtime (e.g., from react-navigation's layout event):
+
+```tsx
+import { Uniwind } from 'uniwind'
+
+// e.g., inside a navigation layout listener
+Uniwind.updateCSSVariables(Uniwind.currentTheme, {
+  '--header-height': headerHeight,
+})
+```
+
+```tsx
+<View className="p-safe-header flex-1" />
+```
+
+#### 2. Brand-new utilities (no Tailwind equivalent)
+
+For styles that have no built-in Tailwind class:
 
 ```css
 @utility h-hairline { height: hairlineWidth(); }
 @utility text-scaled { font-size: fontScale(); }
+@utility card-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 ```
 
-Usage like any Tailwind class: `<View className="h-hairline" />`
+Usage like any Tailwind class: `<View className="h-hairline card-shadow" />`
+
+#### 3. Overriding existing Tailwind utilities
+
+Use `@utility` to completely replace what a built-in class does. Example: make `border` always use `--color-primary`:
+
+```css
+@utility border {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-primary);
+}
+```
 
 ## @theme Directive
 
@@ -1890,7 +1939,15 @@ Yes, use `ScopedTheme`: `<ScopedTheme theme="dark"><Card /></ScopedTheme>`. It f
 No. `withUniwind` does NOT support interactive state selectors (`active:`, `focus:`, `disabled:`). Only core RN `Pressable`, `TextInput`, and `Switch` support them. For RNGH components, use `onPressIn`/`onPressOut` with state.
 
 **Can I customize the default `border` color?**
-Not via `@layer base`. The default `borderColor` from `border` class is hardcoded to `#000000`. Use `border border-gray-300` explicitly or define `--color-border` in `@theme` and use `border-border`.
+Yes — use `@utility border` to override the class entirely:
+```css
+@utility border {
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-primary);
+}
+```
+This completely replaces the built-in `border` behavior, so re-declare any properties you still need. Alternatively, use `border border-gray-300` explicitly or define `--color-border` in `@theme` and use `border-border`.
 
 **Can I use platform-specific fonts in `@theme {}`?**
 No. `@theme {}` only accepts custom properties. Use `@layer theme { :root { @variant ios { --font-sans: '...'; } } }` instead. Note: use `@variant` (not `@media`) for platform selection in CSS.
