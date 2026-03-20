@@ -14,15 +14,27 @@
         "//#check:format": {},
         "circular:check": {},
         "precommit": {
-            "dependsOn": ["lint", "check:typescript", "circular:check", "test:native", "test:web", "//#check:format"]
+            "dependsOn": [
+                "lint",
+                "check:typescript",
+                "circular:check",
+                "test:native",
+                "test:web",
+                "test:types",
+                "//#check:format"
+            ]
         },
         "test": {
-            "dependsOn": ["test:native", "test:web", "test:e2e"]
+            "dependsOn": ["test:native", "test:web", "test:types", "test:e2e"]
         },
         "test:native": {
             "cache": false
         },
         "test:web": {
+            "cache": false
+        },
+        "test:types": {
+            "dependsOn": ["build"],
             "cache": false
         },
         "test:e2e": {

@@ -19,6 +19,7 @@
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
         "test:native": "jest --config jest.config.native.js",
         "test:web": "jest --config jest.config.web.js",
+        "test:types": "tsc --project tests/type-test/tsconfig.json",
         "test:e2e": "playwright test",
         "release": "release-it"
     },

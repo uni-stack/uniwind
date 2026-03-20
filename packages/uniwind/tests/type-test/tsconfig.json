@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "noEmit": true,
+        "rootDir": ".",
+        "baseUrl": ".",
+        "paths": {
+            "uniwind": ["../../dist/module/index.d.ts"]
+        }
+    },
+    "include": [
+        "setup.d.ts",
+        "*.ts"
+    ]
+}

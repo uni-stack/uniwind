@@ -5,7 +5,7 @@ import { UniwindListener } from '../core/listener'
 import { ThemeName } from '../core/types'
 import { StyleDependency } from '../types'
 
-export const useUniwind = () => {
+export const useUniwind = (): { theme: ThemeName; hasAdaptiveThemes: boolean } => {
     const uniwindContext = useUniwindContext()
     const [theme, setTheme] = useState(Uniwind.currentTheme)
     const [hasAdaptiveThemes, setHasAdaptiveThemes] = useState(Uniwind.hasAdaptiveThemes)
@@ -26,7 +26,7 @@ export const useUniwind = () => {
     }, [uniwindContext])
 
     return {
-        theme: uniwindContext.scopedTheme ?? theme as ThemeName,
+        theme: uniwindContext.scopedTheme ?? theme,
         hasAdaptiveThemes: uniwindContext.scopedTheme !== null ? false : hasAdaptiveThemes,
     }
 }

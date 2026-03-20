@@ -82,7 +82,7 @@
     },
     "packages/uniwind": {
       "name": "uniwind",
-      "version": "1.5.0",
+      "version": "1.6.0",
       "dependencies": {
         "@tailwindcss/node": "4.2.1",
         "@tailwindcss/oxide": "4.2.1",
