@@ -134,7 +134,7 @@ class UniwindStoreBuilder {
                 if (
                     style.minWidth > this.runtime.screen.width
                     || style.maxWidth < this.runtime.screen.width
-                    || (style.theme !== null && theme !== style.theme)
+                    || (style.theme !== null && theme !== style.theme && !(style.theme === 'dark' && theme.endsWith('-dark')))
                     || (style.orientation !== null && this.runtime.orientation !== style.orientation)
                     || (style.rtl !== null && this.runtime.rtl !== style.rtl)
                     || (style.active !== null && state?.isPressed !== style.active)
