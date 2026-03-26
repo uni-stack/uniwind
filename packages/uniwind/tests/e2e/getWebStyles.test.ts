@@ -19,7 +19,7 @@ async function getWebStyles(
 ) {
     return page.evaluate(
         ([cls, ctx]) => {
-            return window.__uniwind.getWebStyles(cls, ctx)
+            return window.__uniwind.getWebStyles(cls, undefined, ctx)
         },
         [className, context],
     )

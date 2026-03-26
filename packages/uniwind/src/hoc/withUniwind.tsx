@@ -1,4 +1,5 @@
 import { ComponentProps, useLayoutEffect, useReducer } from 'react'
+import { generateDataSet } from '../components/web/generateDataSet'
 import { useUniwindContext } from '../core/context'
 import { CSSListener, formatColor, getWebStyles } from '../core/web'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
@@ -26,7 +27,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
             }
 
             const className = propValue
-            const color = getWebStyles(className, uniwindContext).accentColor
+            const color = getWebStyles(className, props, uniwindContext).accentColor
 
             acc.generatedProps[colorProp] = color !== undefined
                 ? formatColor(color)
@@ -67,6 +68,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         <Component
             {...props}
             {...generatedProps}
+            dataSet={generateDataSet(props)}
         />
     )
 }
@@ -87,7 +89,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
                 return acc
             }
 
-            const value = getWebStyles(className, uniwindContext)[option.styleProperty]
+            const value = getWebStyles(className, props, uniwindContext)[option.styleProperty]
             const transformedValue = value !== undefined && option.styleProperty.toLowerCase().includes('color')
                 ? formatColor(value as string)
                 : value
@@ -115,6 +117,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         <Component
             {...props}
             {...generatedProps}
+            dataSet={generateDataSet(props)}
         />
     )
 }
