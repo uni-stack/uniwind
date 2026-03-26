@@ -1,4 +1,14 @@
-## What's Changed in 1.6.0
+## What's Changed in 1.6.1
+
+
+
+### 🐛 Bug Fixes
+* fix: pass data attributes to withUniwind by @Brentlok in [#477](https://github.com/uni-stack/uniwind/pull/477)* fix: p3 color parsing by @Brentlok in [#476](https://github.com/uni-stack/uniwind/pull/476)
+
+### 🧪 Testing
+* test: advanced type check for ThemeName by @Brentlok in [#465](https://github.com/uni-stack/uniwind/pull/465)
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.6.0...v1.6.1## What's Changed in 1.6.0
 
 
 
