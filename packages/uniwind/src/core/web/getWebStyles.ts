@@ -52,7 +52,11 @@ const getActiveStylesForClass = (className: string) => {
     return extractedStyles
 }
 
-export const getWebStyles = (className: string | undefined, uniwindContext: UniwindContextType): RNStyle => {
+export const getWebStyles = (
+    className: string | undefined,
+    componentProps: Record<string, unknown> | undefined,
+    uniwindContext: UniwindContextType,
+): RNStyle => {
     if (className === undefined) {
         return {}
     }

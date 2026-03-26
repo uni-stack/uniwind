@@ -26,7 +26,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(propValue, undefined, undefined, uniwindContext)
+            const { styles, dependencies } = UniwindStore.getStyles(propValue, props, undefined, uniwindContext)
 
             acc.dependencies.push(...dependencies)
             acc.generatedProps[colorProp] = styles.accentColor
@@ -36,7 +36,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
         if (isClassProperty(propName)) {
             const styleProp = classToStyle(propName)
-            const { styles, dependencies } = UniwindStore.getStyles(propValue, undefined, undefined, uniwindContext)
+            const { styles, dependencies } = UniwindStore.getStyles(propValue, props, undefined, uniwindContext)
 
             acc.dependencies.push(...dependencies)
             acc.generatedProps[styleProp] ??= []
@@ -90,7 +90,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
                 return acc
             }
 
-            const { styles, dependencies } = UniwindStore.getStyles(className, undefined, undefined, uniwindContext)
+            const { styles, dependencies } = UniwindStore.getStyles(className, props, undefined, uniwindContext)
 
             acc.generatedProps[propName] = styles[option.styleProperty]
             acc.dependencies.push(...dependencies)
@@ -98,7 +98,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
             return acc
         }
 
-        const { styles, dependencies } = UniwindStore.getStyles(className, undefined, undefined, uniwindContext)
+        const { styles, dependencies } = UniwindStore.getStyles(className, props, undefined, uniwindContext)
         acc.dependencies.push(...dependencies)
 
         if (!isStyleProperty(propName)) {

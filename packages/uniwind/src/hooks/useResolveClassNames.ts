@@ -8,9 +8,9 @@ const emptyState = {} as RNStyle
 export const useResolveClassNames = (className: string) => {
     const uniwindContext = useUniwindContext()
     const [styles, recreate] = useReducer(
-        () => className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
+        () => className !== '' ? getWebStyles(className, undefined, uniwindContext) : emptyState,
         undefined,
-        () => className !== '' ? getWebStyles(className, uniwindContext) : emptyState,
+        () => className !== '' ? getWebStyles(className, undefined, uniwindContext) : emptyState,
     )
 
     useLayoutEffect(() => {

@@ -138,4 +138,20 @@ describe('withUniwind', () => {
             borderColor: TW_BLUE_500,
         })
     })
+
+    it('Should pass data attributes to the wrapped component', () => {
+        const ManualWithUniwind = withUniwind(Component, {
+            style: {
+                fromClassName: 'className',
+            },
+        })
+
+        const { getStylesFromId } = renderUniwind(
+            <ManualWithUniwind className="data-test:bg-red-500" data-test testID="test-component" />,
+        )
+
+        expect(getStylesFromId('test-component')).toEqual({
+            backgroundColor: TW_RED_500,
+        })
+    })
 })

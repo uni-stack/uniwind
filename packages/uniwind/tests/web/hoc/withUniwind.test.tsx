@@ -42,7 +42,10 @@ describe('withUniwind', () => {
 
         render(<AutoWithUniwind colorClassName="accent-red-500" testID="test-component" />)
 
-        expect(mockGetWebStyles).toHaveBeenCalledWith('accent-red-500', UNIWIND_CONTEXT_MOCK)
+        expect(mockGetWebStyles).toHaveBeenCalledWith('accent-red-500', {
+            'colorClassName': 'accent-red-500',
+            'testID': 'test-component',
+        }, UNIWIND_CONTEXT_MOCK)
 
         const receivedProps = ComponentWithSpy.mock.calls[0][0]
 
