@@ -74,6 +74,10 @@ describe('Colors', () => {
                     className="bg-bar"
                     testID="custom-oklch-bar"
                 />
+                <View
+                    className="bg-p3"
+                    testID="custom-p3"
+                />
             </React.Fragment>,
         )
 
@@ -94,5 +98,8 @@ describe('Colors', () => {
 
         const customOklchBarStyles = getStylesFromId('custom-oklch-bar')
         expect(customOklchBarStyles.backgroundColor).toBe('#7bae73')
+
+        const customP3Styles = getStylesFromId('custom-p3')
+        expect(customP3Styles.backgroundColor).toBe('#ffd400')
     })
 })

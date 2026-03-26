@@ -57,8 +57,9 @@ export class Color {
                 })
             }
 
+            const colorType = color.type === 'display-p3' ? 'p3' : color.type
             const result = this.toRgb({
-                mode: color.type,
+                mode: colorType,
                 ...color,
             } as ColorType)
 

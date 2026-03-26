@@ -12,6 +12,7 @@
   --color-bar: oklch(var(--bar));
   --spacing-test: 123px;
   --color-background: unset;
+  --color-p3: color(display-p3 1 0.84 0.04);
 }
 
 @layer theme {
