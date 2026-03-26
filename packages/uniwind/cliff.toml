@@ -28,7 +28,7 @@ body = """
       {% if commit.remote.pr_number %} in \
         [#{{ commit.remote.pr_number }}]({{ self::remote_url() }}/pull/{{ commit.remote.pr_number }})\
       {%- endif %}
-  {%- endfor %}
+  {% endfor %}
 {% endif %}{% endfor -%}
 
 {%- if github -%}
