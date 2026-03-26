@@ -1,10 +1,12 @@
+const toCamelCase = (str: string) => str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+
 export const generateDataSet = (props: Record<PropertyKey, any>) => {
     const dataSet: DataSet = props.dataSet !== undefined ? { ...props.dataSet } : {}
 
     Object.entries(props).forEach(([key, value]) => {
         if (key.startsWith('data-')) {
             // Remove data- prefix
-            dataSet[key.slice(5)] = value
+            dataSet[toCamelCase(key.slice(5))] = value
         }
     })
 
