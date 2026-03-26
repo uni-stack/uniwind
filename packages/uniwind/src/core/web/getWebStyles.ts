@@ -1,3 +1,4 @@
+import { generateDataSet } from '../../components/web/generateDataSet'
 import { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
@@ -73,7 +74,21 @@ export const getWebStyles = (
 
     dummy.className = className
 
+    const dataSet = generateDataSet(componentProps ?? {})
+
+    Object.entries(dataSet).forEach(([key, value]) => {
+        if (value === false || value === undefined) {
+            return
+        }
+
+        dummy.dataset[key] = String(value)
+    })
+
     const computedStyles = getActiveStylesForClass(className)
+
+    Object.keys(dataSet).forEach(key => {
+        delete dummy.dataset[key]
+    })
 
     return Object.fromEntries(
         Object.entries(computedStyles)

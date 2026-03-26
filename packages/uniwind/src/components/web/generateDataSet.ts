@@ -11,7 +11,7 @@ export const generateDataSet = (props: Record<PropertyKey, any>) => {
     return dataSet
 }
 
-type DataSet = Record<string, string | boolean>
+type DataSet = Record<string, string | boolean | undefined>
 
 declare module 'react-native' {
     interface SwitchProps {
