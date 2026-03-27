@@ -1,5 +1,6 @@
 import { FlatList as RNFlatList, FlatListProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProps<unknown>) => {
@@ -8,7 +9,7 @@ export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProp
     const styleContentContainer = useStyle(props.contentContainerClassName, props)
     const styleListFooterComponent = useStyle(props.ListFooterComponentClassName, props)
     const styleListHeaderComponent = useStyle(props.ListHeaderComponentClassName, props)
-    const endFillColor = useStyle(props.endFillColorClassName, props).accentColor
+    const endFillColor = useAccentColor(props.endFillColorClassName, props)
     const hasSingleColumn = !('numColumns' in props) || props.numColumns === 1
 
     return (

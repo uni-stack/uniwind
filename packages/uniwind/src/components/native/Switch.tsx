@@ -1,6 +1,7 @@
 import { Switch as RNSwitch, SwitchProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const Switch = copyComponentProperties(RNSwitch, (props: SwitchProps) => {
@@ -8,10 +9,10 @@ export const Switch = copyComponentProperties(RNSwitch, (props: SwitchProps) => 
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
     const style = useStyle(props.className, props, state)
-    const trackColorOn = useStyle(props.trackColorOnClassName, props, state).accentColor
-    const trackColorOff = useStyle(props.trackColorOffClassName, props, state).accentColor
-    const thumbColor = useStyle(props.thumbColorClassName, props, state).accentColor
-    const ios_backgroundColor = useStyle(props.ios_backgroundColorClassName, props, state).accentColor
+    const trackColorOn = useAccentColor(props.trackColorOnClassName, props, state)
+    const trackColorOff = useAccentColor(props.trackColorOffClassName, props, state)
+    const thumbColor = useAccentColor(props.thumbColorClassName, props, state)
+    const ios_backgroundColor = useAccentColor(props.ios_backgroundColorClassName, props, state)
 
     return (
         <RNSwitch

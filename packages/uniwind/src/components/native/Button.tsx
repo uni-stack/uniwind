@@ -1,9 +1,9 @@
 import { Button as RNButton, ButtonProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
-import { useStyle } from './useStyle'
+import { useAccentColor } from './useAccentColor'
 
 export const Button = copyComponentProperties(RNButton, (props: ButtonProps) => {
-    const color = useStyle(props.colorClassName, props).accentColor
+    const color = useAccentColor(props.colorClassName, props)
 
     return (
         <RNButton

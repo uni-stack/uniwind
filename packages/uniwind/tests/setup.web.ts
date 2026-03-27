@@ -1,5 +1,10 @@
 import '@testing-library/jest-dom'
 
+{
+    // Define __DEV__ global for tests
+    ;(globalThis as any).__DEV__ = true
+}
+
 // Mock CSS-related globals that JSDOM doesn't define
 if (typeof CSSRuleList === 'undefined') {
     global.CSSRuleList = class CSSRuleList {} as any
