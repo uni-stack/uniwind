@@ -1,7 +1,8 @@
 import { OverflowKeyword } from 'lightningcss'
+import { isDefined } from '../../common/utils'
 import { Logger } from '../logger'
 import { DeclarationValues } from '../types'
-import { deepEqual, isDefined, pipe, roundToPrecision, shouldBeSerialized } from '../utils'
+import { deepEqual, pipe, roundToPrecision, shouldBeSerialized } from '../utils'
 import type { ProcessorBuilder } from './processor'
 
 export class CSS {

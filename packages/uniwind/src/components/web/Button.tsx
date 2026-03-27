@@ -1,7 +1,7 @@
 import { Button as RNButton, ButtonProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
+import { useUniwindAccent } from './useUniwindAccent'
 
 export const Button = copyComponentProperties(RNButton, (props: ButtonProps) => {
     const color = useUniwindAccent(props.colorClassName)

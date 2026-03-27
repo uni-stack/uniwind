@@ -1,8 +1,9 @@
 import { Image as RNImage, ImageProps } from 'react-native'
-import { useResolveClassNames, useUniwindAccent } from '../../hooks'
+import { useResolveClassNames } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
+import { useUniwindAccent } from './useUniwindAccent'
 
 export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
     const tintColor = useUniwindAccent(props.tintColorClassName)

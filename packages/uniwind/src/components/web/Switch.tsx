@@ -1,8 +1,8 @@
 import { Switch as RNSwitch, SwitchProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
+import { useUniwindAccent } from './useUniwindAccent'
 
 export const Switch = copyComponentProperties(RNSwitch, (props: SwitchProps) => {
     const trackColorOn = useUniwindAccent(props.trackColorOnClassName)

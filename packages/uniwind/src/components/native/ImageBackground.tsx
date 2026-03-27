@@ -1,11 +1,12 @@
 import { ImageBackground as RNImageBackground, ImageBackgroundProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const ImageBackground = copyComponentProperties(RNImageBackground, (props: ImageBackgroundProps) => {
     const style = useStyle(props.className, props)
     const imageStyle = useStyle(props.imageClassName, props)
-    const tintColor = useStyle(props.tintColorClassName, props).accentColor
+    const tintColor = useAccentColor(props.tintColorClassName, props)
 
     return (
         <RNImageBackground

@@ -1,8 +1,8 @@
 import { ActivityIndicator as RNActivityIndicator, ActivityIndicatorProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
+import { useUniwindAccent } from './useUniwindAccent'
 
 export const ActivityIndicator = copyComponentProperties(RNActivityIndicator, (props: ActivityIndicatorProps) => {
     const color = useUniwindAccent(props.colorClassName)

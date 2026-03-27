@@ -1,11 +1,12 @@
 import { ScrollView as RNScrollView, ScrollViewProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const ScrollView = copyComponentProperties(RNScrollView, (props: ScrollViewProps) => {
     const style = useStyle(props.className, props)
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
-    const endFillColor = useStyle(props.endFillColorClassName, props).accentColor
+    const endFillColor = useAccentColor(props.endFillColorClassName, props)
 
     return (
         <RNScrollView

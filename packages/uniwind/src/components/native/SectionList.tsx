@@ -1,5 +1,6 @@
 import { SectionList as RNSectionList, SectionListProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const SectionList = copyComponentProperties(RNSectionList, (props: SectionListProps<unknown, unknown>) => {
@@ -7,7 +8,7 @@ export const SectionList = copyComponentProperties(RNSectionList, (props: Sectio
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
     const listFooterComponentStyle = useStyle(props.ListFooterComponentClassName, props)
     const listHeaderComponentStyle = useStyle(props.ListHeaderComponentClassName, props)
-    const endFillColor = useStyle(props.endFillColorClassName, props).accentColor
+    const endFillColor = useAccentColor(props.endFillColorClassName, props)
 
     return (
         <RNSectionList
