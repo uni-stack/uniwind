@@ -35,7 +35,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
             if (__DEV__ && !warnedOnce && isDefined(propValue) && propValue.trim() !== '' && styles.accentColor === undefined) {
                 warnedOnce = true
                 Logger.warn(
-                    `className '${propValue}' was provided to extract accentColor but no color was found. Make sure the className includes a color utility (e.g., 'accent-red-500', 'accent-blue-600').`,
+                    `className '${propValue}' was provided to extract accentColor but no color was found. Make sure the className includes a color utility (e.g., 'accent-red-500', 'accent-blue-600'). See https://docs.uniwind.dev/class-names#the-accent-prefix`,
                 )
             }
 
