@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TextInput as RNTextInput, TextInputProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputProps) => {
@@ -13,11 +14,11 @@ export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputP
         isPressed,
     } satisfies ComponentState
     const style = useStyle(props.className, props, state)
-    const cursorColor = useStyle(props.cursorColorClassName, props, state).accentColor
-    const selectionColor = useStyle(props.selectionColorClassName, props, state).accentColor
-    const placeholderTextColor = useStyle(props.placeholderTextColorClassName, props, state).accentColor
-    const selectionHandleColor = useStyle(props.selectionHandleColorClassName, props, state).accentColor
-    const underlineColorAndroid = useStyle(props.underlineColorAndroidClassName, props, state).accentColor
+    const cursorColor = useAccentColor(props.cursorColorClassName, props, state)
+    const selectionColor = useAccentColor(props.selectionColorClassName, props, state)
+    const placeholderTextColor = useAccentColor(props.placeholderTextColorClassName, props, state)
+    const selectionHandleColor = useAccentColor(props.selectionHandleColorClassName, props, state)
+    const underlineColorAndroid = useAccentColor(props.underlineColorAndroidClassName, props, state)
 
     return (
         <RNTextInput

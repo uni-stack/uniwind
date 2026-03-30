@@ -1,5 +1,3 @@
-export const isDefined = <T>(value: T): value is NonNullable<T> => value !== null && value !== undefined
-
 export const toCamelCase = (str: string) => str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 
 type P<I, O> = (data: I) => O

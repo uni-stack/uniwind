@@ -1,10 +1,14 @@
 import { ComponentProps, useLayoutEffect, useReducer } from 'react'
+import { isDefined } from '../common/utils'
 import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
+import { Logger } from '../core/logger'
 import { UniwindStore } from '../core/native'
 import { StyleDependency } from '../types'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
+
+let warnedOnce = false
 
 export const withUniwind: WithUniwind = <
     TComponent extends Component,
@@ -27,6 +31,13 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
             }
 
             const { styles, dependencies } = UniwindStore.getStyles(propValue, props, undefined, uniwindContext)
+
+            if (__DEV__ && !warnedOnce && isDefined(propValue) && propValue.trim() !== '' && styles.accentColor === undefined) {
+                warnedOnce = true
+                Logger.warn(
+                    `className '${propValue}' was provided to extract accentColor but no color was found. Make sure the className includes a color utility (e.g., 'accent-red-500', 'accent-blue-600'). See https://docs.uniwind.dev/class-names#the-accent-prefix`,
+                )
+            }
 
             acc.dependencies.push(...dependencies)
             acc.generatedProps[colorProp] = styles.accentColor

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Text as RNText, TextProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 type StyleWithWebkitLineClamp = {
@@ -15,7 +16,7 @@ export const Text = copyComponentProperties(RNText, (props: TextProps) => {
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
     const style = useStyle(props.className, props, state)
-    const selectionColor = useStyle(props.selectionColorClassName, props, state).accentColor
+    const selectionColor = useAccentColor(props.selectionColorClassName, props, state)
 
     return (
         <RNText

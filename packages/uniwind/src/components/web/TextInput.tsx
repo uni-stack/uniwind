@@ -1,8 +1,8 @@
 import { TextInput as RNTextInput, TextInputProps } from 'react-native'
-import { useUniwindAccent } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
+import { useUniwindAccent } from './useUniwindAccent'
 
 export const TextInput = copyComponentProperties(RNTextInput, (props: TextInputProps) => {
     const placeholderTextColor = useUniwindAccent(props.placeholderTextColorClassName)

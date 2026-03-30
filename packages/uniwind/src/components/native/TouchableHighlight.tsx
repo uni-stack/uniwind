@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TouchableHighlight as RNTouchableHighlight, TouchableHighlightProps } from 'react-native'
 import { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, (props: TouchableHighlightProps) => {
@@ -13,7 +14,7 @@ export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, 
         isFocused,
     } satisfies ComponentState
     const style = useStyle(props.className, props, state)
-    const underlayColor = useStyle(props.underlayColorClassName, props, state).accentColor
+    const underlayColor = useAccentColor(props.underlayColorClassName, props, state)
 
     return (
         <RNTouchableHighlight

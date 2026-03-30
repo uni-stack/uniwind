@@ -1,5 +1,6 @@
 import { VirtualizedList as RNVirtualizedList, VirtualizedListProps } from 'react-native'
 import { copyComponentProperties } from '../utils'
+import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props: VirtualizedListProps<unknown>) => {
@@ -7,7 +8,7 @@ export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
     const listFooterComponentStyle = useStyle(props.ListFooterComponentClassName, props)
     const listHeaderComponentStyle = useStyle(props.ListHeaderComponentClassName, props)
-    const endFillColor = useStyle(props.endFillColorClassName, props).accentColor
+    const endFillColor = useAccentColor(props.endFillColorClassName, props)
 
     return (
         <RNVirtualizedList
