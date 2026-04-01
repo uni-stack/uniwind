@@ -30,7 +30,7 @@ export const transform = async (
     data: Buffer,
     options: JsTransformOptions,
 ) => {
-    const isCss = options.type !== 'asset' && path.join(process.cwd(), config.uniwind.cssEntryFile) === path.join(process.cwd(), filePath)
+    const isCss = options.type !== 'asset' && path.join(process.cwd(), config.uniwind.cssEntryFile) === path.join(projectRoot, filePath)
 
     if (filePath.endsWith('/components/web/metro-injected.js')) {
         const cssPath = path.join(process.cwd(), config.uniwind.cssEntryFile)
