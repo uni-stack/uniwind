@@ -75,7 +75,7 @@ export const transform = async (
         themes: config.uniwind.themes,
         dtsPath: config.uniwind.dtsFile,
     })
-    const css = fs.readFileSync(filePath, 'utf-8')
+    const css = fs.readFileSync(cssPath, 'utf-8')
     const platform = getPlatform()
     const virtualCode = await compileVirtual({
         css,
