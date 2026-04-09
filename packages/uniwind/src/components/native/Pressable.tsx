@@ -17,6 +17,7 @@ export const Pressable = copyComponentProperties(RNPressable, (props: PressableP
         {
             isDisabled: Boolean(props.disabled),
         },
+        'Pressable',
     )
     const uniwindContext = useUniwindContext()
 
@@ -27,7 +28,7 @@ export const Pressable = copyComponentProperties(RNPressable, (props: PressableP
                 if (state.pressed || state.focused) {
                     return [
                         UniwindStore.getStyles(
-                            props.className,
+                            props.className !== undefined ? `uniwind-default-Pressable ${props.className}` : 'uniwind-default-Pressable',
                             props,
                             { isDisabled: Boolean(props.disabled), isPressed: state.pressed, isFocused: state.focused },
                             uniwindContext,

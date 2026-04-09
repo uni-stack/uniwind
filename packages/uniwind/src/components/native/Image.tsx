@@ -4,7 +4,7 @@ import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const Image = copyComponentProperties(RNImage, (props: ImageProps) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'Image')
     const tintColor = useAccentColor(props.tintColorClassName, props)
 
     return (

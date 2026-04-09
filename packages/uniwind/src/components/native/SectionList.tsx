@@ -4,7 +4,7 @@ import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const SectionList = copyComponentProperties(RNSectionList, (props: SectionListProps<unknown, unknown>) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'SectionList')
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
     const listFooterComponentStyle = useStyle(props.ListFooterComponentClassName, props)
     const listHeaderComponentStyle = useStyle(props.ListHeaderComponentClassName, props)

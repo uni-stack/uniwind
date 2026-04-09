@@ -15,7 +15,7 @@ export const Text = copyComponentProperties(RNText, (props: TextProps) => {
         isPressed,
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
-    const style = useStyle(props.className, props, state)
+    const style = useStyle(props.className, props, state, 'Text')
     const selectionColor = useAccentColor(props.selectionColorClassName, props, state)
 
     return (

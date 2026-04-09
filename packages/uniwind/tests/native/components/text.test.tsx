@@ -18,9 +18,7 @@ describe('Text', () => {
         const component = getByText('Hello World')
 
         // Check style
-        expect(StyleSheet.flatten(component.props.style)).toEqual({
-            color: TW_RED_500,
-        })
+        expect(StyleSheet.flatten(component.props.style).color).toEqual(TW_RED_500)
 
         // Check selectionColor
         expect(component.props.selectionColor).toEqual(TW_BLUE_500)
@@ -36,25 +34,19 @@ describe('Text', () => {
         const component = getByText('Press Me')
 
         // Initial state
-        expect(StyleSheet.flatten(component.props.style)).toEqual({
-            color: TW_RED_500,
-        })
+        expect(StyleSheet.flatten(component.props.style).color).toEqual(TW_RED_500)
 
         // Press in
         fireEvent(component, 'pressIn')
 
         // Active state
-        expect(StyleSheet.flatten(component.props.style)).toEqual({
-            color: TW_BLUE_500,
-        })
+        expect(StyleSheet.flatten(component.props.style).color).toEqual(TW_BLUE_500)
 
         // Press out
         fireEvent(component, 'pressOut')
 
         // Back to initial state
-        expect(StyleSheet.flatten(component.props.style)).toEqual({
-            color: TW_RED_500,
-        })
+        expect(StyleSheet.flatten(component.props.style).color).toEqual(TW_RED_500)
     })
 
     test('Rendering with disabled state', () => {
@@ -69,8 +61,6 @@ describe('Text', () => {
 
         const component = getByText('Disabled Text')
 
-        expect(StyleSheet.flatten(component.props.style)).toEqual({
-            color: TW_BLUE_500,
-        })
+        expect(StyleSheet.flatten(component.props.style).color).toEqual(TW_BLUE_500)
     })
 })

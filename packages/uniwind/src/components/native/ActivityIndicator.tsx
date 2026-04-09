@@ -4,7 +4,7 @@ import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const ActivityIndicator = copyComponentProperties(RNActivityIndicator, (props: ActivityIndicatorProps) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'ActivityIndicator')
     const color = useAccentColor(props.colorClassName, props)
 
     return (

@@ -8,7 +8,7 @@ export const Switch = copyComponentProperties(RNSwitch, (props: SwitchProps) => 
     const state = {
         isDisabled: Boolean(props.disabled),
     } satisfies ComponentState
-    const style = useStyle(props.className, props, state)
+    const style = useStyle(props.className, props, state, 'Switch')
     const trackColorOn = useAccentColor(props.trackColorOnClassName, props, state)
     const trackColorOff = useAccentColor(props.trackColorOffClassName, props, state)
     const thumbColor = useAccentColor(props.thumbColorClassName, props, state)

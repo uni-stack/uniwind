@@ -4,7 +4,7 @@ import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const RefreshControl = copyComponentProperties(RNRefreshControl, (props: RefreshControlProps) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'RefreshControl')
     const color = useAccentColor(props.colorsClassName, props)
     const tintColor = useAccentColor(props.tintColorClassName, props)
     const titleColor = useAccentColor(props.titleColorClassName, props)

@@ -22,6 +22,29 @@ export class ProcessorBuilder {
     Functions = new Functions(this)
     meta = {} as ProcessMetaValues
 
+    private RNComponentNames = new Set([
+        'ActivityIndicator',
+        'FlatList',
+        'Image',
+        'ImageBackground',
+        'InputAccessoryView',
+        'KeyboardAvoidingView',
+        'Modal',
+        'Pressable',
+        'RefreshControl',
+        'SafeAreaView',
+        'ScrollView',
+        'SectionList',
+        'Switch',
+        'Text',
+        'TextInput',
+        'TouchableHighlight',
+        'TouchableNativeFeedback',
+        'TouchableOpacity',
+        'TouchableWithoutFeedback',
+        'View',
+        'VirtualizedList',
+    ])
     private declarationConfig = this.getDeclarationConfig()
 
     constructor(private readonly themes: Array<string>, readonly polyfills: Polyfills | undefined) {
@@ -131,8 +154,12 @@ export class ProcessorBuilder {
 
         if (rule.type === 'style') {
             rule.value.selectors.forEach(selector => {
-                const [maybeClassNameSelector] = selector
-                const newClassName = maybeClassNameSelector?.type === 'class' ? maybeClassNameSelector.name : undefined
+                const [firstSelector] = selector
+                const maybeClassName = firstSelector?.type === 'class' ? firstSelector.name : undefined
+                const maybeDefaultClassName = firstSelector?.type === 'type' && this.RNComponentNames.has(firstSelector.name)
+                    ? `uniwind-default-${firstSelector.name}`
+                    : undefined
+                const newClassName = maybeClassName ?? maybeDefaultClassName
 
                 if (newClassName !== undefined) {
                     this.declarationConfig.className = newClassName

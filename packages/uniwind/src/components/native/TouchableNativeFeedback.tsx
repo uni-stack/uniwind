@@ -10,7 +10,7 @@ export const TouchableNativeFeedback = copyComponentProperties(RNTouchableNative
         isDisabled: Boolean(props.disabled),
         isPressed,
     } satisfies ComponentState
-    const style = useStyle(props.className, props, state)
+    const style = useStyle(props.className, props, state, 'TouchableNativeFeedback')
 
     return (
         <RNTouchableNativeFeedback

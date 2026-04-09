@@ -7,7 +7,7 @@ import { useStyle } from './useStyle'
 export const InputAccessoryView = copyComponentProperties(
     RNInputAccessoryView,
     (props: InputAccessoryViewProps & { ref?: ForwardedRef<RNInputAccessoryView> }) => {
-        const style = useStyle(props.className, props)
+        const style = useStyle(props.className, props, undefined, 'InputAccessoryView')
         const backgroundColor = useAccentColor(props.backgroundColorClassName, props)
 
         return (

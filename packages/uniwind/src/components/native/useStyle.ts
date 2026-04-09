@@ -4,11 +4,16 @@ import { UniwindListener } from '../../core/listener'
 import { UniwindStore } from '../../core/native'
 import { ComponentState } from '../../core/types'
 
-export const useStyle = (className: string | undefined, componentProps: Record<string, any>, state?: ComponentState) => {
+export const useStyle = (className: string | undefined, componentProps: Record<string, any>, state?: ComponentState, componentName?: string) => {
     'use no memo'
     const uniwindContext = useUniwindContext()
     const [_, rerender] = useReducer(() => ({}), {})
-    const styleState = UniwindStore.getStyles(className, componentProps, state, uniwindContext)
+    const resolvedClassName = componentName !== undefined
+        ? className !== undefined
+            ? `uniwind-default-${componentName} ${className}`
+            : `uniwind-default-${componentName}`
+        : className ?? ''
+    const styleState = UniwindStore.getStyles(resolvedClassName, componentProps, state, uniwindContext)
 
     useLayoutEffect(() => {
         if (__DEV__ || styleState.dependencies.length > 0) {

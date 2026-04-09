@@ -3,7 +3,7 @@ import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 
 export const KeyboardAvoidingView = copyComponentProperties(RNKeyboardAvoidingView, (props: KeyboardAvoidingViewProps) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'KeyboardAvoidingView')
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
 
     return (

@@ -4,7 +4,7 @@ import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
 export const FlatList = copyComponentProperties(RNFlatList, (props: FlatListProps<unknown>) => {
-    const style = useStyle(props.className, props)
+    const style = useStyle(props.className, props, undefined, 'FlatList')
     const styleColumnWrapper = useStyle(props.columnWrapperClassName, props)
     const styleContentContainer = useStyle(props.contentContainerClassName, props)
     const styleListFooterComponent = useStyle(props.ListFooterComponentClassName, props)

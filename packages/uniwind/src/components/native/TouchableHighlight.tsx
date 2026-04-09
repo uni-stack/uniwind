@@ -13,7 +13,7 @@ export const TouchableHighlight = copyComponentProperties(RNTouchableHighlight, 
         isPressed,
         isFocused,
     } satisfies ComponentState
-    const style = useStyle(props.className, props, state)
+    const style = useStyle(props.className, props, state, 'TouchableHighlight')
     const underlayColor = useAccentColor(props.underlayColorClassName, props, state)
 
     return (
