@@ -22,6 +22,7 @@ export const withUniwind: WithUniwind = <
 
 const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const effectiveTheme = uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName
     const { dependencies, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
@@ -74,11 +75,11 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
     useLayoutEffect(() => {
         const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)), {
-            shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+            shouldNotifyVariables: (theme) => theme === effectiveTheme,
         })
 
         return dispose
-    }, [dependencySum])
+    }, [dependencySum, effectiveTheme])
 
     return (
         <Component
@@ -90,6 +91,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
 const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const effectiveTheme = uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName
     const { generatedProps, dependencies } = Object.entries(options).reduce((acc, [propName, option]) => {
         const className = props[option.fromClassName]
 
@@ -142,11 +144,11 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
 
     useLayoutEffect(() => {
         const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)), {
-            shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+            shouldNotifyVariables: (theme) => theme === effectiveTheme,
         })
 
         return dispose
-    }, [dependencySum])
+    }, [dependencySum, effectiveTheme])
 
     return (
         <Component

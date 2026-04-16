@@ -5,6 +5,7 @@ import { UniwindStore } from '../core/native'
 
 export const useResolveClassNames = (className: string) => {
     const uniwindContext = useUniwindContext()
+    const effectiveTheme = uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName
     const [uniwindState, recreate] = useReducer(
         () => UniwindStore.getStyles(className, undefined, undefined, uniwindContext),
         undefined,
@@ -20,12 +21,12 @@ export const useResolveClassNames = (className: string) => {
     useLayoutEffect(() => {
         if (uniwindState.dependencies.length > 0) {
             const dispose = UniwindListener.subscribe(recreate, uniwindState.dependencies, {
-                shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+                shouldNotifyVariables: (theme) => theme === effectiveTheme,
             })
 
             return dispose
         }
-    }, [uniwindState.dependencySum, className])
+    }, [uniwindState.dependencySum, className, effectiveTheme])
 
     return uniwindState.styles
 }
