@@ -33,8 +33,9 @@ class UniwindStoreBuilder {
         }
 
         const isScopedTheme = uniwindContext.scopedTheme !== null
+        const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}`
-        const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
+        const cache = this.cache[theme]
 
         if (!cache) {
             return emptyState
@@ -52,7 +53,10 @@ class UniwindStoreBuilder {
             UniwindListener.subscribe(
                 () => cache.delete(cacheKey),
                 result.dependencies,
-                { once: true },
+                {
+                    once: true,
+                    shouldNotifyVariables: (changedTheme) => changedTheme === theme,
+                },
             )
         }
 

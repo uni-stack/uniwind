@@ -1,4 +1,3 @@
-import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { CSSVariables, ThemeName } from '../types'
@@ -9,6 +8,16 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
     constructor() {
         super()
+    }
+
+    getRuntimeCSSVariableValue(theme: ThemeName, varName: string): string | number | undefined {
+        const vars = this.runtimeCSSVariables.get(theme)
+
+        if (!vars || !Object.prototype.hasOwnProperty.call(vars, varName)) {
+            return undefined
+        }
+
+        return vars[varName]
     }
 
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
@@ -29,9 +38,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             }
         })
 
-        if (theme === this.currentTheme) {
-            UniwindListener.notify([StyleDependency.Variables])
-        }
+        UniwindListener.notifyVariables(theme)
     }
 
     protected onThemeChange() {

@@ -1,4 +1,5 @@
 import { generateDataSet } from '../../components/web/generateDataSet'
+import { Uniwind } from '../config/config'
 import { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
@@ -108,6 +109,17 @@ export const getWebStyles = (
 export const getWebVariable = (name: string, uniwindContext: UniwindContextType) => {
     if (!dummyParent) {
         return undefined
+    }
+
+    const theme = uniwindContext.scopedTheme ?? Uniwind.currentTheme
+    const runtimeValue = Uniwind.getRuntimeCSSVariableValue(theme, name)
+
+    if (runtimeValue !== undefined) {
+        return parseCSSValue(
+            typeof runtimeValue === 'number'
+                ? `${runtimeValue}px`
+                : runtimeValue,
+        )
     }
 
     if (uniwindContext.scopedTheme !== null) {

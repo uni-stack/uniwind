@@ -175,6 +175,47 @@ describe('ScopedTheme', () => {
         expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
     })
 
+    test('useCSSVariable rerenders only affected custom scoped theme', () => {
+        const base = jest.fn()
+        const nestedCustom = jest.fn()
+
+        const Component = (props: { test: jest.Mock }) => {
+            const backgroundColor = useCSSVariable('--color-background')
+
+            props.test(backgroundColor)
+
+            return null
+        }
+
+        act(() => {
+            Uniwind.updateCSSVariables('custom', { '--color-background': '#123456' })
+        })
+
+        renderUniwind(
+            <React.Fragment>
+                <Component test={base} />
+                <ScopedTheme theme="custom">
+                    <Component test={nestedCustom} />
+                </ScopedTheme>
+            </React.Fragment>,
+        )
+
+        expect(Uniwind.currentTheme).toEqual('light')
+        expect(base).toHaveBeenCalledTimes(1)
+        expect(nestedCustom).toHaveBeenCalledTimes(1)
+        expect(base).toHaveBeenLastCalledWith('#ffffff')
+        expect(nestedCustom).toHaveBeenLastCalledWith('#123456')
+
+        act(() => {
+            Uniwind.updateCSSVariables('custom', { '--color-background': '#112233' })
+        })
+
+        expect(base).toHaveBeenCalledTimes(1)
+        expect(nestedCustom).toHaveBeenCalledTimes(2)
+        expect(base).toHaveBeenLastCalledWith('#ffffff')
+        expect(nestedCustom).toHaveBeenLastCalledWith('#112233')
+    })
+
     test('useUniwind', () => {
         const base = jest.fn()
         const nestedDark = jest.fn()

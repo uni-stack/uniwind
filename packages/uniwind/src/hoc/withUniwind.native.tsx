@@ -73,7 +73,9 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
     const [, rerender] = useReducer(() => ({}), {})
 
     useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
+        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)), {
+            shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+        })
 
         return dispose
     }, [dependencySum])
@@ -139,7 +141,9 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
     const [, rerender] = useReducer(() => ({}), {})
 
     useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
+        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)), {
+            shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+        })
 
         return dispose
     }, [dependencySum])

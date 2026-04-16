@@ -44,9 +44,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             })
         })
 
-        if (theme === this.currentTheme) {
-            UniwindListener.notify([StyleDependency.Variables])
-        }
+        UniwindListener.notifyVariables(theme)
     }
 
     updateInsets(insets: Insets) {

@@ -15,13 +15,13 @@ beforeAll(async () => {
         cssPath,
         debug: true,
         platform: Platform.iOS,
-        themes: ['light', 'dark'],
+        themes: ['light', 'dark', 'custom'],
         polyfills: undefined,
     })
 
     eval(
         `const { Uniwind } = require('../src/core/config/config.native');
-        Uniwind.__reinit(rt => ${virtualCode}, ['light', 'dark']);
+        Uniwind.__reinit(rt => ${virtualCode}, ['light', 'dark', 'custom']);
             Uniwind.updateInsets({
             top: ${SAFE_AREA_INSET_TOP},
             left: 0,

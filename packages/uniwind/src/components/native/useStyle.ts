@@ -12,7 +12,9 @@ export const useStyle = (className: string | undefined, componentProps: Record<s
 
     useLayoutEffect(() => {
         if (__DEV__ || styleState.dependencies.length > 0) {
-            const dispose = UniwindListener.subscribe(rerender, styleState.dependencies)
+            const dispose = UniwindListener.subscribe(rerender, styleState.dependencies, {
+                shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+            })
 
             return dispose
         }

@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { Uniwind } from '../../core/config'
 import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
@@ -71,6 +72,9 @@ export const useCSSVariable: UseCSSVariable = (name: string | Array<string>) => 
         const dispose = UniwindListener.subscribe(
             updateValue,
             [StyleDependency.Theme, StyleDependency.Variables],
+            {
+                shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? Uniwind.currentTheme),
+            },
         )
 
         return dispose

@@ -19,7 +19,9 @@ export const useResolveClassNames = (className: string) => {
 
     useLayoutEffect(() => {
         if (uniwindState.dependencies.length > 0) {
-            const dispose = UniwindListener.subscribe(recreate, uniwindState.dependencies)
+            const dispose = UniwindListener.subscribe(recreate, uniwindState.dependencies, {
+                shouldNotifyVariables: (theme) => theme === (uniwindContext.scopedTheme ?? UniwindStore.runtime.currentThemeName),
+            })
 
             return dispose
         }
