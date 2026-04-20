@@ -2,65 +2,77 @@ import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { CSSVariables, ThemeName } from '../types'
+import { getWebVariable } from '../web'
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
+type UniwindCSSRule = {
+    style: CSSStyleDeclaration
+    theme: ThemeName
+}
+
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {
-    private runtimeCSSVariables = new Map<ThemeName, CSSVariables>()
+    private cssRules?: Array<UniwindCSSRule>
 
     constructor() {
         super()
     }
 
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
+        if (typeof document === 'undefined') {
+            return
+        }
+
+        const uniwindRules = this.getUniwindDynamicCSSRules()
+
         Object.entries(variables).forEach(([varName, varValue]) => {
             if (!varName.startsWith('--') && __DEV__) {
                 Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
-
-                return
             }
 
-            const runtimeCSSVariables = this.runtimeCSSVariables.get(theme) ?? {}
+            const existingRules: Record<ThemeName, string | undefined> = Object.fromEntries(
+                uniwindRules.map(rule => [rule.theme, getWebVariable(varName, { scopedTheme: rule.theme })]),
+            )
 
-            runtimeCSSVariables[varName] = varValue
-            this.runtimeCSSVariables.set(theme, runtimeCSSVariables)
+            uniwindRules.forEach(rule => {
+                if (rule.theme === theme) {
+                    rule.style.setProperty(
+                        varName,
+                        typeof varValue === 'number' ? `${varValue}px` : varValue,
+                    )
 
-            if (theme === this.currentTheme) {
-                this.applyCSSVariable(varName, varValue)
-            }
+                    return
+                }
+
+                rule.style.setProperty(varName, existingRules[rule.theme] ?? null)
+            })
         })
 
-        if (theme === this.currentTheme) {
-            UniwindListener.notify([StyleDependency.Variables])
-        }
+        UniwindListener.notify([StyleDependency.Variables])
     }
 
-    protected onThemeChange() {
-        if (typeof document === 'undefined') {
-            return
+    private getUniwindDynamicCSSRules() {
+        if (this.cssRules) {
+            return this.cssRules
         }
 
-        document.documentElement.removeAttribute('style')
+        const styleElement = document.createElement('style')
 
-        const runtimeCSSVariables = this.runtimeCSSVariables.get(this.currentTheme)
-
-        if (!runtimeCSSVariables) {
-            return
-        }
-
-        Object.entries(runtimeCSSVariables).forEach(([varName, varValue]) => {
-            this.applyCSSVariable(varName, varValue)
-        })
-    }
-
-    private applyCSSVariable(varName: keyof CSSVariables, varValue: CSSVariables[keyof CSSVariables]) {
-        if (typeof document === 'undefined') {
-            return
-        }
-
-        document.documentElement.style.setProperty(
-            varName,
-            typeof varValue === 'number' ? `${varValue}px` : varValue,
+        styleElement.innerText = this.themes.reduce(
+            (acc, theme) => {
+                return `${acc}.${theme}{}`
+            },
+            '',
         )
+        styleElement.setAttribute('id', 'uniwind-dynamic-styles')
+        document.head.appendChild(styleElement)
+
+        const cssRules = Array.from(styleElement.sheet?.cssRules ?? [])
+            .filter((rule): rule is CSSStyleRule => 'selectorText' in rule && 'style' in rule)
+            .map((rule): UniwindCSSRule => ({ style: rule.style, theme: rule.selectorText.replace('.', '') }))
+
+        this.cssRules = cssRules
+
+        return cssRules
     }
 }
 

@@ -64,7 +64,7 @@ class CSSListenerBuilder {
             disposables.push(() => listeners?.delete(listener))
         })
 
-        const disposeThemeListener = UniwindListener.subscribe(listener, [StyleDependency.Theme])
+        const disposeThemeListener = UniwindListener.subscribe(listener, [StyleDependency.Theme, StyleDependency.Variables])
 
         return () => {
             disposables.forEach(disposable => disposable())
