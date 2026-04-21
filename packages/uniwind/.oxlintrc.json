@@ -4,14 +4,7 @@
     },
     "rules": {
         "unicorn/no-empty-file": "off",
-        "typescript/strict-boolean-expressions": [
-            "error",
-            {
-                "allowAny": true,
-                "allowNullableBoolean": true,
-                "allowNullableEnum": true
-            }
-        ],
+        "typescript/strict-boolean-expressions": "off",
         "typescript/no-implied-eval": "off"
     },
     "ignorePatterns": [

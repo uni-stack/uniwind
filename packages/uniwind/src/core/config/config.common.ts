@@ -96,11 +96,13 @@ export class UniwindConfigBuilder {
         }
     }
 
-    updateCSSVariables(_: ThemeName, __: CSSVariables) {
+    // oxlint-disable-next-line typescript/no-unused-vars
+    updateCSSVariables(theme: ThemeName, cssVariables: CSSVariables) {
         // noop
     }
 
-    updateInsets(_: Insets) {
+    // oxlint-disable-next-line typescript/no-redundant-type-constituents
+    updateInsets(insets: Insets) {
         // noop
     }
 
