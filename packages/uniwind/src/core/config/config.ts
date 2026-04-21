@@ -1,7 +1,8 @@
+import { arrayEquals } from '../../common/utils'
 import { StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
-import { CSSVariables, ThemeName } from '../types'
+import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 import { getWebVariable } from '../web'
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
@@ -50,9 +51,28 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         UniwindListener.notify([StyleDependency.Variables])
     }
 
+    protected __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
+        const oldThemes = this.themes
+        super.__reinit(generateStyleSheetCallback, themes)
+
+        if (arrayEquals(themes, oldThemes)) {
+            return
+        }
+
+        this.cssRules = undefined
+
+        if (typeof document !== 'undefined') {
+            document.querySelector('#uniwind-dynamic-styles')?.remove()
+        }
+    }
+
     private getUniwindDynamicCSSRules() {
         if (this.cssRules) {
             return this.cssRules
+        }
+
+        if (typeof document === 'undefined') {
+            return []
         }
 
         const styleElement = document.createElement('style')
