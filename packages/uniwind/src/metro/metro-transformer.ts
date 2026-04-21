@@ -91,7 +91,7 @@ export const transform = async (
         isWeb
             ? virtualCode
             : [
-                `import { Uniwind } from '${name}';`,
+                `const { Uniwind } = require('${name}');`,
                 `Uniwind.__reinit(rt => ${virtualCode}, ${injectedThemesCode});`,
             ].join(''),
         'utf-8',
