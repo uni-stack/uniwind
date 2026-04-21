@@ -26,7 +26,7 @@ interface TraverseDependencies {
 export const patchMetroGraphToSupportUncachedModules = () => {
     const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof import('metro/private/DeltaBundler/Graph')
 
-    // oxlint-disable-next-line typescript-eslint(unbound-method)
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     const original_traverseDependencies = Graph.prototype.traverseDependencies as unknown as TraverseDependencies
 
     if (original_traverseDependencies.__patched) {

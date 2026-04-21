@@ -128,7 +128,7 @@ class CSSListenerBuilder {
                 continue
             }
 
-            // oxlint-disable-next-line typescript-eslint(strict-boolean-expressions)
+            // oxlint-disable-next-line @typescript-eslint/strict-boolean-expressions
             if (!rules) {
                 continue
             }
