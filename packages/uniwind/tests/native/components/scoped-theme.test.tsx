@@ -13,7 +13,11 @@ import { renderUniwind } from '../utils'
 
 describe('ScopedTheme', () => {
     afterEach(() => {
-        Uniwind.setTheme('light')
+        act(() => {
+            Uniwind.setTheme('light')
+            Uniwind.updateCSSVariables('light', { '--color-background': '#ffffff' })
+            Uniwind.updateCSSVariables('dark', { '--color-background': '#000000' })
+        })
     })
 
     test('Component styles', () => {
@@ -211,5 +215,138 @@ describe('ScopedTheme', () => {
         expect(base).toHaveBeenLastCalledWith('dark')
         expect(nestedDark).toHaveBeenLastCalledWith('dark')
         expect(nestedLightInDark).toHaveBeenLastCalledWith('light')
+    })
+
+    describe('updateCSSVariables', () => {
+        test('Component styles', () => {
+            const { getStylesFromId } = renderUniwind(
+                <React.Fragment>
+                    <View className="bg-background" testID="base" />
+                    <ScopedTheme theme="dark">
+                        <View className="bg-background" testID="nested-dark" />
+                        <ScopedTheme theme="light">
+                            <View className="bg-background" testID="nested-light-in-dark" />
+                        </ScopedTheme>
+                    </ScopedTheme>
+                </React.Fragment>,
+            )
+
+            expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+            expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+            expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
+
+            act(() => {
+                Uniwind.updateCSSVariables('dark', { '--color-background': '#123456' })
+            })
+
+            expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+            expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#123456')
+            expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
+        })
+
+        test('withUniwind', () => {
+            const Component: React.FC<ActivityIndicatorProps> = (props) => <ActivityIndicator {...props} />
+            const WithUniwind = withUniwind(Component)
+
+            const { getStylesFromId } = renderUniwind(
+                <React.Fragment>
+                    <WithUniwind className="bg-background" testID="base" />
+                    <ScopedTheme theme="dark">
+                        <WithUniwind className="bg-background" testID="nested-dark" />
+                        <ScopedTheme theme="light">
+                            <WithUniwind className="bg-background" testID="nested-light-in-dark" />
+                        </ScopedTheme>
+                    </ScopedTheme>
+                </React.Fragment>,
+            )
+
+            expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+            expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#000000')
+            expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
+
+            act(() => {
+                Uniwind.updateCSSVariables('dark', { '--color-background': '#123456' })
+            })
+
+            expect(getStylesFromId('base').backgroundColor).toEqual('#ffffff')
+            expect(getStylesFromId('nested-dark').backgroundColor).toEqual('#123456')
+            expect(getStylesFromId('nested-light-in-dark').backgroundColor).toEqual('#ffffff')
+        })
+
+        test('useResolveClassNames', () => {
+            const base = jest.fn()
+            const nestedDark = jest.fn()
+            const nestedLightInDark = jest.fn()
+
+            const Component = (props: { test: jest.Mock }) => {
+                const { backgroundColor } = useResolveClassNames('bg-background')
+
+                props.test(backgroundColor)
+
+                return null
+            }
+
+            renderUniwind(
+                <React.Fragment>
+                    <Component test={base} />
+                    <ScopedTheme theme="dark">
+                        <Component test={nestedDark} />
+                        <ScopedTheme theme="light">
+                            <Component test={nestedLightInDark} />
+                        </ScopedTheme>
+                    </ScopedTheme>
+                </React.Fragment>,
+            )
+
+            expect(base).toHaveBeenCalledWith('#ffffff')
+            expect(nestedDark).toHaveBeenCalledWith('#000000')
+            expect(nestedLightInDark).toHaveBeenCalledWith('#ffffff')
+
+            act(() => {
+                Uniwind.updateCSSVariables('dark', { '--color-background': '#123456' })
+            })
+
+            expect(base).toHaveBeenLastCalledWith('#ffffff')
+            expect(nestedDark).toHaveBeenLastCalledWith('#123456')
+            expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
+        })
+
+        test('useCSSVariable', () => {
+            const base = jest.fn()
+            const nestedDark = jest.fn()
+            const nestedLightInDark = jest.fn()
+
+            const Component = (props: { test: jest.Mock }) => {
+                const backgroundColor = useCSSVariable('--color-background')
+
+                props.test(backgroundColor)
+
+                return null
+            }
+
+            renderUniwind(
+                <React.Fragment>
+                    <Component test={base} />
+                    <ScopedTheme theme="dark">
+                        <Component test={nestedDark} />
+                        <ScopedTheme theme="light">
+                            <Component test={nestedLightInDark} />
+                        </ScopedTheme>
+                    </ScopedTheme>
+                </React.Fragment>,
+            )
+
+            expect(base).toHaveBeenCalledWith('#ffffff')
+            expect(nestedDark).toHaveBeenCalledWith('#000000')
+            expect(nestedLightInDark).toHaveBeenCalledWith('#ffffff')
+
+            act(() => {
+                Uniwind.updateCSSVariables('dark', { '--color-background': '#123456' })
+            })
+
+            expect(base).toHaveBeenLastCalledWith('#ffffff')
+            expect(nestedDark).toHaveBeenLastCalledWith('#123456')
+            expect(nestedLightInDark).toHaveBeenLastCalledWith('#ffffff')
+        })
     })
 })

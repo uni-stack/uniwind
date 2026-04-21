@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { arrayEquals } from '../../common/utils'
 import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
@@ -10,14 +11,6 @@ const getValue = (name: string | Array<string>, uniwindContext: UniwindContextTy
     Array.isArray(name)
         ? name.map(name => getVariableValue(name, uniwindContext))
         : getVariableValue(name, uniwindContext)
-
-const arrayEquals = <T>(a: Array<T>, b: Array<T>) => {
-    if (a.length !== b.length) {
-        return false
-    }
-
-    return a.every((value, index) => value === b[index])
-}
 
 let warned = false
 
