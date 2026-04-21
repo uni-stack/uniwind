@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 export class Logger {
     static log(message: string) {
         console.log(`Uniwind - ${message}`)

@@ -182,7 +182,6 @@ export class Functions {
                 .replace(/"/g, '')
                 .replace(new RegExp(unit, 'g'), '')
 
-            // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
             return new Function(`return ${numericValue} + '${unit}'`)()
         } catch {
             this.logger.error(`Invalid calc ${value}`)

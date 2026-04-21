@@ -6,7 +6,6 @@ import path from 'path'
 
 class FileStore<T> extends FileStoreBase<T> {
     async set(key: Buffer, value: any): Promise<void> {
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (value?.output?.[0]?.data?.css?.skipCache) {
             return
         }
@@ -27,7 +26,7 @@ interface TraverseDependencies {
 export const patchMetroGraphToSupportUncachedModules = () => {
     const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof import('metro/private/DeltaBundler/Graph')
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line typescript-eslint(unbound-method)
     const original_traverseDependencies = Graph.prototype.traverseDependencies as unknown as TraverseDependencies
 
     if (original_traverseDependencies.__patched) {

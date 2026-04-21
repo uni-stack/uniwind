@@ -5,7 +5,6 @@ import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
 // Platform.constants is not defined in RNW
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 const RN_VERSION = Platform.constants?.reactNativeVersion?.minor ?? 0
 const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
 
@@ -18,7 +17,6 @@ export class UniwindConfigBuilder {
         Appearance.addChangeListener(event => {
             const colorScheme = event.colorScheme === 'unspecified'
                 ? ColorScheme.Light
-                // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
                 : event.colorScheme ?? ColorScheme.Light
             const prevTheme = this.#currentTheme
 
@@ -52,7 +50,7 @@ export class UniwindConfigBuilder {
         return colorScheme ?? ColorScheme.Light
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    // oxlint-disable-next-line typescript/no-redundant-type-constituents
     setTheme(theme: ThemeName | typeof SYSTEM_THEME) {
         const prevTheme = this.#currentTheme
         const prevHasAdaptiveThemes = this.#hasAdaptiveThemes
@@ -98,15 +96,12 @@ export class UniwindConfigBuilder {
         }
     }
 
-    updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
+    updateCSSVariables(_: ThemeName, __: CSSVariables) {
         // noop
-        theme
-        variables
     }
 
-    updateInsets(insets: Insets) {
+    updateInsets(_: Insets) {
         // noop
-        insets
     }
 
     protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {

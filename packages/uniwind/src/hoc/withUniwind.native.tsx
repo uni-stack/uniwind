@@ -120,7 +120,6 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
 
         const existingStyle = props[propName]
 
-        // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
         if (existingStyle) {
             acc.generatedProps[propName] = [styles, existingStyle]
 

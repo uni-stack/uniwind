@@ -1,0 +1,29 @@
+{
+    "options": {
+        "typeAware": true
+    },
+    "rules": {
+        "unicorn/no-empty-file": "off",
+        "typescript/strict-boolean-expressions": [
+            "error",
+            {
+                "allowAny": true,
+                "allowNullableBoolean": true,
+                "allowNullableEnum": true
+            }
+        ],
+        "typescript/no-implied-eval": "off"
+    },
+    "ignorePatterns": [
+        "build.config.ts",
+        "types.d.ts",
+        "no-types.d.ts",
+        "src/metro/index.d.ts",
+        "src/vite/index.d.ts",
+        "dist",
+        "specs",
+        "jest.config.js",
+        "tests",
+        "babel.config.cjs"
+    ]
+}

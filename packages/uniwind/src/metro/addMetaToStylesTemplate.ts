@@ -41,8 +41,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     minWidth,
                     maxWidth,
                     colorScheme,
-                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                    important,
+                    important: _,
                     importantProperties,
                     active,
                     focus,

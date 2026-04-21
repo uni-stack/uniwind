@@ -495,7 +495,6 @@ export class CSS {
         return undefined
     }
 
-    // eslint-disable-next-line @typescript-eslint/member-ordering
     private static readonly TRANSFORM_TYPES = new Set([
         'translate',
         'translateX',

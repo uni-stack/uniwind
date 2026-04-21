@@ -54,7 +54,6 @@ class CSSListenerBuilder {
             const mediaQuery = this.classNameMediaQueryListeners.get(className)
 
             if (!mediaQuery) {
-                // eslint-disable-next-line no-empty-function
                 return () => {}
             }
 
@@ -129,7 +128,7 @@ class CSSListenerBuilder {
                 continue
             }
 
-            // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions
+            // oxlint-disable-next-line typescript-eslint(strict-boolean-expressions)
             if (!rules) {
                 continue
             }

@@ -103,7 +103,6 @@ export const serializeJSObject = (obj: Record<string, any>, serializer: (key: st
         serializedValues =>
             serializedValues.filter(serializedValue => {
                 try {
-                    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
                     new Function(`function validateJS() { const obj = ({ ${serializedValue} }) }`)
 
                     return true

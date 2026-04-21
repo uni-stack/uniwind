@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-
 const red = '\x1b[91m'
 const yellow = '\x1b[33m'
 const blue = '\x1b[36m'

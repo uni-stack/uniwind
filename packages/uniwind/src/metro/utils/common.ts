@@ -52,7 +52,6 @@ export const uniq = <T>(arr: Array<T>) => Array.from(new Set(arr))
 
 export const isValidJSValue = (jsValueString: string) => {
     try {
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
         new Function(`const test = ${jsValueString}`)
 
         return true
