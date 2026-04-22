@@ -101,7 +101,7 @@ export class UniwindConfigBuilder {
         // noop
     }
 
-    // oxlint-disable-next-line typescript/no-redundant-type-constituents
+    // oxlint-disable-next-line typescript/no-unused-vars
     updateInsets(insets: Insets) {
         // noop
     }

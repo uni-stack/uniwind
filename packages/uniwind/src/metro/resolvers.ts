@@ -1,5 +1,5 @@
 import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
-import { basename, dirname, join, sep } from 'node:path'
+import { basename, dirname, sep } from 'node:path'
 
 type ResolverConfig = {
     platform: string | null
@@ -45,12 +45,11 @@ export const nativeResolver = ({
     const resolution = resolver(context, moduleName, platform)
 
     if (cachedInternalBasePath === null) {
-        const componentsResolution = resolver(context, 'uniwind/components', platform)
-
-        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
-            // Go from src/components to root
-            ? join(dirname(componentsResolution.filePath), '../..')
-            : ''
+        try {
+            cachedInternalBasePath = dirname(require.resolve('uniwind/package.json'))
+        } catch {
+            cachedInternalBasePath = ''
+        }
     }
 
     const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
@@ -94,13 +93,13 @@ export const webResolver = ({
     const resolution = resolver(context, moduleName, platform)
 
     if (cachedInternalBasePath === null) {
-        const componentsResolution = resolver(context, 'uniwind/components', platform)
-
-        cachedInternalBasePath = componentsResolution.type === 'sourceFile'
-            // Go from dist/module/components/web to root
-            ? join(dirname(componentsResolution.filePath), '../../../..')
-            : ''
+        try {
+            cachedInternalBasePath = dirname(require.resolve('uniwind/package.json'))
+        } catch {
+            cachedInternalBasePath = ''
+        }
     }
+
     if (
         (cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath))
         || resolution.type !== 'sourceFile'
