@@ -176,7 +176,7 @@ export class CSS {
                     }
 
                     if (declarationValue.value === 'currentcolor') {
-                        return 'this["currentColor"]'
+                        return 'vars["currentColor"]?.(vars)'
                     }
 
                     return declarationValue.value
@@ -212,7 +212,7 @@ export class CSS {
                 case 'pair':
                     return declarationValue.inside.type
                 case 'currentcolor':
-                    return 'this["currentColor"]'
+                    return 'vars["currentColor"]?.(vars)'
                 case 'calc':
                     return this.Processor.Functions.processCalc(declarationValue.value)
                 case 'min':

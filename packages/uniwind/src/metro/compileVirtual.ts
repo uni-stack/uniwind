@@ -56,19 +56,19 @@ export const compileVirtual = async ({ css, cssPath, platform, themes, polyfills
     )
     const vars = serializeJSObject(
         Processor.vars,
-        (key, value) => `get "${key}"() { return ${value} }`,
+        (key, value) => `"${key}": vars => ${value}`,
     )
     const scopedVars = Object.fromEntries(
         Object.entries(Processor.scopedVars)
             .map(([scopedVarsName, scopedVars]) => [
                 scopedVarsName,
-                serializeJSObject(scopedVars, (key, value) => `get "${key}"() { return ${value} }`),
+                serializeJSObject(scopedVars, (key, value) => `"${key}": vars => ${value}`),
             ]),
     )
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
         .join('')
-    const currentColorVar = `get currentColor() { return rt.colorScheme === 'dark' ? '#ffffff' : '#000000' },`
+    const currentColorVar = `currentColor: () => rt.colorScheme === 'dark' ? '#ffffff' : '#000000',`
 
     return [
         '({',

@@ -3,8 +3,11 @@ import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import { ColorScheme, Orientation, StyleDependency, UniwindConfig } from '../types'
 import type { UniwindContext } from './context'
 
+export type Vars = Record<PropertyKey, Var>
+export type Var = (vars: Vars) => unknown
+
 export type Style = {
-    entries: Array<[string, () => unknown]>
+    entries: Array<[string, Var]>
     minWidth: number
     maxWidth: number
     orientation: Orientation | null
@@ -26,8 +29,8 @@ export type StyleSheets = Record<string, Array<Style>>
 
 export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
     stylesheet: StyleSheets
-    vars: Record<string, unknown>
-    scopedVars: Partial<Record<string, Record<string, unknown>>>
+    vars: Vars
+    scopedVars: Partial<Record<string, Vars>>
 }
 
 type UserThemes = UniwindConfig extends { themes: infer T extends readonly string[] } ? T

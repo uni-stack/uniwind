@@ -6,9 +6,9 @@ import { StyleSheetTemplate } from './types'
 import { serialize, toCamelCase } from './utils'
 
 const extractVarsFromString = (value: string) => {
-    const thisIndexes = [...value.matchAll(/this\[/g)].map(m => m.index)
+    const varsIndexes = [...value.matchAll(/vars\[/g)].map(m => m.index)
 
-    return thisIndexes.map(index => {
+    return varsIndexes.map(index => {
         const afterIndex = value.slice(index + 5)
         const closingIndex = afterIndex.indexOf(']')
         const varName = afterIndex.slice(0, closingIndex)
@@ -52,7 +52,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
 
                 const entries = Object.entries(rest)
                     .flatMap(([property, value]) => Processor.RN.cssToRN(property, value))
-                    .map(([property, value]) => [`"${property}"`, `function() { return ${serialize(value)} }`])
+                    .map(([property, value]) => [`"${property}"`, `function(vars) { return ${serialize(value)} }`])
 
                 if (platform) {
                     const isTV = currentPlatform === Platform.AndroidTV || currentPlatform === Platform.AppleTV

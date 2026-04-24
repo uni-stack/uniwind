@@ -44,7 +44,7 @@ export const addMissingSpaces = (str: string) =>
         x => x.replace(/([^ {])this/g, '$1 this'),
         x => x.replace(/\](?=\d)/g, '] '),
         x => x.replace(/\](?=")/g, '] '),
-        x => x.replace(/\)(?=\S)/g, ') '),
+        x => x.replace(/\)(?=[^\s,])/g, ') '),
         x => x.replace(/(?<!^)(?<!\s)"(?=\d)/g, '" '),
     )
 
@@ -67,7 +67,7 @@ export const shouldBeSerialized = (value: string) => {
 
     return [
         isNumber(value),
-        value.startsWith('this['),
+        value.startsWith('vars['),
         value.startsWith('rt.'),
         /[*/+-]/.test(value),
         value.includes('"'),

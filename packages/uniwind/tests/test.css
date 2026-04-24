@@ -30,3 +30,8 @@
 @utility multiple-transform {
   transform: translateX(10px) translateY(10px);
 }
+
+@utility var-cascade-after {
+  color: var(--inline-after);
+  --inline-after: #123456;
+}
