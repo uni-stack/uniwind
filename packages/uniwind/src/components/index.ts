@@ -196,9 +196,6 @@ module.exports = {
     get PlatformColor() {
         return require('react-native').PlatformColor
     },
-    get PushNotificationIOS() {
-        return require('react-native').PushNotificationIOS
-    },
     get processColor() {
         return require('react-native').processColor
     },
