@@ -177,6 +177,7 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
 
 const BORDER_WIDTH_KEYS = ['borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth']
 const BORDER_COLOR_KEYS = ['borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor']
+const BORDER_RADIUS_KEYS = ['borderTopLeftRadius', 'borderTopRightRadius', 'borderBottomLeftRadius', 'borderBottomRightRadius']
 
 export class RN {
     constructor(private readonly Processor: ProcessorBuilder) {}
@@ -330,6 +331,18 @@ export class RN {
                 return {
                     ...removeKeys(styles, BORDER_COLOR_KEYS),
                     borderColor,
+                }
+            }
+        }
+
+        if (BORDER_RADIUS_KEYS.every(key => keys.includes(key))) {
+            const borderRadius = styles.borderTopLeftRadius
+
+            // Join border radius
+            if (BORDER_RADIUS_KEYS.every(key => styles[key] === borderRadius)) {
+                return {
+                    ...removeKeys(styles, BORDER_RADIUS_KEYS),
+                    borderRadius,
                 }
             }
         }
