@@ -140,6 +140,22 @@ describe('Borders', () => {
         expect(getStylesFromId('border-dashed').borderStyle).toBe('dashed')
         expect(getStylesFromId('border-dotted').borderStyle).toBe('dotted')
     })
+
+    test('Inline border', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="border-s-2" testID="border-s-2" />
+                <View className="border-e-4" testID="border-e-4" />
+                <View className="border-e-red-500" testID="border-e-red-500" />
+                <View className="rounded-s-2xl" testID="rounded-s-2xl" />
+            </React.Fragment>,
+        )
+
+        expect(getStylesFromId('border-s-2').borderStartWidth).toBe(2)
+        expect(getStylesFromId('border-e-4').borderEndWidth).toBe(4)
+        expect(getStylesFromId('border-e-red-500').borderEndColor).toBe(TW_RED_500)
+        expect(getStylesFromId('rounded-s-2xl').borderStartStartRadius).toBe(16)
+    })
 })
 
 describe('Outline', () => {

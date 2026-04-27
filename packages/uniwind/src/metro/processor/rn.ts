@@ -195,6 +195,12 @@ export class RN {
                             .replace('Block', 'Vertical')
                     }
 
+                    if (x.includes('border')) {
+                        return x
+                            .replace('InlineStart', 'Start')
+                            .replace('InlineEnd', 'End')
+                    }
+
                     return x
                 },
             )

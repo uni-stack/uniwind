@@ -231,6 +231,12 @@ const TailwindTestPage = () => {
                     <View className="border-l-4 border-yellow-500 p-4 mb-4">
                         <Text>border-l-4 border-yellow-500</Text>
                     </View>
+                    <View className="border-s-4 border-orange-500 p-4 mb-4">
+                        <Text>border-s-4 border-orange-500</Text>
+                    </View>
+                    <View className="border-e-4 border-violet-500 p-4 mb-4">
+                        <Text>border-e-4 border-violet-500</Text>
+                    </View>
                 </View>
 
                 <View className="bg-white p-4 rounded-lg mb-4">
