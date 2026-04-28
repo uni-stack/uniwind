@@ -1,1 +1,1 @@
-export * from './useCSSVariable'
+export { useCSSVariable } from './useCSSVariable'

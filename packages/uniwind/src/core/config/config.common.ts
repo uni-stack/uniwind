@@ -1,4 +1,5 @@
 import { Appearance, Insets, Platform } from 'react-native'
+import { GetCSSVariable, getCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
 import { ColorScheme, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
@@ -105,6 +106,10 @@ export class UniwindConfigBuilder {
     updateInsets(insets: Insets) {
         // noop
     }
+
+    getCSSVariable = ((variableName: string | Array<string>) => {
+        return getCSSVariable(variableName, { scopedTheme: null })
+    }) as GetCSSVariable
 
     protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {
         this._themes = themes
