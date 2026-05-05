@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { BuildConfig, defineBuildConfig } from 'unbuild'
 
 type Config = {
@@ -6,6 +7,8 @@ type Config = {
     pattern?: Array<string>
     declaration?: boolean
 }
+
+const srcPath = (path: string) => fileURLToPath(new URL(`./src/${path}`, import.meta.url))
 
 const getConfig = (config: Config) =>
     [
@@ -58,12 +61,12 @@ export default defineBuildConfig({
         },
         {
             builder: 'rollup',
-            input: './src/vite',
+            input: './src/bundler/adapters/vite',
             name: 'vite/index',
         },
         {
             builder: 'mkdist',
-            input: './src/vite',
+            input: './src/bundler/adapters/vite',
             outDir: 'dist/vite',
             pattern: ['index.d.ts'],
             declaration: true,
@@ -85,10 +88,17 @@ export default defineBuildConfig({
             pattern: [
                 '**/*',
                 '!metro/**',
+                '!bundler/adapters/vite/**',
             ],
             declaration: true,
         }),
     ],
+    alias: {
+        '@/css': srcPath('css'),
+        '@/css-visitor': srcPath('css-visitor'),
+        '@/metro': srcPath('metro'),
+        '@/utils': srcPath('utils'),
+    },
     outDir: 'dist',
     clean: true,
     externals: [

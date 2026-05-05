@@ -9,6 +9,15 @@
         "isolatedModules": true,
         "strict": true,
         "noUncheckedIndexedAccess": true,
+        "paths": {
+            "@/css": ["./src/css/index.ts"],
+            "@/css/*": ["./src/css/*"],
+            "@/css-visitor": ["./src/css-visitor/index.ts"],
+            "@/css-visitor/*": ["./src/css-visitor/*"],
+            "@/metro": ["./src/metro/index.ts"],
+            "@/metro/*": ["./src/metro/*"],
+            "@/utils/*": ["./src/utils/*"]
+        },
         "moduleResolution": "Bundler",
         "module": "ESNext",
         "outDir": "dist",

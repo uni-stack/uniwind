@@ -1,12 +1,12 @@
 import { normalizePath } from '@tailwindcss/node'
 import path from 'path'
 import type { Plugin } from 'vite'
-import { name as UNIWIND_PACKAGE_NAME } from '../../package.json'
-import { buildCSS } from '../css'
-import { UniwindCSSVisitor } from '../css-visitor'
-import { uniq } from '../metro/utils'
-import { buildDtsFile } from '../utils/buildDtsFile'
-import { stringifyThemes } from '../utils/stringifyThemes'
+
+import { buildCSS } from '@/css'
+import { UniwindCSSVisitor } from '@/css-visitor'
+import { uniq } from '@/metro/utils'
+import { buildDtsFile } from '@/utils/buildDtsFile'
+import { stringifyThemes } from '@/utils/stringifyThemes'
 
 type UniwindConfig = {
     cssEntryFile: string
@@ -56,7 +56,7 @@ export const uniwind = ({
                 },
             },
             optimizeDeps: {
-                exclude: [UNIWIND_PACKAGE_NAME, 'react-native'],
+                exclude: ['uniwind', 'react-native'],
                 esbuildOptions: {
                     plugins: [{
                         name: 'uniwind-esbuild-plugin',
@@ -81,7 +81,7 @@ export const uniwind = ({
                         customResolver: {
                             resolveId(_, importer) {
                                 // Check if import comes from uniwind
-                                if (importer !== undefined && normalizePath(importer).includes(`${UNIWIND_PACKAGE_NAME}/dist`)) {
+                                if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
                                     return this.resolve('react-native-web')
                                 }
 
@@ -95,7 +95,7 @@ export const uniwind = ({
         transform: (code, id) => {
             const normalizedId = normalizePath(id)
 
-            if (normalizedId.includes(`${UNIWIND_PACKAGE_NAME}/dist`) && normalizedId.includes('config/config.js')) {
+            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
                 return {
                     code: `${code}Uniwind.__reinit(() => ({}), ${stringifiedThemes})`,
                 }
