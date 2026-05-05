@@ -5,7 +5,7 @@ description: >
   or styling components in a React Native project that uses Tailwind with className.
   Triggers on: className on RN components, Tailwind classes in RN, global.css with
   @import 'uniwind', withUniwindConfig, withUniwind, metro.config.js with Uniwind,
-  useResolveClassNames, useCSSVariable, useUniwind, dark:/light: theming, platform
+  useResolveClassNames, useCSSVariable, getCSSVariable, useUniwind, dark:/light: theming, platform
   selectors (ios:/android:/native:/web:/tv:), data-[prop=value], responsive breakpoints
   (sm:/md:/lg:), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
   Uniwind.updateCSSVariables, @theme, @utility, @variant, CSS variables in RN,
@@ -943,6 +943,21 @@ Use for: animations, chart libraries, third-party component configs, calculation
 
 It's required to cast the result of `useCSSVariable` as it can return: string | number | undefined.
 Uniwind doesn't know if given variable exist and what type it is, so it returns union type.
+
+### getCSSVariable
+
+Read CSS variable values outside of React (event handlers, async callbacks, utility modules, worklets). Available in Uniwind 1.6.4+.
+
+```ts
+import { Uniwind } from 'uniwind';
+
+const primary = Uniwind.getCSSVariable('--color-primary');
+const [bg, fg] = Uniwind.getCSSVariable(['--color-background', '--color-foreground']) as [string, string];
+```
+
+Same value rules as `useCSSVariable` (variable must be used in a `className` or declared in `@theme static`). Same return type: `string | number | undefined`. Cast as needed.
+
+Not reactive — value is read once. For reactive values inside components use `useCSSVariable`. Use `getCSSVariable` for one-shot reads (onPress handlers, utility functions, native module configs).
 
 ### Runtime CSS Variable Updates
 
@@ -2027,7 +2042,7 @@ Free: Yes. Pro: No — requires native rebuild (development builds).
 No. Uniwind uses Tailwind v4 — all config via `@theme` in `global.css`.
 
 **How to access CSS variables in JS?**
-`useCSSVariable('--color-primary')`. For variables not used in classNames, define with `@theme static`.
+Inside components: `useCSSVariable('--color-primary')` (reactive). Outside React: `Uniwind.getCSSVariable('--color-primary')` (one-shot, 1.6.4+). For variables not used in classNames, define with `@theme static`.
 
 **Can I use Platform.select()?**
 Yes, but prefer platform selectors (`ios:pt-12 android:pt-6`) — cleaner, no imports.
