@@ -2,17 +2,8 @@ import { normalizePath } from '@tailwindcss/node'
 import path from 'path'
 import type { Plugin } from 'vite'
 
-import { buildCSS } from '@/css'
-import { UniwindCSSVisitor } from '@/css-visitor'
-import { uniq } from '@/metro/utils'
-import { buildDtsFile } from '@/utils/buildDtsFile'
-import { stringifyThemes } from '@/utils/stringifyThemes'
-
-type UniwindConfig = {
-    cssEntryFile: string
-    extraThemes?: Array<string>
-    dtsFile?: string
-}
+import { UniwindBundlerConfig } from '@/bundler/config'
+import type { UniwindConfig } from '@/bundler/types'
 
 const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
 const componentPath = path.resolve(
@@ -23,18 +14,10 @@ const styleSheetPath = path.resolve(
     dirname,
     '../module/components/web/createOrderedCSSStyleSheet.js',
 )
+const cssArtifactPath = path.resolve(dirname, '../../uniwind.css')
 
-export const uniwind = ({
-    cssEntryFile,
-    extraThemes,
-    dtsFile = 'uniwind-types.d.ts',
-}: UniwindConfig): Plugin => {
-    const themes = uniq([
-        'light',
-        'dark',
-        ...(extraThemes ?? []),
-    ])
-    const stringifiedThemes = stringifyThemes(themes)
+export const uniwind = (config: UniwindConfig): Plugin => {
+    const bundlerConfig = UniwindBundlerConfig.fromViteConfig(config)
 
     return {
         name: 'uniwind',
@@ -52,7 +35,7 @@ export const uniwind = ({
             css: {
                 transformer: 'lightningcss',
                 lightningcss: {
-                    visitor: new UniwindCSSVisitor(themes),
+                    visitor: bundlerConfig.cssVisitor,
                 },
             },
             optimizeDeps: {
@@ -97,17 +80,15 @@ export const uniwind = ({
 
             if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
                 return {
-                    code: `${code}Uniwind.__reinit(() => ({}), ${stringifiedThemes})`,
+                    code: `${code}Uniwind.__reinit(() => ({}), ${bundlerConfig.stringifiedThemes})`,
                 }
             }
         },
         buildStart: async () => {
-            await buildCSS(themes, cssEntryFile)
-            buildDtsFile(dtsFile, stringifiedThemes)
+            await bundlerConfig.generateArtifacts(cssArtifactPath)
         },
         generateBundle: async () => {
-            await buildCSS(themes, cssEntryFile)
-            buildDtsFile(dtsFile, stringifiedThemes)
+            await bundlerConfig.generateArtifacts(cssArtifactPath)
         },
     }
 }

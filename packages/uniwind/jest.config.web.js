@@ -9,6 +9,7 @@ export default {
     preset: 'ts-jest',
     moduleNameMapper: {
         '^react-native$': 'react-native-web',
+        '^@/(.*)$': '<rootDir>/src/$1',
     },
     transformIgnorePatterns: [
         'node_modules/(?!(react-native-web)/)',

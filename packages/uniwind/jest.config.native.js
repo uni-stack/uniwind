@@ -8,5 +8,6 @@ export default {
     ],
     moduleNameMapper: {
         '^react-native$': '<rootDir>/../../node_modules/react-native',
+        '^@/(.*)$': '<rootDir>/src/$1',
     },
 }

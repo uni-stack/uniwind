@@ -1,6 +1,6 @@
 import { formatHex, formatHex8, parse } from 'culori'
 import { Insets } from 'react-native'
-import { StyleDependency } from '../../types'
+import { StyleDependency } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { UniwindStore } from '../native'

@@ -1,6 +1,6 @@
-import { isDefined } from '../../common/utils'
-import { addMissingSpaces, pipe, removeKeys, toCamelCase } from '../utils'
+import { isDefined } from '@/common/utils'
 import type { ProcessorBuilder } from './processor'
+import { addMissingSpaces, pipe, removeKeys, toCamelCase } from './utils'
 
 const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
     backgroundSize: value => {

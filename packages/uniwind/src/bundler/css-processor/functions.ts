@@ -1,7 +1,7 @@
 import { CalcFor_DimensionPercentageFor_LengthValue, CalcFor_Length, CssColor, Function as FunctionType } from 'lightningcss'
 import { Logger } from '../logger'
-import { pipe } from '../utils'
 import type { ProcessorBuilder } from './processor'
+import { pipe } from './utils'
 
 export class Functions {
     private readonly logger = new Logger('Functions')

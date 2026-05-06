@@ -43,17 +43,17 @@ export default defineBuildConfig({
     entries: [
         {
             builder: 'rollup',
-            input: './src/metro',
+            input: './src/bundler/adapters/metro',
             name: 'metro/index',
         },
         {
             builder: 'rollup',
-            input: './src/metro/metro-transformer.ts',
-            name: 'metro/metro-transformer',
+            input: './src/bundler/adapters/metro/transformer.ts',
+            name: 'metro/transformer',
         },
         {
             builder: 'mkdist',
-            input: './src/metro',
+            input: './src/bundler/adapters/metro',
             outDir: 'dist/metro',
             pattern: ['index.d.ts'],
             declaration: true,
@@ -88,16 +88,17 @@ export default defineBuildConfig({
             pattern: [
                 '**/*',
                 '!metro/**',
+                '!bundler/adapters/metro/**',
                 '!bundler/adapters/vite/**',
             ],
             declaration: true,
         }),
     ],
     alias: {
-        '@/css': srcPath('css'),
-        '@/css-visitor': srcPath('css-visitor'),
         '@/metro': srcPath('metro'),
         '@/utils': srcPath('utils'),
+        '@/common': srcPath('common'),
+        '@/bundler': srcPath('bundler'),
     },
     outDir: 'dist',
     clean: true,

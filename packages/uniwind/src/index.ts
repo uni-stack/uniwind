@@ -1,7 +1,6 @@
 export * from './components/ScopedTheme'
 export { Uniwind } from './core'
-export type { ThemeName } from './core/types'
+export type { ThemeName, UniwindConfig } from './core/types'
 export { withUniwind } from './hoc'
 export type { ApplyUniwind, ApplyUniwindOptions } from './hoc/types'
 export { useCSSVariable, useResolveClassNames, useUniwind } from './hooks'
-export type { UniwindConfig } from './types'

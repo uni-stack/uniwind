@@ -2,7 +2,7 @@ import { compile } from '@tailwindcss/node'
 import fs from 'fs'
 import { transform } from 'lightningcss'
 import path from 'path'
-import { Logger } from '../metro/logger'
+import { Logger } from '../../logger'
 
 const readFileSafe = (filePath: string) => {
     try {

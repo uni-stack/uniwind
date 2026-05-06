@@ -1,6 +1,6 @@
+import { StyleDependency } from '../../common/consts'
 import { Uniwind } from '../../core'
 import { UniwindListener } from '../../core/listener'
-import { StyleDependency } from '../../types'
 import './metro-injected'
 
 type UniwindWithThemes = {

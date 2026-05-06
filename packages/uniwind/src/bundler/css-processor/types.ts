@@ -1,3 +1,4 @@
+import { ColorScheme, Orientation, Platform } from '@/common/consts'
 import type {
     AbsoluteFontWeight,
     Declaration,
@@ -11,22 +12,6 @@ import type {
     TokenOrValue,
     UnresolvedColor,
 } from 'lightningcss'
-import { Platform } from '../common/consts'
-import { ColorScheme, Orientation } from '../types'
-
-export type Polyfills = {
-    rem?: number
-}
-
-export type UniwindConfig = {
-    cssEntryFile: string
-    themes: Array<string>
-    extraThemes?: Array<string>
-    dtsFile?: string
-    polyfills?: Polyfills
-    debug?: boolean
-    isTV?: boolean
-}
 
 export type MediaQueryResolver = {
     maxWidth: any

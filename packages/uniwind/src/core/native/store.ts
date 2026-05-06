@@ -1,6 +1,5 @@
 import { Dimensions, Platform } from 'react-native'
-import { Platform as UniwindPlatform, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
-import { Orientation, StyleDependency } from '../../types'
+import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
 import { cloneWithAccessors } from './native-utils'

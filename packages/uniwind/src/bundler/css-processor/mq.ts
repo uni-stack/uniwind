@@ -1,8 +1,7 @@
+import { ColorScheme, Orientation, Platform } from '@/common/consts'
 import { MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
-import { Platform } from '../../common/consts'
-import { ColorScheme, Orientation } from '../../types'
-import { MediaQueryResolver } from '../types'
 import type { ProcessorBuilder } from './processor'
+import { MediaQueryResolver } from './types'
 
 export class MQ {
     constructor(private readonly Processor: ProcessorBuilder) {}

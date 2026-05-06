@@ -1,8 +1,9 @@
 import { build } from 'esbuild'
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
+import { UniwindBundlerConfig } from '../../src/bundler/config'
+import { compileCSS } from '../../src/bundler/css-compiler'
 import { Platform } from '../../src/common/consts'
-import { compileVirtual } from '../../src/metro/compileVirtual'
 
 // Playwright runs globalSetup with cwd = directory containing playwright.config.ts
 // which is packages/uniwind/
@@ -16,17 +17,10 @@ export default async function globalSetup() {
     mkdirSync(GENERATED_DIR, { recursive: true })
 
     // 1. Compile test.css → real Tailwind CSS for web
-    const cssPath = resolve(ROOT, 'tests/test.css')
-    const css = readFileSync(cssPath, 'utf-8')
-
-    const compiledCSS = await compileVirtual({
-        css,
-        cssPath,
-        debug: false,
-        platform: Platform.Web,
-        themes: ['light', 'dark'],
-        polyfills: undefined,
-    })
+    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({
+        cssEntryFile: 'tests/test.css',
+    }, Platform.Web)
+    const compiledCSS = await compileCSS(bundlerConfig)
 
     writeFileSync(CSS_PATH, compiledCSS, 'utf-8')
     console.log(`[e2e setup] Compiled CSS written to ${CSS_PATH}`)

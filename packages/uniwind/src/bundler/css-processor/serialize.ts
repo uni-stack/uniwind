@@ -1,5 +1,5 @@
-import { Logger } from '../logger'
-import { addMissingSpaces, isNumber, isValidJSValue, pipe, roundToPrecision, smartSplit } from './common'
+import { Logger } from '@/bundler/logger'
+import { addMissingSpaces, isNumber, isValidJSValue, pipe, roundToPrecision, smartSplit } from './utils'
 
 const parseStringValue = (value: string) => {
     if (isValidJSValue(value)) {

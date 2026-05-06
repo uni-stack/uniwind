@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { StyleDependency } from '../../common/consts'
 import { arrayEquals } from '../../common/utils'
 import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { Logger } from '../../core/logger'
 import { UniwindContextType } from '../../core/types'
-import { StyleDependency } from '../../types'
 import { getVariableValue } from './getVariableValue'
 
 let warned = false

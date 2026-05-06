@@ -1,4 +1,4 @@
-import { RNStyle } from '../core/types'
+import { RNStyle } from '../../../core/types'
 
 const toKebabCase = (str: string) => str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`)
 

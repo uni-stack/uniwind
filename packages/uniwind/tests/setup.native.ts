@@ -1,23 +1,16 @@
-import { readFileSync } from 'fs'
-import { resolve } from 'path'
 import { Dimensions } from 'react-native'
+import { UniwindBundlerConfig } from '../src/bundler/config'
+import { compileCSS } from '../src/bundler/css-compiler'
 import { Platform } from '../src/common/consts'
-import { compileVirtual } from '../src/metro/compileVirtual'
 import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, SCREEN_WIDTH } from './consts'
 
 jest.spyOn(Dimensions, 'get').mockReturnValue({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, scale: 1, fontScale: 1 })
 
 beforeAll(async () => {
-    const cssPath = resolve('./tests/test.css')
-    const css = readFileSync(cssPath, 'utf-8')
-    const virtualCode = await compileVirtual({
-        css,
-        cssPath,
-        debug: true,
-        platform: Platform.iOS,
-        themes: ['light', 'dark'],
-        polyfills: undefined,
-    })
+    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({
+        cssEntryFile: './tests/test.css',
+    }, Platform.iOS)
+    const virtualCode = await compileCSS(bundlerConfig)
 
     eval(
         `const { Uniwind } = require('../src/core/config/config.native');

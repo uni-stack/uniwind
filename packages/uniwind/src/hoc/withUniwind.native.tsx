@@ -1,10 +1,10 @@
 import { ComponentProps, useLayoutEffect, useReducer } from 'react'
+import { StyleDependency } from '../common/consts'
 import { isDefined } from '../common/utils'
 import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
 import { Logger } from '../core/logger'
 import { UniwindStore } from '../core/native'
-import { StyleDependency } from '../types'
 import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 

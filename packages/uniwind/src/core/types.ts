@@ -1,6 +1,6 @@
 import React from 'react'
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { ColorScheme, Orientation, StyleDependency, UniwindConfig } from '../types'
+import { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
 export type Style = {
@@ -29,6 +29,8 @@ export type GenerateStyleSheetsCallback = (rt: UniwindRuntime) => {
     vars: Record<string, unknown>
     scopedVars: Partial<Record<string, Record<string, unknown>>>
 }
+
+export interface UniwindConfig {}
 
 type UserThemes = UniwindConfig extends { themes: infer T extends readonly string[] } ? T
     : readonly string[]

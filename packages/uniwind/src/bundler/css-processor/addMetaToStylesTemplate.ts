@@ -1,9 +1,9 @@
-import { Platform } from '../common/consts'
-import { isDefined } from '../common/utils'
-import { StyleDependency } from '../types'
+import { Platform, StyleDependency } from '@/common/consts'
+import { isDefined } from '@/common/utils'
 import { ProcessorBuilder } from './processor'
+import { serialize } from './serialize'
 import { StyleSheetTemplate } from './types'
-import { serialize, toCamelCase } from './utils'
+import { toCamelCase } from './utils'
 
 const extractVarsFromString = (value: string) => {
     const thisIndexes = [...value.matchAll(/this\[/g)].map(m => m.index)

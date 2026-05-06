@@ -1,4 +1,4 @@
-import { StyleDependency } from '../types'
+import { StyleDependency } from '../common/consts'
 
 type SubscribeOptions = {
     once?: boolean

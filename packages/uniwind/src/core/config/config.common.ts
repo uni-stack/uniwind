@@ -1,6 +1,6 @@
 import { Appearance, Insets, Platform } from 'react-native'
+import { ColorScheme, StyleDependency } from '../../common/consts'
 import { GetCSSVariable, getCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
-import { ColorScheme, StyleDependency } from '../../types'
 import { UniwindListener } from '../listener'
 import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 

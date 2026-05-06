@@ -1,8 +1,8 @@
 import { Color as ColorType, converter, formatHex, formatHex8, parse } from 'culori'
 import { CssColor, UnresolvedColor } from 'lightningcss'
 import { Logger } from '../logger'
-import { pipe } from '../utils'
 import type { ProcessorBuilder } from './processor'
+import { pipe } from './utils'
 
 export class Color {
     private toRgb = converter('rgb')

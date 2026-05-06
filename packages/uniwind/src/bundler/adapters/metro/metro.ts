@@ -1,39 +1,24 @@
+import { UniwindBundlerConfig } from '@/bundler/config'
+import type { UniwindConfig } from '@/bundler/types'
+import { Platform } from '@/common/consts'
 import type { MetroConfig } from 'metro-config'
-import { Platform } from '../common/consts'
-import { cacheStore, patchMetroGraphToSupportUncachedModules } from './metro-css-patches'
+import { cacheStore, patchMetroGraphToSupportUncachedModules } from './patches'
 import { nativeResolver, webResolver } from './resolvers'
-import { UniwindConfig } from './types'
-import { uniq } from './utils'
 
 export const withUniwindConfig = <T extends MetroConfig>(
     config: T,
     uniwindConfig: UniwindConfig,
 ): T => {
-    uniwindConfig.themes = uniq([
-        'light',
-        'dark',
-        ...(uniwindConfig.extraThemes ?? []),
-    ])
-
+    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(uniwindConfig, Platform.Native)
     patchMetroGraphToSupportUncachedModules()
-
-    if (typeof uniwindConfig === 'undefined') {
-        throw new Error('Uniwind: You need to pass second parameter to withUniwindConfig')
-    }
-
-    if (typeof uniwindConfig.cssEntryFile === 'undefined') {
-        throw new Error(
-            'Uniwind: You need to pass css css entry file to withUniwindConfig, e.g. withUniwindConfig(config, { cssEntryFile: "./global.css" })',
-        )
-    }
 
     return {
         ...config,
         cacheStores: [cacheStore],
-        transformerPath: require.resolve('./metro-transformer.cjs'),
+        transformerPath: require.resolve('./transformer.cjs'),
         transformer: {
             ...config.transformer,
-            uniwind: uniwindConfig,
+            uniwind: bundlerConfig.toMetroConfig(),
         },
         resolver: {
             ...config.resolver,

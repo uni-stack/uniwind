@@ -1,5 +1,5 @@
 import { Appearance, Dimensions, I18nManager, PixelRatio, StyleSheet } from 'react-native'
-import { ColorScheme, Orientation } from '../../types'
+import { ColorScheme, Orientation } from '../../common/consts'
 import type { UniwindRuntime as UniwindRuntimeType } from '../types'
 import { colorMix, lightDark, parseColor } from './native-utils'
 
