@@ -80,7 +80,7 @@ export const uniwind = (config: UniwindConfig): Plugin => {
 
             if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
                 return {
-                    code: `${code}Uniwind.__reinit(() => ({}), ${bundlerConfig.stringifiedThemes})`,
+                    code: `${code}\n;Uniwind.__reinit(() => ({}), ${bundlerConfig.stringifiedThemes})`,
                 }
             }
         },
