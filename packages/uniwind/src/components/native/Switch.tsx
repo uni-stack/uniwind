@@ -1,5 +1,6 @@
-import { Switch as RNSwitch, SwitchProps } from 'react-native'
-import { ComponentState } from '../../core/types'
+import type { SwitchProps } from 'react-native'
+import { Switch as RNSwitch } from 'react-native'
+import type { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

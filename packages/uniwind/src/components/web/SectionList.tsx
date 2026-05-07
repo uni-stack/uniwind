@@ -1,4 +1,5 @@
-import { SectionList as RNSectionList, SectionListProps } from 'react-native'
+import type { SectionListProps } from 'react-native'
+import { SectionList as RNSectionList } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

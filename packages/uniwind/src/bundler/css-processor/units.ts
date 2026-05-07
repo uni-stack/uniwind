@@ -1,4 +1,4 @@
-import { DimensionPercentageFor_LengthValue, Length, LengthValue } from 'lightningcss'
+import type { DimensionPercentageFor_LengthValue, Length, LengthValue } from 'lightningcss'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
 

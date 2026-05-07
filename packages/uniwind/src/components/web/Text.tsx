@@ -1,4 +1,5 @@
-import { Text as RNText, TextProps } from 'react-native'
+import type { TextProps } from 'react-native'
+import { Text as RNText } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

@@ -1,4 +1,5 @@
-import { Modal as RNModal, ModalProps } from 'react-native'
+import type { ModalProps } from 'react-native'
+import { Modal as RNModal } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

@@ -1,17 +1,19 @@
 import { UniwindBundlerConfig } from '@/bundler/config'
 import { compileCSS } from '@/bundler/css-compiler'
-import { UniwindMetroConfig } from '@/bundler/types'
+import type { UniwindMetroConfig } from '@/bundler/types'
 import { Platform } from '@/common/consts'
+import type * as ExpoMetroConfig from '@expo/metro-config'
+import type * as MetroTransformWorker from 'metro-transform-worker'
 import type { JsTransformerConfig, JsTransformOptions } from 'metro-transform-worker'
 import path from 'path'
 
 const cssArtifactPath = path.resolve(__dirname, '../../uniwind.css')
 
-let worker: typeof import('metro-transform-worker')
+let worker: typeof MetroTransformWorker
 
 try {
     try {
-        const { unstable_transformerPath } = require('@expo/metro-config') as typeof import('@expo/metro-config')
+        const { unstable_transformerPath } = require('@expo/metro-config') as typeof ExpoMetroConfig
 
         worker = require(unstable_transformerPath)
     } catch {

@@ -1,4 +1,5 @@
-import { TouchableWithoutFeedback as RNTouchableWithoutFeedback, TouchableWithoutFeedbackProps } from 'react-native'
+import type { TouchableWithoutFeedbackProps } from 'react-native'
+import { TouchableWithoutFeedback as RNTouchableWithoutFeedback } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

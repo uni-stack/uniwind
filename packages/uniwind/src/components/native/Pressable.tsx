@@ -1,4 +1,5 @@
-import { Pressable as RNPressable, PressableProps } from 'react-native'
+import type { PressableProps } from 'react-native'
+import { Pressable as RNPressable } from 'react-native'
 import { useUniwindContext } from '../../core/context'
 import { UniwindStore } from '../../core/native'
 import { copyComponentProperties } from '../utils'

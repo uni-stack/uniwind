@@ -1,4 +1,5 @@
-import { ImageBackground as RNImageBackground, ImageBackgroundProps } from 'react-native'
+import type { ImageBackgroundProps } from 'react-native'
+import { ImageBackground as RNImageBackground } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

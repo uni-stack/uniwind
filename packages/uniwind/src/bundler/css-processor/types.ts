@@ -1,4 +1,4 @@
-import { ColorScheme, Orientation, Platform } from '@/common/consts'
+import type { ColorScheme, Orientation, Platform } from '@/common/consts'
 import type {
     AbsoluteFontWeight,
     Declaration,

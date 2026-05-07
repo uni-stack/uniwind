@@ -1,4 +1,5 @@
-import { ScrollView as RNScrollView, ScrollViewProps } from 'react-native'
+import type { ScrollViewProps } from 'react-native'
+import { ScrollView as RNScrollView } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

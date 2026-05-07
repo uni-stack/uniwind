@@ -1,4 +1,5 @@
-import { Pressable as RNPressable, PressableProps } from 'react-native'
+import type { PressableProps } from 'react-native'
+import { Pressable as RNPressable } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

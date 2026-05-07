@@ -1,4 +1,5 @@
-import { ActivityIndicator as RNActivityIndicator, ActivityIndicatorProps } from 'react-native'
+import type { ActivityIndicatorProps } from 'react-native'
+import { ActivityIndicator as RNActivityIndicator } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

@@ -1,4 +1,5 @@
-import { SectionList as RNSectionList, SectionListProps } from 'react-native'
+import type { SectionListProps } from 'react-native'
+import { SectionList as RNSectionList } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

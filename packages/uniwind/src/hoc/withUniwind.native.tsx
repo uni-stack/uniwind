@@ -1,11 +1,12 @@
-import { ComponentProps, useLayoutEffect, useReducer } from 'react'
-import { StyleDependency } from '../common/consts'
+import type { ComponentProps } from 'react'
+import { useLayoutEffect, useReducer } from 'react'
+import type { StyleDependency } from '../common/consts'
 import { isDefined } from '../common/utils'
 import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
 import { Logger } from '../core/logger'
 import { UniwindStore } from '../core/native'
-import { AnyObject, Component, OptionMapping, WithUniwind } from './types'
+import type { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 
 let warnedOnce = false

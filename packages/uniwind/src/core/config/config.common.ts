@@ -1,8 +1,10 @@
-import { Appearance, Insets, Platform } from 'react-native'
+import type { Insets } from 'react-native'
+import { Appearance, Platform } from 'react-native'
 import { ColorScheme, StyleDependency } from '../../common/consts'
-import { GetCSSVariable, getCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
+import type { GetCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
+import { getCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
 import { UniwindListener } from '../listener'
-import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
+import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
 // Platform.constants is not defined in RNW

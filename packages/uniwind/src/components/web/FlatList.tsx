@@ -1,4 +1,5 @@
-import { FlatList as RNFlatList, FlatListProps } from 'react-native'
+import type { FlatListProps } from 'react-native'
+import { FlatList as RNFlatList } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

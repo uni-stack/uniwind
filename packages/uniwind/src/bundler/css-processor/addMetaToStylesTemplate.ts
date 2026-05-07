@@ -1,8 +1,8 @@
 import { Platform, StyleDependency } from '@/common/consts'
 import { isDefined } from '@/common/utils'
-import { ProcessorBuilder } from './processor'
+import type { ProcessorBuilder } from './processor'
 import { serialize } from './serialize'
-import { StyleSheetTemplate } from './types'
+import type { StyleSheetTemplate } from './types'
 import { toCamelCase } from './utils'
 
 const extractVarsFromString = (value: string) => {

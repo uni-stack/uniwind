@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { TouchableWithoutFeedback as RNTouchableWithoutFeedback, TouchableWithoutFeedbackProps } from 'react-native'
-import { ComponentState } from '../../core/types'
+import type { TouchableWithoutFeedbackProps } from 'react-native'
+import { TouchableWithoutFeedback as RNTouchableWithoutFeedback } from 'react-native'
+import type { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 

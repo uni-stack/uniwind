@@ -1,6 +1,6 @@
 import { isDefined } from '../../common/utils'
 import { Logger } from '../../core/logger'
-import { ComponentState } from '../../core/types'
+import type { ComponentState } from '../../core/types'
 import { useStyle } from './useStyle'
 
 let warnedOnce = false

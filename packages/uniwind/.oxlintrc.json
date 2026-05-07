@@ -5,7 +5,8 @@
     "rules": {
         "unicorn/no-empty-file": "off",
         "typescript/strict-boolean-expressions": "off",
-        "typescript/no-implied-eval": "off"
+        "typescript/no-implied-eval": "off",
+        "typescript/consistent-type-imports": "error"
     },
     "ignorePatterns": [
         "build.config.ts",

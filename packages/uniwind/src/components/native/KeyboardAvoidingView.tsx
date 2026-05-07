@@ -1,4 +1,5 @@
-import { KeyboardAvoidingView as RNKeyboardAvoidingView, KeyboardAvoidingViewProps } from 'react-native'
+import type { KeyboardAvoidingViewProps } from 'react-native'
+import { KeyboardAvoidingView as RNKeyboardAvoidingView } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 

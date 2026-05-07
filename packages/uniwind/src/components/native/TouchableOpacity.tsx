@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { TouchableOpacity as RNTouchableOpacity, TouchableOpacityProps } from 'react-native'
-import { ComponentState } from '../../core/types'
+import type { TouchableOpacityProps } from 'react-native'
+import { TouchableOpacity as RNTouchableOpacity } from 'react-native'
+import type { ComponentState } from '../../core/types'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 

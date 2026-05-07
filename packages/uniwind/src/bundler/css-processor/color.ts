@@ -1,5 +1,6 @@
-import { Color as ColorType, converter, formatHex, formatHex8, parse } from 'culori'
-import { CssColor, UnresolvedColor } from 'lightningcss'
+import type { Color as ColorType } from 'culori'
+import { converter, formatHex, formatHex8, parse } from 'culori'
+import type { CssColor, UnresolvedColor } from 'lightningcss'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
 import { pipe } from './utils'

@@ -1,5 +1,5 @@
 import { generateDataSet } from '../../components/web/generateDataSet'
-import { RNStyle, UniwindContextType } from '../types'
+import type { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
 

@@ -1,4 +1,4 @@
-import { UniwindBundlerConfig } from '../config'
+import type { UniwindBundlerConfig } from '../config'
 import { addMetaToStylesTemplate, ProcessorBuilder, serializeJSObject } from '../css-processor'
 
 export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCSS: string) => {

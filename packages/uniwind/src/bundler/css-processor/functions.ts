@@ -1,4 +1,4 @@
-import { CalcFor_DimensionPercentageFor_LengthValue, CalcFor_Length, CssColor, Function as FunctionType } from 'lightningcss'
+import type { CalcFor_DimensionPercentageFor_LengthValue, CalcFor_Length, CssColor, Function as FunctionType } from 'lightningcss'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
 import { pipe } from './utils'

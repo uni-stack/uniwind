@@ -1,4 +1,4 @@
-import { Variable } from 'lightningcss'
+import type { Variable } from 'lightningcss'
 import type { ProcessorBuilder } from './processor'
 
 export class Var {

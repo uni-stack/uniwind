@@ -1,4 +1,5 @@
-import { View as RNView, ViewProps } from 'react-native'
+import type { ViewProps } from 'react-native'
+import { View as RNView } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

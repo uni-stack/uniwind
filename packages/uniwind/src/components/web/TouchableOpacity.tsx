@@ -1,4 +1,5 @@
-import { TouchableOpacity as RNTouchableOpacity, TouchableOpacityProps } from 'react-native'
+import type { TouchableOpacityProps } from 'react-native'
+import { TouchableOpacity as RNTouchableOpacity } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

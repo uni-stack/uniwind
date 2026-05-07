@@ -1,5 +1,6 @@
 import type { Graph, Result as GraphResult } from '@expo/metro/metro/DeltaBundler/Graph'
 import FileStoreBase from 'metro-cache/private/stores/FileStore'
+import type * as MetroGraphModule from 'metro/private/DeltaBundler/Graph'
 import type { Options as GraphOptions } from 'metro/private/DeltaBundler/types'
 import os from 'os'
 import path from 'path'
@@ -24,7 +25,7 @@ interface TraverseDependencies {
 }
 
 export const patchMetroGraphToSupportUncachedModules = () => {
-    const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof import('metro/private/DeltaBundler/Graph')
+    const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof MetroGraphModule
 
     // oxlint-disable-next-line @typescript-eslint/unbound-method
     const original_traverseDependencies = Graph.prototype.traverseDependencies as unknown as TraverseDependencies

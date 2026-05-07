@@ -1,4 +1,5 @@
-import { RefreshControl as RNRefreshControl, RefreshControlProps } from 'react-native'
+import type { RefreshControlProps } from 'react-native'
+import { RefreshControl as RNRefreshControl } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

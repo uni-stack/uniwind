@@ -1,4 +1,4 @@
-import { ReturnedDeclaration, ReturnedMediaQuery, ReturnedRule, Rule, SelectorComponent } from 'lightningcss'
+import type { ReturnedDeclaration, ReturnedMediaQuery, ReturnedRule, Rule, SelectorComponent } from 'lightningcss'
 
 type LightningRuleVisitor = Rule<ReturnedDeclaration, ReturnedMediaQuery>
 type LightningRuleVisitors = Partial<

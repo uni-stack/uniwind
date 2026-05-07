@@ -1,4 +1,5 @@
-import { Image as RNImage, ImageProps } from 'react-native'
+import type { ImageProps } from 'react-native'
+import { Image as RNImage } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

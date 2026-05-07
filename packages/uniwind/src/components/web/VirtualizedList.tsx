@@ -1,4 +1,5 @@
-import { VirtualizedList as RNVirtualizedList, VirtualizedListProps } from 'react-native'
+import type { VirtualizedListProps } from 'react-native'
+import { VirtualizedList as RNVirtualizedList } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

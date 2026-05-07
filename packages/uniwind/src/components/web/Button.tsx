@@ -1,4 +1,5 @@
-import { Button as RNButton, ButtonProps } from 'react-native'
+import type { ButtonProps } from 'react-native'
+import { Button as RNButton } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { useUniwindAccent } from './useUniwindAccent'

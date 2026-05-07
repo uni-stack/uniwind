@@ -1,7 +1,7 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
-import { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
+import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
 import { cloneWithAccessors } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'

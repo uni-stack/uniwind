@@ -1,6 +1,6 @@
 import React from 'react'
 import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
-import { ColorScheme, Orientation, StyleDependency } from '../common/consts'
+import type { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
 export type Style = {

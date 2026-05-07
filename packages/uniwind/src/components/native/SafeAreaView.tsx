@@ -1,4 +1,5 @@
-import { SafeAreaView as RNSafeAreaView, ViewProps } from 'react-native'
+import type { ViewProps } from 'react-native'
+import { SafeAreaView as RNSafeAreaView } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useStyle } from './useStyle'
 

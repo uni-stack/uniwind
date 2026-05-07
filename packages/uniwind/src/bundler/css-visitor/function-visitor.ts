@@ -1,4 +1,4 @@
-import { Function as LightningCSSFunction, TokenOrValue } from 'lightningcss'
+import type { Function as LightningCSSFunction, TokenOrValue } from 'lightningcss'
 
 const ONE_PX = {
     type: 'token',

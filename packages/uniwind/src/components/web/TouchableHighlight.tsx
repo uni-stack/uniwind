@@ -1,4 +1,5 @@
-import { TouchableHighlight as RNTouchableHighlight, TouchableHighlightProps } from 'react-native'
+import type { TouchableHighlightProps } from 'react-native'
+import { TouchableHighlight as RNTouchableHighlight } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

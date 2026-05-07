@@ -2,7 +2,7 @@ import { compile } from '@tailwindcss/node'
 import { Scanner } from '@tailwindcss/oxide'
 import fs from 'fs'
 import path from 'path'
-import { UniwindBundlerConfig } from '../config'
+import type { UniwindBundlerConfig } from '../config'
 
 export const compileTailwind = async (bundlerConfig: UniwindBundlerConfig) => {
     const css = await fs.promises.readFile(bundlerConfig.cssPath, 'utf-8')

@@ -1,5 +1,5 @@
 import { Platform } from '@/common/consts'
-import { UniwindBundlerConfig } from '../config'
+import type { UniwindBundlerConfig } from '../config'
 import { compileNativeCSS } from './compileNativeCSS'
 import { compileTailwind } from './compileTailwind'
 import { compileWebCSS } from './compileWebCSS'

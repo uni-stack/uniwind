@@ -1,10 +1,10 @@
 import { formatHex, formatHex8, parse } from 'culori'
-import { Insets } from 'react-native'
+import type { Insets } from 'react-native'
 import { StyleDependency } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { UniwindStore } from '../native'
-import { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
+import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {

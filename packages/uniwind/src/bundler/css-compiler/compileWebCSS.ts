@@ -1,5 +1,5 @@
 import { transform } from 'lightningcss'
-import { UniwindBundlerConfig } from '../config'
+import type { UniwindBundlerConfig } from '../config'
 import { UniwindCSSVisitor } from '../css-visitor'
 
 export const compileWebCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCSS: string) => {

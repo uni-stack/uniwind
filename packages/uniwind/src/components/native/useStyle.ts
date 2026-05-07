@@ -2,7 +2,7 @@ import { useLayoutEffect, useReducer } from 'react'
 import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
 import { UniwindStore } from '../../core/native'
-import { ComponentState } from '../../core/types'
+import type { ComponentState } from '../../core/types'
 
 export const useStyle = (className: string | undefined, componentProps: Record<string, any>, state?: ComponentState) => {
     'use no memo'

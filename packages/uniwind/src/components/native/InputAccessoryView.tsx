@@ -1,5 +1,6 @@
-import { ForwardedRef } from 'react'
-import { InputAccessoryView as RNInputAccessoryView, InputAccessoryViewProps } from 'react-native'
+import type { ForwardedRef } from 'react'
+import type { InputAccessoryViewProps } from 'react-native'
+import { InputAccessoryView as RNInputAccessoryView } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'

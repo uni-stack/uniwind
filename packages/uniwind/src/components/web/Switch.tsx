@@ -1,4 +1,5 @@
-import { Switch as RNSwitch, SwitchProps } from 'react-native'
+import type { SwitchProps } from 'react-native'
+import { Switch as RNSwitch } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

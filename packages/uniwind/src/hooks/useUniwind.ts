@@ -3,7 +3,7 @@ import { StyleDependency } from '../common/consts'
 import { Uniwind } from '../core'
 import { useUniwindContext } from '../core/context'
 import { UniwindListener } from '../core/listener'
-import { ThemeName } from '../core/types'
+import type { ThemeName } from '../core/types'
 
 export const useUniwind = (): { theme: ThemeName; hasAdaptiveThemes: boolean } => {
     const uniwindContext = useUniwindContext()

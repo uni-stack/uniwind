@@ -1,4 +1,5 @@
-import { TextInput as RNTextInput, TextInputProps } from 'react-native'
+import type { TextInputProps } from 'react-native'
+import { TextInput as RNTextInput } from 'react-native'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'

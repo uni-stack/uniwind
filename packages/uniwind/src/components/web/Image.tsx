@@ -1,4 +1,5 @@
-import { Image as RNImage, ImageProps } from 'react-native'
+import type { ImageProps } from 'react-native'
+import { Image as RNImage } from 'react-native'
 import { useResolveClassNames } from '../../hooks'
 import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'

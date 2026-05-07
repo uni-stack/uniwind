@@ -1,4 +1,4 @@
-import { CustomResolutionContext, CustomResolver } from 'metro-resolver'
+import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { basename, dirname, sep } from 'node:path'
 
 type ResolverConfig = {

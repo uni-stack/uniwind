@@ -1,5 +1,5 @@
-import { ComponentProps, ComponentPropsWithRef } from 'react'
-import { RNStyle } from '../core/types'
+import type { ComponentProps, ComponentPropsWithRef } from 'react'
+import type { RNStyle } from '../core/types'
 
 export type AnyObject = Record<PropertyKey, any>
 

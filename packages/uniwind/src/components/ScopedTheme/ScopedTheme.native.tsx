@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { UniwindContext } from '../../core/context'
-import { ThemeName, UniwindContextType } from '../../core/types'
+import type { ThemeName, UniwindContextType } from '../../core/types'
 
 type ScopedThemeProps = {
     theme: ThemeName

@@ -1,4 +1,4 @@
-import { CustomAtRules, Visitor } from 'lightningcss'
+import type { CustomAtRules, Visitor } from 'lightningcss'
 import { FunctionVisitor } from './function-visitor'
 import { RuleVisitor } from './rule-visitor'
 

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useReducer } from 'react'
 import { useUniwindContext } from '../core/context'
-import { RNStyle } from '../core/types'
+import type { RNStyle } from '../core/types'
 import { CSSListener, getWebStyles } from '../core/web'
 
 const emptyState = {} as RNStyle
