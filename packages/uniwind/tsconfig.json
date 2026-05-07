@@ -11,9 +11,6 @@
         "noUncheckedIndexedAccess": true,
         "rootDir": "src",
         "paths": {
-            "@/metro": ["./src/metro/index.ts"],
-            "@/metro/*": ["./src/metro/*"],
-            "@/utils/*": ["./src/utils/*"],
             "@/common/*": ["./src/common/*"],
             "@/bundler/*": ["./src/bundler/*"]
         },

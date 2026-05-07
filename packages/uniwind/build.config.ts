@@ -95,8 +95,6 @@ export default defineBuildConfig({
         }),
     ],
     alias: {
-        '@/metro': srcPath('metro'),
-        '@/utils': srcPath('utils'),
         '@/common': srcPath('common'),
         '@/bundler': srcPath('bundler'),
     },
