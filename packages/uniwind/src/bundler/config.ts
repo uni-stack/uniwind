@@ -3,11 +3,16 @@ import { buildDtsFile } from '@/bundler/artifacts/dts'
 import { UniwindCSSVisitor } from '@/bundler/css-visitor'
 import type { UniwindConfig, UniwindMetroConfig } from '@/bundler/types'
 import { Platform } from '@/common/consts'
+import { isDefined } from '@/common/utils'
 import path from 'path'
 
 export class UniwindBundlerConfig {
-    static fromMetroConfig(config: UniwindMetroConfig, platform: string | null | undefined) {
+    static fromMetroConfig(config: UniwindMetroConfig, platform?: string | null | undefined) {
         const getPlatform = () => {
+            if (!isDefined(platform)) {
+                return Platform.Native
+            }
+
             if (!config.isTV) {
                 return platform as Platform
             }

@@ -9,7 +9,7 @@ export const withUniwindConfig = <T extends MetroConfig>(
     config: T,
     uniwindConfig: UniwindConfig,
 ): T => {
-    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(uniwindConfig, Platform.Native)
+    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(uniwindConfig)
     patchMetroGraphToSupportUncachedModules()
 
     return {

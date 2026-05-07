@@ -102,6 +102,7 @@ Compilation flow:
 - `compileWebCSS` runs Lightning CSS with `UniwindCSSVisitor` and returns CSS.
 - `compileNativeCSS` runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet metadata into JS source.
 - `UniwindBundlerConfig.generateArtifacts` writes CSS artifacts and generated theme typings.
+- Internal package aliases such as `@/*` are only safe inside `packages/uniwind/src/bundler`. Bundler files are built and transformed to JS, but runtime/component/hook/HOC files are published directly as `.ts`/`.tsx` React Native entrypoints, so aliases in those files are not rewritten.
 
 Metro integration:
 

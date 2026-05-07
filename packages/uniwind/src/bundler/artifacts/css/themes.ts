@@ -1,8 +1,8 @@
+import { Logger } from '@/bundler/logger'
 import { compile } from '@tailwindcss/node'
 import fs from 'fs'
 import { transform } from 'lightningcss'
 import path from 'path'
-import { Logger } from '../../logger'
 
 const readFileSafe = (filePath: string) => {
     try {
