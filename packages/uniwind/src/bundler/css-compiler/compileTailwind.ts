@@ -5,7 +5,7 @@ import path from 'path'
 import { UniwindBundlerConfig } from '../config'
 
 export const compileTailwind = async (bundlerConfig: UniwindBundlerConfig) => {
-    const css = fs.readFileSync(bundlerConfig.cssPath, 'utf-8')
+    const css = await fs.promises.readFile(bundlerConfig.cssPath, 'utf-8')
     const compiler = await compile(css, {
         base: path.dirname(bundlerConfig.cssPath),
         onDependency: () => void 0,
