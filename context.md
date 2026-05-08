@@ -79,7 +79,7 @@ Web runtime:
 
 Shared runtime:
 
-- `Uniwind.setTheme(theme | 'system')` switches explicit themes or returns to system adaptive light/dark.
+- `Uniwind.setTheme(theme | 'system')` switches explicit themes or returns to system-adaptive light/dark.
 - `Uniwind.currentTheme` and `Uniwind.hasAdaptiveThemes` back `useUniwind`.
 - `Uniwind.updateCSSVariables(theme, variables)` updates theme variables and notifies variable subscribers.
 - `Uniwind.updateInsets(insets)` is native-only behavior and updates safe-area-style runtime values.
@@ -115,7 +115,7 @@ Metro integration:
 
 Vite integration:
 
-- `uniwind(config)` returns a pre Vite plugin.
+- `uniwind(config)` returns a pre-Vite plugin.
 - Vite aliases `react-native` to Uniwind web components, except imports from Uniwind internals resolve back to `react-native-web`.
 - Vite replaces RNW `createOrderedCSSStyleSheet` with Uniwind's ordered stylesheet implementation.
 - Vite uses Lightning CSS with `UniwindCSSVisitor`.
@@ -127,8 +127,8 @@ Native processing converts Tailwind-generated CSS into metadata-rich style recor
 
 Important concepts:
 
-- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, native flag, dependencies, source index, class name, important properties, selector complexity, pseudo states, and data attributes.
-- CSS variables live in `vars`; theme and platform scoped variables live in `scopedVars` with internal prefixes.
+- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, native flag, dependencies, source index, class name, important properties, selector complexity, pseudo-states, and data attributes.
+- CSS variables live in `vars`; theme and platform-scoped variables live in `scopedVars` with internal prefixes.
 - The processor treats declarations under `:root` or outside class rules as variables.
 - Theme variants are recognized from known theme names.
 - Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
