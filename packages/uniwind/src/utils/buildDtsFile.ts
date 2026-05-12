@@ -1,5 +1,6 @@
 import fs from 'fs'
 import { name } from '../../package.json'
+import { atomicWriteFileSync } from './atomicWriteFileSync'
 
 export const buildDtsFile = (dtsPath: string, stringifiedThemes: string) => {
     const oldDtsContent = fs.existsSync(dtsPath)
@@ -23,5 +24,5 @@ export const buildDtsFile = (dtsPath: string, stringifiedThemes: string) => {
         return
     }
 
-    fs.writeFileSync(dtsPath, dtsContent)
+    atomicWriteFileSync(dtsPath, dtsContent)
 }

@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { atomicWriteFileSync } from '../utils/atomicWriteFileSync'
 import { EXTRA_UTILITIES_CSS } from './extraUtilities'
 import { INSETS_CSS } from './insets'
 import { OVERWRITE_CSS } from './overwrite'
@@ -27,8 +28,5 @@ export const buildCSS = async (themes: Array<string>, input: string) => {
         return
     }
 
-    fs.writeFileSync(
-        cssFilePath,
-        newCssFile,
-    )
+    atomicWriteFileSync(cssFilePath, newCssFile)
 }
