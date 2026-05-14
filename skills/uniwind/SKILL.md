@@ -7,7 +7,7 @@ description: >
   @import 'uniwind', withUniwindConfig, withUniwind, metro.config.js with Uniwind,
   useResolveClassNames, useCSSVariable, getCSSVariable, useUniwind, dark:/light: theming, platform
   selectors (ios:/android:/native:/web:/tv:), data-[prop=value], responsive breakpoints
-  (sm:/md:/lg:), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
+  (sm:/md:/lg:), important utilities (!bg-red-500), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
   Uniwind.updateCSSVariables, @theme, @utility, @variant, CSS variables in RN,
   colorClassName, tintColorClassName, contentContainerClassName, Uniwind Pro
   (animations, transitions, shadow tree, native insets), safe area utilities,
@@ -39,6 +39,7 @@ Uniwind brings Tailwind CSS v4 to React Native. All core React Native components
 11. **rem default is 16px** — NativeWind used 14px. Set `polyfills: { rem: 14 }` in metro config if migrating.
 12. **`cssEntryFile` must be a relative path string** — Use `'./global.css'` not `path.resolve(__dirname, 'global.css')`.
 13. **Deduplicate with `cn()` when mixing custom CSS classes and Tailwind** — Uniwind does NOT auto-deduplicate. If a custom CSS class (`.card { padding: 16px }`) and a Tailwind utility (`p-6`) set the same property, both apply with unpredictable results. Always wrap with `cn('card', 'p-6')` when there's overlap.
+14. **Important utilities are supported** — Tailwind important modifier works in classNames: `!bg-red-500`, `active:!bg-red-500`, `ios:!pt-12`. Important utilities override non-important utilities for the same style property, but inline `style` still overrides className.
 
 ## Setup
 
@@ -740,6 +741,27 @@ import { cn } from '@/lib/cn';
 
 - Static className with no conflicts: `<View className="flex-1 p-4 bg-white" />`
 - Single custom CSS class with no overlapping Tailwind: `<View className="card-shadow mt-4" />` (if card-shadow only sets box-shadow which no Tailwind class also sets)
+
+## Important Utilities and Style Specificity
+
+Uniwind supports Tailwind's important modifier (`!`) for utilities that must override another utility for the same style property.
+
+```tsx
+import { View, Pressable } from 'react-native';
+
+// !bg-red-500 has higher priority than bg-blue-500
+<View className="bg-blue-500 !bg-red-500" />;
+
+// Important utilities work with state and platform variants
+<Pressable className="bg-blue-500 active:!bg-red-500" />;
+<View className="pt-4 ios:!pt-12 android:!pt-8" />;
+```
+
+Priority rules:
+- Important utility (`!bg-red-500`) overrides non-important utility (`bg-blue-500`) for the same property.
+- Important variants work normally: `active:!bg-red-500`, `ios:!pt-12`, `dark:!text-white`.
+- Inline `style` always wins, even over important className utilities: `<View className="!bg-red-500" style={{ backgroundColor: 'blue' }} />` renders blue.
+- Use `!` sparingly. For reusable components and consumer overrides, prefer `cn()` with `tailwind-merge`.
 
 ## Theming
 
@@ -2057,7 +2079,7 @@ Yes, since v1.2.0. Use `uniwind/vite` plugin alongside `@tailwindcss/vite`.
 Metro can't hot-reload files with many providers. Move `global.css` import deeper in the component tree.
 
 **Style specificity?**
-Inline `style` always overrides `className`. Use `className` for static styles, inline only for truly dynamic values. Use `cn()` from tailwind-merge for component libraries where classNames may conflict.
+Important utilities like `!bg-red-500` override non-important utilities for the same property and work with variants (`active:!bg-red-500`, `ios:!pt-12`). Inline `style` always overrides `className`, even important utilities. Use `className` for static styles, inline only for truly dynamic values. Use `cn()` from tailwind-merge for component libraries where classNames may conflict.
 
 **How do I include custom fonts?**
 Load font files (Expo: `expo-font` plugin in `app.json`; Bare RN: `react-native-asset`), then map in CSS: `@theme { --font-sans: 'Roboto-Regular'; }`. Font name must exactly match the file name. See the **Fonts** section above.
