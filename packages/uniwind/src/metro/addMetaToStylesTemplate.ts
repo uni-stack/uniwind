@@ -126,7 +126,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     focus,
                     disabled,
                     importantProperties: importantProperties
-                        ?.map(property => property.startsWith('--') ? property : toCamelCase)
+                        ?.map(property => property.startsWith('--') ? property : toCamelCase(property))
                         .map(makeSafeForSerialization) ?? [],
                     dataAttributes,
                     complexity: [
