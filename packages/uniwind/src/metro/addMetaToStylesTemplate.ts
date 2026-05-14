@@ -29,6 +29,30 @@ const makeSafeForSerialization = (value: any) => {
     return value
 }
 
+const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, visited = new Set<string>()): boolean => {
+    if (visited.has(varName)) {
+        return false
+    }
+
+    visited.add(varName)
+
+    const isScopedVar = Object.values(Processor.scopedVars).some(scopedVars => varName in scopedVars)
+
+    if (isScopedVar) {
+        return true
+    }
+
+    const globalVarValue = Processor.vars[varName]
+
+    if (typeof globalVarValue !== 'string') {
+        return false
+    }
+
+    return extractVarsFromString(globalVarValue).some(usedVarName => {
+        return hasThemedVarDependency(usedVarName, Processor, visited)
+    })
+}
+
 export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlatform: Platform) => {
     const stylesheetsEntries = Object.entries(Processor.stylesheets as StyleSheetTemplate)
         .map(([className, stylesPerMediaQuery]) => {
@@ -70,13 +94,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                 const dependencies: Array<StyleDependency> = []
                 const stringifiedEntries = JSON.stringify(entries)
                 const usedVars = extractVarsFromString(stringifiedEntries)
-                const isUsingThemedVar = usedVars.some(usedVarName => {
-                    return Object.values(Processor.scopedVars).some(scopedVars => {
-                        const scopedVarsNames = Object.keys(scopedVars)
-
-                        return scopedVarsNames.includes(usedVarName)
-                    })
-                })
+                const isUsingThemedVar = usedVars.some(usedVarName => hasThemedVarDependency(usedVarName, Processor))
 
                 if (usedVars.length > 0) {
                     dependencies.push(StyleDependency.Variables)
