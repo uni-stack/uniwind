@@ -1,4 +1,28 @@
-## What's Changed in 1.6.5
+## What's Changed in 1.6.7-beta.0
+
+
+
+### 📦 Other
+* Merge branch 'main' into major-refactor
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.6.6-beta.0...v1.6.7-beta.0## What's Changed in 1.6.6-beta.0
+
+
+
+### 🧪 Testing
+* fix meta test after merge
+
+
+### 🏠 Chores
+* lint warning
+
+
+### 📦 Other
+* Merge branch 'main' into major-refactor
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.6.5...v1.6.6-beta.0## What's Changed in 1.6.5
 
 
 
@@ -24,6 +48,20 @@
 ### 🐛 Bug Fixes
 * fix: join border radius to fix some components by @Brentlok in [#517](https://github.com/uni-stack/uniwind/pull/517)
 * fix: remove deprecated push notification ios export by @Brentlok in [#516](https://github.com/uni-stack/uniwind/pull/516)
+
+
+### 🔨 Refactoring
+* refactored bundler code
+* add import aliases and move vite to bundler/adapters
+
+
+### 🏠 Chores
+* minor corrections
+* consistent type imports
+* fs promise to read file for tailwind compilation
+* add new line before reinit in vite adapter
+* unused aliases
+* remove unused
 
 
 **Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.6.3...v1.6.4## What's Changed in 1.6.3
