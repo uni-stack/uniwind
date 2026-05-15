@@ -13,16 +13,19 @@
   --spacing-test: 123px;
   --color-background: unset;
   --color-p3: color(display-p3 1 0.84 0.04);
+  --color-foreground: var(--app-foreground);
 }
 
 @layer theme {
     :root {
         @variant dark {
             --color-background: black;
+            --app-foreground: white;
         }
 
         @variant light {
             --color-background: white;
+            --app-foreground: black;
         }
     }
 }

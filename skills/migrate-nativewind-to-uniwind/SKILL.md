@@ -414,6 +414,15 @@ import { cn } from '@/lib/cn';
 
 Use `cn` instead of raw `twMerge` — it handles conditional classes, arrays, and falsy values via `clsx` before deduplicating with `tailwind-merge`.
 
+Important utilities are also supported in Uniwind. If migrated NativeWind code intentionally forces an override with Tailwind's important modifier, keep it:
+
+```tsx
+<View className="bg-blue-500 !bg-red-500" />
+<Pressable className="bg-blue-500 active:!bg-red-500" />
+```
+
+Important utilities override non-important utilities for the same style property. Inline `style` still has the highest priority, even over important className utilities.
+
 ## Step 14: Update Animated Class Names
 
 If the project used NativeWind `animated-*` / transition class patterns, migrate those to explicit `react-native-reanimated` usage. Uniwind OSS does not provide NativeWind-style animated class behavior.
