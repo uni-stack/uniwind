@@ -1,26 +1,17 @@
-import { readFileSync } from 'fs'
-import { resolve } from 'path'
-import { Platform } from '../../../src/common/consts'
+import { UniwindBundlerConfig } from '../../../src/bundler/config'
+import { compileCSS } from '../../../src/bundler/css-compiler'
+import { Platform, StyleDependency } from '../../../src/common/consts'
 import { StyleSheets } from '../../../src/core/types'
-import { compileVirtual } from '../../../src/metro/compileVirtual'
-import { StyleDependency } from '../../../src/types'
 
 type CompiledResult = {
     stylesheet: StyleSheets
 }
 
-const compileMetadata = async (candidates: Array<string>): Promise<CompiledResult> => {
-    const cssPath = resolve('./tests/test.css')
-    const css = readFileSync(cssPath, 'utf-8')
-    const virtualCode = await compileVirtual({
-        css,
-        cssPath,
-        debug: false,
-        platform: Platform.iOS,
-        themes: ['light', 'dark'],
-        polyfills: undefined,
-        candidates,
-    })
+const compileMetadata = async (): Promise<CompiledResult> => {
+    const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({
+        cssEntryFile: './tests/test.css',
+    }, Platform.iOS)
+    const virtualCode = await compileCSS(bundlerConfig)
 
     // oxlint-disable-next-line no-unused-vars
     const rt = {}
@@ -31,7 +22,7 @@ const compileMetadata = async (candidates: Array<string>): Promise<CompiledResul
 
 describe('Styles Metadata', () => {
     test('Theme Style Dependency', async () => {
-        const { stylesheet } = await compileMetadata(['bg-background', 'bg-foreground'])
+        const { stylesheet } = await compileMetadata()
 
         expect(stylesheet['bg-background'][0].dependencies).toContain(StyleDependency.Theme)
         expect(stylesheet['bg-foreground'][0].dependencies).toContain(StyleDependency.Theme)
