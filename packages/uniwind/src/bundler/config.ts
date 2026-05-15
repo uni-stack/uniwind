@@ -7,7 +7,7 @@ import { isDefined } from '@/common/utils'
 import path from 'path'
 
 export class UniwindBundlerConfig {
-    static fromMetroConfig(config: UniwindMetroConfig, platform?: string | null | undefined) {
+    static fromMetroConfig(config: UniwindMetroConfig, platform?: string | null) {
         const getPlatform = () => {
             if (!isDefined(platform)) {
                 return Platform.Native
