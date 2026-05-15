@@ -9,10 +9,11 @@ on:
         type: boolean
         default: true
       increment:
-        description: 'Version increment (patch, minor, major)'
+        description: 'Version increment (prerelease, patch, minor, major)'
         required: true
         type: choice
         options:
+          - prerelease
           - patch
           - minor
           - major
