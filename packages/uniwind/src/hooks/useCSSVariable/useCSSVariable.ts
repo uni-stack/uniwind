@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react'
+import { Platform } from 'react-native'
 import { arrayEquals } from '../../common/utils'
 import { useUniwindContext } from '../../core/context'
 import { UniwindListener } from '../../core/listener'
@@ -10,6 +11,11 @@ import { getVariableValue } from './getVariableValue'
 let warned = false
 
 const logDevError = (name: string) => {
+    // Silent warnings for SSR
+    if (Platform.OS === 'web' && typeof document === 'undefined') {
+        return
+    }
+
     warned = true
     Logger.warn(
         `We couldn't find your variable ${name}. Make sure it's used at least once in your className, or define it in a static theme as described in the docs: https://docs.uniwind.dev/api/use-css-variable`,
