@@ -7,10 +7,10 @@ description: >
   @import 'uniwind', withUniwindConfig, withUniwind, metro.config.js with Uniwind,
   useResolveClassNames, useCSSVariable, getCSSVariable, useUniwind, dark:/light: theming, platform
   selectors (ios:/android:/native:/web:/tv:), data-[prop=value], responsive breakpoints
-  (sm:/md:/lg:), important utilities (!bg-red-500), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
+  (sm:/md:/lg:), important utilities (bg-red-500!), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
   Uniwind.updateCSSVariables, @theme, @utility, @variant, CSS variables in RN,
-  colorClassName, tintColorClassName, contentContainerClassName, Uniwind Pro
-  (animations, transitions, shadow tree, native insets), safe area utilities,
+  colorClassName, tintColorClassName, contentContainerClassName, default styles,
+  default RN component styles, Uniwind Pro (animations, transitions, shadow tree, native insets), safe area utilities,
   gradients, hairlineWidth(), fontScale(), pixelRatio(), light-dark(), OKLCH,
   cn, tailwind-merge, HeroUI Native, react-native-reusables, Gluestack.
   Does NOT handle migration — use migrate-nativewind-to-uniwind skill.
@@ -39,7 +39,7 @@ Uniwind brings Tailwind CSS v4 to React Native. All core React Native components
 11. **rem default is 16px** — NativeWind used 14px. Set `polyfills: { rem: 14 }` in metro config if migrating.
 12. **`cssEntryFile` must be a relative path string** — Use `'./global.css'` not `path.resolve(__dirname, 'global.css')`.
 13. **Deduplicate with `cn()` when mixing custom CSS classes and Tailwind** — Uniwind does NOT auto-deduplicate. If a custom CSS class (`.card { padding: 16px }`) and a Tailwind utility (`p-6`) set the same property, both apply with unpredictable results. Always wrap with `cn('card', 'p-6')` when there's overlap.
-14. **Important utilities are supported** — Tailwind important modifier works in classNames: `!bg-red-500`, `active:!bg-red-500`, `ios:!pt-12`. Important utilities override non-important utilities for the same style property, but inline `style` still overrides className.
+14. **Important utilities are supported** — Tailwind important modifier works in classNames with `!` at the end: `bg-red-500!`, `active:bg-red-500!`, `ios:pt-12!`. Leading `!bg-red-500` syntax is deprecated. Important utilities override non-important utilities for the same style property, but inline `style` still overrides className.
 
 ## Setup
 
@@ -749,18 +749,18 @@ Uniwind supports Tailwind's important modifier (`!`) for utilities that must ove
 ```tsx
 import { View, Pressable } from 'react-native';
 
-// !bg-red-500 has higher priority than bg-blue-500
-<View className="bg-blue-500 !bg-red-500" />;
+// bg-red-500! has higher priority than bg-blue-500
+<View className="bg-blue-500 bg-red-500!" />;
 
 // Important utilities work with state and platform variants
-<Pressable className="bg-blue-500 active:!bg-red-500" />;
-<View className="pt-4 ios:!pt-12 android:!pt-8" />;
+<Pressable className="bg-blue-500 active:bg-red-500!" />;
+<View className="pt-4 ios:pt-12! android:pt-8!" />;
 ```
 
 Priority rules:
-- Important utility (`!bg-red-500`) overrides non-important utility (`bg-blue-500`) for the same property.
-- Important variants work normally: `active:!bg-red-500`, `ios:!pt-12`, `dark:!text-white`.
-- Inline `style` always wins, even over important className utilities: `<View className="!bg-red-500" style={{ backgroundColor: 'blue' }} />` renders blue.
+- Important utility (`bg-red-500!`) overrides non-important utility (`bg-blue-500`) for the same property.
+- Important variants work normally: `active:bg-red-500!`, `ios:pt-12!`, `dark:text-white!`.
+- Inline `style` always wins, even over important className utilities: `<View className="bg-red-500!" style={{ backgroundColor: 'blue' }} />` renders blue.
 - Use `!` sparingly. For reusable components and consumer overrides, prefer `cn()` with `tailwind-merge`.
 
 ## Theming
@@ -1692,6 +1692,7 @@ Paid upgrade with 100% API compatibility. Built on a 2nd-generation C++ engine f
 - **Native insets & runtime values**: Automatic safe area injection, device rotation, and font size updates — no `SafeAreaListener` setup needed
 - **Theme transitions**: Native animated transitions when switching themes (fade, slide, circle mask)
 - **Group variants**: Tailwind `group-active:*` / `group-focus:*` propagate parent interaction state through the C++ shadow tree with zero re-renders
+- **Default styles**: Experimental `1.2.0+` feature for styling default React Native components from CSS selectors like `View { ... }` and `Text { ... }`
 - **Priority support**: Don't let technical hurdles slow your team down
 
 Package: `"uniwind": "npm:uniwind-pro@latest"` in `package.json`.
@@ -1908,6 +1909,43 @@ Tailwind `group` variants propagate parent interaction state to descendants thro
 
 **Not supported**: `group-hover:*` (no pointer hover on native), `group-disabled:*` (parsed but no shadow tree trigger), arbitrary `group-[.selector]:*` variants, implicit `in-*` variants.
 
+### Default Styles (Pro 1.2.0+, Experimental)
+
+Default styles let Pro users define baseline styles for built-in React Native components directly in CSS. They are disabled by default and require an experimental flag.
+
+```js
+// metro.config.js
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: './global.css',
+  experimental: {
+    defaultStyles: true,
+  },
+});
+```
+
+```css
+/* global.css */
+View {
+  border-color: var(--color-primary);
+}
+
+Text {
+  font-family: Inter;
+  font-size: 16px;
+}
+```
+
+Effect: every `View` gets `border-color: var(--color-primary)`, every `Text` gets `font-family: Inter` and `font-size: 16px`, unless more specific styles override them.
+
+Rules:
+- Available only in Uniwind Pro `1.2.0+`
+- Disabled by default; enable `experimental.defaultStyles: true`
+- Experimental; may not work for every use case and may change in future releases
+- Use React Native component names as selectors, not HTML tags
+- Treat as baseline styles; direct `className` styles can override them
+
+Supported component selectors: `ActivityIndicator`, `FlatList`, `Image`, `ImageBackground`, `InputAccessoryView`, `KeyboardAvoidingView`, `Modal`, `Pressable`, `RefreshControl`, `SafeAreaView`, `ScrollView`, `SectionList`, `Switch`, `Text`, `TextInput`, `TouchableHighlight`, `TouchableNativeFeedback`, `TouchableOpacity`, `TouchableWithoutFeedback`, `View`, `VirtualizedList`.
+
 ### Suspense Support
 
 Components inside React `Suspense` boundaries are handled correctly. While a subtree is suspended, Uniwind keeps the C++ shadow entries alive so theme updates and runtime changes (dark mode, orientation, etc.) still reach suspended nodes. When the tree unsuspends, styles are already up to date — no flash of stale theme.
@@ -1977,6 +2015,7 @@ When styles aren't working, check in this order:
 - `withUniwindConfig` is the **outermost** wrapper
 - `cssEntryFile` is a **relative path string** (e.g., `'./global.css'`)
 - No `path.resolve()` or absolute paths
+- For Pro default styles: `experimental.defaultStyles: true` is set
 
 ### 3. global.css
 - Contains `@import 'tailwindcss';` AND `@import 'uniwind';`
@@ -2033,6 +2072,7 @@ When styles aren't working, check in this order:
 | Pro: download limit reached | Monthly download limit hit | Check Pro dashboard, limits reset monthly |
 | Pro: `Uniwind.updateInsets` called unnecessarily | Pro injects insets natively | `Uniwind.updateInsets` is a no-op in Pro. Remove `SafeAreaListener` setup when using Pro |
 | Pro: theme transition crash | Missing `ThemeTransitionPreset` import or calling before app is ready | Import from `'uniwind'`. Ensure the app has fully mounted before calling `setTheme` with a transition |
+| Pro: default component styles not applying | Feature disabled or unsupported selector | Use Uniwind Pro 1.2.0+, enable `experimental.defaultStyles: true`, restart Metro, and use supported RN component selectors like `View` or `Text` |
 
 ### unstable_enablePackageExports Selective Resolver
 
@@ -2079,7 +2119,7 @@ Yes, since v1.2.0. Use `uniwind/vite` plugin alongside `@tailwindcss/vite`.
 Metro can't hot-reload files with many providers. Move `global.css` import deeper in the component tree.
 
 **Style specificity?**
-Important utilities like `!bg-red-500` override non-important utilities for the same property and work with variants (`active:!bg-red-500`, `ios:!pt-12`). Inline `style` always overrides `className`, even important utilities. Use `className` for static styles, inline only for truly dynamic values. Use `cn()` from tailwind-merge for component libraries where classNames may conflict.
+Important utilities like `bg-red-500!` override non-important utilities for the same property and work with variants (`active:bg-red-500!`, `ios:pt-12!`). Inline `style` always overrides `className`, even important utilities. Use `className` for static styles, inline only for truly dynamic values. Use `cn()` from tailwind-merge for component libraries where classNames may conflict.
 
 **How do I include custom fonts?**
 Load font files (Expo: `expo-font` plugin in `app.json`; Bare RN: `react-native-asset`), then map in CSS: `@theme { --font-sans: 'Roboto-Regular'; }`. Font name must exactly match the file name. See the **Fonts** section above.
