@@ -33,3 +33,10 @@
 @utility multiple-transform {
   transform: translateX(10px) translateY(10px);
 }
+
+/* Verify if this doesn't get transformed to flex: 1 */
+@utility flex-1-custom {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+}

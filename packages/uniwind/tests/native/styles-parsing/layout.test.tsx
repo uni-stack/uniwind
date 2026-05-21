@@ -7,6 +7,7 @@ describe('Layout', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
                 <View className="flex-1" testID="flex-1" />
+                <View className="flex-1-custom" testID="flex-1-custom" />
                 <View className="flex-row" testID="flex-row" />
                 <View className="flex-col" testID="flex-col" />
                 <View className="items-center" testID="items-center" />
@@ -23,10 +24,11 @@ describe('Layout', () => {
             </React.Fragment>,
         )
 
-        const flex1 = getStylesFromId('flex-1')
-        expect(flex1.flexGrow).toBe(1)
-        expect(flex1.flexShrink).toBe(1)
-        expect(flex1.flexBasis).toBe('0%')
+        const flex1Custom = getStylesFromId('flex-1-custom')
+        expect(flex1Custom.flexGrow).toBe(1)
+        expect(flex1Custom.flexShrink).toBe(1)
+        expect(flex1Custom.flexBasis).toBe('0%')
+        expect(getStylesFromId('flex-1').flex).toBe(1)
         expect(getStylesFromId('flex-row').flexDirection).toBe('row')
         expect(getStylesFromId('flex-col').flexDirection).toBe('column')
         expect(getStylesFromId('items-center').alignItems).toBe('center')

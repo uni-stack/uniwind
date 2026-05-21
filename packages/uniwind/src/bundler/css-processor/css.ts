@@ -2,7 +2,7 @@ import type { OverflowKeyword } from 'lightningcss'
 import { isDefined } from '../../common/utils'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
-import type { DeclarationValues } from './types'
+import type { DeclarationProperty, DeclarationValues } from './types'
 import { deepEqual, pipe, roundToPrecision, shouldBeSerialized } from './utils'
 
 export class CSS {
@@ -10,8 +10,8 @@ export class CSS {
 
     constructor(private readonly Processor: ProcessorBuilder) {}
 
-    processValue(declarationValue: DeclarationValues): any {
-        const processedValue = this.getProcessedValue(declarationValue)
+    processValue(declarationValue: DeclarationValues, declarationProperty?: DeclarationProperty): any {
+        const processedValue = this.getProcessedValue(declarationValue, declarationProperty)
 
         if (typeof processedValue === 'string') {
             return this.makeSafeForSerialization(processedValue)
@@ -48,7 +48,7 @@ export class CSS {
         return processedValue
     }
 
-    private getProcessedValue(declarationValue: DeclarationValues): any {
+    private getProcessedValue(declarationValue: DeclarationValues, declarationProperty?: DeclarationProperty): any {
         if (typeof declarationValue !== 'object') {
             return declarationValue
         }
@@ -319,11 +319,20 @@ export class CSS {
         }
 
         if ('grow' in declarationValue) {
-            return {
+            const parsedFlex = {
                 flexGrow: declarationValue.grow,
                 flexShrink: declarationValue.shrink,
                 flexBasis: this.processValue(declarationValue.basis),
             }
+
+            // CSS `flex: 1` is a shorthand for `flex-grow: 1; flex-shrink: 1; flex-basis: 0%` but for native we just want flex: 1
+            if (declarationProperty === 'flex' && parsedFlex.flexGrow === 1 && parsedFlex.flexShrink === 1 && parsedFlex.flexBasis === '"0%"') {
+                return {
+                    flex: 1,
+                }
+            }
+
+            return parsedFlex
         }
 
         if (Array.isArray(declarationValue)) {

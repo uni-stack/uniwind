@@ -46,6 +46,8 @@ export type DeclarationValues =
     | AbsoluteFontWeight
     | UnresolvedColor
 
+export type DeclarationProperty = Declaration['property']
+
 export type ProcessMetaValues = {
     className?: string | null
 }
