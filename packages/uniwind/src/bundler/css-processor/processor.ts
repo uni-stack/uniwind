@@ -115,7 +115,7 @@ export class ProcessorBuilder {
             return
         }
 
-        style[declaration.property] = this.CSS.processValue(declaration.value)
+        style[declaration.property] = this.CSS.processValue(declaration.value, declaration.property)
 
         if (!isVar && important) {
             style.importantProperties.push(declaration.property)
