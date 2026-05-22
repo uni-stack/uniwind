@@ -41,14 +41,11 @@ export const smartSplit = (str: string, separator = ' ' as string | RegExp) => {
 export const addMissingSpaces = (str: string) =>
     pipe(str)(
         x => x.trim(),
-        x => x.replace(/([^ {])this/g, '$1 this'),
         x => x.replace(/\](?=\d)/g, '] '),
         x => x.replace(/\](?=")/g, '] '),
-        x => x.replace(/\)(?=\S)/g, ') '),
+        x => x.replace(/\)(?=[^\s,])/g, ') '),
         x => x.replace(/(?<!^)(?<!\s)"(?=\d)/g, '" '),
     )
-
-export const uniq = <T>(arr: Array<T>) => Array.from(new Set(arr))
 
 export const isValidJSValue = (jsValueString: string) => {
     try {
@@ -67,7 +64,7 @@ export const shouldBeSerialized = (value: string) => {
 
     return [
         isNumber(value),
-        value.startsWith('this['),
+        value.startsWith('vars['),
         value.startsWith('rt.'),
         /[*/+-]/.test(value),
         value.includes('"'),

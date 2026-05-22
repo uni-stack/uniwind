@@ -5,7 +5,7 @@ export class Var {
     constructor(private readonly Processor: ProcessorBuilder) {}
 
     processVar(variable: Variable): string {
-        const value = `this[\`${variable.name.ident}\`]`
+        const value = `vars[${JSON.stringify(variable.name.ident)}]?.(vars)`
 
         if (!variable.fallback || variable.fallback.length === 0) {
             return value

@@ -31,15 +31,6 @@ export function lightDark(this: UniwindRuntime, light: string, dark: string) {
     return light
 }
 
-export const cloneWithAccessors = <T extends object>(obj: T) => {
-    const proto = Object.getPrototypeOf(obj)
-    const clone = Object.create(proto)
-
-    Object.defineProperties(clone, Object.getOwnPropertyDescriptors(obj))
-
-    return clone
-}
-
 export const parseColor = (type: string, color: string) => {
     try {
         const parsedColor = parse(`${type}(${color})`)

@@ -102,4 +102,16 @@ describe('Colors', () => {
         const customP3Styles = getStylesFromId('custom-p3')
         expect(customP3Styles.backgroundColor).toBe('#ffd400')
     })
+
+    test('Inline vars cascade before style resolution', () => {
+        const { getStylesFromId } = renderUniwind(
+            <View
+                className="var-cascade-after"
+                testID="var-cascade-after"
+            />,
+        )
+
+        const styles = getStylesFromId('var-cascade-after')
+        expect(styles.color).toBe('#123456')
+    })
 })

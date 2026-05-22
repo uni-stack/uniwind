@@ -40,3 +40,8 @@
   flex-shrink: 1;
   flex-basis: 0%;
 }
+
+@utility var-cascade-after {
+  color: var(--inline-after);
+  --inline-after: #123456;
+}

@@ -1,8 +1,7 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
-import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType } from '../types'
-import { cloneWithAccessors } from './native-utils'
+import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
 
@@ -16,7 +15,7 @@ const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 
 
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
-    vars = {} as Record<ThemeName, Record<string, unknown>>
+    vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
 
@@ -66,20 +65,20 @@ class UniwindStoreBuilder {
         const platformVars = scopedVars[`${UNIWIND_PLATFORM_VARIABLES}${platform}`]
 
         if (commonPlatformVars) {
-            Object.defineProperties(vars, Object.getOwnPropertyDescriptors(commonPlatformVars))
+            Object.assign(vars, commonPlatformVars)
         }
 
         if (platformVars) {
-            Object.defineProperties(vars, Object.getOwnPropertyDescriptors(platformVars))
+            Object.assign(vars, platformVars)
         }
 
         this.stylesheet = stylesheet
         this.vars = Object.fromEntries(themes.map(theme => {
-            const clonedVars = cloneWithAccessors(vars)
+            const clonedVars = Object.create(vars) as Vars
             const themeVars = scopedVars[`${UNIWIND_THEME_VARIABLES}${theme}`]
 
             if (themeVars) {
-                Object.defineProperties(clonedVars, Object.getOwnPropertyDescriptors(themeVars))
+                Object.assign(clonedVars, themeVars)
             }
 
             return [theme, clonedVars]
@@ -97,7 +96,7 @@ class UniwindStoreBuilder {
         state: ComponentState | undefined,
         uniwindContext: UniwindContextType,
     ) {
-        const result = {} as Record<string, any>
+        const resultGetters = {} as Record<string, Var>
         const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
         // At this point we're sure that theme is correct
         let vars = this.vars[theme]!
@@ -160,20 +159,12 @@ class UniwindStoreBuilder {
                     if (property[0] === '-') {
                         // Clone vars object if we are adding inline variables
                         if (vars === originalVars) {
-                            vars = cloneWithAccessors(originalVars)
+                            vars = Object.create(originalVars)
                         }
 
-                        Object.defineProperty(vars, property, {
-                            configurable: true,
-                            enumerable: true,
-                            get: valueGetter,
-                        })
+                        vars[property] = valueGetter
                     } else {
-                        Object.defineProperty(result, property, {
-                            configurable: true,
-                            enumerable: true,
-                            get: () => valueGetter.call(vars),
-                        })
+                        resultGetters[property] = valueGetter
                     }
 
                     bestBreakpoints.set(property, style)
@@ -181,66 +172,42 @@ class UniwindStoreBuilder {
             }
         }
 
+        const result = Object.fromEntries(
+            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars)]),
+        ) as Record<string, any>
+
         if (result.lineHeight !== undefined && result.lineHeight < 6) {
-            Object.defineProperty(result, 'lineHeight', {
-                value: result.fontSize * result.lineHeight,
-                configurable: true,
-                enumerable: true,
-            })
+            result.lineHeight *= result.fontSize
         }
 
         if (result.boxShadow !== undefined) {
-            Object.defineProperty(result, 'boxShadow', {
-                value: parseBoxShadow(result.boxShadow),
-                configurable: true,
-                enumerable: true,
-            })
+            result.boxShadow = parseBoxShadow(result.boxShadow)
         }
 
         if (result.visibility === 'hidden') {
-            Object.defineProperty(result, 'display', {
-                value: 'none',
-                configurable: true,
-                enumerable: true,
-            })
+            result.display = 'none'
         }
 
         if (
             result.borderStyle !== undefined && result.borderColor === undefined
         ) {
-            Object.defineProperty(result, 'borderColor', {
-                value: '#000000',
-                configurable: true,
-                enumerable: true,
-            })
+            result.borderColor = '#000000'
         }
 
         if (
             result.outlineStyle !== undefined && result.outlineColor === undefined
         ) {
-            Object.defineProperty(result, 'outlineColor', {
-                value: '#000000',
-                configurable: true,
-                enumerable: true,
-            })
+            result.outlineColor = '#000000'
         }
 
         if (result.fontVariant !== undefined) {
-            Object.defineProperty(result, 'fontVariant', {
-                value: parseFontVariant(result.fontVariant),
-                configurable: true,
-                enumerable: true,
-            })
+            result.fontVariant = parseFontVariant(result.fontVariant)
         }
 
         parseTransformsMutation(result)
 
         if (result.experimental_backgroundImage !== undefined) {
-            Object.defineProperty(result, 'experimental_backgroundImage', {
-                value: resolveGradient(result.experimental_backgroundImage),
-                configurable: true,
-                enumerable: true,
-            })
+            result.experimental_backgroundImage = resolveGradient(result.experimental_backgroundImage)
         }
 
         if (result.textShadow !== undefined) {
@@ -248,7 +215,7 @@ class UniwindStoreBuilder {
         }
 
         return {
-            styles: { ...result } as RNStyle,
+            styles: result,
             dependencies: Array.from(dependencies),
             dependencySum,
             hasDataAttributes,

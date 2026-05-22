@@ -10,28 +10,16 @@ export const parseTextShadowMutation = (styles: Record<string, any>) => {
     const [offsetX, offsetY, radius] = offsets
 
     if (offsetX !== undefined && offsetY !== undefined) {
-        Object.defineProperty(styles, 'textShadowOffset', {
-            configurable: true,
-            enumerable: true,
-            value: {
-                width: Number(offsetX),
-                height: Number(offsetY),
-            },
-        })
+        styles.textShadowOffset = {
+            width: Number(offsetX),
+            height: Number(offsetY),
+        }
         delete styles.textShadow
     }
 
     if (radius !== undefined) {
-        Object.defineProperty(styles, 'textShadowRadius', {
-            configurable: true,
-            enumerable: true,
-            value: Number(radius),
-        })
+        styles.textShadowRadius = Number(radius)
     }
 
-    Object.defineProperty(styles, 'textShadowColor', {
-        configurable: true,
-        enumerable: true,
-        value: color,
-    })
+    styles.textShadowColor = color
 }
