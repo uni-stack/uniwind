@@ -39,7 +39,7 @@ export const patchMetroGraphToSupportUncachedModules = () => {
     function traverseDependencies(this: Graph, paths: Array<string>, options: GraphOptions<any>) {
         this.dependencies.forEach(dependency => {
             if (
-                dependency.output.find(file => file.data.css?.skipCache === true)
+                dependency.output.find(file => (file.data as any)?.css?.skipCache === true)
                 && !paths.includes(dependency.path)
             ) {
                 // @ts-expect-error Hidden property

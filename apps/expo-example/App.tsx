@@ -1,5 +1,4 @@
 import './global.css'
-import React from 'react'
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const TailwindTestPage = () => {

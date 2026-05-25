@@ -2,6 +2,7 @@ import { Logger } from '@/bundler/logger'
 import { compile } from '@tailwindcss/node'
 import fs from 'fs'
 import { transform } from 'lightningcss'
+import type { ImportDependency } from 'lightningcss'
 import path from 'path'
 
 const readFileSafe = (filePath: string) => {
@@ -65,7 +66,11 @@ export const generateCSSForThemes = async (themes: Array<string>, input: string)
 
         const importUrls = new Set<string>()
         const importsCSS = dependencies
-            .filter(dependency => {
+            .filter((dependency): dependency is ImportDependency => {
+                if (dependency.type !== 'import') {
+                    return false
+                }
+
                 if (dependency.url.startsWith('.')) {
                     importUrls.add(path.resolve(path.dirname(cssPath), dependency.url))
 

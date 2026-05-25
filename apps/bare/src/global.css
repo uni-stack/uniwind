@@ -4,10 +4,3 @@
 @theme {
     --color-primary: oklch(0.72 0.11 178);
 }
-
-/* Auto genereated by uniwind - do not modify */
-
-@custom-variant light (&:where(.light, .light *));
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* Auto genereated by uniwind - do not modify */
