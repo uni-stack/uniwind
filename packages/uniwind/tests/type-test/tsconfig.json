@@ -3,7 +3,6 @@
     "compilerOptions": {
         "noEmit": true,
         "rootDir": ".",
-        "baseUrl": ".",
         "paths": {
             "uniwind": ["../../dist/module/index.d.ts"]
         }

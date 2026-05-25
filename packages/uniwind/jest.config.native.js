@@ -1,5 +1,5 @@
 export default {
-    preset: 'react-native',
+    preset: '@react-native/jest-preset',
     displayName: 'native',
     testMatch: ['<rootDir>/tests/native/**/*.test.{ts,tsx}'],
     setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect', '<rootDir>/tests/setup.native.ts'],

@@ -6,7 +6,6 @@ export default {
         '@testing-library/jest-dom',
         '<rootDir>/tests/setup.web.ts',
     ],
-    preset: 'ts-jest',
     moduleNameMapper: {
         '^react-native$': 'react-native-web',
         '^@/(.*)$': '<rootDir>/src/$1',
@@ -15,8 +14,21 @@ export default {
         'node_modules/(?!(react-native-web)/)',
     ],
     transform: {
-        '^.+\\.tsx?$': ['ts-jest', {
-            tsconfig: './tsconfig.test.json',
+        '^.+\\.tsx?$': ['@swc/jest', {
+            jsc: {
+                parser: {
+                    syntax: 'typescript',
+                    tsx: true,
+                },
+                transform: {
+                    react: {
+                        runtime: 'automatic',
+                    },
+                },
+            },
+            module: {
+                type: 'commonjs',
+            },
         }],
     },
 }

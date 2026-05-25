@@ -10,10 +10,10 @@
         "web": "expo start --web"
     },
     "dependencies": {
-        "@expo/metro-runtime": "55.0.6",
+        "@expo/metro-runtime": "56.0.12",
         "uniwind": "workspace:*",
         "expo": "catalog:",
-        "expo-status-bar": "55.0.4",
+        "expo-status-bar": "56.0.4",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",
@@ -21,9 +21,9 @@
         "tailwindcss": "catalog:"
     },
     "devDependencies": {
-        "@babel/core": "7.28.5",
+        "@babel/core": "7.29.0",
         "@types/react": "catalog:",
-        "babel-plugin-module-resolver": "5.0.2",
+        "babel-plugin-module-resolver": "5.0.3",
         "tailwindcss": "catalog:",
         "typescript": "catalog:"
     },
