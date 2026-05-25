@@ -2,9 +2,10 @@
 
 import { UniwindBundlerConfig } from '@/bundler/config'
 import { Logger } from '@/bundler/logger'
+import { fileURLToPath } from 'node:url'
 import path from 'path'
 
-const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
+const dirname = path.dirname(fileURLToPath(import.meta.url))
 const cssArtifactPath = path.resolve(dirname, '../../uniwind.css')
 
 type GenerateArtifactsArgs = {
