@@ -6,6 +6,9 @@
     "homepage": "https://uniwind.dev",
     "author": "Unistack",
     "type": "module",
+    "bin": {
+        "uniwind": "./dist/cli/index.mjs"
+    },
     "repository": "https://github.com/uni-stack/uniwind",
     "sideEffects": false,
     "scripts": {

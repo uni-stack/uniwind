@@ -45,6 +45,16 @@ export class UniwindBundlerConfig {
         return new UniwindBundlerConfig(config, Platform.Web)
     }
 
+    static fromCliConfig(config: UniwindConfig) {
+        if (typeof config.cssEntryFile === 'undefined') {
+            throw new Error(
+                'Uniwind: You need to pass css entry file, e.g. uniwind generate-artifacts --css ./global.css. Run uniwind generate-artifacts --help for usage.',
+            )
+        }
+
+        return new UniwindBundlerConfig(config, Platform.Web)
+    }
+
     constructor(private readonly config: UniwindMetroConfig, readonly platform: Platform) {}
 
     get cssPath() {

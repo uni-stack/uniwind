@@ -16,6 +16,10 @@ export class Logger {
         console.log(`${blue}Uniwind ${meta}- ${message}${reset}`)
     }
 
+    static info(message: string) {
+        console.log(`${blue}[Uniwind] ${message}${reset}`)
+    }
+
     static error(message: string, meta = '') {
         console.log(`${red}Uniwind Error ${meta}- ${message}${reset}`)
     }

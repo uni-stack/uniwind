@@ -65,6 +65,11 @@ export default defineBuildConfig({
             name: 'vite/index',
         },
         {
+            builder: 'rollup',
+            input: './src/bundler/cli/index.ts',
+            name: 'cli/index',
+        },
+        {
             builder: 'mkdist',
             input: './src/bundler/adapters/vite',
             outDir: 'dist/vite',
