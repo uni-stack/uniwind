@@ -118,7 +118,7 @@ export class RuleVisitor implements LightningRuleVisitors {
 
         this.processedClassNames.add(firstSelector.name)
 
-        return {
+        return this.removeNulls({
             type: 'scope',
             value: {
                 loc: styleRule.value.loc,
@@ -128,7 +128,7 @@ export class RuleVisitor implements LightningRuleVisitors {
                     .filter(theme => theme !== selectedVariant)
                     .map(theme => [{ type: 'class', name: theme }]),
             },
-        }
+        }) as ReturnedRule
     }
 
     // Fixes lightningcss serialization bug
