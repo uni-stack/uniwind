@@ -23,7 +23,7 @@
         "test:native": "jest --config jest.config.native.js",
         "test:web": "jest --config jest.config.web.js",
         "test:types": "tsc --project tests/type-test/tsconfig.json",
-        "test:e2e": "playwright test",
+        "test:e2e": "bun --bun playwright test",
         "release": "release-it"
     },
     "keywords": [
@@ -118,7 +118,6 @@
         "release-it": "20.0.1",
         "typescript": "catalog:",
         "unbuild": "3.6.1",
-        "vite": "catalog:",
-        "esbuild": "0.28.0"
+        "vite": "catalog:"
     }
 }

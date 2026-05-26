@@ -1,4 +1,4 @@
-import { build } from 'esbuild'
+import Bun from 'bun'
 import { mkdirSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { UniwindBundlerConfig } from '../../src/bundler/config'
@@ -25,7 +25,7 @@ export default async function globalSetup() {
     writeFileSync(CSS_PATH, compiledCSS, 'utf-8')
     console.log(`[e2e setup] Compiled CSS written to ${CSS_PATH}`)
 
-    // 2. Bundle getWebStyles.ts into a browser IIFE via esbuild
+    // 2. Bundle getWebStyles.ts into a browser IIFE via Bun
     // The bundle exports getWebStyles and getWebVariable as globals on window.__uniwind
     const getWebStylesPath = resolve(ROOT, 'src/core/web/getWebStyles')
     const entryContent = [
@@ -35,21 +35,20 @@ export default async function globalSetup() {
     const entryPath = resolve(GENERATED_DIR, '_entry.ts')
     writeFileSync(entryPath, entryContent, 'utf-8')
 
-    await build({
-        entryPoints: [entryPath],
-        bundle: true,
+    const bundle = await Bun.build({
+        entrypoints: [entryPath],
+        target: 'browser',
         format: 'iife',
-        platform: 'browser',
-        outfile: BUNDLE_PATH,
-        // getWebStyles uses document/window at module load time,
-        // so we must NOT tree-shake the side-effectful top-level code
-        treeShaking: false,
-        // culori is an ESM-only package; esbuild handles it fine with bundle:true
-        mainFields: ['module', 'browser', 'main'],
+        outdir: GENERATED_DIR,
+        naming: {
+            entry: 'getWebStyles.iife.js',
+        },
         conditions: ['browser', 'import', 'default'],
-        tsconfig: resolve(ROOT, 'tsconfig.json'),
-        logLevel: 'warning',
     })
+
+    if (!bundle.success) {
+        throw new Error(bundle.logs.map(log => log.message).join('\n'))
+    }
 
     console.log(`[e2e setup] Browser bundle written to ${BUNDLE_PATH}`)
 }
