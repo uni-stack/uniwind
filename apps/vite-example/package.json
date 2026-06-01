@@ -9,7 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tailwindcss/vite": "4.1.17",
+        "@tailwindcss/vite": "4.3.0",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",
@@ -18,13 +18,13 @@
         "uniwind": "workspace:*"
     },
     "devDependencies": {
-        "@types/node": "24.10.1",
+        "@types/node": "25.9.1",
         "@types/react": "catalog:",
         "@types/react-dom": "19.2.3",
-        "@vitejs/plugin-react": "5.1.1",
-        "globals": "16.5.0",
+        "@vitejs/plugin-react": "6.0.2",
+        "globals": "17.6.0",
         "typescript": "catalog:",
         "vite": "catalog:",
-        "vite-plugin-rnw": "0.0.10"
+        "vite-plugin-rnw": "0.0.11"
     }
 }

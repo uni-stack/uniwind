@@ -83,8 +83,8 @@
         "LICENSE"
     ],
     "dependencies": {
-        "@tailwindcss/node": "4.2.1",
-        "@tailwindcss/oxide": "4.2.1",
+        "@tailwindcss/node": "4.3.0",
+        "@tailwindcss/oxide": "4.3.0",
         "culori": "4.0.2",
         "lightningcss": "1.30.1"
     },

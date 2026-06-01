@@ -1,6 +1,8 @@
 import { normalizePath } from '@tailwindcss/node'
+import { createRequire } from 'node:module'
 import path from 'path'
-import type { Plugin } from 'vite'
+import type { PluginContext } from 'rollup'
+import type { Plugin, UserConfig } from 'vite'
 
 import { UniwindBundlerConfig } from '@/bundler/config'
 import type { UniwindConfig } from '@/bundler/types'
@@ -15,6 +17,96 @@ const styleSheetPath = path.resolve(
     '../module/components/web/createOrderedCSSStyleSheet.js',
 )
 const cssArtifactPath = path.resolve(dirname, '../../uniwind.css')
+const require = createRequire(import.meta.url)
+const viteVersion = require('vite/package.json').version as string
+
+const isVite8 = Number(viteVersion.split('.')[0]) >= 8
+
+type EsbuildResolveArgs = {
+    path: string
+    importer: string
+}
+
+type EsbuildBuild = {
+    onResolve: (
+        options: { filter: RegExp },
+        callback: (args: EsbuildResolveArgs) => { path: string } | undefined,
+    ) => void
+}
+
+const resolveOrderedCSSStyleSheet = (source: string, importer: string | undefined) => {
+    const normalizedSource = normalizePath(source)
+    const isTarget = source === './createOrderedCSSStyleSheet'
+        || normalizedSource.endsWith('react-native-web/dist/exports/StyleSheet/dom/createOrderedCSSStyleSheet.js')
+
+    if (isTarget && importer !== undefined && normalizePath(importer).includes('react-native-web/dist/exports/StyleSheet')) {
+        return styleSheetPath
+    }
+}
+
+const vite8OptimizeDeps = {
+    exclude: ['uniwind', 'react-native'],
+    rolldownOptions: {
+        plugins: [{
+            name: 'uniwind-rolldown-plugin',
+            resolveId: resolveOrderedCSSStyleSheet,
+        }],
+    },
+}
+
+const vite7OptimizeDeps = {
+    exclude: ['uniwind', 'react-native'],
+    esbuildOptions: {
+        plugins: [{
+            name: 'uniwind-esbuild-plugin',
+            setup: (build: EsbuildBuild) => {
+                build.onResolve(
+                    { filter: /^\.\/createOrderedCSSStyleSheet$/ },
+                    args => {
+                        const resolved = resolveOrderedCSSStyleSheet(args.path, args.importer)
+
+                        if (resolved !== undefined) {
+                            return { path: resolved }
+                        }
+                    },
+                )
+            },
+        }],
+    },
+}
+
+const vite8Resolve = {
+    alias: [{
+        find: /^react-native$/,
+        replacement: componentPath,
+        customResolver: {
+            resolveId(this: PluginContext, _: string, importer: string | undefined) {
+                if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
+                    return this.resolve('react-native-web', importer, { skipSelf: true })
+                }
+
+                return componentPath
+            },
+        },
+    }],
+}
+
+const vite7Resolve = {
+    alias: [{
+        find: /^react-native$/,
+        replacement: componentPath,
+        customResolver: {
+            resolveId(this: PluginContext, _: string, importer: string | undefined) {
+                // Check if import comes from uniwind
+                if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
+                    return this.resolve('react-native-web')
+                }
+
+                return componentPath
+            },
+        },
+    }],
+}
 
 export const uniwind = (config: UniwindConfig): Plugin => {
     const bundlerConfig = UniwindBundlerConfig.fromViteConfig(config)
@@ -23,58 +115,19 @@ export const uniwind = (config: UniwindConfig): Plugin => {
         name: 'uniwind',
         enforce: 'pre',
         resolveId: (source, importer) => {
-            const normalizedSource = normalizePath(source)
-            const isTarget = source === './createOrderedCSSStyleSheet'
-                || normalizedSource.endsWith('react-native-web/dist/exports/StyleSheet/dom/createOrderedCSSStyleSheet.js')
-
-            if (isTarget && importer !== undefined && normalizePath(importer).includes('react-native-web/dist/exports/StyleSheet')) {
-                return styleSheetPath
-            }
+            return resolveOrderedCSSStyleSheet(source, importer)
         },
-        config: () => ({
-            css: {
-                transformer: 'lightningcss',
-                lightningcss: {
-                    visitor: bundlerConfig.cssVisitor,
-                },
-            },
-            optimizeDeps: {
-                exclude: ['uniwind', 'react-native'],
-                esbuildOptions: {
-                    plugins: [{
-                        name: 'uniwind-esbuild-plugin',
-                        setup: build => {
-                            build.onResolve(
-                                { filter: /^\.\/createOrderedCSSStyleSheet$/ },
-                                args => {
-                                    if (normalizePath(args.importer).includes('react-native-web/dist/exports/StyleSheet')) {
-                                        return { path: styleSheetPath }
-                                    }
-                                },
-                            )
-                        },
-                    }],
-                },
-            },
-            resolve: {
-                alias: [
-                    {
-                        find: /^react-native$/,
-                        replacement: componentPath,
-                        customResolver: {
-                            resolveId(_, importer) {
-                                // Check if import comes from uniwind
-                                if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
-                                    return this.resolve('react-native-web')
-                                }
-
-                                return componentPath
-                            },
-                        },
+        config: () =>
+            ({
+                css: {
+                    transformer: 'lightningcss',
+                    lightningcss: {
+                        visitor: bundlerConfig.cssVisitor,
                     },
-                ],
-            },
-        }),
+                },
+                optimizeDeps: isVite8 ? vite8OptimizeDeps : vite7OptimizeDeps,
+                resolve: isVite8 ? vite8Resolve : vite7Resolve,
+            }) as unknown as UserConfig,
         transform: (code, id) => {
             const normalizedId = normalizePath(id)
 
