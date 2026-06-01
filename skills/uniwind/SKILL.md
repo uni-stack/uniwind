@@ -2,25 +2,19 @@
 name: uniwind
 description: >
   Uniwind — Tailwind CSS v4 styling for React Native. Use when adding, building,
-  or styling components in a React Native project that uses Tailwind with className.
-  Triggers on: className on RN components, Tailwind classes in RN, global.css with
-  @import 'uniwind', withUniwindConfig, withUniwind, metro.config.js with Uniwind,
-  useResolveClassNames, useCSSVariable, getCSSVariable, useUniwind, dark:/light: theming, platform
-  selectors (ios:/android:/native:/web:/tv:), data-[prop=value], responsive breakpoints
-  (sm:/md:/lg:), important utilities (bg-red-500!), tailwind-variants, tv() variants, ScopedTheme, Uniwind.setTheme,
-  Uniwind.updateCSSVariables, @theme, @utility, @variant, CSS variables in RN,
-  colorClassName, tintColorClassName, contentContainerClassName, default styles,
-  default RN component styles, Uniwind Pro (animations, transitions, shadow tree, native insets), safe area utilities,
-  gradients, hairlineWidth(), fontScale(), pixelRatio(), light-dark(), OKLCH,
-  cn, tailwind-merge, HeroUI Native, react-native-reusables, Gluestack.
-  Does NOT handle migration — use migrate-nativewind-to-uniwind skill.
+  or debugging components in a React Native project that uses Uniwind classNames.
+  Covers setup, Metro config, global.css, theming, className props, accent-* color
+  props, platform/data/state/responsive variants, CSS variables, custom utilities,
+  withUniwind for third-party components, cn/tailwind-merge, tailwind-variants,
+  safe area utilities, gradients, fonts, React Navigation, UI kits, diagnostics,
+  troubleshooting, and Uniwind Pro features. Does not cover NativeWind migration.
 ---
 
 # Uniwind — Complete Reference
 
-> Uniwind 1.6.0+ / Tailwind CSS v4 / React Native 0.81+ / Expo SDK 54+
+> Uniwind 1.7.0+ / Uniwind Pro 1.2.1+ / Tailwind CSS v4 / React Native 0.81+ / Expo SDK 54+
 
-If user has lower version, recommend updating to 1.6.0+ for best experience.
+If user has lower version, recommend updating to 1.7.0+ (free) / 1.2.1+ (Pro) for best experience.
 
 Uniwind brings Tailwind CSS v4 to React Native. All core React Native components support the `className` prop out of the box. Styles are compiled at build time — no runtime overhead.
 
@@ -1711,14 +1705,18 @@ Package: `"uniwind": "npm:uniwind-pro@latest"` in `package.json`.
 
 3. Authenticate: `npx uniwind-pro` (interactive — select "Login with GitHub")
 
-4. Add Babel plugin:
+4. Add Babel plugin — APPEND `react-native-worklets/plugin` to your existing `plugins` array. Do NOT replace your presets (keep `babel-preset-expo` for Expo, or your bare-RN preset):
    ```js
    // babel.config.js
    module.exports = {
-     presets: ['module:metro-react-native-babel-preset'],
-     plugins: ['react-native-worklets/plugin'],
+     // your existing presets and config — leave untouched
+     plugins: [
+       // ...other plugins
+       'react-native-worklets/plugin',
+     ],
    };
    ```
+   If you already use Reanimated, you may already have the worklets plugin configured.
 
 5. Whitelist postinstall if needed:
    - **bun**: Add `"trustedDependencies": ["uniwind"]` to `package.json`
@@ -1881,6 +1879,26 @@ import Animated, { FadeIn, FlipInXUp, LinearTransition } from 'react-native-rean
 ### Shadow Tree Updates
 
 No code changes needed — props connect directly to C++ engine, eliminating re-renders automatically.
+
+### Shadow Tree Diagnostics
+
+Development-only API to observe what the C++ engine is doing — when components register/unregister with the shadow tree and how styles flow through it. Import from `uniwind/diagnostics`:
+
+```tsx
+import { enableDiagnostics } from 'uniwind/diagnostics';
+
+enableDiagnostics({
+  reportMounts: true,    // log when components register with the shadow tree
+  reportUnmounts: true,  // log when components unregister
+  reportUpdates: true,   // log style updates with property-level detail
+});
+```
+
+All three options default to `false` — enable only what you need (logging everything on a complex screen gets noisy). Update logs are grouped into 🔥 C++ updates (applied via the shadow tree) and ✨ Native updates (props set directly on native views) — both happen with zero React re-renders.
+
+Use for: debugging theme switches (`reportUpdates`), detecting memory leaks (mount/unmount counts should return to zero when navigating away), and verifying zero re-renders.
+
+Platform support: full diagnostics on iOS and Android. On Web, `enableDiagnostics` is a no-op stub that produces no output.
 
 ### Group Variants
 
