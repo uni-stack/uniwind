@@ -91,7 +91,19 @@
     "peerDependencies": {
         "react": ">=19.0.0",
         "react-native": ">=0.81.0",
-        "tailwindcss": ">=4"
+        "tailwindcss": ">=4",
+        "metro": "*",
+        "metro-cache": "*",
+        "@expo/metro-config": "*",
+        "metro-transform-worker": "*"
+    },
+    "peerDependenciesMeta": {
+        "@expo/metro-config": {
+            "optional": true
+        },
+        "metro-transform-worker": {
+            "optional": true
+        }
     },
     "devDependencies": {
         "@playwright/test": "1.60.0",
