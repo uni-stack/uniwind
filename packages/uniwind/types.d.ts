@@ -107,3 +107,21 @@ declare module 'react-native' {
         backgroundColorClassName?: string
     }
 }
+
+declare module '@expo/ui' {
+    interface UniversalBaseProps {
+        className?: string
+    }
+
+    interface TextInputProps {
+        className?: string
+        cursorColorClassName?: string
+        placeholderTextColorClassName?: string
+        selectionColorClassName?: string
+        selectionHandleColorClassName?: string
+    }
+
+    interface IconProps {
+        colorClassName?: string
+    }
+}

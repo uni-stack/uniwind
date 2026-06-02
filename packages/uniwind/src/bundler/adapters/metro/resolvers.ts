@@ -1,3 +1,4 @@
+import type { UniwindBundlerConfig } from '@/bundler/config'
 import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { basename, dirname, sep } from 'node:path'
 
@@ -6,6 +7,7 @@ type ResolverConfig = {
     resolver: CustomResolver
     context: CustomResolutionContext
     moduleName: string
+    bundlerConfig: UniwindBundlerConfig
 }
 
 let cachedInternalBasePath: string | null = null
@@ -41,6 +43,7 @@ export const nativeResolver = ({
     moduleName,
     platform,
     resolver,
+    bundlerConfig,
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
@@ -66,8 +69,12 @@ export const nativeResolver = ({
         return resolution
     }
 
+    if (bundlerConfig.thirdPartyModules.expoUI && moduleName === '@expo/ui') {
+        return resolver(context, 'uniwind/expo-ui', platform)
+    }
+
     if (moduleName === 'react-native') {
-        return resolver(context, `uniwind/components`, platform)
+        return resolver(context, 'uniwind/components', platform)
     }
 
     if (

@@ -1,4 +1,17 @@
 import './global.css'
+import {
+    Button as ExpoButton,
+    Column as ExpoColumn,
+    FieldGroup as ExpoFieldGroup,
+    Host as ExpoHost,
+    Icon as ExpoIcon,
+    RNHostView as ExpoRNHostView,
+    Row as ExpoRow,
+    ScrollView as ExpoScrollView,
+    Spacer as ExpoSpacer,
+    Text as ExpoText,
+    TextInput as ExpoTextInput,
+} from '@expo/ui'
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 
 const TailwindTestPage = () => {
@@ -653,6 +666,92 @@ const TailwindTestPage = () => {
                     <Text className="text-lg font-semibold mb-4 text-gray-700">Linear custom multiple colors</Text>
                     <View className="bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal] rounded h-32 mb-4" />
                 </View>
+            </View>
+
+            {/* Expo UI Universal */}
+            <View className="p-4">
+                <Text className="text-2xl font-bold mb-4 text-gray-800">Expo UI Universal</Text>
+
+                <ExpoHost
+                    className="bg-white rounded-2xl p-4 mb-4"
+                    matchContents={{ vertical: true }}
+                >
+                    <ExpoColumn className="gap-4 items-center px-4 py-8">
+                        <ExpoText className="text-xl font-bold text-slate-900 text-center">
+                            Universal components styled by Uniwind
+                        </ExpoText>
+
+                        <ExpoRow className="gap-3 items-center bg-indigo-50 p-3 rounded-xl w-full">
+                            <ExpoIcon
+                                className="text-4xl"
+                                colorClassName="accent-indigo-600"
+                                name="star.fill"
+                            />
+                            <ExpoColumn className="gap-1 flex-1">
+                                <ExpoText className="text-base font-semibold text-indigo-900">
+                                    Row, Column, Icon, Text
+                                </ExpoText>
+                                <ExpoText className="text-sm text-indigo-700 line-clamp-2">
+                                    Gap, alignment, icon size, icon color, text style, and line clamp are read from className.
+                                </ExpoText>
+                            </ExpoColumn>
+                        </ExpoRow>
+
+                        <ExpoButton
+                            className="bg-indigo-600 rounded-xl px-5 py-3 w-full"
+                            label="Expo UI Button"
+                            onPress={() => {}}
+                        />
+
+                        <ExpoTextInput
+                            className="bg-slate-100 border border-slate-300 p-3 w-full text-slate-900 focus:border-indigo-500"
+                            cursorColorClassName="accent-indigo-600"
+                            placeholder="Expo UI TextInput"
+                            placeholderTextColorClassName="accent-slate-400"
+                            selectionColorClassName="accent-indigo-200"
+                        />
+
+                        <ExpoRow className="gap-2 items-center w-full bg-slate-50 rounded-xl p-3">
+                            <ExpoText className="text-sm text-slate-600">Spacer starts here</ExpoText>
+                            <ExpoSpacer className="flex-1" />
+                            <ExpoText className="text-sm font-semibold text-slate-900">pushed end</ExpoText>
+                        </ExpoRow>
+
+                        <ExpoScrollView
+                            className="bg-slate-100 rounded-xl p-2 h-24 w-full"
+                            direction="horizontal"
+                        >
+                            <ExpoRow className="gap-2 items-center">
+                                <ExpoText className="bg-red-500 text-white rounded-lg px-4 py-3">Scroll</ExpoText>
+                                <ExpoText className="bg-blue-500 text-white rounded-lg px-4 py-3">View</ExpoText>
+                                <ExpoText className="bg-green-500 text-white rounded-lg px-4 py-3">uses</ExpoText>
+                                <ExpoText className="bg-purple-500 text-white rounded-lg px-4 py-3">className</ExpoText>
+                            </ExpoRow>
+                        </ExpoScrollView>
+
+                        <ExpoRNHostView className="bg-amber-50 rounded-xl h-20 w-full p-3">
+                            <View className="flex-1 items-center justify-center rounded-lg bg-amber-200">
+                                <Text className="font-semibold text-amber-900">React Native hosted inside expo-ui</Text>
+                            </View>
+                        </ExpoRNHostView>
+
+                        <ExpoFieldGroup className="w-full">
+                            <ExpoFieldGroup.Section
+                                className="bg-white rounded-2xl"
+                                title="FieldGroup"
+                            >
+                                <ExpoText className="text-base text-slate-900 px-4 py-3">
+                                    FieldGroup and Section className support
+                                </ExpoText>
+                                <ExpoButton
+                                    className="bg-emerald-600 rounded-xl px-4 py-3"
+                                    label="Section Button"
+                                    onPress={() => {}}
+                                />
+                            </ExpoFieldGroup.Section>
+                        </ExpoFieldGroup>
+                    </ExpoColumn>
+                </ExpoHost>
             </View>
         </ScrollView>
     )

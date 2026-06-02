@@ -20,4 +20,9 @@ module.exports = withUniwindConfig(config, {
     polyfills: { rem: 14 },
     debug: true,
     isTV: false,
+    experimental: {
+        thirdPartyModules: {
+            expoUI: true,
+        },
+    },
 })

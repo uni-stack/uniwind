@@ -7,12 +7,15 @@ import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, SCREEN_WIDT
 
 jest.spyOn(Dimensions, 'get').mockReturnValue({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, scale: 1, fontScale: 1 })
 
+const workerId = process.env.JEST_WORKER_ID ?? '0'
+const generatedDtsFile = `uniwind-types.native.${workerId}.d.ts`
+
 beforeAll(async () => {
     const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({
         cssEntryFile: './tests/test.css',
+        dtsFile: generatedDtsFile,
     }, Platform.iOS)
     await bundlerConfig.generateArtifacts('./uniwind.css')
-    rmSync('uniwind-types.d.ts', { force: true })
     const virtualCode = await compileCSS(bundlerConfig)
 
     eval(
@@ -26,4 +29,8 @@ beforeAll(async () => {
         });
     `,
     )
+})
+
+afterAll(() => {
+    rmSync(generatedDtsFile, { force: true })
 })

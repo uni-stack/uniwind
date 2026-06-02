@@ -60,6 +60,12 @@
             "import": "./dist/module/components/web/*.js",
             "default": "./dist/common/components/web/*.js"
         },
+        "./expo-ui": {
+            "types": "./no-types.d.ts",
+            "react-native": "./src/components/expo-ui/native/index.ts",
+            "import": "./dist/module/components/expo-ui/web/index.js",
+            "default": "./dist/common/components/expo-ui/web/index.js"
+        },
         "./metro": {
             "types": "./dist/metro/index.d.ts",
             "default": "./dist/metro/index.cjs"
@@ -91,7 +97,13 @@
     "peerDependencies": {
         "react": ">=19.0.0",
         "react-native": ">=0.81.0",
-        "tailwindcss": ">=4"
+        "tailwindcss": ">=4",
+        "@expo/ui": ">=56"
+    },
+    "peerDependenciesMeta": {
+        "@expo/ui": {
+            "optional": true
+        }
     },
     "devDependencies": {
         "@playwright/test": "1.60.0",

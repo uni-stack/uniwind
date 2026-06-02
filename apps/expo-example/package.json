@@ -10,15 +10,16 @@
         "web": "expo start --web"
     },
     "dependencies": {
-        "@expo/metro-runtime": "56.0.12",
-        "uniwind": "workspace:*",
+        "@expo/metro-runtime": "56.0.13",
+        "@expo/ui": "56.0.15",
         "expo": "catalog:",
         "expo-status-bar": "56.0.4",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",
         "react-native-web": "catalog:",
-        "tailwindcss": "catalog:"
+        "tailwindcss": "catalog:",
+        "uniwind": "workspace:*"
     },
     "devDependencies": {
         "@babel/core": "7.29.0",

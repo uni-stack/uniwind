@@ -83,6 +83,10 @@ export class UniwindBundlerConfig {
         return `[${this.themes.map((theme) => `'${theme}'`).join(', ')}]`
     }
 
+    get thirdPartyModules() {
+        return this.config.experimental?.thirdPartyModules ?? {}
+    }
+
     toMetroConfig() {
         return this.config
     }
