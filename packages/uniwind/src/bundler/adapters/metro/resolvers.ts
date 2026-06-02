@@ -96,6 +96,7 @@ export const webResolver = ({
     moduleName,
     platform,
     resolver,
+    bundlerConfig,
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
@@ -107,8 +108,14 @@ export const webResolver = ({
         }
     }
 
+    const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
+
+    if (!isInternal && bundlerConfig.thirdPartyModules.expoUI && moduleName === '@expo/ui') {
+        return resolver(context, 'uniwind/expo-ui', platform)
+    }
+
     if (
-        (cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath))
+        isInternal
         || resolution.type !== 'sourceFile'
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {
