@@ -1,4 +1,29 @@
-## What's Changed in 1.7.0
+## What's Changed in 1.8.0
+
+
+
+### 🚀 Features
+* feat: vite 8 support by @Brentlok in [#560](https://github.com/uni-stack/uniwind/pull/560)
+* feat: public generate-artifacts script by @Brentlok in [#550](https://github.com/uni-stack/uniwind/pull/550)
+
+
+### 🐛 Bug Fixes
+* fix: phantom dependencies by @Brentlok in [#561](https://github.com/uni-stack/uniwind/pull/561)
+
+
+### 🔨 Refactoring
+* refactor: replace computed with functions in styles by @Brentlok in [#547](https://github.com/uni-stack/uniwind/pull/547)
+
+
+### 🧪 Testing
+* generate artifacts before test by @Brentlok
+
+
+### 🏠 Chores
+* chore: update dependencies by @Brentlok in [#549](https://github.com/uni-stack/uniwind/pull/549)
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.7.0...v1.8.0## What's Changed in 1.7.0
 
 
 
