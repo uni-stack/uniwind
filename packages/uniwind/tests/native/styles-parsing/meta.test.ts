@@ -31,7 +31,19 @@ describe('Styles Metadata', () => {
     test('Combined variants', async () => {
         const { stylesheet } = await compileMetadata()
 
-        expect(stylesheet['dark:active:bg-purple-700'][0].theme).toBe('dark')
-        expect(stylesheet['dark:active:bg-purple-700'][0].active).toBe(true)
+        const expectMeta = (className: string, expected: Partial<StyleSheets[string][number]>) => {
+            const meta = stylesheet[className][0]
+
+            expect(meta.theme).toBe(expected.theme ?? null)
+            expect(meta.active).toBe(expected.active ?? null)
+            expect(meta.focus).toBe(expected.focus ?? null)
+            expect(meta.rtl).toBe(expected.rtl ?? null)
+            expect(meta.disabled).toBe(expected.disabled ?? null)
+            expect(meta.dataAttributes).toEqual(expected.dataAttributes ?? null)
+        }
+
+        expectMeta('dark:active:bg-purple-700', { theme: 'dark', active: true })
+        expectMeta('dark:active:focus:bg-purple-700', { theme: 'dark', active: true, focus: true })
+        expectMeta('active:dark:bg-purple-700', { theme: 'dark', active: true })
     })
 })
