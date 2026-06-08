@@ -27,4 +27,11 @@ describe('Styles Metadata', () => {
         expect(stylesheet['bg-background'][0].dependencies).toContain(StyleDependency.Theme)
         expect(stylesheet['bg-foreground'][0].dependencies).toContain(StyleDependency.Theme)
     })
+
+    test('Combined variants', async () => {
+        const { stylesheet } = await compileMetadata()
+
+        expect(stylesheet['dark:active:bg-purple-700'][0].theme).toBe('dark')
+        expect(stylesheet['dark:active:bg-purple-700'][0].active).toBe(true)
+    })
 })

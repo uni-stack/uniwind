@@ -196,12 +196,12 @@ export class ProcessorBuilder {
                 })
 
                 if ([rtl, theme, active, focus, disabled, dataAttributes].some(Boolean)) {
-                    this.declarationConfig.rtl = rtl
-                    this.declarationConfig.theme = theme
-                    this.declarationConfig.active = active
-                    this.declarationConfig.focus = focus
-                    this.declarationConfig.disabled = disabled
-                    this.declarationConfig.dataAttributes = dataAttributes
+                    this.declarationConfig.rtl ??= rtl
+                    this.declarationConfig.theme ??= theme
+                    this.declarationConfig.active ??= active
+                    this.declarationConfig.focus ??= focus
+                    this.declarationConfig.disabled ??= disabled
+                    this.declarationConfig.dataAttributes ??= dataAttributes
 
                     rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                     rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
