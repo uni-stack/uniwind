@@ -11,7 +11,7 @@ export type Style = {
     minWidth: number
     maxWidth: number
     orientation: Orientation | null
-    theme: ColorScheme | null
+    theme: ThemeName | null
     rtl: boolean | null
     native: boolean
     dependencies: Array<StyleDependency> | null
