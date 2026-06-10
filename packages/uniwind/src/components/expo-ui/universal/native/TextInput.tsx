@@ -1,9 +1,9 @@
 import { TextInput as ExpoTextInput, type TextInputProps } from '@expo/ui'
 import { useState } from 'react'
 import { StyleSheet } from 'react-native'
-import { useAccentColor } from '../../native/useAccentColor'
-import { useStyle } from '../../native/useStyle'
-import { copyComponentProperties } from '../../utils'
+import { useAccentColor } from '../../../native/useAccentColor'
+import { useStyle } from '../../../native/useStyle'
+import { copyComponentProperties } from '../../../utils'
 
 type StyleWithWebkitLineClamp = {
     WebkitLineClamp?: number

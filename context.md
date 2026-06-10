@@ -48,6 +48,8 @@ Package subpath exports:
 - `uniwind`: main runtime API.
 - `uniwind/components`: React Native component replacements.
 - `uniwind/components/*`: individual component replacements.
+- `uniwind/expo-ui`: `@expo/ui` universal component replacements.
+- `uniwind/expo-ui/swift-ui` and `uniwind/expo-ui/jetpack-compose`: native Expo UI passthrough subpaths reserved for wrappers.
 - `uniwind/metro`: Metro adapter.
 - `uniwind/vite`: Vite plugin.
 - `uniwind/types`: generated/user-facing type support.
@@ -111,7 +113,7 @@ Metro integration:
 - Metro transformer handles the configured CSS entry file specially.
 - Native platform CSS transforms into a JS module that calls `Uniwind.__reinit(...)`.
 - Web platform CSS transforms into CSS plus web runtime setup.
-- Resolver swaps React Native component imports to Uniwind-aware implementations where needed.
+- Resolver swaps React Native component imports to Uniwind-aware implementations where needed, and can rewrite enabled Expo UI entrypoints to Uniwind subpaths.
 
 Vite integration:
 

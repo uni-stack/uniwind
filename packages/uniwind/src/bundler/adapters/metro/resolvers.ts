@@ -38,6 +38,12 @@ const SUPPORTED_COMPONENTS = [
     'createOrderedCSSStyleSheet',
 ]
 
+const EXPO_UI_MODULES: Record<string, string> = {
+    '@expo/ui': 'uniwind/expo-ui',
+    '@expo/ui/swift-ui': 'uniwind/expo-ui/swift-ui',
+    '@expo/ui/jetpack-compose': 'uniwind/expo-ui/jetpack-compose',
+}
+
 export const nativeResolver = ({
     context,
     moduleName,
@@ -69,8 +75,10 @@ export const nativeResolver = ({
         return resolution
     }
 
-    if (bundlerConfig.thirdPartyModules.expoUI && moduleName === '@expo/ui') {
-        return resolver(context, 'uniwind/expo-ui', platform)
+    const expoUIReplacement = EXPO_UI_MODULES[moduleName]
+
+    if (bundlerConfig.thirdPartyModules.expoUI && expoUIReplacement !== undefined) {
+        return resolver(context, expoUIReplacement, platform)
     }
 
     if (moduleName === 'react-native') {
@@ -110,8 +118,10 @@ export const webResolver = ({
 
     const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
 
-    if (!isInternal && bundlerConfig.thirdPartyModules.expoUI && moduleName === '@expo/ui') {
-        return resolver(context, 'uniwind/expo-ui', platform)
+    const expoUIReplacement = EXPO_UI_MODULES[moduleName]
+
+    if (!isInternal && bundlerConfig.thirdPartyModules.expoUI && expoUIReplacement !== undefined) {
+        return resolver(context, expoUIReplacement, platform)
     }
 
     if (

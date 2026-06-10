@@ -1,7 +1,7 @@
 import { Text as ExpoText, type TextProps } from '@expo/ui'
 import { StyleSheet } from 'react-native'
-import { useStyle } from '../../native/useStyle'
-import { copyComponentProperties } from '../../utils'
+import { useStyle } from '../../../native/useStyle'
+import { copyComponentProperties } from '../../../utils'
 
 type StyleWithWebkitLineClamp = {
     WebkitLineClamp?: number

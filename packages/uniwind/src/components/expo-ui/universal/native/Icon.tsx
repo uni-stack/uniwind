@@ -1,8 +1,8 @@
 import { Icon as ExpoIcon, type IconProps } from '@expo/ui'
 import { StyleSheet } from 'react-native'
-import { useAccentColor } from '../../native/useAccentColor'
-import { useStyle } from '../../native/useStyle'
-import { copyComponentProperties } from '../../utils'
+import { useAccentColor } from '../../../native/useAccentColor'
+import { useStyle } from '../../../native/useStyle'
+import { copyComponentProperties } from '../../../utils'
 
 export const Icon = copyComponentProperties(ExpoIcon, (props: IconProps) => {
     const state = {

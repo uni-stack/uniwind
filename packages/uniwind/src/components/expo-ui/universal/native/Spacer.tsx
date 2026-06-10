@@ -1,7 +1,7 @@
 import { Spacer as ExpoSpacer, type SpacerProps } from '@expo/ui'
 import { StyleSheet } from 'react-native'
-import { useStyle } from '../../native/useStyle'
-import { copyComponentProperties } from '../../utils'
+import { useStyle } from '../../../native/useStyle'
+import { copyComponentProperties } from '../../../utils'
 
 export const Spacer = copyComponentProperties(ExpoSpacer, (props: SpacerProps) => {
     const style = useStyle(props.className, props, {

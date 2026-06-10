@@ -62,9 +62,21 @@
         },
         "./expo-ui": {
             "types": "./no-types.d.ts",
-            "react-native": "./src/components/expo-ui/native/index.ts",
-            "import": "./dist/module/components/expo-ui/web/index.js",
-            "default": "./dist/common/components/expo-ui/web/index.js"
+            "react-native": "./src/components/expo-ui/universal/native/index.ts",
+            "import": "./dist/module/components/expo-ui/universal/web/index.js",
+            "default": "./dist/common/components/expo-ui/universal/web/index.js"
+        },
+        "./expo-ui/swift-ui": {
+            "types": "./no-types.d.ts",
+            "react-native": "./src/components/expo-ui/swift-ui/index.ts",
+            "import": "./dist/module/components/expo-ui/swift-ui/index.js",
+            "default": "./dist/common/components/expo-ui/swift-ui/index.js"
+        },
+        "./expo-ui/jetpack-compose": {
+            "types": "./no-types.d.ts",
+            "react-native": "./src/components/expo-ui/jetpack-compose/index.ts",
+            "import": "./dist/module/components/expo-ui/jetpack-compose/index.js",
+            "default": "./dist/common/components/expo-ui/jetpack-compose/index.js"
         },
         "./metro": {
             "types": "./dist/metro/index.d.ts",
