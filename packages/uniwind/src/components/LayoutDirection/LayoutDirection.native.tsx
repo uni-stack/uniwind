@@ -11,7 +11,7 @@ type LayoutDirectionProps = {
 export const LayoutDirection: React.FC<React.PropsWithChildren<LayoutDirectionProps>> = ({ rtl, children }) => {
     const uniwindContext = useUniwindContext()
     const value = useMemo<UniwindContextType>(
-        () => ({ ...uniwindContext, rtl: rtl ?? null }),
+        () => rtl === undefined ? uniwindContext : { ...uniwindContext, rtl },
         [uniwindContext, rtl],
     )
     const style = useMemo<ViewStyle>(() => {

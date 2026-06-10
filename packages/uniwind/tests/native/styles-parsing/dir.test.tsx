@@ -76,6 +76,32 @@ describe('Dir', () => {
         expect(getStylesFromId('rtl-red').backgroundColor).toBe(TW_RED_500)
     })
 
+    test('LayoutDirection without rtl falls back to global rtl', () => {
+        mockRTL(true)
+
+        const { getStylesFromId } = renderUniwind(
+            <LayoutDirection>
+                <View className="rtl:bg-red-500 bg-blue-500" testID="rtl-red" />
+            </LayoutDirection>,
+        )
+
+        expect(getStylesFromId('rtl-red').backgroundColor).toBe(TW_RED_500)
+    })
+
+    test('Nested LayoutDirection without rtl inherits parent rtl', () => {
+        mockRTL(false)
+
+        const { getStylesFromId } = renderUniwind(
+            <LayoutDirection rtl>
+                <LayoutDirection>
+                    <View className="rtl:bg-red-500 bg-blue-500" testID="rtl-red" />
+                </LayoutDirection>
+            </LayoutDirection>,
+        )
+
+        expect(getStylesFromId('rtl-red').backgroundColor).toBe(TW_RED_500)
+    })
+
     test('LayoutDirection cache separates explicit rtl values', () => {
         mockRTL(false)
 
