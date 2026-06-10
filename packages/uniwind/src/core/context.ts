@@ -1,10 +1,11 @@
-import { createContext, useContext } from 'react'
+import { createContext, use } from 'react'
 import type { ThemeName } from './types'
 
 export const UniwindContext = createContext({
     scopedTheme: null as ThemeName | null,
+    rtl: null as boolean | null,
 })
 
-export const useUniwindContext = () => useContext(UniwindContext)
+export const useUniwindContext = () => use(UniwindContext)
 
 UniwindContext.displayName = 'UniwindContext'

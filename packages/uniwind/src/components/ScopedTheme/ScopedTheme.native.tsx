@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { UniwindContext } from '../../core/context'
+import { UniwindContext, useUniwindContext } from '../../core/context'
 import type { ThemeName, UniwindContextType } from '../../core/types'
 
 type ScopedThemeProps = {
@@ -7,7 +7,11 @@ type ScopedThemeProps = {
 }
 
 export const ScopedTheme: React.FC<React.PropsWithChildren<ScopedThemeProps>> = ({ theme, children }) => {
-    const value = useMemo<UniwindContextType>(() => ({ scopedTheme: theme }), [theme])
+    const uniwindContext = useUniwindContext()
+    const value = useMemo<UniwindContextType>(
+        () => ({ ...uniwindContext, scopedTheme: theme }),
+        [theme, uniwindContext],
+    )
 
     return (
         <UniwindContext.Provider value={value}>

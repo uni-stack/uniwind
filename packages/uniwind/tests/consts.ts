@@ -14,4 +14,5 @@ export const SCREEN_HEIGHT = 844
 
 export const UNIWIND_CONTEXT_MOCK = {
     scopedTheme: null,
+    rtl: null,
 } satisfies UniwindContextType

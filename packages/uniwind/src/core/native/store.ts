@@ -1,5 +1,4 @@
-import type { ViewStyle } from 'react-native'
-import { Dimensions, Platform, StyleSheet } from 'react-native'
+import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
@@ -31,7 +30,9 @@ class UniwindStoreBuilder {
         }
 
         const isScopedTheme = uniwindContext.scopedTheme !== null
-        const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}`
+        const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
+            uniwindContext.rtl ?? ''
+        }`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
         if (!cache) {
@@ -134,7 +135,7 @@ class UniwindStoreBuilder {
                     || style.maxWidth < this.runtime.screen.width
                     || (style.theme !== null && theme !== style.theme)
                     || (style.orientation !== null && this.runtime.orientation !== style.orientation)
-                    || (style.rtl !== null && !this.validateDir(style.rtl, componentProps))
+                    || (style.rtl !== null && !this.validateDir(style.rtl, uniwindContext))
                     || (style.active !== null && state?.isPressed !== style.active)
                     || (style.focus !== null && state?.isFocused !== style.focus)
                     || (style.disabled !== null && state?.isDisabled !== style.disabled)
@@ -251,13 +252,9 @@ class UniwindStoreBuilder {
         return true
     }
 
-    private validateDir(rtl: boolean, props: Record<string, any> = {}) {
-        const inlineDir = 'style' in props ? (StyleSheet.flatten(props.style) as ViewStyle)?.direction : undefined
-
-        if (inlineDir !== undefined && inlineDir !== 'inherit') {
-            const isInlineRtl = inlineDir === 'rtl'
-
-            return isInlineRtl === rtl
+    private validateDir(rtl: boolean, uniwindContext: UniwindContextType) {
+        if (uniwindContext.rtl !== null) {
+            return rtl === uniwindContext.rtl
         }
 
         return rtl === this.runtime.rtl

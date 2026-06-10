@@ -15,7 +15,7 @@ const bundle = readFileSync(BUNDLE_PATH, 'utf-8')
 async function getWebStyles(
     page: import('@playwright/test').Page,
     className: string,
-    context: UniwindContextType = { scopedTheme: null },
+    context: UniwindContextType = { scopedTheme: null, rtl: null },
 ) {
     return page.evaluate(
         ([cls, ctx]) => {
@@ -53,13 +53,25 @@ test.describe('getWebStyles — basic cases', () => {
 
 test.describe('getWebStyles — scoped theme', () => {
     test('bg-background in dark theme → backgroundColor black', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark' })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark', rtl: null })
         expect(styles.backgroundColor).toBe('#000000')
     })
 
     test('bg-background in light theme → backgroundColor white', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light' })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light', rtl: null })
         expect(styles.backgroundColor).toBe('#ffffff')
+    })
+})
+
+test.describe('getWebStyles — layout direction', () => {
+    test('rtl variant resolves inside rtl context', async ({ page }) => {
+        const styles = await getWebStyles(page, 'rtl:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: true })
+        expect(styles.backgroundColor).toBe(TW_RED_500)
+    })
+
+    test('ltr variant resolves inside ltr context', async ({ page }) => {
+        const styles = await getWebStyles(page, 'ltr:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: false })
+        expect(styles.backgroundColor).toBe(TW_RED_500)
     })
 })
 

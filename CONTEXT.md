@@ -18,6 +18,7 @@ Core user-facing features:
 - `active`, `focus`, `disabled`, RTL, orientation, responsive, data attribute, and platform-aware variants.
 - CSS custom property reads and updates from React Native code.
 - Scoped themes through `ScopedTheme`.
+- Scoped layout direction through `LayoutDirection`.
 - Metro and Vite integration.
 
 Supported platforms: iOS, Android, web, Android TV, and Apple TV. Other React Native targets are out of scope until tests and docs explicitly cover them.
@@ -38,6 +39,7 @@ Important paths:
 Public exports from `src/index.ts`:
 
 - `Uniwind` runtime/config object.
+- `LayoutDirection` component.
 - `ScopedTheme` component.
 - `withUniwind` HOC and related types.
 - `useCSSVariable`, `useResolveClassNames`, `useUniwind` hooks.
@@ -63,7 +65,7 @@ Native runtime:
 - Build output injects a generated stylesheet callback into `Uniwind.__reinit(...)`.
 - `UniwindStore` holds generated style records, theme variables, scoped variables, runtime state, and per-theme caches.
 - `UniwindStore.getStyles(className, props, state, context)` resolves classes into React Native style objects.
-- Cache keys include class names, component state, and whether theme is scoped.
+- Cache keys include class names, component state, whether theme is scoped, and explicit layout direction context.
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
 - Native style resolution filters rules by screen width, orientation, theme, RTL, active/focus/disabled state, and `data-*` props.
@@ -75,6 +77,7 @@ Web runtime:
 - `getWebStyles` uses a hidden DOM element to compute style values when a JS value is needed, such as color extraction or `useResolveClassNames`.
 - `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when class-dependent media rules change.
 - `ScopedTheme` renders a `div` with the theme class and `display: contents` on web.
+- `LayoutDirection` renders a contents-style wrapper with `direction`/`dir` semantics so RTL/LTR variants can be scoped to a subtree.
 - Dynamic CSS variable updates are written into a generated `#uniwind-dynamic-styles` style element.
 
 Shared runtime:
@@ -84,6 +87,7 @@ Shared runtime:
 - `Uniwind.updateCSSVariables(theme, variables)` updates theme variables and notifies variable subscribers.
 - `Uniwind.updateInsets(insets)` is native-only behavior and updates safe-area-style runtime values.
 - `ScopedTheme` sets `UniwindContext.scopedTheme`; scoped subtree ignores global theme changes for style resolution.
+- `LayoutDirection` sets `UniwindContext.rtl`; scoped subtree uses that direction for RTL/LTR variant resolution instead of global runtime RTL.
 
 ## Build And Bundler Model
 
