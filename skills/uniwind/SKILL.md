@@ -6,8 +6,9 @@ description: >
   Covers setup, Metro config, global.css, theming, className props, accent-* color
   props, platform/data/state/responsive variants, CSS variables, custom utilities,
   withUniwind for third-party components, cn/tailwind-merge, tailwind-variants,
-  safe area utilities, gradients, fonts, React Navigation, UI kits, diagnostics,
-  troubleshooting, and Uniwind Pro features. Does not cover NativeWind migration.
+  safe area utilities, LayoutDirection, gradients, fonts, React Navigation,
+  UI kits, diagnostics, troubleshooting, and Uniwind Pro features. Does not
+  cover NativeWind migration.
 ---
 
 # Uniwind — Complete Reference
@@ -15,6 +16,8 @@ description: >
 > Uniwind 1.7.0+ / Uniwind Pro 1.2.1+ / Tailwind CSS v4 / React Native 0.81+ / Expo SDK 54+
 
 If user has lower version, recommend updating to 1.7.0+ (free) / 1.2.1+ (Pro) for best experience.
+
+`LayoutDirection` is available from Uniwind 1.8.0+.
 
 Uniwind brings Tailwind CSS v4 to React Native. All core React Native components support the `className` prop out of the box. Styles are compiled at build time — no runtime overhead.
 
@@ -940,6 +943,33 @@ import { ScopedTheme } from 'uniwind';
 - Hooks (`useUniwind`, `useResolveClassNames`, `useCSSVariable`) resolve against the nearest scoped theme
 - `withUniwind`-wrapped components inside the scope also resolve scoped theme values
 - Custom themes require registration in `extraThemes`
+
+### LayoutDirection (v1.8.0+)
+
+Scope RTL/LTR variants to a subtree without changing global device RTL state:
+
+```tsx
+import { LayoutDirection } from 'uniwind';
+
+<View className="gap-3">
+  <Text className="ltr:text-left rtl:text-right">Uses global RTL state</Text>
+
+  <LayoutDirection rtl>
+    <Text className="ltr:text-left rtl:text-right">Forced RTL subtree</Text>
+  </LayoutDirection>
+
+  <LayoutDirection rtl={false}>
+    <Text className="ltr:text-left rtl:text-right">Forced LTR subtree</Text>
+  </LayoutDirection>
+</View>
+```
+
+- Available from `uniwind@1.8.0`.
+- `rtl` prop: `true` forces RTL, `false` forces LTR.
+- Omit `rtl` to inherit parent `LayoutDirection`; outside any parent it falls back to global RTL state.
+- Nearest `LayoutDirection` wins (nested scopes supported).
+- Prefer `LayoutDirection` over inline `style={{ direction: 'rtl' }}` for `rtl:`/`ltr:` variant scoping.
+- Hooks (`useResolveClassNames`, `useCSSVariable`) and `withUniwind`-wrapped components inside the scope resolve against the nearest layout direction.
 
 ### useCSSVariable
 
