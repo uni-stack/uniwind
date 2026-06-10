@@ -1,4 +1,5 @@
 import { UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '@/common/consts'
+import { isDefined } from '@/common/utils'
 import type { Declaration, MediaQuery, Rule } from 'lightningcss'
 import { transform } from 'lightningcss'
 import type { UniwindBundlerConfig } from '../config'
@@ -195,7 +196,7 @@ export class ProcessorBuilder {
                     }
                 })
 
-                if ([rtl, theme, active, focus, disabled, dataAttributes].some(Boolean)) {
+                if ([rtl, theme, active, focus, disabled, dataAttributes].some(isDefined)) {
                     this.declarationConfig.rtl ??= rtl
                     this.declarationConfig.theme ??= theme
                     this.declarationConfig.active ??= active

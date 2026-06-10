@@ -34,3 +34,9 @@ beforeAll(async () => {
 afterAll(() => {
     rmSync(generatedDtsFile, { force: true })
 })
+
+afterEach(() => {
+    const { UniwindStore } = require('../src/core/native')
+
+    UniwindStore.cache = Object.fromEntries(Object.keys(UniwindStore.cache).map(theme => [theme, new Map()]))
+})

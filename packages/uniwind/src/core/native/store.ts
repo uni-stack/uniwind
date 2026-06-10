@@ -1,4 +1,5 @@
-import { Dimensions, Platform } from 'react-native'
+import type { ViewStyle } from 'react-native'
+import { Dimensions, Platform, StyleSheet } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
@@ -133,7 +134,7 @@ class UniwindStoreBuilder {
                     || style.maxWidth < this.runtime.screen.width
                     || (style.theme !== null && theme !== style.theme)
                     || (style.orientation !== null && this.runtime.orientation !== style.orientation)
-                    || (style.rtl !== null && this.runtime.rtl !== style.rtl)
+                    || (style.rtl !== null && !this.validateDir(style.rtl, componentProps))
                     || (style.active !== null && state?.isPressed !== style.active)
                     || (style.focus !== null && state?.isFocused !== style.focus)
                     || (style.disabled !== null && state?.isDisabled !== style.disabled)
@@ -248,6 +249,18 @@ class UniwindStoreBuilder {
         }
 
         return true
+    }
+
+    private validateDir(rtl: boolean, props: Record<string, any> = {}) {
+        const inlineDir = 'style' in props ? (StyleSheet.flatten(props.style) as ViewStyle)?.direction : undefined
+
+        if (inlineDir !== undefined && inlineDir !== 'inherit') {
+            const isInlineRtl = inlineDir === 'rtl'
+
+            return isInlineRtl === rtl
+        }
+
+        return rtl === this.runtime.rtl
     }
 
     private getCurrentPlatform() {
