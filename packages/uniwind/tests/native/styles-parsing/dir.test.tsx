@@ -62,4 +62,28 @@ describe('Dir', () => {
 
         expect(getStylesFromId('ltr-red').backgroundColor).toBe(TW_RED_500)
     })
+
+    test('inline RTL inherited from ancestor', () => {
+        mockRTL(false)
+
+        const { getStylesFromId } = renderUniwind(
+            <View style={{ direction: 'rtl' }}>
+                <View className="rtl:bg-red-500 bg-blue-500" testID="rtl-red" />
+            </View>,
+        )
+
+        expect(getStylesFromId('rtl-red').backgroundColor).toBe(TW_RED_500)
+    })
+
+    test('inline LTR inherited from ancestor', () => {
+        mockRTL(true)
+
+        const { getStylesFromId } = renderUniwind(
+            <View style={{ direction: 'ltr' }}>
+                <View className="ltr:bg-red-500 bg-blue-500" testID="ltr-red" />
+            </View>,
+        )
+
+        expect(getStylesFromId('ltr-red').backgroundColor).toBe(TW_RED_500)
+    })
 })
