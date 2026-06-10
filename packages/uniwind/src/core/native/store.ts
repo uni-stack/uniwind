@@ -254,7 +254,7 @@ class UniwindStoreBuilder {
     private validateDir(rtl: boolean, props: Record<string, any> = {}) {
         const inlineDir = 'style' in props ? (StyleSheet.flatten(props.style) as ViewStyle)?.direction : undefined
 
-        if (inlineDir !== undefined) {
+        if (inlineDir !== undefined && inlineDir !== 'inherit') {
             const isInlineRtl = inlineDir === 'rtl'
 
             return isInlineRtl === rtl
