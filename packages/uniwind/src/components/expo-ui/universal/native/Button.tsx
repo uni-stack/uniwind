@@ -2,6 +2,7 @@ import { Button as ExpoButton, type ButtonProps } from '@expo/ui'
 import { StyleSheet } from 'react-native'
 import { useStyle } from '../../../native/useStyle'
 import { copyComponentProperties } from '../../../utils'
+import { addModifiersFromStyle } from '../../modifiers-utils'
 
 export const Button = copyComponentProperties(ExpoButton, (props: ButtonProps) => {
     const style = useStyle(props.className, props, {
@@ -12,6 +13,7 @@ export const Button = copyComponentProperties(ExpoButton, (props: ButtonProps) =
         <ExpoButton
             {...props}
             style={StyleSheet.flatten([style, props.style])}
+            modifiers={addModifiersFromStyle(style, props.modifiers)}
         />
     )
 })

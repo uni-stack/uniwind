@@ -698,7 +698,7 @@ const TailwindTestPage = () => {
                         </ExpoRow>
 
                         <ExpoButton
-                            className="bg-indigo-600 rounded-xl px-5 py-3 w-full"
+                            className="accent-indigo-600 rounded-xl px-5 py-3 w-full"
                             label="Expo UI Button"
                             onPress={() => {}}
                         />
@@ -744,7 +744,7 @@ const TailwindTestPage = () => {
                                     FieldGroup and Section className support
                                 </ExpoText>
                                 <ExpoButton
-                                    className="bg-emerald-600 rounded-xl px-4 py-3"
+                                    className="accent-emerald-600 rounded-xl px-4 py-3"
                                     label="Section Button"
                                     onPress={() => {}}
                                 />
