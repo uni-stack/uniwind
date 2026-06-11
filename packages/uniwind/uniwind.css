@@ -1,6 +1,6 @@
 @custom-variant ios (@media ios);
 @custom-variant android (@media android);
-@custom-variant web (html &);
+@custom-variant web (@supports selector(div > div));
 @custom-variant native (@media native);
 @custom-variant tv (@media tv);
 @custom-variant android-tv (@media android-tv);

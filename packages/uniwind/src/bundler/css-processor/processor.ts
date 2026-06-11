@@ -232,7 +232,8 @@ export class ProcessorBuilder {
             return
         }
 
-        if (rule.type === 'supports') {
+        // Skip web: variant
+        if (rule.type === 'supports' && rule.value.condition.value !== 'div > div') {
             rule.value.rules.forEach(rule => this.parseRuleRec(rule))
 
             return
