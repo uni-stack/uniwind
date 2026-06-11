@@ -26,7 +26,7 @@
             "@types/react-dom": "19.2.3",
             "react": "19.2.3",
             "react-dom": "19.2.3",
-            "expo": "56.0.8",
+            "expo": "56.0.11",
             "react-native": "0.85.3",
             "react-native-web": "0.21.2",
             "tailwindcss": "4.3.0",
