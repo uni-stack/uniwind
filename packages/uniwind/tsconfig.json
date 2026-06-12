@@ -29,7 +29,8 @@
     },
     "include": [
         "./src",
-        "./types.d.ts"
+        "./types.d.ts",
+        "./expo-ui.d.ts"
     ],
     "exclude": [
         "node_modules",

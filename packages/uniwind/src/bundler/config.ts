@@ -93,6 +93,10 @@ export class UniwindBundlerConfig {
 
     async generateArtifacts(cssArtifactPath: string) {
         await buildCSS(this.themes, this.config.cssEntryFile, cssArtifactPath)
-        buildDtsFile(this.config.dtsFile ?? 'uniwind-types.d.ts', this.stringifiedThemes)
+        buildDtsFile(
+            this.config.dtsFile ?? 'uniwind-types.d.ts',
+            this.stringifiedThemes,
+            this.thirdPartyModules.expoUI === true,
+        )
     }
 }

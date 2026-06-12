@@ -53,6 +53,7 @@ Package subpath exports:
 - `uniwind/metro`: Metro adapter.
 - `uniwind/vite`: Vite plugin.
 - `uniwind/types`: generated/user-facing type support.
+- `uniwind/expo-ui-types`: Expo UI type augmentations referenced from generated typings only when `experimental.thirdPartyModules.expoUI` is enabled.
 
 Stability policy: public package and subpath exports are semver-stable. Generated artifact internals are implementation details unless explicitly documented, with two notable user-facing surfaces: generated theme typings and the package `style` export (`uniwind.css`).
 
@@ -103,7 +104,7 @@ Compilation flow:
 - `compileCSS` routes to web or native by platform.
 - `compileWebCSS` runs Lightning CSS with `UniwindCSSVisitor` and returns CSS.
 - `compileNativeCSS` runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet metadata into JS source.
-- `UniwindBundlerConfig.generateArtifacts` writes CSS artifacts and generated theme typings.
+- `UniwindBundlerConfig.generateArtifacts` writes CSS artifacts and generated theme typings; generated typings reference `uniwind/expo-ui-types` only when the Expo UI experimental resolver is enabled.
 - Internal package aliases such as `@/*` are only safe inside `packages/uniwind/src/bundler`. Bundler files are built and transformed to JS, but runtime/component/hook/HOC files are published directly as `.ts`/`.tsx` React Native entrypoints, so aliases in those files are not rewritten.
 
 Metro integration:
