@@ -137,3 +137,14 @@ declare module '@expo/ui' {
         className?: string
     }
 }
+
+declare module '@expo/ui/swift-ui' {
+    interface CommonViewModifierProps {
+        className?: string
+        colorClassName?: string
+    }
+
+    interface ImageProps {
+        colorClassName?: string
+    }
+}

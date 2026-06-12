@@ -49,7 +49,7 @@ Package subpath exports:
 - `uniwind/components`: React Native component replacements.
 - `uniwind/components/*`: individual component replacements.
 - `uniwind/expo-ui`: `@expo/ui` universal component replacements.
-- `uniwind/expo-ui/swift-ui` and `uniwind/expo-ui/jetpack-compose`: native Expo UI passthrough subpaths reserved for wrappers.
+- `uniwind/expo-ui/swift-ui`: native Expo UI wrappers for SwiftUI components that expose `style`, top-level `color`, or tintable controls; other SwiftUI exports pass through. `uniwind/expo-ui/jetpack-compose` remains a native Expo UI passthrough subpath reserved for wrappers.
 - `uniwind/metro`: Metro adapter.
 - `uniwind/vite`: Vite plugin.
 - `uniwind/types`: generated/user-facing type support.
