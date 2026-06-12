@@ -1,0 +1,1783 @@
+diff --git a/build/jetpack-compose/AlertDialog/index.d.ts b/build/jetpack-compose/AlertDialog/index.d.ts
+index a3d95668aed50cc7b0f4a7fe5ad4cf94cadd2a9d..00581e37a1fd99ba5fafe45c502c206a4144ed53 100644
+--- a/build/jetpack-compose/AlertDialog/index.d.ts
++++ b/build/jetpack-compose/AlertDialog/index.d.ts
+@@ -21,7 +21,7 @@ export type AlertDialogColors = {
+      */
+     textContentColor?: ColorValue;
+ };
+-export type AlertDialogProps = {
++export interface AlertDialogProps {
+     /**
+      * Colors for the alert dialog.
+      */
+diff --git a/build/jetpack-compose/AnimatedVisibility/index.d.ts b/build/jetpack-compose/AnimatedVisibility/index.d.ts
+index cfd2ba593ec573c9303348504201db959ee8bbf2..d36c9da6003c3082f7389665552a9afd2d7466b4 100644
+--- a/build/jetpack-compose/AnimatedVisibility/index.d.ts
++++ b/build/jetpack-compose/AnimatedVisibility/index.d.ts
+@@ -110,7 +110,7 @@ export declare const ExitTransition: {
+         targetScale?: number;
+     }) => ExitTransitionType;
+ };
+-export type AnimatedVisibilityProps = {
++export interface AnimatedVisibilityProps extends PrimitiveBaseProps {
+     children?: React.ReactNode;
+     /**
+      * Whether the content is visible. When changed, the content will animate in or out.
+@@ -128,7 +128,7 @@ export type AnimatedVisibilityProps = {
+      * Defaults to Compose's `fadeOut + shrinkOut` when not specified.
+      */
+     exitTransition?: ExitTransitionType;
+-} & PrimitiveBaseProps;
++}
+ export declare function AnimatedVisibility(props: AnimatedVisibilityProps): import("react/jsx-runtime").JSX.Element;
+ export {};
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/Badge/index.d.ts b/build/jetpack-compose/Badge/index.d.ts
+index 637998076f551a9c5f21b0f875790f5cde11a218..94292314be9859995914272b58c210aeb9e67b6a 100644
+--- a/build/jetpack-compose/Badge/index.d.ts
++++ b/build/jetpack-compose/Badge/index.d.ts
+@@ -1,6 +1,6 @@
+ import { type ColorValue } from 'react-native';
+ import { type ModifierConfig } from '../../types';
+-export type BadgeProps = {
++export interface BadgeProps {
+     /**
+      * Background color of the badge.
+      * @default BadgeDefaults.containerColor
+diff --git a/build/jetpack-compose/BadgedBox/index.d.ts b/build/jetpack-compose/BadgedBox/index.d.ts
+index f50a49e717cb3eb1d823c29cea8757a771c70bc3..25adeee4d38577338c082d7447e1d7f3cb624774 100644
+--- a/build/jetpack-compose/BadgedBox/index.d.ts
++++ b/build/jetpack-compose/BadgedBox/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ModifierConfig } from '../../types';
+-export type BadgedBoxProps = {
++export interface BadgedBoxProps {
+     /**
+      * Modifiers for the component.
+      */
+diff --git a/build/jetpack-compose/BasicAlertDialog/index.d.ts b/build/jetpack-compose/BasicAlertDialog/index.d.ts
+index b317e85140cdb5176d3951ff650f5caf442d6e4f..ab38ed3d60dbe6f0f94f95d6c61e6723e7330dd2 100644
+--- a/build/jetpack-compose/BasicAlertDialog/index.d.ts
++++ b/build/jetpack-compose/BasicAlertDialog/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ModifierConfig, type DialogProperties } from '../../types';
+-export type BasicAlertDialogProps = {
++export interface BasicAlertDialogProps {
+     /**
+      * The content to display inside the dialog.
+      */
+diff --git a/build/jetpack-compose/Box/index.d.ts b/build/jetpack-compose/Box/index.d.ts
+index d8d81687a4a74a3ae46b87f46458df6caf2a6343..aa94de4aff548796390e7209de4a3ad19690adda 100644
+--- a/build/jetpack-compose/Box/index.d.ts
++++ b/build/jetpack-compose/Box/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ContentAlignment, type FloatingToolbarExitAlwaysScrollBehavior, type PrimitiveBaseProps } from '../layout-types';
+-export type BoxProps = {
++export interface BoxProps extends PrimitiveBaseProps {
+     children?: React.ReactNode;
+     /**
+      * Alignment of children within the box.
+@@ -9,6 +9,6 @@ export type BoxProps = {
+      * Scroll behavior for the floating toolbar exit.
+      */
+     floatingToolbarExitAlwaysScrollBehavior?: FloatingToolbarExitAlwaysScrollBehavior;
+-} & PrimitiveBaseProps;
++}
+ export declare function Box(props: BoxProps): import("react/jsx-runtime").JSX.Element;
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/Button/index.d.ts b/build/jetpack-compose/Button/index.d.ts
+index 77062d2e6f089414df7dafd2adec23bc30961c9f..79ef370867e60c821de49babc464107e211958a4 100644
+--- a/build/jetpack-compose/Button/index.d.ts
++++ b/build/jetpack-compose/Button/index.d.ts
+@@ -20,7 +20,7 @@ export type ButtonContentPadding = {
+     end?: number;
+     bottom?: number;
+ };
+-export type ButtonProps = {
++export interface ButtonProps {
+     /**
+      * Callback that is called when the button is clicked.
+      */
+diff --git a/build/jetpack-compose/Card/index.d.ts b/build/jetpack-compose/Card/index.d.ts
+index 569537926ddf003d308f1170e4973ff505ca8511..91b389a75b9ae08016aa225c549877e40677b354 100644
+--- a/build/jetpack-compose/Card/index.d.ts
++++ b/build/jetpack-compose/Card/index.d.ts
+@@ -21,7 +21,7 @@ export type CardBorder = {
+      */
+     color?: ColorValue;
+ };
+-export type CardProps = {
++export interface CardProps {
+     /**
+      * The content to display inside the card.
+      */
+@@ -47,7 +47,7 @@ export type CardProps = {
+  * A card component that renders a filled card surface for content.
+  */
+ export declare const Card: import("react").ComponentType<CardProps>;
+-export type ElevatedCardProps = {
++export interface ElevatedCardProps {
+     /**
+      * The content to display inside the card.
+      */
+@@ -69,7 +69,7 @@ export type ElevatedCardProps = {
+  * An elevated card component that provides a raised surface for content.
+  */
+ export declare const ElevatedCard: import("react").ComponentType<ElevatedCardProps>;
+-export type OutlinedCardProps = {
++export interface OutlinedCardProps {
+     /**
+      * The content to display inside the card.
+      */
+diff --git a/build/jetpack-compose/Carousel/index.d.ts b/build/jetpack-compose/Carousel/index.d.ts
+index e6d322051dedc6a530f0e563611c3a5f931cc34e..f8e6af377d6bbbee45be70f869b9da13220d0695 100644
+--- a/build/jetpack-compose/Carousel/index.d.ts
++++ b/build/jetpack-compose/Carousel/index.d.ts
+@@ -44,7 +44,7 @@ export type CarouselCommonConfig = {
+      */
+     children: React.ReactNode;
+ };
+-export type HorizontalCenteredHeroCarouselProps = CarouselCommonConfig & {
++export interface HorizontalCenteredHeroCarouselProps extends CarouselCommonConfig {
+     /**
+      * Maximum width of the hero item in dp.
+      * When unspecified, the hero item will be as wide as possible.
+@@ -66,7 +66,7 @@ export type HorizontalCenteredHeroCarouselProps = CarouselCommonConfig & {
+  * matching Compose's `HorizontalCenteredHeroCarousel`.
+  */
+ export declare const HorizontalCenteredHeroCarousel: import("react").ComponentType<HorizontalCenteredHeroCarouselProps>;
+-export type HorizontalMultiBrowseCarouselProps = CarouselCommonConfig & {
++export interface HorizontalMultiBrowseCarouselProps extends CarouselCommonConfig {
+     /**
+      * The preferred width of the large item in dp.
+      */
+@@ -87,7 +87,7 @@ export type HorizontalMultiBrowseCarouselProps = CarouselCommonConfig & {
+  * matching Compose's `HorizontalMultiBrowseCarousel`.
+  */
+ export declare const HorizontalMultiBrowseCarousel: import("react").ComponentType<HorizontalMultiBrowseCarouselProps>;
+-export type HorizontalUncontainedCarouselProps = CarouselCommonConfig & {
++export interface HorizontalUncontainedCarouselProps extends CarouselCommonConfig {
+     /**
+      * The width of each item in dp.
+      */
+diff --git a/build/jetpack-compose/Checkbox/index.d.ts b/build/jetpack-compose/Checkbox/index.d.ts
+index dae7e52211ce319e6250d99b72bd990a12e38d1d..91bd82539604b501dd14a0a26dbff947ff185628 100644
+--- a/build/jetpack-compose/Checkbox/index.d.ts
++++ b/build/jetpack-compose/Checkbox/index.d.ts
+@@ -11,7 +11,7 @@ export type CheckboxColors = {
+     checkmarkColor?: ColorValue;
+     disabledIndeterminateColor?: ColorValue;
+ };
+-export type CheckboxProps = {
++export interface CheckboxProps {
+     /**
+      * Indicates whether the checkbox is checked.
+      */
+@@ -42,7 +42,7 @@ export declare function Checkbox(props: CheckboxProps): import("react/jsx-runtim
+  * The toggleable state of a tri-state checkbox.
+  */
+ export type ToggleableState = 'on' | 'off' | 'indeterminate';
+-export type TriStateCheckboxProps = {
++export interface TriStateCheckboxProps {
+     /**
+      * The toggleable state of the checkbox: `'on'`, `'off'`, or `'indeterminate'`.
+      */
+diff --git a/build/jetpack-compose/Chip/index.d.ts b/build/jetpack-compose/Chip/index.d.ts
+index 7c4a59c1dd94868ab09e2191e011df8f6485c667..5ee544d5a5d84f633da86ad8bdb27e7b49ed2db2 100644
+--- a/build/jetpack-compose/Chip/index.d.ts
++++ b/build/jetpack-compose/Chip/index.d.ts
+@@ -59,7 +59,7 @@ export type ChipBorder = {
+ type SlotChildProps = {
+     children: React.ReactNode;
+ };
+-export type AssistChipProps = {
++export interface AssistChipProps {
+     /**
+      * Whether the chip is enabled and can be clicked.
+      * @default true
+@@ -112,7 +112,7 @@ declare namespace AssistChipComponent {
+     var TrailingIcon: typeof AssistChipTrailingIcon;
+ }
+ export { AssistChipComponent as AssistChip };
+-export type FilterChipProps = {
++export interface FilterChipProps {
+     /**
+      * Whether the chip is currently selected.
+      */
+@@ -168,7 +168,7 @@ declare namespace FilterChipComponent {
+     var TrailingIcon: typeof FilterChipTrailingIcon;
+ }
+ export { FilterChipComponent as FilterChip };
+-export type InputChipProps = {
++export interface InputChipProps {
+     /**
+      * Whether the chip is enabled and can be interacted with.
+      * @default true
+@@ -226,7 +226,7 @@ declare namespace InputChipComponent {
+     var TrailingIcon: typeof InputChipTrailingIcon;
+ }
+ export { InputChipComponent as InputChip };
+-export type SuggestionChipProps = {
++export interface SuggestionChipProps {
+     /**
+      * Whether the chip is enabled and can be clicked.
+      * @default true
+diff --git a/build/jetpack-compose/Column/index.d.ts b/build/jetpack-compose/Column/index.d.ts
+index d499275dde47a32ba0072045359a45595293535f..6b557a61050de01db9f6a94699dd4f28ffc1ecb1 100644
+--- a/build/jetpack-compose/Column/index.d.ts
++++ b/build/jetpack-compose/Column/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type HorizontalAlignment, type HorizontalArrangement, type PrimitiveBaseProps, type VerticalAlignment, type VerticalArrangement } from '../layout-types';
+-export type ColumnProps = {
++export interface ColumnProps extends PrimitiveBaseProps {
+     children?: React.ReactNode;
+     /**
+      * Horizontal arrangement of children.
+@@ -17,6 +17,6 @@ export type ColumnProps = {
+      * Vertical alignment of children.
+      */
+     verticalAlignment?: VerticalAlignment;
+-} & PrimitiveBaseProps;
++}
+ export declare function Column(props: ColumnProps): import("react/jsx-runtime").JSX.Element;
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/DatePicker/index.d.ts b/build/jetpack-compose/DatePicker/index.d.ts
+index 821428db0e5fa750694b201ee9e8c2d7304e9977..65ce34c107b450fccab5cb44e4ba9a238bcc3d3a 100644
+--- a/build/jetpack-compose/DatePicker/index.d.ts
++++ b/build/jetpack-compose/DatePicker/index.d.ts
+@@ -90,7 +90,7 @@ export type TimePickerElementColors = {
+     /** The text color of the unselected hour/minute segment. */
+     timeSelectorUnselectedContentColor?: ColorValue;
+ };
+-export type DateTimePickerProps = {
++export interface DateTimePickerProps {
+     /**
+      * The initial date to display on the picker.
+      */
+@@ -154,7 +154,7 @@ export type DateTimePickerProps = {
+  * Renders an inline `DateTimePicker` component.
+  */
+ export declare function DateTimePicker(props: DateTimePickerProps): import("react/jsx-runtime").JSX.Element;
+-export type DatePickerDialogProps = {
++export interface DatePickerDialogProps {
+     initialDate?: string | null;
+     variant?: AndroidVariant;
+     showVariantToggle?: boolean;
+@@ -170,7 +170,7 @@ export type DatePickerDialogProps = {
+     onDismissRequest: () => void;
+ };
+ export declare function DatePickerDialog(props: DatePickerDialogProps): import("react/jsx-runtime").JSX.Element;
+-export type TimePickerDialogProps = {
++export interface TimePickerDialogProps {
+     initialDate?: string | null;
+     is24Hour?: boolean;
+     confirmButtonLabel?: string;
+diff --git a/build/jetpack-compose/DockedSearchBar/index.d.ts b/build/jetpack-compose/DockedSearchBar/index.d.ts
+index f4ceac45464cf970a599253a7163d33398e46857..d07eb82b818ec5d089b2eac882d0397764b4bc96 100644
+--- a/build/jetpack-compose/DockedSearchBar/index.d.ts
++++ b/build/jetpack-compose/DockedSearchBar/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ExpoModifier } from '../../types';
+-export type DockedSearchBarProps = {
++export interface DockedSearchBarProps {
+     /**
+      * Callback function that is called when the search query changes.
+      */
+diff --git a/build/jetpack-compose/DropdownMenu/DropdownMenuItem.d.ts b/build/jetpack-compose/DropdownMenu/DropdownMenuItem.d.ts
+index 5b9f3809d159ae65bab1b88f99f64684031b708d..d3c372f8e1e03afc3d16d4f73a979179e5533cb6 100644
+--- a/build/jetpack-compose/DropdownMenu/DropdownMenuItem.d.ts
++++ b/build/jetpack-compose/DropdownMenu/DropdownMenuItem.d.ts
+@@ -16,7 +16,7 @@ export type DropdownMenuItemElementColors = {
+ /**
+  * Props of the `DropdownMenuItem` component.
+  */
+-export type DropdownMenuItemProps = {
++export interface DropdownMenuItemProps {
+     /**
+      * Whether the menu item is enabled.
+      * @default true
+diff --git a/build/jetpack-compose/DropdownMenu/index.d.ts b/build/jetpack-compose/DropdownMenu/index.d.ts
+index 6709361d89c8169da7e0433f45e64902b713521a..f03e185755a13524e3a51c910791f5976e90bb7b 100644
+--- a/build/jetpack-compose/DropdownMenu/index.d.ts
++++ b/build/jetpack-compose/DropdownMenu/index.d.ts
+@@ -4,7 +4,7 @@ import type { ModifierConfig } from '../../types';
+ /**
+  * Props of the `DropdownMenu` component.
+  */
+-export type DropdownMenuProps = {
++export interface DropdownMenuProps {
+     /**
+      * The contents of the submenu are used as an anchor for the dropdown menu.
+      * The children will be wrapped in a pressable element, which triggers opening of the dropdown menu.
+diff --git a/build/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.d.ts b/build/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.d.ts
+index 0f8afad564aabbbefe3f7d9aab94a00ef3c715a2..0a45b81c32a39a05a4ee21bc771afa307a957b2d 100644
+--- a/build/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.d.ts
++++ b/build/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.d.ts
+@@ -4,7 +4,7 @@ import { type ModifierConfig } from '../../types';
+ /**
+  * Props for the `ExposedDropdownMenu` component.
+  */
+-export type ExposedDropdownMenuProps = {
++export interface ExposedDropdownMenuProps {
+     /**
+      * Whether the dropdown menu is expanded (visible).
+      */
+diff --git a/build/jetpack-compose/ExposedDropdownMenuBox/index.d.ts b/build/jetpack-compose/ExposedDropdownMenuBox/index.d.ts
+index b581dd044ca695d68535bc6c1fb5de5aa2e709ce..854b2ae0d66210fa4aa151983361710308218a5e 100644
+--- a/build/jetpack-compose/ExposedDropdownMenuBox/index.d.ts
++++ b/build/jetpack-compose/ExposedDropdownMenuBox/index.d.ts
+@@ -1,6 +1,6 @@
+ import type { ReactNode } from 'react';
+ import { type ModifierConfig } from '../../types';
+-export type ExposedDropdownMenuBoxProps = {
++export interface ExposedDropdownMenuBoxProps {
+     /**
+      * Whether the dropdown menu is expanded (visible).
+      */
+diff --git a/build/jetpack-compose/FloatingActionButton/index.d.ts b/build/jetpack-compose/FloatingActionButton/index.d.ts
+index ea0f1df52e4505b1226e1d89f85f7c60490ff13f..beed3af0298ec08c02a1434ede9c69374e328186 100644
+--- a/build/jetpack-compose/FloatingActionButton/index.d.ts
++++ b/build/jetpack-compose/FloatingActionButton/index.d.ts
+@@ -6,7 +6,7 @@ type SlotChildProps = {
+ /**
+  * Props shared by all `FloatingActionButton` variants.
+  */
+-export type FloatingActionButtonProps = {
++export interface FloatingActionButtonProps {
+     /**
+      * Slot-based children (use `.Icon` sub-component).
+      */
+@@ -38,7 +38,7 @@ export type LargeFloatingActionButtonProps = FloatingActionButtonProps;
+ /**
+  * Props for the `ExtendedFloatingActionButton` component.
+  */
+-export type ExtendedFloatingActionButtonProps = FloatingActionButtonProps & {
++export interface ExtendedFloatingActionButtonProps extends FloatingActionButtonProps {
+     /**
+      * Slot-based children (use `.Icon` and `.Text` sub-components).
+      */
+diff --git a/build/jetpack-compose/FlowRow/index.d.ts b/build/jetpack-compose/FlowRow/index.d.ts
+index 09735a495cb9d8a5b848d3403dfdd417717a4b10..b69e18cc4bcfd45e86219babe4af05acfe5ac7fc 100644
+--- a/build/jetpack-compose/FlowRow/index.d.ts
++++ b/build/jetpack-compose/FlowRow/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type HorizontalArrangement, type PrimitiveBaseProps, type VerticalArrangement } from '../layout-types';
+-export type FlowRowProps = {
++export interface FlowRowProps extends PrimitiveBaseProps {
+     children?: React.ReactNode;
+     /**
+      * Horizontal arrangement of children.
+@@ -9,6 +9,6 @@ export type FlowRowProps = {
+      * Vertical arrangement of children.
+      */
+     verticalArrangement?: VerticalArrangement;
+-} & PrimitiveBaseProps;
++}
+ export declare function FlowRow(props: FlowRowProps): import("react/jsx-runtime").JSX.Element;
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/HorizontalFloatingToolbar/index.d.ts b/build/jetpack-compose/HorizontalFloatingToolbar/index.d.ts
+index eaa3244e28d1e05c749d15d333e950e311fcfa8d..0c356c291b8b1ce5448099c417957bed6f506428 100644
+--- a/build/jetpack-compose/HorizontalFloatingToolbar/index.d.ts
++++ b/build/jetpack-compose/HorizontalFloatingToolbar/index.d.ts
+@@ -18,7 +18,7 @@ export type HorizontalFloatingToolbarColors = {
+      */
+     fabContentColor?: ColorValue;
+ };
+-export type HorizontalFloatingToolbarProps = {
++export interface HorizontalFloatingToolbarProps {
+     /**
+      * The variant of the horizontal floating toolbar.
+      * @default 'standard'
+@@ -38,7 +38,7 @@ export type HorizontalFloatingToolbarProps = {
+      */
+     modifiers?: ExpoModifier[];
+ };
+-export type HorizontalFloatingToolbarFloatingActionButtonProps = {
++export interface HorizontalFloatingToolbarFloatingActionButtonProps {
+     /**
+      * A callback that is called when the button is pressed.
+      */
+diff --git a/build/jetpack-compose/HorizontalPager/index.d.ts b/build/jetpack-compose/HorizontalPager/index.d.ts
+index bb5214fd8ee65b84db8c4921dd1248a3780664bc..76e6c32f9971bad741c5d6928f4c6f6295109cda 100644
+--- a/build/jetpack-compose/HorizontalPager/index.d.ts
++++ b/build/jetpack-compose/HorizontalPager/index.d.ts
+@@ -18,7 +18,7 @@ export type HorizontalPagerHandle = {
+  * `DragInteraction.Start` / `DragInteraction.Stop` / `DragInteraction.Cancel`.
+  */
+ export type HorizontalPagerDragInteraction = 'start' | 'stop' | 'cancel';
+-export type HorizontalPagerProps = {
++export interface HorizontalPagerProps {
+     /**
+      * Imperative handle for programmatic navigation. Mirrors the methods on
+      * Compose's `PagerState`.
+diff --git a/build/jetpack-compose/Host/index.d.ts b/build/jetpack-compose/Host/index.d.ts
+index d29c5ac74a5223d1772ea2c7503b9a1992928501..116aa1ee0e08e30a38cc78e487c651f48e36d683 100644
+--- a/build/jetpack-compose/Host/index.d.ts
++++ b/build/jetpack-compose/Host/index.d.ts
+@@ -1,6 +1,6 @@
+ import { type ColorSchemeName, type ColorValue, type StyleProp, type ViewStyle } from 'react-native';
+ import { type PrimitiveBaseProps } from '../layout';
+-export type HostProps = {
++export interface HostProps extends PrimitiveBaseProps {
+     /**
+      * When true, the host view will update its size in the React Native view tree to match the content's layout from Jetpack Compose.
+      * Can be only set once on mount.
+@@ -54,6 +54,6 @@ export type HostProps = {
+     children: React.ReactNode;
+     style?: StyleProp<ViewStyle>;
+     pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto';
+-} & PrimitiveBaseProps;
++}
+ export declare function Host(props: HostProps): import("react/jsx-runtime").JSX.Element;
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/Icon/index.d.ts b/build/jetpack-compose/Icon/index.d.ts
+index 6d9163e5bc26a69ee8a9c606f294c27701c61c8a..a79a556cfb87b3332dd137cf4089b87929fa0648 100644
+--- a/build/jetpack-compose/Icon/index.d.ts
++++ b/build/jetpack-compose/Icon/index.d.ts
+@@ -1,6 +1,6 @@
+ import { type ColorValue, type ImageSourcePropType, type ImageResolvedAssetSource } from 'react-native';
+ import type { ModifierConfig } from '../../types';
+-export type IconProps = {
++export interface IconProps {
+     /**
+      * The source of the icon. Can be a URI string or the result of `require()`.
+      * On Android, supports XML vector drawables loaded via Metro bundler.
+diff --git a/build/jetpack-compose/IconButton/index.d.ts b/build/jetpack-compose/IconButton/index.d.ts
+index 576e45e0252762cd3ef50a31d4c9dc6ad13e3b1f..8c13365b1b93aa7eb015a68c1f7ee893e6806b26 100644
+--- a/build/jetpack-compose/IconButton/index.d.ts
++++ b/build/jetpack-compose/IconButton/index.d.ts
+@@ -10,7 +10,7 @@ export type IconButtonColors = {
+     disabledContainerColor?: ColorValue;
+     disabledContentColor?: ColorValue;
+ };
+-export type IconButtonProps = {
++export interface IconButtonProps {
+     /**
+      * Callback that is called when the icon button is clicked.
+      */
+diff --git a/build/jetpack-compose/LazyColumn/index.d.ts b/build/jetpack-compose/LazyColumn/index.d.ts
+index 27da8bd82a7224621bb82e2dc886602bd1573589..70bde3cdecd7a9793a3948cedcba186de24e4f52 100644
+--- a/build/jetpack-compose/LazyColumn/index.d.ts
++++ b/build/jetpack-compose/LazyColumn/index.d.ts
+@@ -20,7 +20,7 @@ export type ContentPadding = {
+      */
+     bottom?: number;
+ };
+-export type LazyColumnProps = {
++export interface LazyColumnProps {
+     /**
+      * The content to display inside the lazy column.
+      */
+diff --git a/build/jetpack-compose/LazyRow/index.d.ts b/build/jetpack-compose/LazyRow/index.d.ts
+index fe8862962dcbd66bf5d69921a0e2dacd477112ac..cccbbdaef0ca31a7ce069895b8174f49af075b44 100644
+--- a/build/jetpack-compose/LazyRow/index.d.ts
++++ b/build/jetpack-compose/LazyRow/index.d.ts
+@@ -1,6 +1,6 @@
+ import type { ExpoModifier } from '../../types';
+ import { type ContentPadding } from '../LazyColumn';
+-export type LazyRowProps = {
++export interface LazyRowProps {
+     /**
+      * The content to display inside the lazy row.
+      */
+diff --git a/build/jetpack-compose/ListItem/index.d.ts b/build/jetpack-compose/ListItem/index.d.ts
+index f79b3435b87d20e9e664fcb13cca706e6cbe1744..e5d956f514374521ed80644b7523f8b7fba00aae 100644
+--- a/build/jetpack-compose/ListItem/index.d.ts
++++ b/build/jetpack-compose/ListItem/index.d.ts
+@@ -11,7 +11,7 @@ export type ListItemColors = {
+     supportingContentColor?: ColorValue;
+     overlineContentColor?: ColorValue;
+ };
+-export type ListItemProps = {
++export interface ListItemProps {
+     /**
+      * Colors for list item elements.
+      */
+diff --git a/build/jetpack-compose/LoadingIndicator/index.d.ts b/build/jetpack-compose/LoadingIndicator/index.d.ts
+index ea50303c8b86c0eab7da0e4c27cc0add23943fcd..b473dc2974e8396d3d94a3ee35b4d18a75bb8a39 100644
+--- a/build/jetpack-compose/LoadingIndicator/index.d.ts
++++ b/build/jetpack-compose/LoadingIndicator/index.d.ts
+@@ -25,7 +25,7 @@ export type LoadingIndicatorCommonConfig = {
+  * Matches the Jetpack Compose `LoadingIndicator`.
+  */
+ export declare const LoadingIndicator: import("react").ComponentType<LoadingIndicatorCommonConfig>;
+-export type ContainedLoadingIndicatorProps = LoadingIndicatorCommonConfig & {
++export interface ContainedLoadingIndicatorProps extends LoadingIndicatorCommonConfig {
+     /**
+      * Loading indicator's container color
+      */
+diff --git a/build/jetpack-compose/ModalBottomSheet/index.d.ts b/build/jetpack-compose/ModalBottomSheet/index.d.ts
+index 0530602700e7897309df1f4c353873ad0d7e19f5..d911f16a9065282d6446f5799d5282cfc822844a 100644
+--- a/build/jetpack-compose/ModalBottomSheet/index.d.ts
++++ b/build/jetpack-compose/ModalBottomSheet/index.d.ts
+@@ -29,7 +29,7 @@ export type ModalBottomSheetProperties = {
+      */
+     shouldDismissOnClickOutside?: boolean;
+ };
+-export type ModalBottomSheetProps = {
++export interface ModalBottomSheetProps {
+     /**
+      * The children of the `ModalBottomSheet` component.
+      * Can include a `ModalBottomSheet.DragHandle` slot for a custom drag handle.
+diff --git a/build/jetpack-compose/MultiChoiceSegmentedButtonRow/index.d.ts b/build/jetpack-compose/MultiChoiceSegmentedButtonRow/index.d.ts
+index 565e5e5794fa745b1048445ef0b8725c5e75a1e3..c4b0881e37d9e9b29cd163ca97473e9b35f29e25 100644
+--- a/build/jetpack-compose/MultiChoiceSegmentedButtonRow/index.d.ts
++++ b/build/jetpack-compose/MultiChoiceSegmentedButtonRow/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ModifierConfig } from '../../types';
+-export type MultiChoiceSegmentedButtonRowProps = {
++export interface MultiChoiceSegmentedButtonRowProps {
+     /**
+      * SegmentedButton children.
+      */
+diff --git a/build/jetpack-compose/NavigationBar/index.d.ts b/build/jetpack-compose/NavigationBar/index.d.ts
+index e84f86222a7eb50902dd7106534b8b4cff6e937c..4e716c9e0d0e5f805aa5f2c4b65363e077875015 100644
+--- a/build/jetpack-compose/NavigationBar/index.d.ts
++++ b/build/jetpack-compose/NavigationBar/index.d.ts
+@@ -15,7 +15,7 @@ export type NavigationBarItemColors = {
+     disabledIconColor?: ColorValue;
+     disabledTextColor?: ColorValue;
+ };
+-export type NavigationBarProps = {
++export interface NavigationBarProps {
+     /**
+      * Background color of the navigation bar.
+      * @default NavigationBarDefaults.containerColor
+@@ -40,7 +40,7 @@ export type NavigationBarProps = {
+      */
+     children?: React.ReactNode;
+ };
+-export type NavigationBarItemProps = {
++export interface NavigationBarItemProps {
+     /**
+      * Whether this item is currently selected.
+      */
+diff --git a/build/jetpack-compose/Progress/index.d.ts b/build/jetpack-compose/Progress/index.d.ts
+index 93ff81329db86740276ee2ce0a0de522868d7147..687e7ab2d1f70c656d300e70d445b20fe2021b59 100644
+--- a/build/jetpack-compose/Progress/index.d.ts
++++ b/build/jetpack-compose/Progress/index.d.ts
+@@ -43,7 +43,7 @@ export type DrawStopIndicatorConfig = {
+      */
+     stopSize?: number;
+ };
+-export type LinearProgressIndicatorProps = ProgressCommonConfig & {
++export interface LinearProgressIndicatorProps extends ProgressCommonConfig {
+     /**
+      * Stroke cap style for the indicator ends.
+      * @default 'round'
+@@ -64,7 +64,7 @@ export type LinearProgressIndicatorProps = ProgressCommonConfig & {
+  * Matches the Jetpack Compose `LinearProgressIndicator`.
+  */
+ export declare const LinearProgressIndicator: import("react").ComponentType<LinearProgressIndicatorProps>;
+-export type CircularProgressIndicatorProps = ProgressCommonConfig & {
++export interface CircularProgressIndicatorProps extends ProgressCommonConfig {
+     /**
+      * Width of the circular stroke in dp.
+      */
+@@ -85,7 +85,7 @@ export type CircularProgressIndicatorProps = ProgressCommonConfig & {
+  * Matches the Jetpack Compose `CircularProgressIndicator`.
+  */
+ export declare const CircularProgressIndicator: import("react").ComponentType<CircularProgressIndicatorProps>;
+-export type LinearWavyProgressIndicatorProps = ProgressCommonConfig & {
++export interface LinearWavyProgressIndicatorProps extends ProgressCommonConfig {
+     /**
+      * Size of the stop indicator in dp at the end of the determinate progress track.
+      */
+diff --git a/build/jetpack-compose/PullToRefreshBox/index.d.ts b/build/jetpack-compose/PullToRefreshBox/index.d.ts
+index 98dead906b2959cea7e1e1386a26ffb392359e09..510b8062505f6665905c6511077d4660c3b4b898 100644
+--- a/build/jetpack-compose/PullToRefreshBox/index.d.ts
++++ b/build/jetpack-compose/PullToRefreshBox/index.d.ts
+@@ -4,7 +4,7 @@ import { type ContentAlignment } from '../layout-types';
+ /**
+  * Configuration for the loading indicator shown during pull-to-refresh.
+  */
+-export type PullToRefreshIndicatorProps = {
++export interface PullToRefreshIndicatorProps {
+     /**
+      * Color of the loading indicator spinner.
+      * @default MaterialTheme.colorScheme.primary
+@@ -20,7 +20,7 @@ export type PullToRefreshIndicatorProps = {
+      */
+     modifiers?: ModifierConfig[];
+ };
+-export type PullToRefreshBoxProps = {
++export interface PullToRefreshBoxProps {
+     /**
+      * Whether the content is refreshing.
+      * @default false
+diff --git a/build/jetpack-compose/RadioButton/index.d.ts b/build/jetpack-compose/RadioButton/index.d.ts
+index 9267d07344992a8552e5b6d3a8b3890f7467b580..837f372f852cfa8c01cd71c660cc5b176d782655 100644
+--- a/build/jetpack-compose/RadioButton/index.d.ts
++++ b/build/jetpack-compose/RadioButton/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ModifierConfig } from '../../types';
+-export type RadioButtonProps = {
++export interface RadioButtonProps {
+     /**
+      * Whether the radio button is selected.
+      */
+diff --git a/build/jetpack-compose/Row/index.d.ts b/build/jetpack-compose/Row/index.d.ts
+index 1e0f1151946875528c67d495d3df2e649e2004b7..76597de6f84d432cb80cd8d1fc4980badc0b6e8c 100644
+--- a/build/jetpack-compose/Row/index.d.ts
++++ b/build/jetpack-compose/Row/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type HorizontalAlignment, type HorizontalArrangement, type PrimitiveBaseProps, type VerticalAlignment, type VerticalArrangement } from '../layout-types';
+-export type RowProps = {
++export interface RowProps extends PrimitiveBaseProps {
+     children?: React.ReactNode;
+     /**
+      * Horizontal arrangement of children.
+@@ -17,6 +17,6 @@ export type RowProps = {
+      * Vertical alignment of children.
+      */
+     verticalAlignment?: VerticalAlignment;
+-} & PrimitiveBaseProps;
++}
+ export declare function Row(props: RowProps): import("react/jsx-runtime").JSX.Element;
+ //# sourceMappingURL=index.d.ts.map
+diff --git a/build/jetpack-compose/SearchBar/index.d.ts b/build/jetpack-compose/SearchBar/index.d.ts
+index d55fa12d956b39779bd43c95b06f3e790b023413..56bed861f82f4a2ef494b55ec0cbdd39c5b7c4b3 100644
+--- a/build/jetpack-compose/SearchBar/index.d.ts
++++ b/build/jetpack-compose/SearchBar/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ExpoModifier } from '../../types';
+-export type SearchBarProps = {
++export interface SearchBarProps {
+     /**
+      * Callback function that is called when the search text is submitted.
+      */
+diff --git a/build/jetpack-compose/SegmentedButton/index.d.ts b/build/jetpack-compose/SegmentedButton/index.d.ts
+index 825394f3521184e627cd5b2a89189db600d7bf22..6b0c7118ee2516697b942aaf9e3f5056a62ac3f6 100644
+--- a/build/jetpack-compose/SegmentedButton/index.d.ts
++++ b/build/jetpack-compose/SegmentedButton/index.d.ts
+@@ -17,7 +17,7 @@ export type SegmentedButtonColors = {
+     disabledActiveContainerColor?: ColorValue;
+     disabledInactiveContainerColor?: ColorValue;
+ };
+-export type SegmentedButtonProps = {
++export interface SegmentedButtonProps {
+     /**
+      * Whether the button is currently selected (used inside `SingleChoiceSegmentedButtonRow`).
+      */
+diff --git a/build/jetpack-compose/Shape/index.d.ts b/build/jetpack-compose/Shape/index.d.ts
+index babd72dc53fc0c515cf95387746069da6d79357f..ea70bd69c9473d0b77095f1757a6401e54a3f884 100644
+--- a/build/jetpack-compose/Shape/index.d.ts
++++ b/build/jetpack-compose/Shape/index.d.ts
+@@ -22,7 +22,7 @@ export type CornerRadii = {
+      */
+     bottomEnd?: number;
+ };
+-export type ShapeProps = {
++export interface ShapeProps {
+     /**
+      * Corner rounding percentage. Multiplied by the shorter dimension of the view to produce pixel values.
+      * @default 0.0
+diff --git a/build/jetpack-compose/SingleChoiceSegmentedButtonRow/index.d.ts b/build/jetpack-compose/SingleChoiceSegmentedButtonRow/index.d.ts
+index 000473ccac3af81ce879c3205340bd2665428fb9..9d479da5e1f545bd26258ef45931eabe93f16f16 100644
+--- a/build/jetpack-compose/SingleChoiceSegmentedButtonRow/index.d.ts
++++ b/build/jetpack-compose/SingleChoiceSegmentedButtonRow/index.d.ts
+@@ -1,5 +1,5 @@
+ import { type ModifierConfig } from '../../types';
+-export type SingleChoiceSegmentedButtonRowProps = {
++export interface SingleChoiceSegmentedButtonRowProps {
+     /**
+      * SegmentedButton children.
+      */
+diff --git a/build/jetpack-compose/Slider/index.d.ts b/build/jetpack-compose/Slider/index.d.ts
+index 85ba24ecdb04cbafceb9c4e4007780999f98268f..03fb31ac7609fab47f0a30e07d52ebee76361635 100644
+--- a/build/jetpack-compose/Slider/index.d.ts
++++ b/build/jetpack-compose/Slider/index.d.ts
+@@ -11,7 +11,7 @@ export type SliderColors = {
+     activeTickColor?: ColorValue;
+     inactiveTickColor?: ColorValue;
+ };
+-export type SliderProps = {
++export interface SliderProps {
+     /**
+      * The current value of the slider.
+      * @default 0
+diff --git a/build/jetpack-compose/Snackbar/index.d.ts b/build/jetpack-compose/Snackbar/index.d.ts
+index 63f4fe4916e6f8c478ee6655d0d331d54067923b..400c95c62fc31e29635e7dc987c40950640db378 100644
+--- a/build/jetpack-compose/Snackbar/index.d.ts
++++ b/build/jetpack-compose/Snackbar/index.d.ts
+@@ -1,7 +1,7 @@
+ import { type Ref } from 'react';
+ import { type ColorValue } from 'react-native';
+ import { type ModifierConfig } from '../../types';
+-export type SnackbarProps = {
++export interface SnackbarProps {
+     /**
+      * The background color of the snackbar container.
+      */
+@@ -71,7 +71,7 @@ export type SnackbarHostRef = {
+      */
+     showSnackbar: (options: SnackbarShowOptions) => Promise<SnackbarResult>;
+ };
+-export type SnackbarHostProps = {
++export interface SnackbarHostProps {
+     /**
+      * Ref exposing the imperative `showSnackbar` method.
+      */
+diff --git a/build/jetpack-compose/Spacer/index.d.ts b/build/jetpack-compose/Spacer/index.d.ts
+index b33a0adc1e07626987a6cbf2dc26731e4f369ea8..29ae2357330a372468288fd65363367056f3869c 100644
+--- a/build/jetpack-compose/Spacer/index.d.ts
++++ b/build/jetpack-compose/Spacer/index.d.ts
+@@ -1,5 +1,5 @@
+ import type { ExpoModifier } from '../../types';
+-export type SpacerProps = {
++export interface SpacerProps {
+     /**
+      * Modifiers for the component. Use `weight()` modifier to make the spacer flexible.
+      */
+diff --git a/build/jetpack-compose/Surface/index.d.ts b/build/jetpack-compose/Surface/index.d.ts
+index 2a57dad09c93d86b903a4f1d232b2081aed23325..9c421c8bf95c913d6648b0c1a4640cadb14792a0 100644
+--- a/build/jetpack-compose/Surface/index.d.ts
++++ b/build/jetpack-compose/Surface/index.d.ts
+@@ -17,7 +17,7 @@ export type SurfaceBorder = {
+      */
+     color?: ColorValue;
+ };
+-export type SurfaceProps = {
++export interface SurfaceProps {
+     /**
+      * The content to display inside the surface.
+      */
+diff --git a/build/jetpack-compose/Switch/index.d.ts b/build/jetpack-compose/Switch/index.d.ts
+index 693c00d2031ec004737a0c2d7f7fac63b843b3c9..f6a8e0d99437a4220fe3c82fccf0f4549c2ea878 100644
+--- a/build/jetpack-compose/Switch/index.d.ts
++++ b/build/jetpack-compose/Switch/index.d.ts
+@@ -21,7 +21,7 @@ export type SwitchColors = {
+     disabledUncheckedBorderColor?: ColorValue;
+     disabledUncheckedIconColor?: ColorValue;
+ };
+-export type SwitchProps = {
++export interface SwitchProps {
+     /**
+      * Indicates whether the switch is checked.
+      */
+diff --git a/build/jetpack-compose/SyncSwitch/index.d.ts b/build/jetpack-compose/SyncSwitch/index.d.ts
+index 802f1d4760c663195eca789ec3f939f2224dc75f..71f7b6c945af4bebad445f60b533bf467960155f 100644
+--- a/build/jetpack-compose/SyncSwitch/index.d.ts
++++ b/build/jetpack-compose/SyncSwitch/index.d.ts
+@@ -1,6 +1,6 @@
+ import { type ObservableState } from '../../State';
+ import { type ModifierConfig } from '../../types';
+-export type SyncSwitchProps = {
++export interface SyncSwitchProps {
+     /**
+      * An observable state that drives the switch.
+      * Create one with `useNativeState(false)`.
+diff --git a/build/jetpack-compose/Text/index.d.ts b/build/jetpack-compose/Text/index.d.ts
+index 430c91270f70421a1309cf4d047ae5cd84b728e1..394f26c8df696c4d9713b855fc92ceca6702b349 100644
+--- a/build/jetpack-compose/Text/index.d.ts
++++ b/build/jetpack-compose/Text/index.d.ts
+@@ -125,7 +125,7 @@ export type TextStyle = TextSpanStyleBase & {
+      */
+     lineBreak?: TextLineBreak;
+ };
+-export type TextProps = {
++export interface TextProps {
+     /**
+      * The text content to display. Can be a string, number, or nested `Text` components
+      * for inline styled spans.
+diff --git a/build/jetpack-compose/TextField/BasicTextField.d.ts b/build/jetpack-compose/TextField/BasicTextField.d.ts
+index b760e3b2cc87ae5d1a3feda8923ba9e415713ab9..36fc628f2de60ef858c6497ad5a05094e2422428 100644
+--- a/build/jetpack-compose/TextField/BasicTextField.d.ts
++++ b/build/jetpack-compose/TextField/BasicTextField.d.ts
+@@ -11,7 +11,7 @@ export type BasicTextFieldRef = TextFieldRef;
+  * `OutlinedTextField`; use `BasicTextField.DecorationBox` to add your own
+  * decoration.
+  */
+-export type BasicTextFieldProps = CommonTextFieldProperties & {
++export interface BasicTextFieldProps extends CommonTextFieldProperties {
+     /**
+      * Color of the text cursor. Maps to Compose's `cursorBrush` via
+      * `SolidColor(color)`. Defaults to the theme's primary color
+diff --git a/build/jetpack-compose/TextField/TextField.d.ts b/build/jetpack-compose/TextField/TextField.d.ts
+index 5474789648b3b0099da552394b72754849702559..eb8309bf96e291f64722d5840ce4ffd88c5fccb5 100644
+--- a/build/jetpack-compose/TextField/TextField.d.ts
++++ b/build/jetpack-compose/TextField/TextField.d.ts
+@@ -50,7 +50,7 @@ export type TextFieldColors = {
+     disabledSuffixColor?: ColorValue;
+     errorSuffixColor?: ColorValue;
+ };
+-export type TextFieldProps = CommonTextFieldProperties & {
++export interface TextFieldProps extends CommonTextFieldProperties {
+     /** @default false */
+     isError?: boolean;
+     /**
+@@ -61,7 +61,7 @@ export type TextFieldProps = CommonTextFieldProperties & {
+     shape?: ShapeJSXElement;
+     colors?: TextFieldColors;
+ };
+-export type OutlinedTextFieldProps = CommonTextFieldProperties & {
++export interface OutlinedTextFieldProps extends CommonTextFieldProperties {
+     /** @default false */
+     isError?: boolean;
+     /**
+diff --git a/build/jetpack-compose/ToggleButton/index.d.ts b/build/jetpack-compose/ToggleButton/index.d.ts
+index de7355696925c5953fbc30988655545543511cc0..f2bd228cad72a9c42b38352cc95113bf9268733e 100644
+--- a/build/jetpack-compose/ToggleButton/index.d.ts
++++ b/build/jetpack-compose/ToggleButton/index.d.ts
+@@ -11,7 +11,7 @@ export type ToggleButtonColors = {
+     disabledContainerColor?: ColorValue;
+     disabledContentColor?: ColorValue;
+ };
+-export type ToggleButtonProps = {
++export interface ToggleButtonProps {
+     /**
+      * Whether the toggle button is checked.
+      */
+diff --git a/build/jetpack-compose/Tooltip/index.d.ts b/build/jetpack-compose/Tooltip/index.d.ts
+index aa25acd505ccf066472e515bc547cf9fee730db0..1bad7876a5348cf5201e75c41da1e77f3274cad6 100644
+--- a/build/jetpack-compose/Tooltip/index.d.ts
++++ b/build/jetpack-compose/Tooltip/index.d.ts
+@@ -11,7 +11,7 @@ export type TooltipBoxRef = {
+      */
+     dismiss: () => Promise<void>;
+ };
+-export type TooltipBoxProps = {
++export interface TooltipBoxProps {
+     /**
+      * Ref to imperatively show/dismiss the tooltip.
+      */
+@@ -46,7 +46,7 @@ export type TooltipBoxProps = {
+      */
+     children: React.ReactNode;
+ };
+-export type PlainTooltipProps = {
++export interface PlainTooltipProps {
+     containerColor?: ColorValue;
+     contentColor?: ColorValue;
+     modifiers?: ModifierConfig[];
+@@ -57,7 +57,7 @@ export type PlainTooltipProps = {
+  * Children become the tooltip content.
+  */
+ declare function PlainTooltipComponent(props: PlainTooltipProps): import("react/jsx-runtime").JSX.Element;
+-export type RichTooltipProps = {
++export interface RichTooltipProps {
+     containerColor?: ColorValue;
+     contentColor?: ColorValue;
+     titleContentColor?: ColorValue;
+diff --git a/build/jetpack-compose/layout-types.d.ts b/build/jetpack-compose/layout-types.d.ts
+index 53f3e7e1744eb19ba4d95d649ef499f62c1cac2c..fcae4db92216041860c4c9ab29a71684868b726a 100644
+--- a/build/jetpack-compose/layout-types.d.ts
++++ b/build/jetpack-compose/layout-types.d.ts
+@@ -1,5 +1,5 @@
+ import type { ExpoModifier } from '../types';
+-export type PrimitiveBaseProps = {
++export interface PrimitiveBaseProps {
+     /**
+      * Modifiers for the component.
+      */
+diff --git a/src/jetpack-compose/AlertDialog/index.tsx b/src/jetpack-compose/AlertDialog/index.tsx
+index 1430b7fa60373d34d63d8a89816d51d67817c0a0..eeb94868af56a02e82e8c5cd11c00f8411a354a0 100644
+--- a/src/jetpack-compose/AlertDialog/index.tsx
++++ b/src/jetpack-compose/AlertDialog/index.tsx
+@@ -26,7 +26,7 @@ export type AlertDialogColors = {
+   textContentColor?: ColorValue;
+ };
+ 
+-export type AlertDialogProps = {
++export interface AlertDialogProps {
+   /**
+    * Colors for the alert dialog.
+    */
+diff --git a/src/jetpack-compose/AnimatedVisibility/index.tsx b/src/jetpack-compose/AnimatedVisibility/index.tsx
+index 5aa0e6f799573d72861a43b6b9445b0e9055b55f..bb4651502a9dfc0cbe1a1dab5e6f7d262de34256 100644
+--- a/src/jetpack-compose/AnimatedVisibility/index.tsx
++++ b/src/jetpack-compose/AnimatedVisibility/index.tsx
+@@ -163,7 +163,7 @@ export const ExitTransition = {
+     createExitTransition([{ type: 'scaleOut', ...params }]),
+ };
+ 
+-export type AnimatedVisibilityProps = {
++export interface AnimatedVisibilityProps extends PrimitiveBaseProps {
+   children?: React.ReactNode;
+   /**
+    * Whether the content is visible. When changed, the content will animate in or out.
+@@ -181,7 +181,7 @@ export type AnimatedVisibilityProps = {
+    * Defaults to Compose's `fadeOut + shrinkOut` when not specified.
+    */
+   exitTransition?: ExitTransitionType;
+-} & PrimitiveBaseProps;
++}
+ 
+ type AnimatedVisibilityNativeProps = Omit<
+   AnimatedVisibilityProps,
+diff --git a/src/jetpack-compose/Badge/index.tsx b/src/jetpack-compose/Badge/index.tsx
+index 56ea781a51645cbcf837c363c869f240dc1636a7..0b0e8af0d47387191cabda9c3108384dab23cfe5 100644
+--- a/src/jetpack-compose/Badge/index.tsx
++++ b/src/jetpack-compose/Badge/index.tsx
+@@ -4,7 +4,7 @@ import { type ColorValue } from 'react-native';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type BadgeProps = {
++export interface BadgeProps {
+   /**
+    * Background color of the badge.
+    * @default BadgeDefaults.containerColor
+diff --git a/src/jetpack-compose/BadgedBox/index.tsx b/src/jetpack-compose/BadgedBox/index.tsx
+index 8d657771ebade4f5fc33bfbfdaffa901b5d9fe96..2d7ec282ad70ee9d8794f84606658c1ee2867717 100644
+--- a/src/jetpack-compose/BadgedBox/index.tsx
++++ b/src/jetpack-compose/BadgedBox/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type BadgedBoxProps = {
++export interface BadgedBoxProps {
+   /**
+    * Modifiers for the component.
+    */
+diff --git a/src/jetpack-compose/BasicAlertDialog/index.tsx b/src/jetpack-compose/BasicAlertDialog/index.tsx
+index 1f0b4aed84947e5e6b4e016a4d14e61457b25575..403aa7212b6f6e1a1bccb61ded3f730c8044d31e 100644
+--- a/src/jetpack-compose/BasicAlertDialog/index.tsx
++++ b/src/jetpack-compose/BasicAlertDialog/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ViewEvent, type ModifierConfig, type DialogProperties } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type BasicAlertDialogProps = {
++export interface BasicAlertDialogProps {
+   /**
+    * The content to display inside the dialog.
+    */
+diff --git a/src/jetpack-compose/Box/index.tsx b/src/jetpack-compose/Box/index.tsx
+index d41d3018d6026747a16d87b76ded4730f402d2ad..4d13df8499ffd13e25e28f72817f7156d5b80733 100644
+--- a/src/jetpack-compose/Box/index.tsx
++++ b/src/jetpack-compose/Box/index.tsx
+@@ -7,7 +7,7 @@ import {
+   transformProps,
+ } from '../layout-types';
+ 
+-export type BoxProps = {
++export interface BoxProps extends PrimitiveBaseProps {
+   children?: React.ReactNode;
+   /**
+    * Alignment of children within the box.
+@@ -17,7 +17,7 @@ export type BoxProps = {
+    * Scroll behavior for the floating toolbar exit.
+    */
+   floatingToolbarExitAlwaysScrollBehavior?: FloatingToolbarExitAlwaysScrollBehavior;
+-} & PrimitiveBaseProps;
++}
+ 
+ const BoxNativeView: React.ComponentType<BoxProps> = requireNativeView('ExpoUI', 'BoxView');
+ 
+diff --git a/src/jetpack-compose/Button/index.tsx b/src/jetpack-compose/Button/index.tsx
+index a1f9239f70502f0b4be1a7373dcad2427f55402b..8ac2eb1ab35ac22a622aa9b1b586592df63b2ab1 100644
+--- a/src/jetpack-compose/Button/index.tsx
++++ b/src/jetpack-compose/Button/index.tsx
+@@ -26,7 +26,7 @@ export type ButtonContentPadding = {
+   bottom?: number;
+ };
+ 
+-export type ButtonProps = {
++export interface ButtonProps {
+   /**
+    * Callback that is called when the button is clicked.
+    */
+diff --git a/src/jetpack-compose/Card/index.tsx b/src/jetpack-compose/Card/index.tsx
+index cf7a2a4c2878ac4aca78e79d0b1d2008e059f343..042908c27a3d5b24241ba93b1093b0df09b187e6 100644
+--- a/src/jetpack-compose/Card/index.tsx
++++ b/src/jetpack-compose/Card/index.tsx
+@@ -49,7 +49,7 @@ function createCardComponent<P extends { modifiers?: ModifierConfig[] }>(
+ 
+ // region Card
+ 
+-export type CardProps = {
++export interface CardProps {
+   /**
+    * The content to display inside the card.
+    */
+@@ -81,7 +81,7 @@ export const Card = createCardComponent<CardProps>('CardView');
+ 
+ // region ElevatedCard
+ 
+-export type ElevatedCardProps = {
++export interface ElevatedCardProps {
+   /**
+    * The content to display inside the card.
+    */
+@@ -109,7 +109,7 @@ export const ElevatedCard = createCardComponent<ElevatedCardProps>('ElevatedCard
+ 
+ // region OutlinedCard
+ 
+-export type OutlinedCardProps = {
++export interface OutlinedCardProps {
+   /**
+    * The content to display inside the card.
+    */
+diff --git a/src/jetpack-compose/Carousel/index.tsx b/src/jetpack-compose/Carousel/index.tsx
+index 429f0f94aed42d9c0f84d6c1773d166d36793a4f..08534cc89f292583d2bfa566824daaf84a17a360 100644
+--- a/src/jetpack-compose/Carousel/index.tsx
++++ b/src/jetpack-compose/Carousel/index.tsx
+@@ -71,7 +71,7 @@ function createCarouselComponent<P extends { modifiers?: ModifierConfig[] }>(
+ 
+ // region HorizontalCenteredHeroCarousel
+ 
+-export type HorizontalCenteredHeroCarouselProps = CarouselCommonConfig & {
++export interface HorizontalCenteredHeroCarouselProps extends CarouselCommonConfig {
+   /**
+    * Maximum width of the hero item in dp.
+    * When unspecified, the hero item will be as wide as possible.
+@@ -102,7 +102,7 @@ export const HorizontalCenteredHeroCarousel =
+ 
+ // region HorizontalMultiBrowseCarousel
+ 
+-export type HorizontalMultiBrowseCarouselProps = CarouselCommonConfig & {
++export interface HorizontalMultiBrowseCarouselProps extends CarouselCommonConfig {
+   /**
+    * The preferred width of the large item in dp.
+    */
+@@ -130,7 +130,7 @@ export const HorizontalMultiBrowseCarousel =
+ 
+ // region HorizontalUncontainedCarousel
+ 
+-export type HorizontalUncontainedCarouselProps = CarouselCommonConfig & {
++export interface HorizontalUncontainedCarouselProps extends CarouselCommonConfig {
+   /**
+    * The width of each item in dp.
+    */
+diff --git a/src/jetpack-compose/Checkbox/index.tsx b/src/jetpack-compose/Checkbox/index.tsx
+index 614c9f58a7a40b922161e6b15431e02da503c1b0..cc6d88e0b26e4ace3a2f9ef9956cd809e6b0a924 100644
+--- a/src/jetpack-compose/Checkbox/index.tsx
++++ b/src/jetpack-compose/Checkbox/index.tsx
+@@ -16,7 +16,7 @@ export type CheckboxColors = {
+   disabledIndeterminateColor?: ColorValue;
+ };
+ 
+-export type CheckboxProps = {
++export interface CheckboxProps {
+   /**
+    * Indicates whether the checkbox is checked.
+    */
+@@ -75,7 +75,7 @@ export function Checkbox(props: CheckboxProps) {
+  */
+ export type ToggleableState = 'on' | 'off' | 'indeterminate';
+ 
+-export type TriStateCheckboxProps = {
++export interface TriStateCheckboxProps {
+   /**
+    * The toggleable state of the checkbox: `'on'`, `'off'`, or `'indeterminate'`.
+    */
+diff --git a/src/jetpack-compose/Chip/index.tsx b/src/jetpack-compose/Chip/index.tsx
+index fddefdce36adcacb2017241ef4e12c343f5665c4..dd1e7457d39c34b1df062fcc963a4a717911e3f4 100644
+--- a/src/jetpack-compose/Chip/index.tsx
++++ b/src/jetpack-compose/Chip/index.tsx
+@@ -81,7 +81,7 @@ const SlotNativeView: React.ComponentType<NativeSlotViewProps> = requireNativeVi
+ 
+ // region AssistChip
+ 
+-export type AssistChipProps = {
++export interface AssistChipProps {
+   /**
+    * Whether the chip is enabled and can be clicked.
+    * @default true
+@@ -170,7 +170,7 @@ export { AssistChipComponent as AssistChip };
+ 
+ // region FilterChip
+ 
+-export type FilterChipProps = {
++export interface FilterChipProps {
+   /**
+    * Whether the chip is currently selected.
+    */
+@@ -262,7 +262,7 @@ export { FilterChipComponent as FilterChip };
+ 
+ // region InputChip
+ 
+-export type InputChipProps = {
++export interface InputChipProps {
+   /**
+    * Whether the chip is enabled and can be interacted with.
+    * @default true
+@@ -356,7 +356,7 @@ export { InputChipComponent as InputChip };
+ 
+ // region SuggestionChip
+ 
+-export type SuggestionChipProps = {
++export interface SuggestionChipProps {
+   /**
+    * Whether the chip is enabled and can be clicked.
+    * @default true
+diff --git a/src/jetpack-compose/Column/index.tsx b/src/jetpack-compose/Column/index.tsx
+index f7e5c91098565192a1c77f63bcaaeafe033e584f..b117723e54dceb13433b98e9a7056ee406bada8f 100644
+--- a/src/jetpack-compose/Column/index.tsx
++++ b/src/jetpack-compose/Column/index.tsx
+@@ -9,7 +9,7 @@ import {
+   transformProps,
+ } from '../layout-types';
+ 
+-export type ColumnProps = {
++export interface ColumnProps extends PrimitiveBaseProps {
+   children?: React.ReactNode;
+   /**
+    * Horizontal arrangement of children.
+@@ -27,7 +27,7 @@ export type ColumnProps = {
+    * Vertical alignment of children.
+    */
+   verticalAlignment?: VerticalAlignment;
+-} & PrimitiveBaseProps;
++}
+ 
+ const ColumnNativeView: React.ComponentType<ColumnProps> = requireNativeView(
+   'ExpoUI',
+diff --git a/src/jetpack-compose/DatePicker/index.tsx b/src/jetpack-compose/DatePicker/index.tsx
+index 82ce5cb07391d3eca2e55487f3617baa40dab1b2..9dd72a6e66159c3ffbac40658275b34ab751207f 100644
+--- a/src/jetpack-compose/DatePicker/index.tsx
++++ b/src/jetpack-compose/DatePicker/index.tsx
+@@ -98,7 +98,7 @@ export type TimePickerElementColors = {
+   timeSelectorUnselectedContentColor?: ColorValue;
+ };
+ 
+-export type DateTimePickerProps = {
++export interface DateTimePickerProps {
+   /**
+    * The initial date to display on the picker.
+    */
+@@ -212,7 +212,7 @@ export function DateTimePicker(props: DateTimePickerProps) {
+ 
+ // -- Dialog views (used internally by the compat layer) ---------------------
+ 
+-export type DatePickerDialogProps = {
++export interface DatePickerDialogProps {
+   initialDate?: string | null;
+   variant?: AndroidVariant;
+   showVariantToggle?: boolean;
+@@ -260,7 +260,7 @@ export function DatePickerDialog(props: DatePickerDialogProps) {
+   return <DatePickerDialogNativeView {...nativeProps} />;
+ }
+ 
+-export type TimePickerDialogProps = {
++export interface TimePickerDialogProps {
+   initialDate?: string | null;
+   is24Hour?: boolean;
+   confirmButtonLabel?: string;
+diff --git a/src/jetpack-compose/DockedSearchBar/index.tsx b/src/jetpack-compose/DockedSearchBar/index.tsx
+index deac7ba0d2678c5ecc373538a6dce92beff58221..23bd53c269a6bb4ac3622fe3cc0d1a4d43ba16b4 100644
+--- a/src/jetpack-compose/DockedSearchBar/index.tsx
++++ b/src/jetpack-compose/DockedSearchBar/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ExpoModifier, type ViewEvent } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type DockedSearchBarProps = {
++export interface DockedSearchBarProps {
+   /**
+    * Callback function that is called when the search query changes.
+    */
+diff --git a/src/jetpack-compose/DropdownMenu/DropdownMenuItem.tsx b/src/jetpack-compose/DropdownMenu/DropdownMenuItem.tsx
+index d7b68fe55794e5700404a6fe7134561eb3b4fa6d..5a0e17ae17922c2dd062f684f402a06457d26519 100644
+--- a/src/jetpack-compose/DropdownMenu/DropdownMenuItem.tsx
++++ b/src/jetpack-compose/DropdownMenu/DropdownMenuItem.tsx
+@@ -31,7 +31,7 @@ export type DropdownMenuItemElementColors = {
+ /**
+  * Props of the `DropdownMenuItem` component.
+  */
+-export type DropdownMenuItemProps = {
++export interface DropdownMenuItemProps {
+   /**
+    * Whether the menu item is enabled.
+    * @default true
+diff --git a/src/jetpack-compose/DropdownMenu/index.tsx b/src/jetpack-compose/DropdownMenu/index.tsx
+index 772309e3ef21981406a351b4532e74e2860b0417..b6bd589dfc62eaceee2fcb7eca5d1b7373378f34 100644
+--- a/src/jetpack-compose/DropdownMenu/index.tsx
++++ b/src/jetpack-compose/DropdownMenu/index.tsx
+@@ -19,7 +19,7 @@ const SlotNativeView: React.ComponentType<{
+ /**
+  * Props of the `DropdownMenu` component.
+  */
+-export type DropdownMenuProps = {
++export interface DropdownMenuProps {
+   /**
+    * The contents of the submenu are used as an anchor for the dropdown menu.
+    * The children will be wrapped in a pressable element, which triggers opening of the dropdown menu.
+diff --git a/src/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.tsx b/src/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.tsx
+index c7556db9552a1015b72e96c7174f7a909e3b9802..a4e5ed7de10ef4b342e107fe1a1f9288c94d81fa 100644
+--- a/src/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.tsx
++++ b/src/jetpack-compose/ExposedDropdownMenuBox/ExposedDropdownMenu.tsx
+@@ -13,7 +13,7 @@ const NativeView: React.ComponentType<ExposedDropdownMenuProps> = requireNativeV
+ /**
+  * Props for the `ExposedDropdownMenu` component.
+  */
+-export type ExposedDropdownMenuProps = {
++export interface ExposedDropdownMenuProps {
+   /**
+    * Whether the dropdown menu is expanded (visible).
+    */
+diff --git a/src/jetpack-compose/ExposedDropdownMenuBox/index.tsx b/src/jetpack-compose/ExposedDropdownMenuBox/index.tsx
+index 9c8322e003bd3a3b7e9cf481394d0158e6bdc583..dd3f1b77ba35f62cc4ca0ec4e8935ea7ce0f8eba 100644
+--- a/src/jetpack-compose/ExposedDropdownMenuBox/index.tsx
++++ b/src/jetpack-compose/ExposedDropdownMenuBox/index.tsx
+@@ -10,7 +10,7 @@ const NativeView: React.ComponentType<NativeExposedDropdownMenuBoxProps> = requi
+   'ExposedDropdownMenuBoxView'
+ );
+ 
+-export type ExposedDropdownMenuBoxProps = {
++export interface ExposedDropdownMenuBoxProps {
+   /**
+    * Whether the dropdown menu is expanded (visible).
+    */
+diff --git a/src/jetpack-compose/FloatingActionButton/index.tsx b/src/jetpack-compose/FloatingActionButton/index.tsx
+index 20f18205063880184801a7d0c65d12884dcce09e..fdedbc0308df7225c74f08d78080b718959d6d92 100644
+--- a/src/jetpack-compose/FloatingActionButton/index.tsx
++++ b/src/jetpack-compose/FloatingActionButton/index.tsx
+@@ -16,7 +16,7 @@ type NativeSlotViewProps = {
+ /**
+  * Props shared by all `FloatingActionButton` variants.
+  */
+-export type FloatingActionButtonProps = {
++export interface FloatingActionButtonProps {
+   /**
+    * Slot-based children (use `.Icon` sub-component).
+    */
+@@ -54,7 +54,7 @@ export type LargeFloatingActionButtonProps = FloatingActionButtonProps;
+ /**
+  * Props for the `ExtendedFloatingActionButton` component.
+  */
+-export type ExtendedFloatingActionButtonProps = FloatingActionButtonProps & {
++export interface ExtendedFloatingActionButtonProps extends FloatingActionButtonProps {
+   /**
+    * Slot-based children (use `.Icon` and `.Text` sub-components).
+    */
+diff --git a/src/jetpack-compose/FlowRow/index.tsx b/src/jetpack-compose/FlowRow/index.tsx
+index 9a337ae83d4f15ac2aa043ecce90e053afe59660..a41af2ac234466c128413726cc106add7bd528ae 100644
+--- a/src/jetpack-compose/FlowRow/index.tsx
++++ b/src/jetpack-compose/FlowRow/index.tsx
+@@ -7,7 +7,7 @@ import {
+   transformProps,
+ } from '../layout-types';
+ 
+-export type FlowRowProps = {
++export interface FlowRowProps extends PrimitiveBaseProps {
+   children?: React.ReactNode;
+   /**
+    * Horizontal arrangement of children.
+@@ -17,7 +17,7 @@ export type FlowRowProps = {
+    * Vertical arrangement of children.
+    */
+   verticalArrangement?: VerticalArrangement;
+-} & PrimitiveBaseProps;
++}
+ 
+ const FlowRowNativeView: React.ComponentType<FlowRowProps> = requireNativeView(
+   'ExpoUI',
+diff --git a/src/jetpack-compose/HorizontalFloatingToolbar/index.tsx b/src/jetpack-compose/HorizontalFloatingToolbar/index.tsx
+index 2e12fd0a7c9418547ecacf3f61667d81c0373950..8ff942d31d2aa8fb8647622ebcc62924743c6ad8 100644
+--- a/src/jetpack-compose/HorizontalFloatingToolbar/index.tsx
++++ b/src/jetpack-compose/HorizontalFloatingToolbar/index.tsx
+@@ -26,7 +26,7 @@ export type HorizontalFloatingToolbarColors = {
+   fabContentColor?: ColorValue;
+ };
+ 
+-export type HorizontalFloatingToolbarProps = {
++export interface HorizontalFloatingToolbarProps {
+   /**
+    * The variant of the horizontal floating toolbar.
+    * @default 'standard'
+@@ -50,7 +50,7 @@ export type HorizontalFloatingToolbarProps = {
+   modifiers?: ExpoModifier[];
+ };
+ 
+-export type HorizontalFloatingToolbarFloatingActionButtonProps = {
++export interface HorizontalFloatingToolbarFloatingActionButtonProps {
+   /**
+    * A callback that is called when the button is pressed.
+    */
+diff --git a/src/jetpack-compose/HorizontalPager/index.tsx b/src/jetpack-compose/HorizontalPager/index.tsx
+index 84a34b82dd6cd4db1b7a24526f59dd9620ce40f4..b67ef63c9e382ea2ca57b4e55c397d13397c4a22 100644
+--- a/src/jetpack-compose/HorizontalPager/index.tsx
++++ b/src/jetpack-compose/HorizontalPager/index.tsx
+@@ -26,7 +26,7 @@ export type HorizontalPagerHandle = {
+  */
+ export type HorizontalPagerDragInteraction = 'start' | 'stop' | 'cancel';
+ 
+-export type HorizontalPagerProps = {
++export interface HorizontalPagerProps {
+   /**
+    * Imperative handle for programmatic navigation. Mirrors the methods on
+    * Compose's `PagerState`.
+diff --git a/src/jetpack-compose/Host/index.tsx b/src/jetpack-compose/Host/index.tsx
+index 7854e396a6e41cf5fa689ecb167cf6ef420c622b..398aa515fe40ac3a86b341de16fee1490ccbec97 100644
+--- a/src/jetpack-compose/Host/index.tsx
++++ b/src/jetpack-compose/Host/index.tsx
+@@ -12,7 +12,7 @@ import {
+ import { getMaterialColors, HostPaletteContext } from '../colors';
+ import { type PrimitiveBaseProps } from '../layout';
+ 
+-export type HostProps = {
++export interface HostProps extends PrimitiveBaseProps {
+   /**
+    * When true, the host view will update its size in the React Native view tree to match the content's layout from Jetpack Compose.
+    * Can be only set once on mount.
+@@ -65,7 +65,7 @@ export type HostProps = {
+   children: React.ReactNode;
+   style?: StyleProp<ViewStyle>;
+   pointerEvents?: 'box-none' | 'none' | 'box-only' | 'auto';
+-} & PrimitiveBaseProps;
++}
+ 
+ type NativeHostProps = Omit<HostProps, 'colorScheme'> & {
+   matchContentsVertical?: boolean;
+diff --git a/src/jetpack-compose/Icon/index.tsx b/src/jetpack-compose/Icon/index.tsx
+index 29887f8467531535f7e1fe5c95078fab86daa934..03f07f9a776b839f6afef19273712ccf3f0a29fa 100644
+--- a/src/jetpack-compose/Icon/index.tsx
++++ b/src/jetpack-compose/Icon/index.tsx
+@@ -9,7 +9,7 @@ import {
+ import type { ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type IconProps = {
++export interface IconProps {
+   /**
+    * The source of the icon. Can be a URI string or the result of `require()`.
+    * On Android, supports XML vector drawables loaded via Metro bundler.
+diff --git a/src/jetpack-compose/IconButton/index.tsx b/src/jetpack-compose/IconButton/index.tsx
+index 34487788737bfd68162235a698d535a36e7bb1f3..e963ca9b4fdb85d4bce7046ccb955d80a808dde5 100644
+--- a/src/jetpack-compose/IconButton/index.tsx
++++ b/src/jetpack-compose/IconButton/index.tsx
+@@ -15,7 +15,7 @@ export type IconButtonColors = {
+   disabledContentColor?: ColorValue;
+ };
+ 
+-export type IconButtonProps = {
++export interface IconButtonProps {
+   /**
+    * Callback that is called when the icon button is clicked.
+    */
+diff --git a/src/jetpack-compose/LazyColumn/index.tsx b/src/jetpack-compose/LazyColumn/index.tsx
+index 8b95abf0febf501f8a86a0b92b9c64c1f268e0fe..51b2f697c3a225b9f46cf8db8fd46db5be8129c6 100644
+--- a/src/jetpack-compose/LazyColumn/index.tsx
++++ b/src/jetpack-compose/LazyColumn/index.tsx
+@@ -25,7 +25,7 @@ export type ContentPadding = {
+   bottom?: number;
+ };
+ 
+-export type LazyColumnProps = {
++export interface LazyColumnProps {
+   /**
+    * The content to display inside the lazy column.
+    */
+diff --git a/src/jetpack-compose/LazyRow/index.tsx b/src/jetpack-compose/LazyRow/index.tsx
+index f4205b50290942366e194ac1bf72783894fc4cdb..1b667b8a7957114386204f32ba51b3e593e52d8c 100644
+--- a/src/jetpack-compose/LazyRow/index.tsx
++++ b/src/jetpack-compose/LazyRow/index.tsx
+@@ -4,7 +4,7 @@ import type { ExpoModifier } from '../../types';
+ import { type ContentPadding } from '../LazyColumn';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type LazyRowProps = {
++export interface LazyRowProps {
+   /**
+    * The content to display inside the lazy row.
+    */
+diff --git a/src/jetpack-compose/ListItem/index.tsx b/src/jetpack-compose/ListItem/index.tsx
+index c31aed988f0b4a69c66423999da9a280055254af..997f319d6b3b14595f64d721c56e2c276141ac9d 100644
+--- a/src/jetpack-compose/ListItem/index.tsx
++++ b/src/jetpack-compose/ListItem/index.tsx
+@@ -16,7 +16,7 @@ export type ListItemColors = {
+   overlineContentColor?: ColorValue;
+ };
+ 
+-export type ListItemProps = {
++export interface ListItemProps {
+   /**
+    * Colors for list item elements.
+    */
+diff --git a/src/jetpack-compose/LoadingIndicator/index.tsx b/src/jetpack-compose/LoadingIndicator/index.tsx
+index 28720197ede46413cfa081524c0e27ccf5049071..446074fa8dfaaf7310a25d4fcf8a870c0cac26b1 100644
+--- a/src/jetpack-compose/LoadingIndicator/index.tsx
++++ b/src/jetpack-compose/LoadingIndicator/index.tsx
+@@ -71,7 +71,7 @@ export const LoadingIndicator = createLoadingIndicatorComponent('LoadingIndicato
+ 
+ // region ContainedLoadingIndicator
+ 
+-export type ContainedLoadingIndicatorProps = LoadingIndicatorCommonConfig & {
++export interface ContainedLoadingIndicatorProps extends LoadingIndicatorCommonConfig {
+   /**
+    * Loading indicator's container color
+    */
+diff --git a/src/jetpack-compose/ModalBottomSheet/index.tsx b/src/jetpack-compose/ModalBottomSheet/index.tsx
+index e62702572183d6bdb5e934389248ac38611dbb4c..dd72ebf169f03bd925a20c976cfb2fd0e710745e 100644
+--- a/src/jetpack-compose/ModalBottomSheet/index.tsx
++++ b/src/jetpack-compose/ModalBottomSheet/index.tsx
+@@ -42,7 +42,7 @@ export type ModalBottomSheetProperties = {
+   shouldDismissOnClickOutside?: boolean;
+ };
+ 
+-export type ModalBottomSheetProps = {
++export interface ModalBottomSheetProps {
+   /**
+    * The children of the `ModalBottomSheet` component.
+    * Can include a `ModalBottomSheet.DragHandle` slot for a custom drag handle.
+diff --git a/src/jetpack-compose/MultiChoiceSegmentedButtonRow/index.tsx b/src/jetpack-compose/MultiChoiceSegmentedButtonRow/index.tsx
+index 136abc9d3889f0db11ec0c3ea433630c912abdbd..6ec4ee79209a9dba4b0bd961515c1a446008f572 100644
+--- a/src/jetpack-compose/MultiChoiceSegmentedButtonRow/index.tsx
++++ b/src/jetpack-compose/MultiChoiceSegmentedButtonRow/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type MultiChoiceSegmentedButtonRowProps = {
++export interface MultiChoiceSegmentedButtonRowProps {
+   /**
+    * SegmentedButton children.
+    */
+diff --git a/src/jetpack-compose/NavigationBar/index.tsx b/src/jetpack-compose/NavigationBar/index.tsx
+index 321166d82e43b306884d53f7e21f0f89f6e432f3..eb1ac0a4afda352e945744d6ff9595b785b71e1e 100644
+--- a/src/jetpack-compose/NavigationBar/index.tsx
++++ b/src/jetpack-compose/NavigationBar/index.tsx
+@@ -26,7 +26,7 @@ export type NavigationBarItemColors = {
+   disabledTextColor?: ColorValue;
+ };
+ 
+-export type NavigationBarProps = {
++export interface NavigationBarProps {
+   /**
+    * Background color of the navigation bar.
+    * @default NavigationBarDefaults.containerColor
+@@ -52,7 +52,7 @@ export type NavigationBarProps = {
+   children?: React.ReactNode;
+ };
+ 
+-export type NavigationBarItemProps = {
++export interface NavigationBarItemProps {
+   /**
+    * Whether this item is currently selected.
+    */
+diff --git a/src/jetpack-compose/Progress/index.tsx b/src/jetpack-compose/Progress/index.tsx
+index 0abd80a52c3e67e92d440cb751aa98b0a7ac8114..3cb67a3e1eef623825f5ce2b419d2e52787b96b5 100644
+--- a/src/jetpack-compose/Progress/index.tsx
++++ b/src/jetpack-compose/Progress/index.tsx
+@@ -72,7 +72,7 @@ export type DrawStopIndicatorConfig = {
+   stopSize?: number;
+ };
+ 
+-export type LinearProgressIndicatorProps = ProgressCommonConfig & {
++export interface LinearProgressIndicatorProps extends ProgressCommonConfig {
+   /**
+    * Stroke cap style for the indicator ends.
+    * @default 'round'
+@@ -101,7 +101,7 @@ export const LinearProgressIndicator = createProgressComponent<LinearProgressInd
+ 
+ // region CircularProgressIndicator
+ 
+-export type CircularProgressIndicatorProps = ProgressCommonConfig & {
++export interface CircularProgressIndicatorProps extends ProgressCommonConfig {
+   /**
+    * Width of the circular stroke in dp.
+    */
+@@ -130,7 +130,7 @@ export const CircularProgressIndicator = createProgressComponent<CircularProgres
+ 
+ // region LinearWavyProgressIndicator
+ 
+-export type LinearWavyProgressIndicatorProps = ProgressCommonConfig & {
++export interface LinearWavyProgressIndicatorProps extends ProgressCommonConfig {
+   /**
+    * Size of the stop indicator in dp at the end of the determinate progress track.
+    */
+diff --git a/src/jetpack-compose/PullToRefreshBox/index.tsx b/src/jetpack-compose/PullToRefreshBox/index.tsx
+index 20d7b3187ad6101bc8472c9d93df34cb96ee378c..b481029d85b504b14b25fb20c642de4b68318d18 100644
+--- a/src/jetpack-compose/PullToRefreshBox/index.tsx
++++ b/src/jetpack-compose/PullToRefreshBox/index.tsx
+@@ -8,7 +8,7 @@ import { createViewModifierEventListener } from '../modifiers/utils';
+ /**
+  * Configuration for the loading indicator shown during pull-to-refresh.
+  */
+-export type PullToRefreshIndicatorProps = {
++export interface PullToRefreshIndicatorProps {
+   /**
+    * Color of the loading indicator spinner.
+    * @default MaterialTheme.colorScheme.primary
+@@ -25,7 +25,7 @@ export type PullToRefreshIndicatorProps = {
+   modifiers?: ModifierConfig[];
+ };
+ 
+-export type PullToRefreshBoxProps = {
++export interface PullToRefreshBoxProps {
+   /**
+    * Whether the content is refreshing.
+    * @default false
+diff --git a/src/jetpack-compose/RadioButton/index.tsx b/src/jetpack-compose/RadioButton/index.tsx
+index 35aad51f0a48e24d685705a8b00ba56efcced563..50fcdf83542c3a41559e527ab7c3c328f67ad170 100644
+--- a/src/jetpack-compose/RadioButton/index.tsx
++++ b/src/jetpack-compose/RadioButton/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ModifierConfig, type ViewEvent } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type RadioButtonProps = {
++export interface RadioButtonProps {
+   /**
+    * Whether the radio button is selected.
+    */
+diff --git a/src/jetpack-compose/Row/index.tsx b/src/jetpack-compose/Row/index.tsx
+index ae3a966c718d611bb835ddff2ec95706e525959f..e34ffa92374217142689b9df14ac8bb17a566227 100644
+--- a/src/jetpack-compose/Row/index.tsx
++++ b/src/jetpack-compose/Row/index.tsx
+@@ -9,7 +9,7 @@ import {
+   transformProps,
+ } from '../layout-types';
+ 
+-export type RowProps = {
++export interface RowProps extends PrimitiveBaseProps {
+   children?: React.ReactNode;
+   /**
+    * Horizontal arrangement of children.
+@@ -27,7 +27,7 @@ export type RowProps = {
+    * Vertical alignment of children.
+    */
+   verticalAlignment?: VerticalAlignment;
+-} & PrimitiveBaseProps;
++}
+ 
+ const RowNativeView: React.ComponentType<RowProps> = requireNativeView('ExpoUI', 'RowView');
+ 
+diff --git a/src/jetpack-compose/SearchBar/index.tsx b/src/jetpack-compose/SearchBar/index.tsx
+index f9ad6070f84027b0a864ad8a111f4aa02f3491bf..57ed33054a6a5fe89244ca56b113ea07b2b2ee6a 100644
+--- a/src/jetpack-compose/SearchBar/index.tsx
++++ b/src/jetpack-compose/SearchBar/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ExpoModifier, type ViewEvent } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type SearchBarProps = {
++export interface SearchBarProps {
+   /**
+    * Callback function that is called when the search text is submitted.
+    */
+diff --git a/src/jetpack-compose/SegmentedButton/index.tsx b/src/jetpack-compose/SegmentedButton/index.tsx
+index 20f9ddd42a998324c24243a66dc1c377c6202587..03a47e6832d703038f3fb83d03f1ccd2d861c918 100644
+--- a/src/jetpack-compose/SegmentedButton/index.tsx
++++ b/src/jetpack-compose/SegmentedButton/index.tsx
+@@ -22,7 +22,7 @@ export type SegmentedButtonColors = {
+   disabledInactiveContainerColor?: ColorValue;
+ };
+ 
+-export type SegmentedButtonProps = {
++export interface SegmentedButtonProps {
+   /**
+    * Whether the button is currently selected (used inside `SingleChoiceSegmentedButtonRow`).
+    */
+diff --git a/src/jetpack-compose/Shape/index.tsx b/src/jetpack-compose/Shape/index.tsx
+index 290434fe72d4fed4083632f85b437e12f4b9edd9..4befaa62a814fd7b2cae7995711ab70a5144ce74 100644
+--- a/src/jetpack-compose/Shape/index.tsx
++++ b/src/jetpack-compose/Shape/index.tsx
+@@ -35,7 +35,7 @@ export type CornerRadii = {
+   bottomEnd?: number;
+ };
+ 
+-export type ShapeProps = {
++export interface ShapeProps {
+   /**
+    * Corner rounding percentage. Multiplied by the shorter dimension of the view to produce pixel values.
+    * @default 0.0
+diff --git a/src/jetpack-compose/SingleChoiceSegmentedButtonRow/index.tsx b/src/jetpack-compose/SingleChoiceSegmentedButtonRow/index.tsx
+index 567f6321c08bc0fce6afb397811992be90534a50..6c9d1d639be07d6d71f3f5936ee67f9219382b7e 100644
+--- a/src/jetpack-compose/SingleChoiceSegmentedButtonRow/index.tsx
++++ b/src/jetpack-compose/SingleChoiceSegmentedButtonRow/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type SingleChoiceSegmentedButtonRowProps = {
++export interface SingleChoiceSegmentedButtonRowProps {
+   /**
+    * SegmentedButton children.
+    */
+diff --git a/src/jetpack-compose/Slider/index.tsx b/src/jetpack-compose/Slider/index.tsx
+index 05523117de9ca364a44a56f2a992bb119d4e2f5c..d42b050fa09596bfc5c5ca16ee5ce2dba828c44f 100644
+--- a/src/jetpack-compose/Slider/index.tsx
++++ b/src/jetpack-compose/Slider/index.tsx
+@@ -26,7 +26,7 @@ export type SliderColors = {
+   inactiveTickColor?: ColorValue;
+ };
+ 
+-export type SliderProps = {
++export interface SliderProps {
+   /**
+    * The current value of the slider.
+    * @default 0
+diff --git a/src/jetpack-compose/Snackbar/index.tsx b/src/jetpack-compose/Snackbar/index.tsx
+index 0cc5d7f105587b7d3a6fb3165823fb1a4a228f24..f4af427a25c05c3012fd5b9dd0605df639f91a9a 100644
+--- a/src/jetpack-compose/Snackbar/index.tsx
++++ b/src/jetpack-compose/Snackbar/index.tsx
+@@ -5,7 +5,7 @@ import { type ColorValue } from 'react-native';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type SnackbarProps = {
++export interface SnackbarProps {
+   /**
+    * The background color of the snackbar container.
+    */
+@@ -97,7 +97,7 @@ export type SnackbarHostRef = {
+   showSnackbar: (options: SnackbarShowOptions) => Promise<SnackbarResult>;
+ };
+ 
+-export type SnackbarHostProps = {
++export interface SnackbarHostProps {
+   /**
+    * Ref exposing the imperative `showSnackbar` method.
+    */
+diff --git a/src/jetpack-compose/Spacer/index.tsx b/src/jetpack-compose/Spacer/index.tsx
+index 1f7552fe9d3b5d237031a51c1d4f195d1a85b013..941bc7a6c8a322c99cfa2f9dab8166e8ebad36ae 100644
+--- a/src/jetpack-compose/Spacer/index.tsx
++++ b/src/jetpack-compose/Spacer/index.tsx
+@@ -3,7 +3,7 @@ import { requireNativeView } from 'expo';
+ import type { ExpoModifier } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type SpacerProps = {
++export interface SpacerProps {
+   /**
+    * Modifiers for the component. Use `weight()` modifier to make the spacer flexible.
+    */
+diff --git a/src/jetpack-compose/Surface/index.tsx b/src/jetpack-compose/Surface/index.tsx
+index ede6f7a1d2aa747ae563b71331d94cc6eab23e13..c6c0e687957f871fa74f875aa97093ddcc431bdd 100644
+--- a/src/jetpack-compose/Surface/index.tsx
++++ b/src/jetpack-compose/Surface/index.tsx
+@@ -22,7 +22,7 @@ export type SurfaceBorder = {
+   color?: ColorValue;
+ };
+ 
+-export type SurfaceProps = {
++export interface SurfaceProps {
+   /**
+    * The content to display inside the surface.
+    */
+diff --git a/src/jetpack-compose/Switch/index.tsx b/src/jetpack-compose/Switch/index.tsx
+index 87bf1b2a446d0962aec0776edbf761ad5260bbe1..eed1970bd27a3bf22cf1c0f97e00c95330685f63 100644
+--- a/src/jetpack-compose/Switch/index.tsx
++++ b/src/jetpack-compose/Switch/index.tsx
+@@ -27,7 +27,7 @@ export type SwitchColors = {
+   disabledUncheckedIconColor?: ColorValue;
+ };
+ 
+-export type SwitchProps = {
++export interface SwitchProps {
+   /**
+    * Indicates whether the switch is checked.
+    */
+diff --git a/src/jetpack-compose/SyncSwitch/index.tsx b/src/jetpack-compose/SyncSwitch/index.tsx
+index 4a8efdf8b9f8f35df74a3b44358b35cb9a005901..46e850c4b36ffa7e650b29c9f7a53f245961d1ba 100644
+--- a/src/jetpack-compose/SyncSwitch/index.tsx
++++ b/src/jetpack-compose/SyncSwitch/index.tsx
+@@ -4,7 +4,7 @@ import { getStateId, type ObservableState, useWorkletProp } from '../../State';
+ import { type ModifierConfig } from '../../types';
+ import { createViewModifierEventListener } from '../modifiers/utils';
+ 
+-export type SyncSwitchProps = {
++export interface SyncSwitchProps {
+   /**
+    * An observable state that drives the switch.
+    * Create one with `useNativeState(false)`.
+diff --git a/src/jetpack-compose/Text/index.tsx b/src/jetpack-compose/Text/index.tsx
+index af149c3650d57948e80d787cc6f96973ea0f03ca..7558d0e5d684c9fb4d094bb48ed8a5f377661eb1 100644
+--- a/src/jetpack-compose/Text/index.tsx
++++ b/src/jetpack-compose/Text/index.tsx
+@@ -194,7 +194,7 @@ type TextSpanRecord = TextSpanStyleBase & {
+   children?: TextSpanRecord[];
+ };
+ 
+-export type TextProps = {
++export interface TextProps {
+   /**
+    * The text content to display. Can be a string, number, or nested `Text` components
+    * for inline styled spans.
+diff --git a/src/jetpack-compose/TextField/BasicTextField.tsx b/src/jetpack-compose/TextField/BasicTextField.tsx
+index c90231c35695ebf9d1a4beee55fa880777b8254b..3e80eb982d217325e34987f4104d0b9ffaf42166 100644
+--- a/src/jetpack-compose/TextField/BasicTextField.tsx
++++ b/src/jetpack-compose/TextField/BasicTextField.tsx
+@@ -23,7 +23,7 @@ export type BasicTextFieldRef = TextFieldRef;
+  * `OutlinedTextField`; use `BasicTextField.DecorationBox` to add your own
+  * decoration.
+  */
+-export type BasicTextFieldProps = CommonTextFieldProperties & {
++export interface BasicTextFieldProps extends CommonTextFieldProperties {
+   /**
+    * Color of the text cursor. Maps to Compose's `cursorBrush` via
+    * `SolidColor(color)`. Defaults to the theme's primary color
+diff --git a/src/jetpack-compose/TextField/TextField.tsx b/src/jetpack-compose/TextField/TextField.tsx
+index edf5b38c3c2859de5b0faf5c616f56b5f97a6091..bdffd895c49164f9dc1abe16d284603c42674d51 100644
+--- a/src/jetpack-compose/TextField/TextField.tsx
++++ b/src/jetpack-compose/TextField/TextField.tsx
+@@ -62,7 +62,7 @@ export type TextFieldColors = {
+ };
+ 
+ // Material props inlined per variant (not a shared named base) so docs render them directly.
+-export type TextFieldProps = CommonTextFieldProperties & {
++export interface TextFieldProps extends CommonTextFieldProperties {
+   /** @default false */
+   isError?: boolean;
+   /**
+@@ -74,7 +74,7 @@ export type TextFieldProps = CommonTextFieldProperties & {
+   colors?: TextFieldColors;
+ };
+ 
+-export type OutlinedTextFieldProps = CommonTextFieldProperties & {
++export interface OutlinedTextFieldProps extends CommonTextFieldProperties {
+   /** @default false */
+   isError?: boolean;
+   /**
+diff --git a/src/jetpack-compose/ToggleButton/index.tsx b/src/jetpack-compose/ToggleButton/index.tsx
+index 3730514aaa86a0e6b12c70dd768fe52431fcf561..7fd1807c560db22fd6f144274706a51e286d83d4 100644
+--- a/src/jetpack-compose/ToggleButton/index.tsx
++++ b/src/jetpack-compose/ToggleButton/index.tsx
+@@ -17,7 +17,7 @@ export type ToggleButtonColors = {
+   disabledContentColor?: ColorValue;
+ };
+ 
+-export type ToggleButtonProps = {
++export interface ToggleButtonProps {
+   /**
+    * Whether the toggle button is checked.
+    */
+diff --git a/src/jetpack-compose/Tooltip/index.tsx b/src/jetpack-compose/Tooltip/index.tsx
+index 7a52020267cbb26eb81afffa905547a5f523c04d..a6ab1914882fcd16d2af47f95bb4b73cd1e183f7 100644
+--- a/src/jetpack-compose/Tooltip/index.tsx
++++ b/src/jetpack-compose/Tooltip/index.tsx
+@@ -16,7 +16,7 @@ export type TooltipBoxRef = {
+   dismiss: () => Promise<void>;
+ };
+ 
+-export type TooltipBoxProps = {
++export interface TooltipBoxProps {
+   /**
+    * Ref to imperatively show/dismiss the tooltip.
+    */
+@@ -76,7 +76,7 @@ function transformProps(
+ 
+ // --- PlainTooltip (compound component of TooltipBox) ---
+ 
+-export type PlainTooltipProps = {
++export interface PlainTooltipProps {
+   containerColor?: ColorValue;
+   contentColor?: ColorValue;
+   modifiers?: ModifierConfig[];
+@@ -108,7 +108,7 @@ function PlainTooltipComponent(props: PlainTooltipProps) {
+ 
+ // --- RichTooltip (compound component of TooltipBox) ---
+ 
+-export type RichTooltipProps = {
++export interface RichTooltipProps {
+   containerColor?: ColorValue;
+   contentColor?: ColorValue;
+   titleContentColor?: ColorValue;
+diff --git a/src/jetpack-compose/layout-types.ts b/src/jetpack-compose/layout-types.ts
+index 44046731ab72845dc1e9170915b4ec2503fecf4a..3c19ff38e64b8e8a4c275127fe89e71f2b925f61 100644
+--- a/src/jetpack-compose/layout-types.ts
++++ b/src/jetpack-compose/layout-types.ts
+@@ -1,7 +1,7 @@
+ import type { ExpoModifier } from '../types';
+ import { createViewModifierEventListener } from './modifiers/utils';
+ 
+-export type PrimitiveBaseProps = {
++export interface PrimitiveBaseProps {
+   /**
+    * Modifiers for the component.
+    */

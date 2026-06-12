@@ -44,5 +44,8 @@
     "packageManager": "bun@1.3.14",
     "trustedDependencies": [
         "@tailwindcss/oxide"
-    ]
+    ],
+    "patchedDependencies": {
+        "@expo/ui@56.0.17": "patches/@expo%2Fui@56.0.17.patch"
+    }
 }
