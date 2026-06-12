@@ -124,4 +124,16 @@ declare module '@expo/ui' {
     interface IconProps {
         colorClassName?: string
     }
+
+    interface CheckboxProps {
+        className?: string
+    }
+
+    interface SliderProps {
+        className?: string
+    }
+
+    interface SwitchProps {
+        className?: string
+    }
 }
