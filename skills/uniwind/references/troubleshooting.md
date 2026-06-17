@@ -119,28 +119,28 @@ Metro can't hot-reload files with many providers. Move `global.css` import deepe
 Important utilities like `bg-red-500!` override non-important utilities for the same property and work with variants (`active:bg-red-500!`, `ios:pt-12!`). Inline `style` always overrides `className`, even important utilities. Use `className` for static styles, inline only for truly dynamic values. Use `cn()` from tailwind-merge for component libraries where classNames may conflict.
 
 **How do I include custom fonts?**
-Load font files (Expo: `expo-font` plugin in `app.json`; Bare RN: `react-native-asset`), then map in CSS: `@theme { --font-sans: 'Roboto-Regular'; }`. Font name must exactly match the file name. See the **Fonts** section above.
+Load font files (Expo: `expo-font` plugin in `app.json`; Bare RN: `react-native-asset`), then map in CSS: `@theme { --font-sans: 'Roboto-Regular'; }`. Font name must exactly match the file name. See [Fonts](./css-and-utilities.md#fonts).
 
 **How can I style based on prop values?**
-Use data selectors: `data-[selected=true]:ring-2`. Only equality checks supported. See the **Data Selectors** section above.
+Use data selectors: `data-[selected=true]:ring-2`. Only equality checks supported. See [Data Selectors](./variants-and-selectors.md#data-selectors).
 
 **How can I use gradients?**
-Built-in: `bg-gradient-to-r from-red-500 to-green-500`. Also supports angle-based (`bg-linear-90`) and arbitrary values (`bg-linear-[45deg,#f00_0%,#00f_100%]`). See the **Gradients** section above.
+Built-in: `bg-gradient-to-r from-red-500 to-green-500`. Also supports angle-based (`bg-linear-90`) and arbitrary values (`bg-linear-[45deg,#f00_0%,#00f_100%]`). See [Gradients](./css-and-utilities.md#gradients).
 
 **How does className deduplication work?**
-Uniwind does NOT auto-deduplicate conflicting classNames. Use `tailwind-merge` with a `cn()` utility. See the **cn Utility** section above.
+Uniwind does NOT auto-deduplicate conflicting classNames. Use `tailwind-merge` with a `cn()` utility. See [cn Utility](./styling-patterns.md#cn-utility--class-deduplication).
 
 **How to debug 'Failed to serialize javascript object'?**
-Clear caches: `watchman watch-del-all; rm -rf node_modules/.cache; npx expo start --clear`. Enable `debug: true` in metro config to identify the problematic CSS pattern. See the **Troubleshooting** table above.
+Clear caches: `watchman watch-del-all; rm -rf node_modules/.cache; npx expo start --clear`. Enable `debug: true` in metro config to identify the problematic CSS pattern. See [Troubleshooting](#troubleshooting).
 
 **How do I enable safe area classNames?**
-Free: Install `react-native-safe-area-context`, wrap root with `SafeAreaListener`, call `Uniwind.updateInsets(insets)`. Pro: Automatic — no setup. Then use `pt-safe`, `pb-safe`, etc. See the **Safe Area Utilities** section above.
+Free: Install `react-native-safe-area-context`, wrap root with `SafeAreaListener`, call `Uniwind.updateInsets(insets)`. Pro: Automatic — no setup. Then use `pt-safe`, `pb-safe`, etc. See [Safe Area Utilities](./variants-and-selectors.md#safe-area-utilities).
 
 **What UI kits work well with Uniwind?**
-**React Native Reusables** (shadcn philosophy, copy-paste components) and **HeroUI Native** (complete library, optimized for Uniwind). Any library works via `withUniwind` wrapper. See the **UI Kit Compatibility** section above.
+**React Native Reusables** (shadcn philosophy, copy-paste components) and **HeroUI Native** (complete library, optimized for Uniwind). Any library works via `withUniwind` wrapper. See [UI Kit Compatibility](./integrations.md#ui-kit-compatibility).
 
 **Can I scope a theme to a single component?**
-Yes, use `ScopedTheme`: `<ScopedTheme theme="dark"><Card /></ScopedTheme>`. It forces a theme for the subtree without changing the global theme. See the **Theming** section.
+Yes, use `ScopedTheme`: `<ScopedTheme theme="dark"><Card /></ScopedTheme>`. It forces a theme for the subtree without changing the global theme. See [Theming](./theming.md#theming).
 
 **Does `active:` work with `react-native-gesture-handler` Pressable?**
 No. `withUniwind` does NOT support interactive state selectors (`active:`, `focus:`, `disabled:`). Only core RN `Pressable`, `TextInput`, and `Switch` support them. For RNGH components, use `onPressIn`/`onPressOut` with state.
@@ -163,7 +163,7 @@ No. `@theme {}` only accepts custom properties. Use `@layer theme { :root { @var
 Yes since v1.3.0+. If you hit `Class extends value is not a constructor`, update Uniwind or use CommonJS `metro.config.js`.
 
 **Classes from `node_modules` work in dev but not production (bun)?**
-Bun symlinks packages. Tailwind's Oxide scanner can't follow them. Use resolved `@source` paths and hoist the package. See **UI Kit Compatibility** for details.
+Bun symlinks packages. Tailwind's Oxide scanner can't follow them. Use resolved `@source` paths and hoist the package. See [UI Kit Compatibility](./integrations.md#ui-kit-compatibility) for details.
 
 **How to clear all caches when debugging?**
 `watchman watch-del-all 2>/dev/null; rm -rf node_modules/.cache && npx expo start --clear`. This clears Watchman, Babel/bundler caches, and Expo internal cache.
