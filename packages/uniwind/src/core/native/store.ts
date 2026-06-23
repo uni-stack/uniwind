@@ -147,15 +147,17 @@ class UniwindStoreBuilder {
                 for (const [property, valueGetter] of style.entries) {
                     const previousBest = bestBreakpoints.get(property)
 
-                    if (
-                        previousBest
-                        && (
-                            previousBest.minWidth > style.minWidth
+                    if (previousBest) {
+                        const previousWins = previousBest.minWidth > style.minWidth
                             || previousBest.complexity > style.complexity
-                            || previousBest.importantProperties.includes(property)
-                        )
-                    ) {
-                        continue
+                            || (
+                                previousBest.complexity === style.complexity
+                                && previousBest.importantProperties.includes(property)
+                            )
+
+                        if (previousWins) {
+                            continue
+                        }
                     }
 
                     if (property[0] === '-') {
