@@ -169,6 +169,7 @@ Usage: `xs:p-2 tablet:p-4 3xl:p-8`
 |-------|-------------|
 | `p-safe` | All sides |
 | `pt-safe` / `pb-safe` / `pl-safe` / `pr-safe` | Individual sides |
+| `ps-safe` / `pe-safe` | Logical start / end |
 | `px-safe` / `py-safe` | Horizontal / vertical |
 
 ### Margin
@@ -177,6 +178,7 @@ Usage: `xs:p-2 tablet:p-4 3xl:p-8`
 |-------|-------------|
 | `m-safe` | All sides |
 | `mt-safe` / `mb-safe` / `ml-safe` / `mr-safe` | Individual sides |
+| `ms-safe` / `me-safe` | Logical start / end |
 | `mx-safe` / `my-safe` | Horizontal / vertical |
 
 ### Positioning
@@ -185,6 +187,7 @@ Usage: `xs:p-2 tablet:p-4 3xl:p-8`
 |-------|-------------|
 | `inset-safe` | All sides |
 | `top-safe` / `bottom-safe` / `left-safe` / `right-safe` | Individual sides |
+| `start-safe` / `end-safe` | Logical start / end |
 | `x-safe` / `y-safe` | Horizontal / vertical inset |
 
 ### Compound Variants

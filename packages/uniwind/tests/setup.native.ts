@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native'
 import { UniwindBundlerConfig } from '../src/bundler/config'
 import { compileCSS } from '../src/bundler/css-compiler'
 import { Platform } from '../src/common/consts'
-import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, SCREEN_WIDTH } from './consts'
+import { SAFE_AREA_INSET_BOTTOM, SAFE_AREA_INSET_LEFT, SAFE_AREA_INSET_RIGHT, SAFE_AREA_INSET_TOP, SCREEN_HEIGHT, SCREEN_WIDTH } from './consts'
 
 jest.spyOn(Dimensions, 'get').mockReturnValue({ width: SCREEN_WIDTH, height: SCREEN_HEIGHT, scale: 1, fontScale: 1 })
 
@@ -20,9 +20,9 @@ beforeAll(async () => {
         Uniwind.__reinit(rt => ${virtualCode}, ['light', 'dark']);
             Uniwind.updateInsets({
             top: ${SAFE_AREA_INSET_TOP},
-            left: 0,
+            left: ${SAFE_AREA_INSET_LEFT},
             bottom: ${SAFE_AREA_INSET_BOTTOM},
-            right: 0,
+            right: ${SAFE_AREA_INSET_RIGHT},
         });
     `,
     )

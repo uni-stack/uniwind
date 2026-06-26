@@ -196,6 +196,20 @@ export class RN {
                             .replace('Block', 'Vertical')
                     }
 
+                    if (x.includes('inset')) {
+                        if (x === 'insetInlineStart') {
+                            return 'start'
+                        }
+
+                        if (x === 'insetInlineEnd') {
+                            return 'end'
+                        }
+
+                        return x
+                            .replace('InlineStart', 'Start')
+                            .replace('InlineEnd', 'End')
+                    }
+
                     if (x.includes('border')) {
                         return x
                             .replace('InlineStart', 'Start')

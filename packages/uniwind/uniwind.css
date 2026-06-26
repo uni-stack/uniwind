@@ -133,6 +133,62 @@
     margin-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
+@utility ms-safe {
+    margin-inline-start: env(safe-area-inset-left);
+
+    @variant rtl {
+        margin-inline-start: env(safe-area-inset-right);
+    }
+}
+
+@utility ms-safe-or-* {
+    margin-inline-start: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    margin-inline-start: max(env(safe-area-inset-left), --value([length], --spacing-*));
+
+    @variant rtl {
+        margin-inline-start: max(env(safe-area-inset-right), --spacing(--value(integer)));
+        margin-inline-start: max(env(safe-area-inset-right), --value([length], --spacing-*));
+    }
+}
+
+@utility ms-safe-offset-* {
+    margin-inline-start: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    margin-inline-start: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+
+    @variant rtl {
+        margin-inline-start: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+        margin-inline-start: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+    }
+}
+
+@utility me-safe {
+    margin-inline-end: env(safe-area-inset-right);
+
+    @variant rtl {
+        margin-inline-end: env(safe-area-inset-left);
+    }
+}
+
+@utility me-safe-or-* {
+    margin-inline-end: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    margin-inline-end: max(env(safe-area-inset-right), --value([length], --spacing-*));
+
+    @variant rtl {
+        margin-inline-end: max(env(safe-area-inset-left), --spacing(--value(integer)));
+        margin-inline-end: max(env(safe-area-inset-left), --value([length], --spacing-*));
+    }
+}
+
+@utility me-safe-offset-* {
+    margin-inline-end: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    margin-inline-end: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+
+    @variant rtl {
+        margin-inline-end: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+        margin-inline-end: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+    }
+}
+
 @utility p-safe {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
@@ -256,6 +312,62 @@
     padding-right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
 }
 
+@utility ps-safe {
+    padding-inline-start: env(safe-area-inset-left);
+
+    @variant rtl {
+        padding-inline-start: env(safe-area-inset-right);
+    }
+}
+
+@utility ps-safe-or-* {
+    padding-inline-start: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    padding-inline-start: max(env(safe-area-inset-left), --value([length], --spacing-*));
+
+    @variant rtl {
+        padding-inline-start: max(env(safe-area-inset-right), --spacing(--value(integer)));
+        padding-inline-start: max(env(safe-area-inset-right), --value([length], --spacing-*));
+    }
+}
+
+@utility ps-safe-offset-* {
+    padding-inline-start: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    padding-inline-start: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+
+    @variant rtl {
+        padding-inline-start: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+        padding-inline-start: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+    }
+}
+
+@utility pe-safe {
+    padding-inline-end: env(safe-area-inset-right);
+
+    @variant rtl {
+        padding-inline-end: env(safe-area-inset-left);
+    }
+}
+
+@utility pe-safe-or-* {
+    padding-inline-end: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    padding-inline-end: max(env(safe-area-inset-right), --value([length], --spacing-*));
+
+    @variant rtl {
+        padding-inline-end: max(env(safe-area-inset-left), --spacing(--value(integer)));
+        padding-inline-end: max(env(safe-area-inset-left), --value([length], --spacing-*));
+    }
+}
+
+@utility pe-safe-offset-* {
+    padding-inline-end: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    padding-inline-end: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+
+    @variant rtl {
+        padding-inline-end: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+        padding-inline-end: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+    }
+}
+
 @utility inset-safe {
     top: env(safe-area-inset-top);
     bottom: env(safe-area-inset-bottom);
@@ -377,6 +489,62 @@
 @utility right-safe-offset-* {
     right: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
     right: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+}
+
+@utility start-safe {
+    inset-inline-start: env(safe-area-inset-left);
+
+    @variant rtl {
+        inset-inline-start: env(safe-area-inset-right);
+    }
+}
+
+@utility start-safe-or-* {
+    inset-inline-start: max(env(safe-area-inset-left), --spacing(--value(integer)));
+    inset-inline-start: max(env(safe-area-inset-left), --value([length], --spacing-*));
+
+    @variant rtl {
+        inset-inline-start: max(env(safe-area-inset-right), --spacing(--value(integer)));
+        inset-inline-start: max(env(safe-area-inset-right), --value([length], --spacing-*));
+    }
+}
+
+@utility start-safe-offset-* {
+    inset-inline-start: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+    inset-inline-start: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+
+    @variant rtl {
+        inset-inline-start: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+        inset-inline-start: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+    }
+}
+
+@utility end-safe {
+    inset-inline-end: env(safe-area-inset-right);
+
+    @variant rtl {
+        inset-inline-end: env(safe-area-inset-left);
+    }
+}
+
+@utility end-safe-or-* {
+    inset-inline-end: max(env(safe-area-inset-right), --spacing(--value(integer)));
+    inset-inline-end: max(env(safe-area-inset-right), --value([length], --spacing-*));
+
+    @variant rtl {
+        inset-inline-end: max(env(safe-area-inset-left), --spacing(--value(integer)));
+        inset-inline-end: max(env(safe-area-inset-left), --value([length], --spacing-*));
+    }
+}
+
+@utility end-safe-offset-* {
+    inset-inline-end: calc(env(safe-area-inset-right) + --spacing(--value(integer)));
+    inset-inline-end: calc(env(safe-area-inset-right) + --value([length], --spacing-*));
+
+    @variant rtl {
+        inset-inline-end: calc(env(safe-area-inset-left) + --spacing(--value(integer)));
+        inset-inline-end: calc(env(safe-area-inset-left) + --value([length], --spacing-*));
+    }
 }
 
 @custom-variant disabled {

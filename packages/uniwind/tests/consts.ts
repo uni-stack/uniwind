@@ -8,6 +8,8 @@ export const TW_SPACING = 4
 
 export const SAFE_AREA_INSET_TOP = 21
 export const SAFE_AREA_INSET_BOTTOM = 42
+export const SAFE_AREA_INSET_LEFT = 7
+export const SAFE_AREA_INSET_RIGHT = 13
 
 export const SCREEN_WIDTH = 390
 export const SCREEN_HEIGHT = 844
