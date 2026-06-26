@@ -53,6 +53,10 @@ export class Functions {
             return `rt.cubicBezier(${cubicArguments})`
         }
 
+        if (fn.name === 'min') {
+            return `Math.min(${this.Processor.CSS.processValue(fn.arguments)})`
+        }
+
         if (fn.name === 'max') {
             return `Math.max(${this.Processor.CSS.processValue(fn.arguments)})`
         }
