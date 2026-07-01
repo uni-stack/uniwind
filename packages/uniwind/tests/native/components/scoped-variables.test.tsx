@@ -4,6 +4,9 @@ import View from '../../../src/components/native/View'
 import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
 import { ScopedVariables } from '../../../src/components/ScopedVariables/ScopedVariables.native'
 import { Uniwind } from '../../../src/core'
+import { useUniwindContext } from '../../../src/core/context'
+import { UniwindStore } from '../../../src/core/native'
+import type { UniwindContextType } from '../../../src/core/types'
 import { useCSSVariable } from '../../../src/hooks/useCSSVariable'
 import { renderUniwind } from '../utils'
 
@@ -176,5 +179,138 @@ describe('ScopedVariables', () => {
         } finally {
             errorSpy.mockRestore()
         }
+    })
+
+    describe('cacheKey opt-in', () => {
+        // A cached resolve returns the SAME result object reference on a hit,
+        // while a bypass resolve returns a fresh object every time. We use that
+        // referential identity to observe caching directly.
+        const baseContext = { scopedTheme: null, rtl: null } as const
+
+        test('opting in caches: identical resolves return the same result reference', () => {
+            const context: UniwindContextType = {
+                ...baseContext,
+                variables: { '--gap': 8 },
+                variablesCacheKey: 'stable-key',
+            }
+
+            const first = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
+            const second = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
+
+            expect(first.styles.gap).toEqual(8)
+            expect(second).toBe(first)
+        })
+
+        test('different cacheKeys do not collide even with identical variables', () => {
+            const contextA: UniwindContextType = {
+                ...baseContext,
+                variables: { '--gap': 8 },
+                variablesCacheKey: 'key-a',
+            }
+            const contextB: UniwindContextType = {
+                ...baseContext,
+                variables: { '--gap': 8 },
+                variablesCacheKey: 'key-b',
+            }
+
+            const a = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, contextA)
+            const b = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, contextB)
+
+            // Distinct cache entries -> distinct references, both correct
+            expect(a).not.toBe(b)
+            expect(a.styles.gap).toEqual(8)
+            expect(b.styles.gap).toEqual(8)
+        })
+
+        test('default (no cacheKey) still bypasses: resolves are fresh each time', () => {
+            const context: UniwindContextType = {
+                ...baseContext,
+                variables: { '--gap': 8 },
+                variablesCacheKey: null,
+            }
+
+            const first = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
+            const second = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
+
+            // Bypass -> recomputed each call (no shared reference), still correct
+            expect(second).not.toBe(first)
+            expect(first.styles.gap).toEqual(8)
+            expect(second.styles.gap).toEqual(8)
+        })
+
+        test('component-level: cached subtree still resolves correctly across re-renders', () => {
+            const Wrapper = ({ color }: { color: string }) => (
+                <ScopedVariables variables={{ '--color-primary': color }} cacheKey="pinned">
+                    <View className="text-(--color-primary)" testID="cached" />
+                </ScopedVariables>
+            )
+
+            const { getStylesFromId, rerender } = renderUniwind(<Wrapper color="#3b82f6" />)
+
+            expect(getStylesFromId('cached').color).toEqual('#3b82f6')
+
+            // Re-render with the same cacheKey and same value -> still correct
+            act(() => {
+                rerender(<Wrapper color="#3b82f6" />)
+            })
+
+            expect(getStylesFromId('cached').color).toEqual('#3b82f6')
+        })
+
+        test('nested provider without cacheKey under a cached parent falls back to bypass', () => {
+            const Probe = (props: { test: jest.Mock }) => {
+                const { variablesCacheKey } = useUniwindContext()
+
+                props.test(variablesCacheKey)
+
+                return null
+            }
+
+            const outer = jest.fn()
+            const innerCached = jest.fn()
+            const innerBypass = jest.fn()
+
+            renderUniwind(
+                <ScopedVariables variables={{ '--gap': 8 }} cacheKey="outer">
+                    <Probe test={outer} />
+                    <ScopedVariables variables={{ '--gap': 4 }} cacheKey="inner">
+                        <Probe test={innerCached} />
+                    </ScopedVariables>
+                    <ScopedVariables variables={{ '--gap': 2 }}>
+                        <Probe test={innerBypass} />
+                    </ScopedVariables>
+                </ScopedVariables>,
+            )
+
+            // Outer opted in (leading delimiter is an internal detail)
+            expect(outer).toHaveBeenCalledWith(expect.stringContaining('outer'))
+            // Nested opt-in composes the ancestor key so it can't collide
+            expect(innerCached).toHaveBeenCalledWith(expect.stringContaining('outer'))
+            expect(innerCached).toHaveBeenCalledWith(expect.stringContaining('inner'))
+            // Nested WITHOUT a key bypasses (null) even under a cached parent
+            expect(innerBypass).toHaveBeenCalledWith(null)
+        })
+
+        test('opt-in provider under a bypassing ancestor still bypasses', () => {
+            const Probe = (props: { test: jest.Mock }) => {
+                props.test(useUniwindContext().variablesCacheKey)
+
+                return null
+            }
+
+            const inner = jest.fn()
+
+            renderUniwind(
+                <ScopedVariables variables={{ '--gap': 8 }}>
+                    <ScopedVariables variables={{ '--gap': 4 }} cacheKey="inner">
+                        <Probe test={inner} />
+                    </ScopedVariables>
+                </ScopedVariables>,
+            )
+
+            // Ancestor did not opt in -> the merged variable set is not stable,
+            // so this subtree bypasses regardless of its own cacheKey.
+            expect(inner).toHaveBeenCalledWith(null)
+        })
     })
 })

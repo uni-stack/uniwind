@@ -31,28 +31,30 @@ class UniwindStoreBuilder {
         }
 
         const isScopedTheme = uniwindContext.scopedTheme !== null
-        // Subtrees with scoped variables (<ScopedVariables>) bypass the cache
-        // entirely. Keying the cache on the variable map would require
-        // serializing it on every resolve (expensive) and would bloat the
-        // cache with per-subtree entries, so we recompute instead.
-        const hasScopedVariables = uniwindContext.variables !== null
+        // Subtrees with scoped variables (<ScopedVariables>) bypass the cache by
+        // default: keying the cache on the variable map would require
+        // serializing it on every resolve (expensive) and would bloat the cache
+        // with per-subtree entries, so we recompute instead. When the caller
+        // opts in via a stable `cacheKey`, `variablesCacheKey` is set and folded
+        // into the cache key below so the normal cache path is used.
+        const bypassCache = uniwindContext.variables !== null && uniwindContext.variablesCacheKey === null
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
-        }`
+        }${uniwindContext.variablesCacheKey ?? ''}`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
         if (!cache) {
             return emptyState
         }
 
-        if (!hasScopedVariables && cache.has(cacheKey)) {
+        if (!bypassCache && cache.has(cacheKey)) {
             return cache.get(cacheKey)!
         }
 
         const result = this.resolveStyles(className, componentProps, state, uniwindContext)
 
-        // Don't cache styles that depend on data attributes or scoped variables
-        if (!hasScopedVariables && !result.hasDataAttributes) {
+        // Don't cache styles that depend on data attributes or that bypass the cache
+        if (!bypassCache && !result.hasDataAttributes) {
             cache.set(cacheKey, result)
             UniwindListener.subscribe(
                 () => cache.delete(cacheKey),

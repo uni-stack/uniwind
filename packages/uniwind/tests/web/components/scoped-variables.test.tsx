@@ -70,13 +70,33 @@ describe('ScopedVariables (web)', () => {
 
     test('getWebVariable applies number values as px and clears them afterwards', () => {
         expect(
-            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 } }),
+            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 }, variablesCacheKey: null }),
         ).toEqual('8px')
 
         // After resolving with scoped variables, the dummy parent no longer
         // carries the property (it is cleared), so a plain read falls back.
         expect(
-            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: null }),
+            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: null, variablesCacheKey: null }),
         ).toEqual('')
+    })
+
+    test('cacheKey prop is accepted on web and does not change the resolved value', () => {
+        // The web read path has no memo cache, so cacheKey is a no-op there;
+        // it must still resolve scoped variables normally.
+        const inside = jest.fn()
+
+        const Probe = ({ test }: { test: jest.Mock }) => {
+            test(useCSSVariable('--color-primary'))
+
+            return null
+        }
+
+        render(
+            <ScopedVariables variables={{ '--color-primary': '#3b82f6' }} cacheKey="stable">
+                <Probe test={inside} />
+            </ScopedVariables>,
+        )
+
+        expect(inside).toHaveBeenCalledWith('#3b82f6')
     })
 })
