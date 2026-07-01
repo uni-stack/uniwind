@@ -1,4 +1,19 @@
-## What's Changed in 1.8.0
+## What's Changed in 1.9.0
+
+
+
+### 🚀 Features
+* feat: layout direction component by @Brentlok in [#577](https://github.com/uni-stack/uniwind/pull/577)
+* feat: inline rtl support by @Brentlok in [#574](https://github.com/uni-stack/uniwind/pull/574)
+
+
+### 🐛 Bug Fixes
+* fix: update web variant condition by @Brentlok in [#580](https://github.com/uni-stack/uniwind/pull/580)
+* fix: bundler infinite loop when multiple uniwind instances are installed by @Brentlok in [#570](https://github.com/uni-stack/uniwind/pull/570)
+* fix: combined variants overriding each other by @Brentlok in [#567](https://github.com/uni-stack/uniwind/pull/567)
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.8.0...v1.9.0## What's Changed in 1.8.0
 
 
 

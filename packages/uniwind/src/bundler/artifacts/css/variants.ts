@@ -4,7 +4,7 @@ const generateCSSForVariants = () => {
     let css = ''
 
     variants.forEach(variant => {
-        css += `@custom-variant ${variant} (${variant === 'web' ? 'html &' : `@media ${variant}`});\n`
+        css += `@custom-variant ${variant} (${variant === 'web' ? '@supports selector(div > div)' : `@media ${variant}`});\n`
     })
 
     return css

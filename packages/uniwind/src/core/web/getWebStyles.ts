@@ -72,6 +72,12 @@ export const getWebStyles = (
         dummyParent?.removeAttribute('class')
     }
 
+    if (uniwindContext.rtl !== null) {
+        dummyParent?.setAttribute('dir', uniwindContext.rtl ? 'rtl' : 'ltr')
+    } else {
+        dummyParent?.removeAttribute('dir')
+    }
+
     dummy.className = className
 
     const dataSet = generateDataSet(componentProps ?? {})
@@ -114,6 +120,12 @@ export const getWebVariable = (name: string, uniwindContext: UniwindContextType)
         dummyParent.setAttribute('class', uniwindContext.scopedTheme)
     } else {
         dummyParent.removeAttribute('class')
+    }
+
+    if (uniwindContext.rtl !== null) {
+        dummyParent.setAttribute('dir', uniwindContext.rtl ? 'rtl' : 'ltr')
+    } else {
+        dummyParent.removeAttribute('dir')
     }
 
     const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)

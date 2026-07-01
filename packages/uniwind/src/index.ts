@@ -1,3 +1,4 @@
+export * from './components/LayoutDirection'
 export * from './components/ScopedTheme'
 export { Uniwind } from './core'
 export type { ThemeName, UniwindConfig } from './core/types'

@@ -1,10 +1,12 @@
 const types = ['margin', 'padding', 'inset'] as const
 const sides = ['inset', 'x', 'y', 'top', 'bottom', 'left', 'right'] as const
+const logicalSides = ['start', 'end'] as const
 const safeAreaTypes = ['safe', 'safe-or-*', 'safe-offset-*'] as const
 const spacing = '--spacing(--value(integer))'
 const length = '--value([length], --spacing-*)'
 
 type Side = (typeof sides)[number]
+type LogicalSide = (typeof logicalSides)[number]
 type TypeName = (typeof types)[number]
 type SafeAreaType = (typeof safeAreaTypes)[number]
 type Inset = 'top' | 'bottom' | 'left' | 'right'
@@ -54,6 +56,30 @@ const generateCSSForInsets = () => {
         return `${typeName}-${inset}`
     }
 
+    const getLogicalUtilityName = (typeName: TypeName, side: LogicalSide, safeAreaType: SafeAreaType) => {
+        if (typeName === 'inset') {
+            return `${side}-${safeAreaType}`
+        }
+
+        return `${typeName.at(0)}${side.at(0)}-${safeAreaType}`
+    }
+
+    const getLogicalStyleProperty = (typeName: TypeName, side: LogicalSide) => {
+        if (typeName === 'inset') {
+            return `inset-inline-${side}`
+        }
+
+        return `${typeName}-inline-${side}`
+    }
+
+    const getLogicalInset = (side: LogicalSide, rtl: boolean): Inset => {
+        if (side === 'start') {
+            return rtl ? 'right' : 'left'
+        }
+
+        return rtl ? 'left' : 'right'
+    }
+
     const getStylesForSafeAreaType = (safeAreaType: SafeAreaType, styles: Array<string>) => {
         switch (safeAreaType) {
             case 'safe':
@@ -93,6 +119,28 @@ const generateCSSForInsets = () => {
                 css += [
                     `@utility ${utilityName} {`,
                     ...getStylesForSafeAreaType(safeAreaType, styles).map(style => `    ${style}`),
+                    '}',
+                    '',
+                    '',
+                ].join('\n')
+            })
+        })
+
+        logicalSides.forEach(side => {
+            const styleProperty = getLogicalStyleProperty(type, side)
+            const ltrStyles = [`${styleProperty}: env(safe-area-inset-${getLogicalInset(side, false)});`]
+            const rtlStyles = [`${styleProperty}: env(safe-area-inset-${getLogicalInset(side, true)});`]
+
+            safeAreaTypes.forEach(safeAreaType => {
+                const utilityName = getLogicalUtilityName(type, side, safeAreaType)
+
+                css += [
+                    `@utility ${utilityName} {`,
+                    ...getStylesForSafeAreaType(safeAreaType, ltrStyles).map(style => `    ${style}`),
+                    '',
+                    '    @variant rtl {',
+                    ...getStylesForSafeAreaType(safeAreaType, rtlStyles).map(style => `        ${style}`),
+                    '    }',
                     '}',
                     '',
                     '',
