@@ -17,6 +17,28 @@ if (dummyParent && dummy) {
     dummyParent.appendChild(dummy)
 }
 
+/**
+ * Applies scoped CSS variables (from <ScopedVariables>) to `dummyParent` as
+ * inline custom properties so they cascade to `dummy` during style computation.
+ * Numbers are converted to px, matching `Uniwind.updateCSSVariables` on web.
+ * Returns a disposer that removes the applied properties again.
+ */
+const applyScopedVariables = (uniwindContext: UniwindContextType) => {
+    if (!dummyParent || uniwindContext.variables === null) {
+        return () => {}
+    }
+
+    const names = Object.keys(uniwindContext.variables)
+
+    Object.entries(uniwindContext.variables).forEach(([name, value]) => {
+        dummyParent.style.setProperty(name, typeof value === 'number' ? `${value}px` : value)
+    })
+
+    return () => {
+        names.forEach(name => dummyParent.style.removeProperty(name))
+    }
+}
+
 const getActiveStylesForClass = (className: string) => {
     const extractedStyles = {} as Record<string, string>
 
@@ -78,6 +100,8 @@ export const getWebStyles = (
         dummyParent?.removeAttribute('dir')
     }
 
+    const disposeScopedVariables = applyScopedVariables(uniwindContext)
+
     dummy.className = className
 
     const dataSet = generateDataSet(componentProps ?? {})
@@ -95,6 +119,8 @@ export const getWebStyles = (
     Object.keys(dataSet).forEach(key => {
         delete dummy.dataset[key]
     })
+
+    disposeScopedVariables()
 
     return Object.fromEntries(
         Object.entries(computedStyles)
@@ -128,7 +154,10 @@ export const getWebVariable = (name: string, uniwindContext: UniwindContextType)
         dummyParent.removeAttribute('dir')
     }
 
+    const disposeScopedVariables = applyScopedVariables(uniwindContext)
     const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
+
+    disposeScopedVariables()
 
     return parseCSSValue(variable)
 }

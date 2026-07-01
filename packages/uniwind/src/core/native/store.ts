@@ -2,6 +2,7 @@ import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
+import { createVarGetter } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
 
@@ -30,6 +31,11 @@ class UniwindStoreBuilder {
         }
 
         const isScopedTheme = uniwindContext.scopedTheme !== null
+        // Subtrees with scoped variables (<ScopedVariables>) bypass the cache
+        // entirely. Keying the cache on the variable map would require
+        // serializing it on every resolve (expensive) and would bloat the
+        // cache with per-subtree entries, so we recompute instead.
+        const hasScopedVariables = uniwindContext.variables !== null
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
         }`
@@ -39,14 +45,14 @@ class UniwindStoreBuilder {
             return emptyState
         }
 
-        if (cache.has(cacheKey)) {
+        if (!hasScopedVariables && cache.has(cacheKey)) {
             return cache.get(cacheKey)!
         }
 
         const result = this.resolveStyles(className, componentProps, state, uniwindContext)
 
-        // Don't cache styles that depend on data attributes
-        if (!result.hasDataAttributes) {
+        // Don't cache styles that depend on data attributes or scoped variables
+        if (!hasScopedVariables && !result.hasDataAttributes) {
             cache.set(cacheKey, result)
             UniwindListener.subscribe(
                 () => cache.delete(cacheKey),
@@ -101,7 +107,19 @@ class UniwindStoreBuilder {
         const resultGetters = {} as Record<string, Var>
         const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
         // At this point we're sure that theme is correct
-        let vars = this.vars[theme]!
+        const themeVars = this.vars[theme]!
+        // Overlay scoped variables (from <ScopedVariables>) onto the theme vars.
+        // We clone via the prototype chain so theme defaults still resolve for
+        // any variable the subtree didn't override, and so getters that read
+        // other variables (custom property references) see the overrides too.
+        let vars = uniwindContext.variables === null
+            ? themeVars
+            : Object.assign(
+                Object.create(themeVars) as Vars,
+                Object.fromEntries(
+                    Object.entries(uniwindContext.variables).map(([name, value]) => [name, createVarGetter(value)]),
+                ),
+            )
         const originalVars = vars
         let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()

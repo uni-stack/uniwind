@@ -110,7 +110,7 @@ export class UniwindConfigBuilder {
     }
 
     getCSSVariable = ((variableName: string | Array<string>) => {
-        return getCSSVariable(variableName, { scopedTheme: null, rtl: null })
+        return getCSSVariable(variableName, { scopedTheme: null, rtl: null, variables: null })
     }) as GetCSSVariable
 
     protected __reinit(_: GenerateStyleSheetsCallback, themes: Array<string>) {

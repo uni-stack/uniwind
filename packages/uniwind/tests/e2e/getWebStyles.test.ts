@@ -15,7 +15,7 @@ const bundle = readFileSync(BUNDLE_PATH, 'utf-8')
 async function getWebStyles(
     page: import('@playwright/test').Page,
     className: string,
-    context: UniwindContextType = { scopedTheme: null, rtl: null },
+    context: UniwindContextType = { scopedTheme: null, rtl: null, variables: null },
 ) {
     return page.evaluate(
         ([cls, ctx]) => {
@@ -53,24 +53,24 @@ test.describe('getWebStyles — basic cases', () => {
 
 test.describe('getWebStyles — scoped theme', () => {
     test('bg-background in dark theme → backgroundColor black', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark', rtl: null })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark', rtl: null, variables: null })
         expect(styles.backgroundColor).toBe('#000000')
     })
 
     test('bg-background in light theme → backgroundColor white', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light', rtl: null })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light', rtl: null, variables: null })
         expect(styles.backgroundColor).toBe('#ffffff')
     })
 })
 
 test.describe('getWebStyles — layout direction', () => {
     test('rtl variant resolves inside rtl context', async ({ page }) => {
-        const styles = await getWebStyles(page, 'rtl:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: true })
+        const styles = await getWebStyles(page, 'rtl:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: true, variables: null })
         expect(styles.backgroundColor).toBe(TW_RED_500)
     })
 
     test('ltr variant resolves inside ltr context', async ({ page }) => {
-        const styles = await getWebStyles(page, 'ltr:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: false })
+        const styles = await getWebStyles(page, 'ltr:bg-red-500 bg-blue-500', { scopedTheme: null, rtl: false, variables: null })
         expect(styles.backgroundColor).toBe(TW_RED_500)
     })
 })

@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { ScopedTheme, type ThemeName, Uniwind, useUniwind } from 'uniwind'
+import { ScopedTheme, ScopedVariables, type ThemeName, Uniwind, useUniwind } from 'uniwind'
 import { type Equal, type Expect } from './checks'
 
 type ExpectedThemeName = 'light' | 'dark' | 'premium' | 'custom'
@@ -28,3 +28,7 @@ type UniwindUpdateCSSVariablesThemeTest = Expect<Equal<UniwindUpdateCSSVariables
 // ScopedTheme theme prop
 type ScopedThemeThemeProp = ComponentProps<typeof ScopedTheme>['theme']
 type ScopedThemeThemePropTest = Expect<Equal<ScopedThemeThemeProp, ExpectedThemeName>>
+
+// ScopedVariables variables prop
+type ScopedVariablesProp = ComponentProps<typeof ScopedVariables>['variables']
+type ScopedVariablesPropTest = Expect<Equal<ScopedVariablesProp, Record<string, string | number>>>
