@@ -112,7 +112,7 @@ jobs:
           RELEASE_URL="$(gh release view "$TAG" --json url --jq .url)"
 
           gh issue list --state open --label "pending-release" --json number --jq '.[].number' | while read -r ISSUE; do
-            gh issue edit "$ISSUE" --remove-label "pending-release"
-            gh issue comment "$ISSUE" --body "New release $TAG is published: $RELEASE_URL"
-            gh issue close "$ISSUE"
+            gh issue edit "$ISSUE" --remove-label "pending-release" || echo "::warning::failed to remove label on #$ISSUE"
+            gh issue comment "$ISSUE" --body "New release $TAG is published: $RELEASE_URL" || echo "::warning::failed to comment on #$ISSUE"
+            gh issue close "$ISSUE" || echo "::warning::failed to close #$ISSUE"
           done
