@@ -29,7 +29,7 @@
             "expo": "57.0.1",
             "react-native": "0.86.0",
             "react-native-web": "0.21.2",
-            "tailwindcss": "4.3.0",
+            "tailwindcss": "4.3.2",
             "vite": "8.0.14"
         }
     },
