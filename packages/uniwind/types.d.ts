@@ -1,13 +1,10 @@
 import {
-    ScrollViewProps,
-    ScrollViewPropsAndroid,
-    ScrollViewPropsIOS,
-    Touchable,
+    ScrollViewProps as ScrollViewPropsBase,
     VirtualizedListProps,
 } from 'react-native'
 
 declare module '@react-native/virtualized-lists' {
-    export interface VirtualizedListWithoutRenderItemProps<ItemT> extends ScrollViewProps {
+    export interface VirtualizedListWithoutRenderItemProps<ItemT> extends ScrollViewPropsBase {
         ListFooterComponentClassName?: string
         ListHeaderComponentClassName?: string
     }
@@ -37,7 +34,7 @@ declare module 'react-native' {
         contentContainerClassName?: string
     }
 
-    interface ScrollViewProps extends ViewProps, ScrollViewPropsIOS, ScrollViewPropsAndroid, Touchable {
+    interface ScrollViewProps extends ViewProps, ScrollViewPropsBase {
         contentContainerClassName?: string
         endFillColorClassName?: string
     }
