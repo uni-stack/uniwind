@@ -10,10 +10,11 @@
         "web": "expo start --web"
     },
     "dependencies": {
-        "@expo/metro-runtime": "56.0.15",
-        "@expo/ui": "56.0.17",
+        "@expo/ui": "57.0.4",
+        "@expo/metro-runtime": "57.0.2",
         "expo": "catalog:",
-        "expo-status-bar": "56.0.4",
+        "expo-splash-screen": "57.0.1",
+        "expo-status-bar": "57.0.0",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",

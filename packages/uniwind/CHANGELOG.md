@@ -1,4 +1,17 @@
-## What's Changed in 1.9.0
+## What's Changed in 1.10.0
+
+
+
+### 🚀 Features
+* feat: support rtl safe area classes by @Brentlok in [#589](https://github.com/uni-stack/uniwind/pull/589)
+* feat: support min() css function by @Brentlok in [#588](https://github.com/uni-stack/uniwind/pull/588)
+
+
+### 🐛 Bug Fixes
+* fix: important with state specificity by @Brentlok in [#585](https://github.com/uni-stack/uniwind/pull/585)
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.9.0...v1.10.0## What's Changed in 1.9.0
 
 
 

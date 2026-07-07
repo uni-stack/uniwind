@@ -9,7 +9,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
-        "@tailwindcss/vite": "4.3.0",
+        "@tailwindcss/vite": "4.3.2",
         "react": "catalog:",
         "react-dom": "catalog:",
         "react-native": "catalog:",
