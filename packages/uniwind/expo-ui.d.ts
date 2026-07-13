@@ -1,6 +1,56 @@
 declare module '@expo/ui' {
-    interface UniversalBaseProps {
+    interface ButtonProps {
         className?: string
+    }
+
+    interface CheckboxProps {
+        className?: string
+    }
+
+    interface ColumnProps {
+        className?: string
+    }
+
+    interface FieldGroupProps {
+        className?: string
+    }
+
+    interface FieldSectionProps {
+        className?: string
+    }
+
+    interface IconProps {
+        className?: string
+        colorClassName?: string
+    }
+
+    interface RNHostViewProps {
+        className?: string
+    }
+
+    interface RowProps {
+        className?: string
+    }
+
+    interface ScrollViewProps {
+        className?: string
+    }
+
+    interface SliderProps {
+        className?: string
+    }
+
+    interface SpacerProps {
+        className?: string
+    }
+
+    interface SwitchProps {
+        className?: string
+    }
+
+    interface TextProps {
+        className?: string
+        textClassName?: string
     }
 
     interface TextInputProps {
@@ -10,12 +60,26 @@ declare module '@expo/ui' {
         selectionColorClassName?: string
         selectionHandleColorClassName?: string
     }
+}
 
-    interface IconProps {
+declare module '@expo/ui/swift-ui' {
+    interface ImageProps {
         colorClassName?: string
     }
 
-    interface CheckboxProps {
+    interface ToggleProps {
+        className?: string
+    }
+
+    interface TextFieldProps {
+        className?: string
+    }
+
+    interface SyncToggleProps {
+        className?: string
+    }
+
+    interface StepperProps {
         className?: string
     }
 
@@ -23,19 +87,36 @@ declare module '@expo/ui' {
         className?: string
     }
 
-    interface SwitchProps {
+    interface SecureFieldProps {
         className?: string
     }
-}
 
-declare module '@expo/ui/swift-ui' {
-    interface CommonViewModifierProps {
+    interface ProgressViewProps {
         className?: string
+    }
+
+    interface LabelProps {
         colorClassName?: string
     }
 
-    interface ImageProps {
-        colorClassName?: string
+    interface HostProps {
+        className?: string
+    }
+
+    interface GaugeProps {
+        className?: string
+    }
+
+    interface DatePickerProps {
+        className?: string
+    }
+
+    interface ColorPickerProps {
+        className?: string
+    }
+
+    interface ButtonProps {
+        className?: string
     }
 }
 
