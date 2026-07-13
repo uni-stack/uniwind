@@ -6,7 +6,8 @@ import { rnw } from 'vite-plugin-rnw'
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
-        rnw(),
+        // Storybook's React Native Web framework configures this plugin itself.
+        process.env.STORYBOOK !== '1' && rnw(),
         tailwindcss(),
         uniwind({
             cssEntryFile: './src/App.css',

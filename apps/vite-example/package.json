@@ -7,8 +7,8 @@
         "dev": "vite",
         "release": "tsc -b && vite build",
         "preview": "vite preview",
-        "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "storybook": "STORYBOOK=1 storybook dev -p 6006",
+        "build-storybook": "STORYBOOK=1 storybook build"
     },
     "dependencies": {
         "@tailwindcss/vite": "4.3.2",
@@ -23,7 +23,7 @@
         "@types/node": "25.9.1",
         "@types/react": "catalog:",
         "@types/react-dom": "19.2.3",
-        "@storybook/react-vite": "10.5.0",
+        "@storybook/react-native-web-vite": "10.5.0",
         "globals": "17.6.0",
         "storybook": "10.5.0",
         "typescript": "catalog:",

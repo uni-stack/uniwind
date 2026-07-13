@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite'
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite'
 import { Text } from 'react-native'
 
 function StorybookText() {
