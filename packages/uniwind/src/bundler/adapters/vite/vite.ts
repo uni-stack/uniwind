@@ -45,6 +45,7 @@ const resolveOrderedCSSStyleSheet = (source: string, importer: string | undefine
 }
 
 const vite8OptimizeDeps = {
+    include: ['react-native-web'],
     exclude: ['uniwind', 'react-native'],
     rolldownOptions: {
         plugins: [{
