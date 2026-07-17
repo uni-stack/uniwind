@@ -8,6 +8,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        <!-- uniwind:issue-template -->
+
         ## Pro User Bug Report
 
         Thank you for being a Pro user! Your issue will receive priority attention.

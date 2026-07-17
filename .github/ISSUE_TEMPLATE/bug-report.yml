@@ -7,6 +7,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        <!-- uniwind:issue-template -->
+
         ## Required Information
 
   - type: textarea

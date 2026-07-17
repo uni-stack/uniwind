@@ -19,13 +19,30 @@ env:
 jobs:
   autoclose:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.issue.labels.*.name, 'uniwind-pro') }}
     permissions:
       issues: write
     steps:
+      - name: Check issue template
+        id: template
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          if echo "$BODY" | grep -qF '<!-- uniwind:issue-template -->'; then
+            echo "valid=true" >> $GITHUB_OUTPUT
+          else
+            echo "valid=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Close invalid issue
+        if: github.event_name != 'workflow_dispatch' && steps.template.outputs.valid == 'false'
+        run: >-
+          gh issue close "$NUMBER" --comment "This issue must be reported using the official issue templates: **Bug report** or **Bug report (Uniwind Pro)**." --repo "$REPO"
+      - name: Label invalid issue
+        if: github.event_name != 'workflow_dispatch' && steps.template.outputs.valid == 'false'
+        run: gh issue edit "$NUMBER" --add-label "invalid" --repo "$REPO"
       - name: Check for valid reproduction
         id: check
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name != 'workflow_dispatch' && steps.template.outputs.valid == 'true' && !contains(github.event.issue.labels.*.name, 'uniwind-pro')
         env:
           BODY: ${{ github.event.issue.body }}
         run: |
@@ -36,7 +53,7 @@ jobs:
           fi
       - name: Close Issue
         if: github.event_name == 'workflow_dispatch' || steps.check.outputs.valid == 'false'
-        run: gh issue close "$NUMBER" --comment "This issue has been automatically closed because it **lacks a clear, minimal reproduction** that we can use to verify the reported bug." --repo "$REPO"
+        run: gh issue close "$NUMBER" --comment "This issue has been automatically closed because it **lacks a repository with a minimal reproduction** that we can use to verify the reported bug." --repo "$REPO"
       - name: Label Issue
         if: github.event_name == 'workflow_dispatch' || steps.check.outputs.valid == 'false'
         run: gh issue edit "$NUMBER" --add-label "repro-required" --repo "$REPO"
