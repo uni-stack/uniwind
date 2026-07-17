@@ -62,3 +62,37 @@ describe('Uniwind web config', () => {
         expect(getRule('.premium')?.style.getPropertyValue('--color-background')).toBe('#abcdef')
     })
 })
+
+describe('Uniwind web config initial theme', () => {
+    // The theme is adopted in the constructor, so the module has to be loaded
+    // after <html> already carries the class
+    const loadUniwind = (rootClassName: string) => {
+        document.documentElement.className = rootClassName
+
+        let instance: typeof Uniwind | undefined
+
+        jest.isolateModules(() => {
+            instance = (require('../../../src/core/config/config') as { Uniwind: typeof Uniwind }).Uniwind
+        })
+
+        return instance as typeof Uniwind
+    }
+
+    afterEach(() => {
+        document.documentElement.className = ''
+    })
+
+    test('adopts the theme already applied to <html>', () => {
+        const instance = loadUniwind('dark')
+
+        expect(instance.currentTheme).toBe('dark')
+        expect(instance.hasAdaptiveThemes).toBe(false)
+    })
+
+    test('keeps adaptive themes when <html> has no registered theme class', () => {
+        const instance = loadUniwind('no-theme-here')
+
+        expect(instance.currentTheme).toBe('light')
+        expect(instance.hasAdaptiveThemes).toBe(true)
+    })
+})

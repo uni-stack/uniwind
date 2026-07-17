@@ -16,6 +16,17 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
     constructor() {
         super()
+
+        if (typeof document === 'undefined') {
+            return
+        }
+
+        // Adopt the theme already applied to <html>, e.g. by an SSR anti-flicker script
+        const rootClasses = document.documentElement.classList
+        const rootTheme = this.themes.find((theme) => rootClasses.contains(theme))
+        if (rootTheme) {
+            this.setTheme(rootTheme)
+        }
     }
 
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
