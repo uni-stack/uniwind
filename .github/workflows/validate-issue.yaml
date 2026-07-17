@@ -28,7 +28,7 @@ jobs:
         env:
           BODY: ${{ github.event.issue.body }}
         run: |
-          if echo "$BODY" | grep -qF '<!-- uniwind:issue-template -->'; then
+          if echo "$BODY" | grep -qF '〰'; then
             echo "valid=true" >> $GITHUB_OUTPUT
           else
             echo "valid=false" >> $GITHUB_OUTPUT
