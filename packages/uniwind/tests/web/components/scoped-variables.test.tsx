@@ -68,6 +68,55 @@ describe('ScopedVariables (web)', () => {
         expect(getByText('scoped content').parentElement).toHaveStyle({ display: 'contents' })
     })
 
+    test('applies the variables as inline custom properties on the wrapper', () => {
+        // The real DOM cascade (RNW passes classes through as-is) resolves
+        // `var(--name)` against these inline properties, so they must land on
+        // the wrapper element itself, not only on the hidden read helper.
+        const { getByText } = render(
+            <ScopedVariables variables={{ '--color-primary': '#3b82f6', '--gap': 8 }}>
+                <span>scoped content</span>
+            </ScopedVariables>,
+        )
+
+        const wrapper = getByText('scoped content').parentElement!
+
+        expect(wrapper.style.getPropertyValue('--color-primary')).toEqual('#3b82f6')
+        // Numbers are converted to px, matching updateCSSVariables on web
+        expect(wrapper.style.getPropertyValue('--gap')).toEqual('8px')
+    })
+
+    test('nested wrappers each carry only their own overrides inline', () => {
+        // Inheritance comes from the DOM cascade, so the inner wrapper only
+        // needs to declare what it overrides; --gap keeps cascading from outer.
+        const { getByText } = render(
+            <ScopedVariables variables={{ '--color-primary': '#3b82f6', '--gap': 8 }}>
+                <ScopedVariables variables={{ '--color-primary': '#ff0000' }}>
+                    <span>inner content</span>
+                </ScopedVariables>
+            </ScopedVariables>,
+        )
+
+        const innerWrapper = getByText('inner content').parentElement!
+
+        expect(innerWrapper.style.getPropertyValue('--color-primary')).toEqual('#ff0000')
+        // Inner does not redeclare --gap; it inherits through the cascade
+        expect(innerWrapper.style.getPropertyValue('--gap')).toEqual('')
+    })
+
+    test('invalid keys are not written to the wrapper inline styles', () => {
+        const { getByText } = render(
+            // @ts-expect-error intentionally passing an invalid key
+            <ScopedVariables variables={{ 'color-primary': '#3b82f6', '--gap': 8 }}>
+                <span>scoped content</span>
+            </ScopedVariables>,
+        )
+
+        const wrapper = getByText('scoped content').parentElement!
+
+        expect(wrapper.style.getPropertyValue('color-primary')).toEqual('')
+        expect(wrapper.style.getPropertyValue('--gap')).toEqual('8px')
+    })
+
     test('getWebVariable applies number values as px and clears them afterwards', () => {
         expect(
             getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 }, variablesCacheKey: null }),

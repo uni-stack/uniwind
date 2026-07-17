@@ -81,7 +81,7 @@ Web runtime:
 - `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when class-dependent media rules change.
 - `ScopedTheme` renders a `div` with the theme class and `display: contents` on web.
 - `LayoutDirection` renders a contents-style wrapper with `direction`/`dir` semantics so RTL/LTR variants can be scoped to a subtree.
-- `ScopedVariables` applies its variables as inline custom properties on the hidden `dummyParent` during read, then clears them, so the DOM cascade resolves overrides.
+- `ScopedVariables` renders a `display: contents` wrapper and sets its variables as inline custom properties on that wrapper, so the real DOM cascade resolves `var(--name)` to the scoped value for every descendant (numbers become px). During JS reads (`getWebVariable` / `useResolveClassNames`) it also applies the variables to the hidden `dummyParent`, then clears them.
 - Dynamic CSS variable updates are written into a generated `#uniwind-dynamic-styles` style element.
 
 Shared runtime:
