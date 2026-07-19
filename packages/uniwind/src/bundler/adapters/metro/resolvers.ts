@@ -1,4 +1,5 @@
 import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
+import { realpathSync } from 'node:fs'
 import { basename, dirname, sep } from 'node:path'
 
 type ResolverConfig = {
@@ -9,6 +10,35 @@ type ResolverConfig = {
 }
 
 let cachedInternalBasePath: string | null = null
+
+const isInternalOrigin = (originModulePath: string) => {
+    if (cachedInternalBasePath === null) {
+        try {
+            cachedInternalBasePath = dirname(realpathSync(require.resolve('uniwind/package.json')))
+        } catch {
+            cachedInternalBasePath = ''
+        }
+    }
+
+    if (cachedInternalBasePath === '') {
+        return false
+    }
+
+    const internalPathPrefix = `${cachedInternalBasePath}${sep}`
+    if (originModulePath.startsWith(internalPathPrefix)) {
+        return true
+    }
+
+    if (!originModulePath.includes(`${sep}node_modules${sep}uniwind${sep}`)) {
+        return false
+    }
+
+    try {
+        return realpathSync(originModulePath).startsWith(internalPathPrefix)
+    } catch {
+        return false
+    }
+}
 
 const SUPPORTED_COMPONENTS = [
     'ActivityIndicator',
@@ -44,15 +74,7 @@ export const nativeResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
-    if (cachedInternalBasePath === null) {
-        try {
-            cachedInternalBasePath = dirname(require.resolve('uniwind/package.json'))
-        } catch {
-            cachedInternalBasePath = ''
-        }
-    }
-
-    const isInternal = cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath)
+    const isInternal = isInternalOrigin(context.originModulePath)
     const isFromNodeModules = context.originModulePath.includes(`${sep}node_modules${sep}`)
     const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
         || context.originModulePath.includes(`${sep}@react-native${sep}`)
@@ -92,16 +114,8 @@ export const webResolver = ({
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
 
-    if (cachedInternalBasePath === null) {
-        try {
-            cachedInternalBasePath = dirname(require.resolve('uniwind/package.json'))
-        } catch {
-            cachedInternalBasePath = ''
-        }
-    }
-
     if (
-        (cachedInternalBasePath !== '' && context.originModulePath.startsWith(cachedInternalBasePath))
+        isInternalOrigin(context.originModulePath)
         || resolution.type !== 'sourceFile'
         || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
     ) {
