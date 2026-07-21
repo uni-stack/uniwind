@@ -108,8 +108,11 @@ class UniwindStoreBuilder {
         let dependencySum = 0
         const bestBreakpoints = new Map<string, Style>()
         const isScopedTheme = uniwindContext.scopedTheme !== null
+        const classNameTokens = classNames.includes('\n')
+            ? classNames.split(/\s+/).filter(Boolean)
+            : classNames.split(' ')
 
-        for (const className of classNames.split(' ')) {
+        for (const className of classNameTokens) {
             if (!(className in this.stylesheet)) {
                 continue
             }
