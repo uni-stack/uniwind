@@ -2,6 +2,16 @@ import { Logger } from '../../core/logger'
 import type { CSSVariables, UniwindContextType } from '../../core/types'
 
 export type ScopedVariablesProps = {
+    /**
+     * CSS variables to override for this subtree. Keys must start with `--`;
+     * values are `string | number` (numbers become px on web, colors are
+     * normalized on native).
+     *
+     * Prefer a **stable** reference — define this object outside render or wrap
+     * it in `useMemo`. An inline object is a new reference every render, which
+     * recomputes the provider value and re-renders every consumer in the
+     * subtree (the same guidance as any React context provider value).
+     */
     variables: CSSVariables
     /**
      * Opt-in native style caching for this subtree.
@@ -21,15 +31,17 @@ export type ScopedVariablesProps = {
     cacheKey?: string
 }
 
-const validateVariables = (variables: CSSVariables) => {
-    if (!__DEV__) {
-        return variables
-    }
-
-    return Object.fromEntries(
+// Drop keys that aren't custom properties in every build, not just dev: an
+// invalid key left in `context.variables` reaches `applyScopedVariables`, which
+// would set an inheritable property (e.g. `color`) on the web read helper and
+// could corrupt a resolved value. Only the dev warning is gated on `__DEV__`.
+const validateVariables = (variables: CSSVariables) =>
+    Object.fromEntries(
         Object.entries(variables).filter(([name]) => {
             if (!name.startsWith('--')) {
-                Logger.error(`CSS variable name must start with "--", instead got: ${name}`)
+                if (__DEV__) {
+                    Logger.error(`CSS variable name must start with "--", instead got: ${name}`)
+                }
 
                 return false
             }
@@ -37,7 +49,6 @@ const validateVariables = (variables: CSSVariables) => {
             return true
         }),
     )
-}
 
 /**
  * Builds the context value for a `<ScopedVariables>` provider.

@@ -121,10 +121,10 @@ export const ScopedVariablesDemo = () => {
                 </View>
             </ScopedVariables>
 
-            {/* 4. Same as override, plus an opt-in stable cacheKey (native caching) */}
+            {/* 4. A scoped override plus an opt-in stable cacheKey (native caching) */}
             <SectionHeader
                 title="4. Cached subtree (cacheKey)"
-                subtitle="Same overrides as #2, but a stable cacheKey re-enables the native style cache."
+                subtitle="A scoped override with a stable cacheKey, which re-enables the native style cache for this subtree."
             />
             <ScopedVariables variables={{ '--color-primary': '#f59e0b', '--gap': 8 }} cacheKey="demo-amber">
                 <AccentCard title="Amber card" primary="override" gap="override" />

@@ -102,39 +102,43 @@ export const getWebStyles = (
 
     const disposeScopedVariables = applyScopedVariables(uniwindContext)
 
-    dummy.className = className
+    // finally: the scoped custom properties must be cleared even if a DOM read
+    // throws, otherwise `dummyParent` keeps them and the next resolve is stale.
+    try {
+        dummy.className = className
 
-    const dataSet = generateDataSet(componentProps ?? {})
+        const dataSet = generateDataSet(componentProps ?? {})
 
-    Object.entries(dataSet).forEach(([key, value]) => {
-        if (value === false || value === undefined) {
-            return
-        }
+        Object.entries(dataSet).forEach(([key, value]) => {
+            if (value === false || value === undefined) {
+                return
+            }
 
-        dummy.dataset[key] = String(value)
-    })
+            dummy.dataset[key] = String(value)
+        })
 
-    const computedStyles = getActiveStylesForClass(className)
+        const computedStyles = getActiveStylesForClass(className)
 
-    Object.keys(dataSet).forEach(key => {
-        delete dummy.dataset[key]
-    })
+        Object.keys(dataSet).forEach(key => {
+            delete dummy.dataset[key]
+        })
 
-    disposeScopedVariables()
+        return Object.fromEntries(
+            Object.entries(computedStyles)
+                .map(([key, value]) => {
+                    const parsedKey = key[0] === '-'
+                        ? key
+                        : key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
 
-    return Object.fromEntries(
-        Object.entries(computedStyles)
-            .map(([key, value]) => {
-                const parsedKey = key[0] === '-'
-                    ? key
-                    : key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
-
-                return [
-                    parsedKey,
-                    parseCSSValue(value),
-                ]
-            }),
-    )
+                    return [
+                        parsedKey,
+                        parseCSSValue(value),
+                    ]
+                }),
+        )
+    } finally {
+        disposeScopedVariables()
+    }
 }
 
 export const getWebVariable = (name: string, uniwindContext: UniwindContextType) => {
@@ -155,9 +159,12 @@ export const getWebVariable = (name: string, uniwindContext: UniwindContextType)
     }
 
     const disposeScopedVariables = applyScopedVariables(uniwindContext)
-    const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
 
-    disposeScopedVariables()
+    try {
+        const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
 
-    return parseCSSValue(variable)
+        return parseCSSValue(variable)
+    } finally {
+        disposeScopedVariables()
+    }
 }

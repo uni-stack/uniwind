@@ -30,6 +30,30 @@ describe('ScopedVariables (web)', () => {
         expect(inside).toHaveBeenCalledWith('#3b82f6')
     })
 
+    test('useCSSVariable reflects an updated variables prop through the cascade', () => {
+        const seen: Array<string | number | undefined> = []
+
+        const Probe = () => {
+            seen.push(useCSSVariable('--color-primary'))
+
+            return null
+        }
+
+        const Wrapper = ({ color }: { color: string }) => (
+            <ScopedVariables variables={{ '--color-primary': color }}>
+                <Probe />
+            </ScopedVariables>
+        )
+
+        const { rerender } = render(<Wrapper color="#3b82f6" />)
+
+        rerender(<Wrapper color="#ff0000" />)
+
+        // Mounts with the initial value, then reflects the updated prop
+        expect(seen[0]).toEqual('#3b82f6')
+        expect(seen.at(-1)).toEqual('#ff0000')
+    })
+
     test('nested providers inherit ancestors and the nearest wins', () => {
         const values: Array<Record<string, string | number | undefined>> = []
 
@@ -105,7 +129,6 @@ describe('ScopedVariables (web)', () => {
 
     test('invalid keys are not written to the wrapper inline styles', () => {
         const { getByText } = render(
-            // @ts-expect-error intentionally passing an invalid key
             <ScopedVariables variables={{ 'color-primary': '#3b82f6', '--gap': 8 }}>
                 <span>scoped content</span>
             </ScopedVariables>,

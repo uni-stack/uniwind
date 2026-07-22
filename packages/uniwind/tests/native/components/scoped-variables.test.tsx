@@ -109,6 +109,32 @@ describe('ScopedVariables', () => {
         expect(inside).toHaveBeenCalledWith('#123456')
     })
 
+    test('useCSSVariable reflects an updated variables prop', () => {
+        const seen: Array<string | number | undefined> = []
+
+        const Probe = () => {
+            seen.push(useCSSVariable('--color-primary'))
+
+            return null
+        }
+
+        const Wrapper = ({ color }: { color: string }) => (
+            <ScopedVariables variables={{ '--color-primary': color }}>
+                <Probe />
+            </ScopedVariables>
+        )
+
+        const { rerender } = renderUniwind(<Wrapper color="#3b82f6" />)
+
+        act(() => {
+            rerender(<Wrapper color="#ff0000" />)
+        })
+
+        // Mounts with the initial value, then reflects the updated prop
+        expect(seen[0]).toEqual('#3b82f6')
+        expect(seen.at(-1)).toEqual('#ff0000')
+    })
+
     test('composes with ScopedTheme: base follows theme, scoped value stays pinned', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
@@ -165,7 +191,6 @@ describe('ScopedVariables', () => {
 
         try {
             const { getStylesFromId } = renderUniwind(
-                // @ts-expect-error intentionally passing an invalid key for the dev warning
                 <ScopedVariables variables={{ 'color-primary': '#3b82f6', '--gap': 8 }}>
                     <View className="gap-(--gap)" testID="valid" />
                 </ScopedVariables>,

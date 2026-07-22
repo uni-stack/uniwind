@@ -82,6 +82,10 @@ export const useCSSVariable: GetCSSVariable = (name: string | Array<string>) => 
 
     useLayoutEffect(() => {
         const updateValue = () => setValue(getCSSVariable(nameRef.current, uniwindContext))
+        // Recompute on context change too: a new `uniwindContext` (e.g. an
+        // updated `<ScopedVariables>` prop or a nearer provider) can resolve to
+        // a different value without any global Theme/Variables event firing.
+        updateValue()
         const dispose = UniwindListener.subscribe(
             updateValue,
             [StyleDependency.Theme, StyleDependency.Variables],
