@@ -3,7 +3,7 @@ import { arrayEquals } from '../../common/utils'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
-import { getWebVariable } from '../web'
+import { getWebVariable, toWebValue } from '../web'
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 type UniwindCSSRule = {
@@ -49,10 +49,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
             uniwindRules.forEach(rule => {
                 if (rule.theme === theme) {
-                    rule.style.setProperty(
-                        varName,
-                        typeof varValue === 'number' ? `${varValue}px` : varValue,
-                    )
+                    rule.style.setProperty(varName, toWebValue(varValue))
 
                     return
                 }

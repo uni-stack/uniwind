@@ -93,9 +93,6 @@ describe('ScopedVariables (web)', () => {
     })
 
     test('applies the variables as inline custom properties on the wrapper', () => {
-        // The real DOM cascade (RNW passes classes through as-is) resolves
-        // `var(--name)` against these inline properties, so they must land on
-        // the wrapper element itself, not only on the hidden read helper.
         const { getByText } = render(
             <ScopedVariables variables={{ '--color-primary': '#3b82f6', '--gap': 8 }}>
                 <span>scoped content</span>
@@ -110,8 +107,6 @@ describe('ScopedVariables (web)', () => {
     })
 
     test('nested wrappers each carry only their own overrides inline', () => {
-        // Inheritance comes from the DOM cascade, so the inner wrapper only
-        // needs to declare what it overrides; --gap keeps cascading from outer.
         const { getByText } = render(
             <ScopedVariables variables={{ '--color-primary': '#3b82f6', '--gap': 8 }}>
                 <ScopedVariables variables={{ '--color-primary': '#ff0000' }}>
@@ -145,30 +140,9 @@ describe('ScopedVariables (web)', () => {
             getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 }, variablesCacheKey: null }),
         ).toEqual('8px')
 
-        // After resolving with scoped variables, the dummy parent no longer
-        // carries the property (it is cleared), so a plain read falls back.
+        // The dummy parent is cleared after the read, so a plain read falls back
         expect(
             getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: null, variablesCacheKey: null }),
         ).toEqual('')
-    })
-
-    test('cacheKey prop is accepted on web and does not change the resolved value', () => {
-        // The web read path has no memo cache, so cacheKey is a no-op there;
-        // it must still resolve scoped variables normally.
-        const inside = jest.fn()
-
-        const Probe = ({ test }: { test: jest.Mock }) => {
-            test(useCSSVariable('--color-primary'))
-
-            return null
-        }
-
-        render(
-            <ScopedVariables variables={{ '--color-primary': '#3b82f6' }} cacheKey="stable">
-                <Probe test={inside} />
-            </ScopedVariables>,
-        )
-
-        expect(inside).toHaveBeenCalledWith('#3b82f6')
     })
 })

@@ -67,8 +67,8 @@ Native runtime:
 - Build output injects a generated stylesheet callback into `Uniwind.__reinit(...)`.
 - `UniwindStore` holds generated style records, theme variables, scoped variables, runtime state, and per-theme caches.
 - `UniwindStore.getStyles(className, props, state, context)` resolves classes into React Native style objects.
-- Cache keys include class names, component state, whether theme is scoped, layout direction, and the opt-in `ScopedVariables` cache key.
-- `ScopedVariables` subtrees bypass the cache by default (variables are overlaid onto a prototype-chained clone of the theme vars during resolve); an opt-in `cacheKey` is folded into the cache key to restore caching. Caller owns key stability.
+- Cache keys include class names, component state, whether theme is scoped, layout direction, and a key derived from the merged `ScopedVariables` map.
+- During resolve, `ScopedVariables` overrides are overlaid onto a prototype-chained clone of the theme vars so unset variables fall through to the theme.
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
 - Native style resolution filters rules by screen width, orientation, theme, RTL, active/focus/disabled state, and `data-*` props.
@@ -92,7 +92,7 @@ Shared runtime:
 - `Uniwind.updateInsets(insets)` is native-only behavior and updates safe-area-style runtime values.
 - `ScopedTheme` sets `UniwindContext.scopedTheme`; scoped subtree ignores global theme changes for style resolution.
 - `LayoutDirection` sets `UniwindContext.rtl`; scoped subtree uses that direction for RTL/LTR variant resolution instead of global runtime RTL.
-- `ScopedVariables` sets `UniwindContext.variables` (and optional `variablesCacheKey` via its `cacheKey` prop); scoped subtree overrides CSS variables for style resolution and `useCSSVariable` without mutating the global theme. Nested providers merge `{ ...ancestor, ...own }`, nearest wins; keys must start with `--` (invalid keys log a dev error); values reuse `updateCSSVariables` normalization. All scoping primitives spread the full parent context so sibling fields compose without clobbering.
+- `ScopedVariables` sets `UniwindContext.variables`; the subtree overrides CSS variables for style resolution and `useCSSVariable` without mutating the global theme. Nested providers merge with ancestors, nearest wins.
 
 ## Build And Bundler Model
 

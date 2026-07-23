@@ -1,6 +1,5 @@
 import './global.css'
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { ScopedVariablesDemo } from './ScopedVariablesDemo'
 
 const TailwindTestPage = () => {
     return (
@@ -655,8 +654,6 @@ const TailwindTestPage = () => {
                     <View className="bg-linear-[25deg,red_5%,yellow_60%,lime_90%,teal] rounded h-32 mb-4" />
                 </View>
             </View>
-
-            <ScopedVariablesDemo />
         </ScrollView>
     )
 }

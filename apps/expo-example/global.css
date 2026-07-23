@@ -1,17 +1,6 @@
 @import 'tailwindcss';
 @import 'uniwind';
 
-/* Theme defaults consumed by the ScopedVariables demo. Outside any
-   <ScopedVariables> subtree these are the values that apply. */
-@theme {
-    --color-primary: #2b7fff;
-    --color-surface: #ffffff;
-}
-
-:root {
-    --gap: 8px;
-}
-
 @layer theme {
     :root {
         @variant dark {

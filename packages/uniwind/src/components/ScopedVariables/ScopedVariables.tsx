@@ -1,30 +1,24 @@
 import React, { useMemo } from 'react'
 import { UniwindContext, useUniwindContext } from '../../core/context'
 import type { UniwindContextType } from '../../core/types'
+import { toWebValue } from '../../core/web/webUtils'
 import { buildScopedVariablesContext, type ScopedVariablesProps } from './utils'
 
-export const ScopedVariables: React.FC<React.PropsWithChildren<ScopedVariablesProps>> = ({ variables, cacheKey, children }) => {
+export const ScopedVariables: React.FC<React.PropsWithChildren<ScopedVariablesProps>> = ({ variables, children }) => {
     const uniwindContext = useUniwindContext()
     const value = useMemo<UniwindContextType>(
-        () => buildScopedVariablesContext(uniwindContext, variables, cacheKey),
-        [uniwindContext, variables, cacheKey],
+        () => buildScopedVariablesContext(uniwindContext, variables),
+        [uniwindContext, variables],
     )
-
-    // Apply the overrides as inline custom properties on the wrapper so the DOM
-    // cascade resolves `var(--name)` to the scoped value for every descendant.
-    // Custom properties inherit through `display: contents`, so children still
-    // pick these up even though the wrapper generates no box. Numbers are
-    // converted to px, matching `Uniwind.updateCSSVariables` on web.
+    // Inline custom properties so the DOM cascade resolves var(--name) for descendants
     const style = useMemo<React.CSSProperties>(() => {
         const result: Record<string, string | number> = { display: 'contents' }
 
-        for (const [name, variableValue] of Object.entries(variables)) {
-            if (!name.startsWith('--')) {
-                continue
+        Object.entries(variables).forEach(([name, variableValue]) => {
+            if (name.startsWith('--')) {
+                result[name] = toWebValue(variableValue)
             }
-
-            result[name] = typeof variableValue === 'number' ? `${variableValue}px` : variableValue
-        }
+        })
 
         return result as React.CSSProperties
     }, [variables])

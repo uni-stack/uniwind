@@ -2,6 +2,7 @@ import { generateDataSet } from '../../components/web/generateDataSet'
 import type { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
+import { toWebValue } from './webUtils'
 
 const dummyParent = typeof document !== 'undefined'
     ? Object.assign(document.createElement('div'), {
@@ -17,12 +18,8 @@ if (dummyParent && dummy) {
     dummyParent.appendChild(dummy)
 }
 
-/**
- * Applies scoped CSS variables (from <ScopedVariables>) to `dummyParent` as
- * inline custom properties so they cascade to `dummy` during style computation.
- * Numbers are converted to px, matching `Uniwind.updateCSSVariables` on web.
- * Returns a disposer that removes the applied properties again.
- */
+// Applies scoped variables to dummyParent so they cascade to dummy during style
+// computation. Returns a disposer that removes them again
 const applyScopedVariables = (uniwindContext: UniwindContextType) => {
     if (!dummyParent || uniwindContext.variables === null) {
         return () => {}
@@ -31,7 +28,7 @@ const applyScopedVariables = (uniwindContext: UniwindContextType) => {
     const names = Object.keys(uniwindContext.variables)
 
     Object.entries(uniwindContext.variables).forEach(([name, value]) => {
-        dummyParent.style.setProperty(name, typeof value === 'number' ? `${value}px` : value)
+        dummyParent.style.setProperty(name, toWebValue(value))
     })
 
     return () => {
@@ -102,8 +99,6 @@ export const getWebStyles = (
 
     const disposeScopedVariables = applyScopedVariables(uniwindContext)
 
-    // finally: the scoped custom properties must be cleared even if a DOM read
-    // throws, otherwise `dummyParent` keeps them and the next resolve is stale.
     try {
         dummy.className = className
 
