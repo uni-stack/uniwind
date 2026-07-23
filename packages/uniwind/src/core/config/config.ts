@@ -3,7 +3,7 @@ import { arrayEquals } from '../../common/utils'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
-import { getWebVariable } from '../web'
+import { getWebVariable, toWebValue } from '../web'
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 type UniwindCSSRule = {
@@ -42,15 +42,14 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
             }
 
             const existingRules: Record<ThemeName, string | undefined> = Object.fromEntries(
-                uniwindRules.map(rule => [rule.theme, getWebVariable(varName, { scopedTheme: rule.theme, rtl: null })]),
+                uniwindRules.map(
+                    rule => [rule.theme, getWebVariable(varName, { scopedTheme: rule.theme, rtl: null, variables: null, variablesCacheKey: null })],
+                ),
             )
 
             uniwindRules.forEach(rule => {
                 if (rule.theme === theme) {
-                    rule.style.setProperty(
-                        varName,
-                        typeof varValue === 'number' ? `${varValue}px` : varValue,
-                    )
+                    rule.style.setProperty(varName, toWebValue(varValue))
 
                     return
                 }

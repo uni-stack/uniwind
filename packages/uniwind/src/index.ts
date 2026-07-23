@@ -1,5 +1,6 @@
 export * from './components/LayoutDirection'
 export * from './components/ScopedTheme'
+export * from './components/ScopedVariables'
 export { Uniwind } from './core'
 export type { ThemeName, UniwindConfig } from './core/types'
 export { withUniwind } from './hoc'

@@ -2,6 +2,7 @@ import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
+import { createVarGetter } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
 
@@ -32,7 +33,7 @@ class UniwindStoreBuilder {
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
-        }`
+        }${uniwindContext.variablesCacheKey ?? ''}`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
         if (!cache) {
@@ -101,7 +102,16 @@ class UniwindStoreBuilder {
         const resultGetters = {} as Record<string, Var>
         const theme = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
         // At this point we're sure that theme is correct
-        let vars = this.vars[theme]!
+        const themeVars = this.vars[theme]!
+        // Overlay scoped variables onto a prototype-chained clone so unset vars fall through to the theme
+        let vars = uniwindContext.variables === null
+            ? themeVars
+            : Object.assign(
+                Object.create(themeVars) as Vars,
+                Object.fromEntries(
+                    Object.entries(uniwindContext.variables).map(([name, value]) => [name, createVarGetter(value)]),
+                ),
+            )
         const originalVars = vars
         let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()

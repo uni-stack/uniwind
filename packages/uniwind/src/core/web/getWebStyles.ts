@@ -2,6 +2,7 @@ import { generateDataSet } from '../../components/web/generateDataSet'
 import type { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue } from './parseCSSValue'
+import { toWebValue } from './webUtils'
 
 const dummyParent = typeof document !== 'undefined'
     ? Object.assign(document.createElement('div'), {
@@ -15,6 +16,24 @@ const dummy = typeof document !== 'undefined'
 if (dummyParent && dummy) {
     document.body.appendChild(dummyParent)
     dummyParent.appendChild(dummy)
+}
+
+// Applies scoped variables to dummyParent so they cascade to dummy during style
+// computation. Returns a disposer that removes them again
+const applyScopedVariables = (uniwindContext: UniwindContextType) => {
+    if (!dummyParent || uniwindContext.variables === null) {
+        return () => {}
+    }
+
+    const names = Object.keys(uniwindContext.variables)
+
+    Object.entries(uniwindContext.variables).forEach(([name, value]) => {
+        dummyParent.style.setProperty(name, toWebValue(value))
+    })
+
+    return () => {
+        names.forEach(name => dummyParent.style.removeProperty(name))
+    }
 }
 
 const getActiveStylesForClass = (className: string) => {
@@ -78,37 +97,43 @@ export const getWebStyles = (
         dummyParent?.removeAttribute('dir')
     }
 
-    dummy.className = className
+    const disposeScopedVariables = applyScopedVariables(uniwindContext)
 
-    const dataSet = generateDataSet(componentProps ?? {})
+    try {
+        dummy.className = className
 
-    Object.entries(dataSet).forEach(([key, value]) => {
-        if (value === false || value === undefined) {
-            return
-        }
+        const dataSet = generateDataSet(componentProps ?? {})
 
-        dummy.dataset[key] = String(value)
-    })
+        Object.entries(dataSet).forEach(([key, value]) => {
+            if (value === false || value === undefined) {
+                return
+            }
 
-    const computedStyles = getActiveStylesForClass(className)
+            dummy.dataset[key] = String(value)
+        })
 
-    Object.keys(dataSet).forEach(key => {
-        delete dummy.dataset[key]
-    })
+        const computedStyles = getActiveStylesForClass(className)
 
-    return Object.fromEntries(
-        Object.entries(computedStyles)
-            .map(([key, value]) => {
-                const parsedKey = key[0] === '-'
-                    ? key
-                    : key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+        Object.keys(dataSet).forEach(key => {
+            delete dummy.dataset[key]
+        })
 
-                return [
-                    parsedKey,
-                    parseCSSValue(value),
-                ]
-            }),
-    )
+        return Object.fromEntries(
+            Object.entries(computedStyles)
+                .map(([key, value]) => {
+                    const parsedKey = key[0] === '-'
+                        ? key
+                        : key.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase())
+
+                    return [
+                        parsedKey,
+                        parseCSSValue(value),
+                    ]
+                }),
+        )
+    } finally {
+        disposeScopedVariables()
+    }
 }
 
 export const getWebVariable = (name: string, uniwindContext: UniwindContextType) => {
@@ -128,7 +153,13 @@ export const getWebVariable = (name: string, uniwindContext: UniwindContextType)
         dummyParent.removeAttribute('dir')
     }
 
-    const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
+    const disposeScopedVariables = applyScopedVariables(uniwindContext)
 
-    return parseCSSValue(variable)
+    try {
+        const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
+
+        return parseCSSValue(variable)
+    } finally {
+        disposeScopedVariables()
+    }
 }
