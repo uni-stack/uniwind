@@ -209,7 +209,7 @@ describe('ScopedVariables', () => {
             const context: UniwindContextType = {
                 ...baseContext,
                 variables: { '--gap': 8 },
-                variablesCacheKey: '--gap:8;',
+                variablesCacheKey: '[["--gap",8]]',
             }
 
             const first = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
@@ -223,12 +223,12 @@ describe('ScopedVariables', () => {
             const contextA: UniwindContextType = {
                 ...baseContext,
                 variables: { '--gap': 8 },
-                variablesCacheKey: '--gap:8;',
+                variablesCacheKey: '[["--gap",8]]',
             }
             const contextB: UniwindContextType = {
                 ...baseContext,
                 variables: { '--gap': 4 },
-                variablesCacheKey: '--gap:4;',
+                variablesCacheKey: '[["--gap",4]]',
             }
 
             const a = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, contextA)
@@ -258,9 +258,33 @@ describe('ScopedVariables', () => {
                 </ScopedVariables>,
             )
 
-            expect(outer).toHaveBeenCalledWith('--gap:8;')
+            expect(outer).toHaveBeenCalledWith('[["--gap",8]]')
             // Inner key includes the inherited variables, so nested subtrees can't collide
-            expect(inner).toHaveBeenCalledWith('--color-primary:#ff0000;--gap:8;')
+            expect(inner).toHaveBeenCalledWith('[["--color-primary","#ff0000"],["--gap",8]]')
+        })
+
+        test('values containing separators do not produce colliding keys', () => {
+            const Probe = (props: { test: jest.Mock }) => {
+                props.test(useUniwindContext().variablesCacheKey)
+
+                return null
+            }
+
+            const ambiguous = jest.fn()
+            const plain = jest.fn()
+
+            renderUniwind(
+                <React.Fragment>
+                    <ScopedVariables variables={{ '--a': '1;--b:2' }}>
+                        <Probe test={ambiguous} />
+                    </ScopedVariables>
+                    <ScopedVariables variables={{ '--a': '1', '--b': '2' }}>
+                        <Probe test={plain} />
+                    </ScopedVariables>
+                </React.Fragment>,
+            )
+
+            expect(ambiguous.mock.calls[0][0]).not.toEqual(plain.mock.calls[0][0])
         })
 
         test('updating the variables prop does not serve stale cached styles', () => {

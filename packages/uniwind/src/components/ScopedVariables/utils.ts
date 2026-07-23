@@ -29,10 +29,9 @@ export const buildScopedVariablesContext = (
         ...parent.variables,
         ...validateVariables(variables),
     }
-    const variablesCacheKey = Object
-        .entries(mergedVariables)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .reduce((acc, [key, value]) => `${acc}${key}:${value};`, '')
+    const variablesCacheKey = JSON.stringify(
+        Object.entries(mergedVariables).sort(([a], [b]) => a.localeCompare(b)),
+    )
 
     return {
         ...parent,
