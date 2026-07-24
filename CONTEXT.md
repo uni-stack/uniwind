@@ -65,6 +65,7 @@ Dependency policy: peer dependency floors are support contracts. Raising support
 Native runtime:
 
 - Build output injects a generated stylesheet callback into `Uniwind.__reinit(...)`.
+- Federated remote build output registers an owner-keyed style delta instead.
 - `UniwindStore` holds generated style records, theme variables, scoped variables, runtime state, and per-theme caches.
 - `UniwindStore.getStyles(className, props, state, context)` resolves classes into React Native style objects.
 - Cache keys include class names, component state, whether theme is scoped, layout direction, and a key derived from the merged `ScopedVariables` map.
@@ -78,7 +79,7 @@ Web runtime:
 
 - Web keeps styles in CSS and passes `{ $$css: true, tailwind: className }` through RNW style arrays.
 - `getWebStyles` uses a hidden DOM element to compute style values when a JS value is needed, such as color extraction or `useResolveClassNames`.
-- `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when class-dependent media rules change.
+- `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when stylesheets load or class-dependent media rules change.
 - `ScopedTheme` renders a `div` with the theme class and `display: contents` on web.
 - `LayoutDirection` renders a contents-style wrapper with `direction`/`dir` semantics so RTL/LTR variants can be scoped to a subtree.
 - `ScopedVariables` renders a `display: contents` wrapper and sets its variables as inline custom properties on that wrapper, so the real DOM cascade resolves `var(--name)` to the scoped value for every descendant (numbers become px). During JS reads (`getWebVariable` / `useResolveClassNames`) it also applies the variables to the hidden `dummyParent`, then clears them.
@@ -101,6 +102,7 @@ Configuration shape:
 - `cssEntryFile`: required CSS entry path, resolved from `process.cwd()`.
 - `extraThemes`: optional named themes added to default `light` and `dark`.
 - `dtsFile`: optional generated declaration file path, default `uniwind-types.d.ts`.
+- Metro-only `federation`: optional native remote build contract with a stable owner ID.
 - Metro-only `polyfills.rem`: custom rem base, default `16`.
 - Metro-only `debug` and `isTV` flags exist in types.
 
@@ -120,6 +122,7 @@ Metro integration:
 - Metro transformer handles the configured CSS entry file specially.
 - Metro transformer worker selection is lazy, cached per Expo/non-Expo config type, and follows Expo transformer paths or Expo-specific config markers.
 - Native platform CSS transforms into a JS module that calls `Uniwind.__reinit(...)`.
+- Federated remote native CSS transforms into an owner-keyed merge registration.
 - Web platform CSS transforms into CSS plus web runtime setup.
 - Resolver swaps React Native component imports to Uniwind-aware implementations where needed.
 
@@ -170,6 +173,11 @@ Web components:
 - Web wrappers import from `react-native` as resolved by bundler aliases.
 - Web wrappers map `className` to RNW CSS style markers through `toRNWClassName`.
 - Web wrappers pass generated `dataSet` so data attribute variants can match.
+
+## Federated Style Contract
+
+- The host owns the base/global CSS. Remotes emit only explicitly prefixed deltas.
+- Native deltas merge by owner; existing keys win, same-owner registration replaces, and non-federated `__reinit` behavior is unchanged.
 
 `withUniwind`:
 
