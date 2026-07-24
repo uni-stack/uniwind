@@ -38,6 +38,10 @@ export class UniwindBundlerConfig {
             )
         }
 
+        if (config.federation && config.federation.id.trim() === '') {
+            throw new Error('Uniwind: federation.id must be a non-empty stable remote identifier.')
+        }
+
         return new UniwindBundlerConfig(config, getPlatform())
     }
 
@@ -77,6 +81,10 @@ export class UniwindBundlerConfig {
 
     get polyfills() {
         return this.config.polyfills
+    }
+
+    get federation() {
+        return this.config.federation
     }
 
     get stringifiedThemes() {

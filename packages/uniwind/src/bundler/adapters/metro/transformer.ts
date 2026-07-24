@@ -73,6 +73,14 @@ export const transform = async (
     data = Buffer.from(
         isWeb
             ? virtualCode
+            : bundlerConfig.federation
+            ? [
+                `const { Uniwind } = require('uniwind');`,
+                `const dispose = Uniwind.__mergeStyles(${
+                    JSON.stringify(bundlerConfig.federation.id)
+                }, rt => ${virtualCode}, ${bundlerConfig.stringifiedThemes});`,
+                `if (module.hot) { module.hot.dispose(dispose); }`,
+            ].join('')
             : [
                 `const { Uniwind } = require('uniwind');`,
                 `Uniwind.__reinit(rt => ${virtualCode}, ${bundlerConfig.stringifiedThemes});`,
