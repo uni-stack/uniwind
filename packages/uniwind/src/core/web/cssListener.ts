@@ -225,7 +225,7 @@ class CSSListenerBuilder {
     private addMediaQuery(mediaQueries: Array<CSSMediaRule>, rule: CSSStyleRule) {
         const className = rule.selectorText
         const rules = mediaQueries.map(mediaQuery => mediaQuery.conditionText).sort().join(' and ')
-        const parsedClassName = className.replace('.', '').replace('\\', '')
+        const parsedClassName = className.replace('.', '').replaceAll('\\', '')
         const cachedMediaQueryList = this.registeredRulesMediaQueries.get(rules)
 
         if (cachedMediaQueryList) {

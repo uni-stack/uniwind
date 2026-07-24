@@ -53,11 +53,11 @@ describe('CSSListener', () => {
         })
 
         const listener = jest.fn()
-        const dispose = CSSListener.subscribeToClassName('remote-responsive', listener)
+        const dispose = CSSListener.subscribeToClassName('rma:md:bg-blue-500', listener)
         const style = document.createElement('style')
 
         try {
-            style.textContent = '@media (min-width: 600px) { .remote-responsive { background-color: blue; } }'
+            style.textContent = '@media (min-width: 600px) { .rma\\:md\\:bg-blue-500 { background-color: blue; } }'
             document.head.appendChild(style)
 
             await waitFor(() => {
@@ -69,7 +69,7 @@ describe('CSSListener', () => {
             mediaQueryList.matches = true
             mediaListeners.forEach(mediaListener => mediaListener(new Event('change')))
 
-            expect(Array.from(CSSListener.activeRules).some(rule => rule.selectorText === '.remote-responsive')).toBe(true)
+            expect(Array.from(CSSListener.activeRules).some(rule => rule.selectorText === '.rma\\:md\\:bg-blue-500')).toBe(true)
             expect(listener).toHaveBeenCalled()
         } finally {
             dispose()
