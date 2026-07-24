@@ -21,6 +21,7 @@ export enum StyleDependency {
     Rtl = 7,
     AdaptiveThemes = 8,
     Variables = 9,
+    Stylesheet = 10,
 }
 
 export const enum Orientation {
