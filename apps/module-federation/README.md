@@ -18,6 +18,9 @@ There are three separate signals in each panel:
 
 The diagnostic UI uses inline styles except for the colored signal bars. This
 keeps the controls readable after the native Uniwind registry is replaced.
+Each signal also prints the color currently resolved by Uniwind, or
+`not registered`, so the result does not depend on distinguishing the bar
+colors visually.
 Distinct CSS filenames also prevent Expo's CSS HMR identity from replacing an
 earlier graph's entire stylesheet, so the web result isolates selector and
 variable collisions.
@@ -30,6 +33,17 @@ From the repository root:
 bun install
 bun run --cwd apps/module-federation web
 ```
+
+With the web servers running, a separate terminal can execute the headed
+browser assertions used to verify both load orders:
+
+```sh
+bun run --cwd apps/module-federation verify:web
+```
+
+The verifier uses the repository's existing Playwright installation; the demo
+does not add Playwright as a dependency. If Chromium is not installed locally,
+run `bunx playwright install chromium` once.
 
 For the iOS simulator:
 

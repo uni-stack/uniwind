@@ -11,7 +11,7 @@ import {
     Text,
     View,
 } from 'react-native'
-import { withUniwind } from 'uniwind'
+import { useResolveClassNames, withUniwind } from 'uniwind'
 
 const RemoteA = lazy(() => import('remoteA/Panel'))
 const RemoteB = lazy(() => import('remoteB/Panel'))
@@ -72,10 +72,21 @@ type SignalProps = {
     testID: string
 }
 
+function formatObservedColor(value: unknown) {
+    return typeof value === 'string' && value !== ''
+        ? value
+        : 'not registered'
+}
+
 function Signal({ className, label, testID }: SignalProps) {
+    const { backgroundColor } = useResolveClassNames(className)
+
     return (
         <View style={styles.signalRow}>
             <Text style={styles.signalLabel}>{label}</Text>
+            <Text style={styles.observedLabel} testID={`${testID}-observed`}>
+                Observed now: {formatObservedColor(backgroundColor)}
+            </Text>
             <View style={styles.signalTrack}>
                 <StyledView className={className} style={styles.signalBar} testID={testID} />
             </View>
@@ -87,6 +98,7 @@ function App() {
     const [requested, setRequested] = useState<Array<RemoteId>>([])
     const [loaded, setLoaded] = useState<Array<RemoteId>>([])
     const isLoading = requested.length !== loaded.length
+    const revision = loaded.length === 0 ? 'host' : loaded.join('-')
 
     const requestRemote = (id: RemoteId) => {
         if (requested.includes(id) || isLoading) {
@@ -170,16 +182,31 @@ function App() {
                         <Text style={styles.panelMeta}>Declares green (#16a34a)</Text>
                     </View>
                 </View>
-                <Signal className="mf-host-only" label="Host-only class: #16a34a" testID="host-only" />
-                <Signal className="mf-conflict" label="Shared class declares: #16a34a" testID="host-conflict" />
-                <Signal className="mf-variable-probe" label="--mf-shared-color: #16a34a" testID="host-variable" />
+                <Signal
+                    key={`host-only-${revision}`}
+                    className="mf-host-only"
+                    label="Host-only class declares: #16a34a"
+                    testID="host-only"
+                />
+                <Signal
+                    key={`host-conflict-${revision}`}
+                    className="mf-conflict"
+                    label="Shared class declares: #16a34a"
+                    testID="host-conflict"
+                />
+                <Signal
+                    key={`host-variable-${revision}`}
+                    className="mf-variable-probe"
+                    label="--mf-shared-color declares: #16a34a"
+                    testID="host-variable"
+                />
             </View>
 
             {requested.includes('A') && (
                 <RemoteErrorBoundary name="Remote A">
                     <Suspense fallback={<LoadingRemote name="Remote A" />}>
                         <ReadyBoundary id="A" onReady={markLoaded}>
-                            <RemoteA />
+                            <RemoteA revision={revision} />
                         </ReadyBoundary>
                     </Suspense>
                 </RemoteErrorBoundary>
@@ -189,7 +216,7 @@ function App() {
                 <RemoteErrorBoundary name="Remote B">
                     <Suspense fallback={<LoadingRemote name="Remote B" />}>
                         <ReadyBoundary id="B" onReady={markLoaded}>
-                            <RemoteB />
+                            <RemoteB revision={revision} />
                         </ReadyBoundary>
                     </Suspense>
                 </RemoteErrorBoundary>
@@ -330,6 +357,12 @@ const styles = StyleSheet.create({
         color: '#3d3c37',
         fontSize: 13,
         fontWeight: '600',
+    },
+    observedLabel: {
+        color: '#111827',
+        fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }),
+        fontSize: 12,
+        fontWeight: '700',
     },
     signalTrack: {
         backgroundColor: '#e5e1d6',

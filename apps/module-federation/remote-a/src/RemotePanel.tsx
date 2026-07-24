@@ -1,14 +1,25 @@
 import '../remote-a.css'
 
 import { Platform, StyleSheet, Text, View } from 'react-native'
-import { withUniwind } from 'uniwind'
+import { useResolveClassNames, withUniwind } from 'uniwind'
 
 const StyledView = withUniwind(View)
 
+function formatObservedColor(value: unknown) {
+    return typeof value === 'string' && value !== ''
+        ? value
+        : 'not registered'
+}
+
 function Signal({ className, label, testID }: { className: string; label: string; testID: string }) {
+    const { backgroundColor } = useResolveClassNames(className)
+
     return (
         <View style={styles.signalRow}>
             <Text style={styles.signalLabel}>{label}</Text>
+            <Text style={styles.observedLabel} testID={`${testID}-observed`}>
+                Observed now: {formatObservedColor(backgroundColor)}
+            </Text>
             <View style={styles.signalTrack}>
                 <StyledView className={className} style={styles.signalBar} testID={testID} />
             </View>
@@ -16,7 +27,7 @@ function Signal({ className, label, testID }: { className: string; label: string
     )
 }
 
-export default function RemotePanel() {
+export default function RemotePanel({ revision }: { revision: string }) {
     return (
         <View style={styles.panel}>
             <View style={styles.panelHeading}>
@@ -27,9 +38,24 @@ export default function RemotePanel() {
                 </View>
             </View>
             <Text style={styles.moduleId}>remoteA/Panel</Text>
-            <Signal className="mf-remote-a-only" label="Remote A-only class: #facc15" testID="remote-a-only" />
-            <Signal className="mf-conflict" label="Shared class declares: #facc15" testID="remote-a-conflict" />
-            <Signal className="mf-variable-probe" label="--mf-shared-color: #facc15" testID="remote-a-variable" />
+            <Signal
+                key={`remote-a-only-${revision}`}
+                className="mf-remote-a-only"
+                label="Remote A-only class declares: #facc15"
+                testID="remote-a-only"
+            />
+            <Signal
+                key={`remote-a-conflict-${revision}`}
+                className="mf-conflict"
+                label="Shared class declares: #facc15"
+                testID="remote-a-conflict"
+            />
+            <Signal
+                key={`remote-a-variable-${revision}`}
+                className="mf-variable-probe"
+                label="--mf-shared-color declares: #facc15"
+                testID="remote-a-variable"
+            />
         </View>
     )
 }
@@ -78,6 +104,12 @@ const styles = StyleSheet.create({
         color: '#713f12',
         fontSize: 13,
         fontWeight: '600',
+    },
+    observedLabel: {
+        color: '#422006',
+        fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }),
+        fontSize: 12,
+        fontWeight: '700',
     },
     signalTrack: {
         backgroundColor: '#fef9c3',

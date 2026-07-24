@@ -1,14 +1,25 @@
 import '../remote-b.css'
 
 import { Platform, StyleSheet, Text, View } from 'react-native'
-import { withUniwind } from 'uniwind'
+import { useResolveClassNames, withUniwind } from 'uniwind'
 
 const StyledView = withUniwind(View)
 
+function formatObservedColor(value: unknown) {
+    return typeof value === 'string' && value !== ''
+        ? value
+        : 'not registered'
+}
+
 function Signal({ className, label, testID }: { className: string; label: string; testID: string }) {
+    const { backgroundColor } = useResolveClassNames(className)
+
     return (
         <View style={styles.signalRow}>
             <Text style={styles.signalLabel}>{label}</Text>
+            <Text style={styles.observedLabel} testID={`${testID}-observed`}>
+                Observed now: {formatObservedColor(backgroundColor)}
+            </Text>
             <View style={styles.signalTrack}>
                 <StyledView className={className} style={styles.signalBar} testID={testID} />
             </View>
@@ -16,7 +27,7 @@ function Signal({ className, label, testID }: { className: string; label: string
     )
 }
 
-export default function RemotePanel() {
+export default function RemotePanel({ revision }: { revision: string }) {
     return (
         <View style={styles.panel}>
             <View style={styles.panelHeading}>
@@ -27,9 +38,24 @@ export default function RemotePanel() {
                 </View>
             </View>
             <Text style={styles.moduleId}>remoteB/Panel</Text>
-            <Signal className="mf-remote-b-only" label="Remote B-only class: #2563eb" testID="remote-b-only" />
-            <Signal className="mf-conflict" label="Shared class declares: #2563eb" testID="remote-b-conflict" />
-            <Signal className="mf-variable-probe" label="--mf-shared-color: #2563eb" testID="remote-b-variable" />
+            <Signal
+                key={`remote-b-only-${revision}`}
+                className="mf-remote-b-only"
+                label="Remote B-only class declares: #2563eb"
+                testID="remote-b-only"
+            />
+            <Signal
+                key={`remote-b-conflict-${revision}`}
+                className="mf-conflict"
+                label="Shared class declares: #2563eb"
+                testID="remote-b-conflict"
+            />
+            <Signal
+                key={`remote-b-variable-${revision}`}
+                className="mf-variable-probe"
+                label="--mf-shared-color declares: #2563eb"
+                testID="remote-b-variable"
+            />
         </View>
     )
 }
@@ -78,6 +104,12 @@ const styles = StyleSheet.create({
         color: '#1e3a8a',
         fontSize: 13,
         fontWeight: '600',
+    },
+    observedLabel: {
+        color: '#172554',
+        fontFamily: Platform.select({ ios: 'Menlo', default: 'monospace' }),
+        fontSize: 12,
+        fontWeight: '700',
     },
     signalTrack: {
         backgroundColor: '#dbeafe',
