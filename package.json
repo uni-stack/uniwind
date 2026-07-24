@@ -17,13 +17,16 @@
     "workspaces": {
         "packages": [
             "packages/*",
-            "apps/*"
+            "apps/*",
+            "apps/module-federation/*"
         ],
         "catalog": {
             "typescript": "6.0.3",
             "@types/bun": "1.3.14",
             "@types/react": "19.2.15",
             "@types/react-dom": "19.2.3",
+            "@module-federation/metro": "2.8.0",
+            "@module-federation/runtime": "2.8.0",
             "react": "19.2.3",
             "react-dom": "19.2.3",
             "expo": "57.0.1",

@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@source inline("mf-host-only mf-conflict bg-mf-shared");
+
+@theme {
+    --color-mf-shared: #16a34a;
+}
+
+@utility mf-host-only {
+    background-color: #16a34a;
+}
+
+@utility mf-conflict {
+    background-color: #16a34a;
+}

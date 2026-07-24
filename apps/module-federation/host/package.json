@@ -1,0 +1,28 @@
+{
+    "name": "uniwind-module-federation-host",
+    "version": "1.0.0",
+    "private": true,
+    "main": "index.js",
+    "scripts": {
+        "check:typescript": "tsc --noEmit",
+        "start": "expo start"
+    },
+    "dependencies": {
+        "@expo/metro-runtime": "57.0.2",
+        "@module-federation/metro": "catalog:",
+        "@module-federation/runtime": "catalog:",
+        "expo": "catalog:",
+        "react": "catalog:",
+        "react-dom": "catalog:",
+        "react-native": "catalog:",
+        "react-native-web": "catalog:",
+        "tailwindcss": "catalog:",
+        "uniwind": "workspace:*"
+    },
+    "devDependencies": {
+        "@babel/core": "7.29.0",
+        "@types/react": "catalog:",
+        "babel-plugin-module-resolver": "5.0.3",
+        "typescript": "catalog:"
+    }
+}

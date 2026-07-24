@@ -1,0 +1,11 @@
+{
+    "name": "uniwind-module-federation-example",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "ios": "bun ./start.mjs ios",
+        "stop": "bun ./stop.mjs",
+        "verify:web": "node ./verify-web.mjs",
+        "web": "bun ./start.mjs web"
+    }
+}
