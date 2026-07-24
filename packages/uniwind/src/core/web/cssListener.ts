@@ -3,8 +3,7 @@ import { UniwindListener } from '../listener'
 
 class CSSListenerBuilder {
     activeRules = new Set<CSSStyleRule>()
-    private classNameMediaQueryListeners = new Map<string, MediaQueryList>()
-    private listeners = new Map<MediaQueryList, Set<VoidFunction>>()
+    private classNameListeners = new Map<string, Set<VoidFunction>>()
     private registeredRulesMediaQueries = new Map<string, MediaQueryList>()
     private processedStyleSheets = new Set<CSSStyleSheet>()
     private pendingInitialization: number | undefined = undefined
@@ -50,17 +49,18 @@ class CSSListenerBuilder {
     subscribeToClassName(classNames: string, listener: VoidFunction) {
         const disposables = [] as Array<VoidFunction>
 
-        classNames.split(' ').forEach(className => {
-            const mediaQuery = this.classNameMediaQueryListeners.get(className)
+        classNames.split(' ').filter(Boolean).forEach(className => {
+            const listeners = this.classNameListeners.get(className) ?? new Set()
 
-            if (!mediaQuery) {
-                return () => {}
-            }
+            listeners.add(listener)
+            this.classNameListeners.set(className, listeners)
+            disposables.push(() => {
+                listeners.delete(listener)
 
-            const listeners = this.listeners.get(mediaQuery)
-
-            listeners?.add(listener)
-            disposables.push(() => listeners?.delete(listener))
+                if (listeners.size === 0) {
+                    this.classNameListeners.delete(className)
+                }
+            })
         })
 
         const disposeThemeListener = UniwindListener.subscribe(listener, [StyleDependency.Theme, StyleDependency.Variables])
@@ -168,6 +168,10 @@ class CSSListenerBuilder {
         return rule.constructor.name === 'CSSSupportsRule'
     }
 
+    private hasNestedRules(rule: CSSRule): rule is CSSRule & { cssRules: CSSRuleList } {
+        return 'cssRules' in rule
+    }
+
     private collectParentMediaQueries(rule: CSSRule, acc = [] as Array<CSSMediaRule>): Array<CSSMediaRule> {
         const { parentRule } = rule
 
@@ -210,7 +214,7 @@ class CSSListenerBuilder {
                 continue
             }
 
-            if ('cssRules' in rule && rule.cssRules instanceof CSSRuleList) {
+            if (this.hasNestedRules(rule)) {
                 this.addMediaQueriesDeep(rule.cssRules)
 
                 continue
@@ -225,11 +229,11 @@ class CSSListenerBuilder {
         const cachedMediaQueryList = this.registeredRulesMediaQueries.get(rules)
 
         if (cachedMediaQueryList) {
-            this.classNameMediaQueryListeners.set(parsedClassName, cachedMediaQueryList)
             this.toggleRule(cachedMediaQueryList, rule)
 
             cachedMediaQueryList.addEventListener('change', () => {
                 this.toggleRule(cachedMediaQueryList, rule)
+                this.notifyClassName(parsedClassName)
             })
 
             return
@@ -239,15 +243,15 @@ class CSSListenerBuilder {
 
         this.toggleRule(mediaQueryList, rule)
         this.registeredRulesMediaQueries.set(rules, mediaQueryList)
-        this.listeners.set(mediaQueryList, new Set())
-        this.classNameMediaQueryListeners.set(parsedClassName, mediaQueryList)
 
         mediaQueryList.addEventListener('change', () => {
-            this.listeners.get(mediaQueryList)!.forEach(listener => {
-                listener()
-            })
             this.toggleRule(mediaQueryList, rule)
+            this.notifyClassName(parsedClassName)
         })
+    }
+
+    private notifyClassName(className: string) {
+        this.classNameListeners.get(className)?.forEach(listener => listener())
     }
 
     private isRuleLive(rule: CSSStyleRule) {
