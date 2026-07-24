@@ -6,7 +6,7 @@ class CSSListenerBuilder {
     private classNameMediaQueryListeners = new Map<string, MediaQueryList>()
     private listeners = new Map<MediaQueryList, Set<VoidFunction>>()
     private registeredRulesMediaQueries = new Map<string, MediaQueryList>()
-    private processedStyleSheets = new WeakSet<CSSStyleSheet>()
+    private processedStyleSheets = new Set<CSSStyleSheet>()
     private pendingInitialization: number | undefined = undefined
 
     constructor() {
@@ -101,17 +101,28 @@ class CSSListenerBuilder {
 
     private pruneStaleRules() {
         const activeSheets = new Set(Array.from(document.styleSheets))
+        let styleSheetsChanged = false
+
+        for (const sheet of this.processedStyleSheets) {
+            if (!activeSheets.has(sheet)) {
+                this.processedStyleSheets.delete(sheet)
+                styleSheetsChanged = true
+            }
+        }
 
         for (const rule of this.activeRules) {
             if (!rule.parentStyleSheet || !activeSheets.has(rule.parentStyleSheet)) {
                 this.activeRules.delete(rule)
+                styleSheetsChanged = true
             }
         }
+
+        return styleSheetsChanged
     }
 
     private initialize() {
         this.pendingInitialization = undefined
-        this.pruneStaleRules()
+        let styleSheetsChanged = this.pruneStaleRules()
 
         for (const sheet of Array.from(document.styleSheets)) {
             // Skip already processed stylesheets
@@ -135,8 +146,13 @@ class CSSListenerBuilder {
 
             // Mark as processed after successful cssRules access
             this.processedStyleSheets.add(sheet)
+            styleSheetsChanged = true
 
             this.addMediaQueriesDeep(rules)
+        }
+
+        if (styleSheetsChanged) {
+            UniwindListener.notify([StyleDependency.Variables])
         }
     }
 
