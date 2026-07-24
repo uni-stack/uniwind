@@ -1,0 +1,16 @@
+{
+    "expo": {
+        "name": "Uniwind Module Federation Host",
+        "slug": "uniwind-module-federation-host",
+        "version": "1.0.0",
+        "orientation": "default",
+        "userInterfaceStyle": "light",
+        "ios": {
+            "bundleIdentifier": "dev.uniwind.modulefederation",
+            "supportsTablet": true
+        },
+        "web": {
+            "bundler": "metro"
+        }
+    }
+}
