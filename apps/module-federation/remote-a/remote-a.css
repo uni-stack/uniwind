@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@source inline("mf-remote-a-only mf-conflict mf-variable-probe");
+
+@layer theme {
+    :root {
+        --mf-shared-color: #facc15;
+    }
+}
+
+@utility mf-remote-a-only {
+    background-color: #facc15;
+}
+
+@utility mf-conflict {
+    background-color: #facc15;
+}
+
+@utility mf-variable-probe {
+    background-color: var(--mf-shared-color);
+}

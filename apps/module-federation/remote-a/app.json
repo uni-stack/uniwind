@@ -1,0 +1,15 @@
+{
+    "expo": {
+        "name": "Uniwind Module Federation Remote A",
+        "slug": "uniwind-module-federation-remote-a",
+        "version": "1.0.0",
+        "orientation": "default",
+        "userInterfaceStyle": "light",
+        "ios": {
+            "supportsTablet": true
+        },
+        "web": {
+            "bundler": "metro"
+        }
+    }
+}
