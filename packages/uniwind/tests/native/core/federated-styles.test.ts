@@ -1,3 +1,5 @@
+import { act, renderHook } from '@testing-library/react-native'
+import { Uniwind, useCSSVariable } from '../../../src'
 import { StyleDependency } from '../../../src/common/consts'
 import { UniwindListener } from '../../../src/core/listener'
 import { Logger } from '../../../src/core/logger'
@@ -188,6 +190,58 @@ describe('federated native styles', () => {
         dispose()
 
         expect(getBackgroundColor('host-variable')).toBe('#ea580c')
+    })
+
+    test('updates public CSS variable APIs when remote registrations change', () => {
+        const variableName = '--rma-shared-color'
+        const warn = jest.spyOn(Logger, 'warn').mockImplementation()
+        const { result } = renderHook(() => useCSSVariable(variableName))
+        let staleDispose = () => {}
+
+        expect(Uniwind.getCSSVariable(variableName)).toBeUndefined()
+        expect(result.current).toBeUndefined()
+
+        act(() => {
+            staleDispose = UniwindStore.merge(
+                'remote-a',
+                createRegistration({}, { [variableName]: '#facc15' }),
+                ['light', 'dark'],
+            )
+        })
+        disposers.push(staleDispose)
+
+        try {
+            expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
+            expect(Uniwind.getCSSVariable(variableName)).toBe('#facc15')
+            expect(result.current).toBe('#facc15')
+
+            let currentDispose = () => {}
+
+            act(() => {
+                currentDispose = UniwindStore.merge(
+                    'remote-a',
+                    createRegistration({}, { [variableName]: '#2563eb' }),
+                    ['light', 'dark'],
+                )
+            })
+            disposers.push(currentDispose)
+
+            expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
+            expect(result.current).toBe('#2563eb')
+
+            act(() => staleDispose())
+
+            expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
+            expect(result.current).toBe('#2563eb')
+
+            act(() => currentDispose())
+
+            expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
+            expect(Uniwind.getCSSVariable(variableName)).toBeUndefined()
+            expect(result.current).toBeUndefined()
+        } finally {
+            warn.mockRestore()
+        }
     })
 
     test('notifies static and missing class subscribers when registrations change', () => {
