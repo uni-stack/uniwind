@@ -87,17 +87,17 @@ describe('withUniwind', () => {
         expect(receivedProps.color).toBe(TW_BLUE_500)
     })
 
-    test('[manual] Should map className to style', () => {
+    test('[manual] Should map testClassName to style', () => {
         ComponentWithSpy.mockClear()
 
         const ManualWithUniwind = withUniwind(ComponentWithSpy, {
             style: {
-                fromClassName: 'className',
+                fromClassName: 'testClassName',
             },
         })
 
         const { getByTestId } = render(
-            <ManualWithUniwind className="bg-red-500" testID="test-component" />,
+            <ManualWithUniwind testClassName="bg-red-500" testID="test-component" />,
         )
 
         const component = getByTestId('test-component')
@@ -108,10 +108,10 @@ describe('withUniwind', () => {
         const receivedProps = ComponentWithSpy.mock.calls[0][0]
 
         expect(receivedProps.style).toEqual([{ $$css: true, tailwind: 'bg-red-500' }, undefined])
-        expect(receivedProps).not.toHaveProperty('className')
+        expect(receivedProps).not.toHaveProperty('testClassName')
     })
 
-    test('[manual] Should map colorClassName to color', () => {
+    test('[manual] Should map testClassName to color', () => {
         const mockGetWebStyles = webCore.getWebStyles as jest.MockedFunction<typeof webCore.getWebStyles>
 
         mockGetWebStyles.mockReturnValue({ fill: TW_RED_500 })
@@ -119,18 +119,18 @@ describe('withUniwind', () => {
 
         const ManualWithUniwind = withUniwind(ComponentWithSpy, {
             color: {
-                fromClassName: 'colorClassName',
+                fromClassName: 'testClassName',
                 styleProperty: 'fill',
             },
         })
 
-        render(<ManualWithUniwind colorClassName="fill-red-500" testID="test-component" />)
+        render(<ManualWithUniwind testClassName="fill-red-500" testID="test-component" />)
 
         const receivedProps = ComponentWithSpy.mock.calls[0][0]
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_RED_500)
-        expect(receivedProps).not.toHaveProperty('colorClassName')
+        expect(receivedProps).not.toHaveProperty('testClassName')
     })
 
     test('[manual] Should override colorClassName with inline color', () => {
