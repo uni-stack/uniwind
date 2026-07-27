@@ -20,8 +20,9 @@ export const withUniwind: WithUniwind = <
     ? withManualUniwind(Component, options)
     : withAutoUniwind(Component)
 
-const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
+const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const props = { ...originalProps }
 
     const { classNames, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
@@ -45,6 +46,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
                 ? formatColor(color)
                 : undefined
             acc.classNames += `${className} `
+            delete props[propName]
 
             return acc
         }
@@ -54,6 +56,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
             acc.generatedProps[styleProp] ??= []
             acc.generatedProps[styleProp][0] = { $$css: true, tailwind: propValue }
+            delete props[propName]
 
             return acc
         }
@@ -61,6 +64,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         if (isStyleProperty(propName)) {
             acc.generatedProps[propName] ??= []
             acc.generatedProps[propName][1] = propValue
+            delete props[propName]
 
             return acc
         }
@@ -85,11 +89,13 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
     )
 }
 
-const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
+const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (originalProps: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const props = { ...originalProps }
 
     const { generatedProps, classNames } = Object.entries(options).reduce((acc, [propName, option]) => {
         const className = props[option.fromClassName]
+        delete props[option.fromClassName]
 
         if (className === undefined) {
             return acc
