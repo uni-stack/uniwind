@@ -28,6 +28,8 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: Any
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
 
+            delete props[propName]
+
             if (props[colorProp] !== undefined) {
                 return acc
             }
@@ -46,7 +48,6 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: Any
                 ? formatColor(color)
                 : undefined
             acc.classNames += `${className} `
-            delete props[propName]
 
             return acc
         }
@@ -94,7 +95,8 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
     const props = { ...originalProps }
 
     const { generatedProps, classNames } = Object.entries(options).reduce((acc, [propName, option]) => {
-        const className = props[option.fromClassName]
+        // Read from original props because we're going to delete the prop from cloned props later
+        const className = originalProps[option.fromClassName]
         delete props[option.fromClassName]
 
         if (className === undefined) {

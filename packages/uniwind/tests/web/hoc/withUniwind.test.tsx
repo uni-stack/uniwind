@@ -85,6 +85,7 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_BLUE_500)
+        expect(receivedProps).not.toHaveProperty('colorClassName')
     })
 
     test('[manual] Should map testClassName to style', () => {
@@ -149,6 +150,7 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_BLUE_500)
+        expect(receivedProps).not.toHaveProperty('colorClassName')
     })
 
     test('[manual] Should add both inline style and className', () => {
