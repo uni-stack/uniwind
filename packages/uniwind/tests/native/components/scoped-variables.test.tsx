@@ -208,8 +208,7 @@ describe('ScopedVariables', () => {
         test('identical variables resolve from the cache', () => {
             const context: UniwindContextType = {
                 ...baseContext,
-                variables: { '--gap': 8 },
-                variablesCacheKey: '[["--gap",8]]',
+                variables: { '--gap': 8, __uniwindVariablesCacheKey: '[["--gap",8]]' },
             }
 
             const first = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, context)
@@ -222,13 +221,11 @@ describe('ScopedVariables', () => {
         test('different variable values do not collide', () => {
             const contextA: UniwindContextType = {
                 ...baseContext,
-                variables: { '--gap': 8 },
-                variablesCacheKey: '[["--gap",8]]',
+                variables: { '--gap': 8, __uniwindVariablesCacheKey: '[["--gap",8]]' },
             }
             const contextB: UniwindContextType = {
                 ...baseContext,
-                variables: { '--gap': 4 },
-                variablesCacheKey: '[["--gap",4]]',
+                variables: { '--gap': 4, __uniwindVariablesCacheKey: '[["--gap",4]]' },
             }
 
             const a = UniwindStore.getStyles('gap-(--gap)', undefined, undefined, contextA)
@@ -241,7 +238,7 @@ describe('ScopedVariables', () => {
 
         test('derived cache key reflects the merged variables', () => {
             const Probe = (props: { test: jest.Mock }) => {
-                props.test(useUniwindContext().variablesCacheKey)
+                props.test(useUniwindContext().variables?.__uniwindVariablesCacheKey)
 
                 return null
             }
@@ -265,7 +262,7 @@ describe('ScopedVariables', () => {
 
         test('values containing separators do not produce colliding keys', () => {
             const Probe = (props: { test: jest.Mock }) => {
-                props.test(useUniwindContext().variablesCacheKey)
+                props.test(useUniwindContext().variables?.__uniwindVariablesCacheKey)
 
                 return null
             }

@@ -33,7 +33,7 @@ class UniwindStoreBuilder {
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
-        }${uniwindContext.variablesCacheKey ?? ''}`
+        }${uniwindContext.variables?.__uniwindVariablesCacheKey ?? ''}`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
         if (!cache) {

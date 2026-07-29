@@ -1,5 +1,5 @@
 import { Logger } from '../../core/logger'
-import type { CSSVariables, UniwindContextType } from '../../core/types'
+import type { CSSVariables, UniwindContextCSSVariables, UniwindContextType } from '../../core/types'
 
 export type ScopedVariablesProps = {
     variables: CSSVariables
@@ -28,14 +28,15 @@ export const buildScopedVariablesContext = (
     const mergedVariables = {
         ...parent.variables,
         ...validateVariables(variables),
-    }
+    } as UniwindContextCSSVariables
+    delete mergedVariables.__uniwindVariablesCacheKey
     const variablesCacheKey = JSON.stringify(
         Object.entries(mergedVariables).sort(([a], [b]) => a.localeCompare(b)),
     )
+    mergedVariables.__uniwindVariablesCacheKey = variablesCacheKey
 
     return {
         ...parent,
         variables: mergedVariables,
-        variablesCacheKey,
     }
 }

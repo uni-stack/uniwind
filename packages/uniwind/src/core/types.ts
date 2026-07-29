@@ -100,4 +100,8 @@ export type ComponentState = {
 
 export type CSSVariables = Record<string, string | number>
 
+export type UniwindContextCSSVariables = CSSVariables & {
+    __uniwindVariablesCacheKey?: string
+}
+
 export type UniwindContextType = React.ContextType<typeof UniwindContext>

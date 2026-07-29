@@ -15,7 +15,7 @@ const bundle = readFileSync(BUNDLE_PATH, 'utf-8')
 async function getWebStyles(
     page: import('@playwright/test').Page,
     className: string,
-    context: UniwindContextType = { scopedTheme: null, rtl: null, variables: null, variablesCacheKey: null },
+    context: UniwindContextType = { scopedTheme: null, rtl: null, variables: null },
 ) {
     return page.evaluate(
         ([cls, ctx]) => {
@@ -53,12 +53,12 @@ test.describe('getWebStyles — basic cases', () => {
 
 test.describe('getWebStyles — scoped theme', () => {
     test('bg-background in dark theme → backgroundColor black', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark', rtl: null, variables: null, variablesCacheKey: null })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'dark', rtl: null, variables: null })
         expect(styles.backgroundColor).toBe('#000000')
     })
 
     test('bg-background in light theme → backgroundColor white', async ({ page }) => {
-        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light', rtl: null, variables: null, variablesCacheKey: null })
+        const styles = await getWebStyles(page, 'bg-background', { scopedTheme: 'light', rtl: null, variables: null })
         expect(styles.backgroundColor).toBe('#ffffff')
     })
 })
@@ -69,7 +69,6 @@ test.describe('getWebStyles — layout direction', () => {
             scopedTheme: null,
             rtl: true,
             variables: null,
-            variablesCacheKey: null,
         })
         expect(styles.backgroundColor).toBe(TW_RED_500)
     })
@@ -79,7 +78,6 @@ test.describe('getWebStyles — layout direction', () => {
             scopedTheme: null,
             rtl: false,
             variables: null,
-            variablesCacheKey: null,
         })
         expect(styles.backgroundColor).toBe(TW_RED_500)
     })
