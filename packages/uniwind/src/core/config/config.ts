@@ -43,7 +43,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
             const existingRules: Record<ThemeName, string | undefined> = Object.fromEntries(
                 uniwindRules.map(
-                    rule => [rule.theme, getWebVariable(varName, { scopedTheme: rule.theme, rtl: null, variables: null, variablesCacheKey: null })],
+                    rule => [rule.theme, getWebVariable(varName, { scopedTheme: rule.theme, rtl: null, variables: null })],
                 ),
             )
 

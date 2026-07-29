@@ -59,7 +59,7 @@ export type GetCSSVariable = {
  */
 export const useCSSVariable: GetCSSVariable = (name: string | Array<string>) => {
     const uniwindContext = useUniwindContext()
-    const [value, setValue] = useState(getCSSVariable(name, uniwindContext))
+    const [value, setValue] = useState(() => getCSSVariable(name, uniwindContext))
     const nameRef = useRef(name)
     const isMountRef = useRef(true)
 

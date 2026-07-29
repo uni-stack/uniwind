@@ -4,6 +4,8 @@ import type { UniwindContextType } from '../../core/types'
 import { toWebValue } from '../../core/web/webUtils'
 import { buildScopedVariablesContext, type ScopedVariablesProps } from './utils'
 
+type CSSPropertiesWithVars = React.CSSProperties & { [key: `--${string}`]: string | undefined }
+
 export const ScopedVariables: React.FC<React.PropsWithChildren<ScopedVariablesProps>> = ({ variables, children }) => {
     const uniwindContext = useUniwindContext()
     const value = useMemo<UniwindContextType>(
@@ -11,23 +13,21 @@ export const ScopedVariables: React.FC<React.PropsWithChildren<ScopedVariablesPr
         [uniwindContext, variables],
     )
     // Inline custom properties so the DOM cascade resolves var(--name) for descendants
-    const style = useMemo<React.CSSProperties>(() => {
-        const result: Record<string, string | number> = { display: 'contents' }
+    const style = useMemo(() =>
+        Object.entries(variables)
+            .reduce<CSSPropertiesWithVars>((result, [name, variableValue]) => {
+                if (name.startsWith('--')) {
+                    result[name as `--${string}`] = toWebValue(variableValue)
+                }
 
-        Object.entries(variables).forEach(([name, variableValue]) => {
-            if (name.startsWith('--')) {
-                result[name] = toWebValue(variableValue)
-            }
-        })
-
-        return result as React.CSSProperties
-    }, [variables])
+                return result
+            }, { display: 'contents' }), [variables])
 
     return (
-        <div style={style}>
-            <UniwindContext.Provider value={value}>
+        <UniwindContext.Provider value={value}>
+            <div style={style}>
                 {children}
-            </UniwindContext.Provider>
-        </div>
+            </div>
+        </UniwindContext.Provider>
     )
 }
