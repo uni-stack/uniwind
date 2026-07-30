@@ -2,7 +2,7 @@ import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
-import { createVarGetter } from './native-utils'
+import { getScopedVars } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
 import { UniwindRuntime } from './runtime'
 
@@ -108,9 +108,7 @@ class UniwindStoreBuilder {
             ? themeVars
             : Object.assign(
                 Object.create(themeVars) as Vars,
-                Object.fromEntries(
-                    Object.entries(uniwindContext.variables).map(([name, value]) => [name, createVarGetter(value)]),
-                ),
+                getScopedVars(uniwindContext.variables),
             )
         const originalVars = vars
         let hasDataAttributes = false

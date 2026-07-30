@@ -1,5 +1,5 @@
 import { UniwindRuntime, UniwindStore } from '../../core/native'
-import { createVarGetter } from '../../core/native/native-utils'
+import { getScopedVars } from '../../core/native/native-utils'
 import type { UniwindContextType, Vars } from '../../core/types'
 
 export const getVariableValue = (name: string, uniwindContext: UniwindContextType) => {
@@ -14,9 +14,7 @@ export const getVariableValue = (name: string, uniwindContext: UniwindContextTyp
         ? themeVars
         : Object.assign(
             Object.create(themeVars) as Vars,
-            Object.fromEntries(
-                Object.entries(uniwindContext.variables).map(([varName, value]) => [varName, createVarGetter(value)]),
-            ),
+            getScopedVars(uniwindContext.variables),
         )
 
     return vars[name]?.(vars)
