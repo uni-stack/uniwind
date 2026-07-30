@@ -1,8 +1,7 @@
 import { generateDataSet } from '../../components/web/generateDataSet'
 import type { RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
-import { parseCSSValue } from './parseCSSValue'
-import { toWebValue } from './webUtils'
+import { parseCSSValue, toWebValue } from './webUtils'
 
 const dummyParent = typeof document !== 'undefined'
     ? Object.assign(document.createElement('div'), {
@@ -19,7 +18,7 @@ if (dummyParent && dummy) {
 }
 
 // Applies scoped variables to dummyParent so they cascade to dummy during style
-// computation. Returns a disposer that removes them again
+// computation. Returns a disposer that removes them
 const applyScopedVariables = (uniwindContext: UniwindContextType) => {
     if (!dummyParent || uniwindContext.variables === null) {
         return () => {}

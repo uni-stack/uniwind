@@ -1,6 +1,6 @@
 import { isDefined } from '../../common/utils'
 import { Logger } from '../../core/logger'
-import { formatColor } from '../../core/web/formatColor'
+import { formatColor } from '../../core/web/webUtils'
 import { useResolveClassNames } from '../../hooks/useResolveClassNames'
 
 let warnedOnce = false
