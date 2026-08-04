@@ -20,7 +20,9 @@ describe('withUniwind', () => {
     })
 
     test('[auto] Should map className to style', () => {
-        const AutoWithUniwind = withUniwind(Component)
+        ComponentWithSpy.mockClear()
+
+        const AutoWithUniwind = withUniwind(ComponentWithSpy)
 
         const { getByTestId } = render(
             <AutoWithUniwind className="bg-red-500" testID="test-component" />,
@@ -30,6 +32,11 @@ describe('withUniwind', () => {
 
         expect(component).toBeInTheDocument()
         expect(component).toHaveClass('bg-red-500')
+
+        const receivedProps = ComponentWithSpy.mock.calls[0][0]
+
+        expect(receivedProps.style).toEqual([{ $$css: true, tailwind: 'bg-red-500' }])
+        expect(receivedProps).not.toHaveProperty('className')
     })
 
     test('[auto] Should map colorClassName to color', () => {
@@ -43,7 +50,6 @@ describe('withUniwind', () => {
         render(<AutoWithUniwind colorClassName="accent-red-500" testID="test-component" />)
 
         expect(mockGetWebStyles).toHaveBeenCalledWith('accent-red-500', {
-            'colorClassName': 'accent-red-500',
             'testID': 'test-component',
         }, UNIWIND_CONTEXT_MOCK)
 
@@ -51,6 +57,7 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_RED_500)
+        expect(receivedProps).not.toHaveProperty('colorClassName')
     })
 
     test('[auto] Should add both inline style and className', () => {
@@ -78,10 +85,13 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_BLUE_500)
+        expect(receivedProps).not.toHaveProperty('colorClassName')
     })
 
     test('[manual] Should map testClassName to style', () => {
-        const ManualWithUniwind = withUniwind(Component, {
+        ComponentWithSpy.mockClear()
+
+        const ManualWithUniwind = withUniwind(ComponentWithSpy, {
             style: {
                 fromClassName: 'testClassName',
             },
@@ -95,6 +105,11 @@ describe('withUniwind', () => {
 
         expect(component).toBeInTheDocument()
         expect(component).toHaveClass('bg-red-500')
+
+        const receivedProps = ComponentWithSpy.mock.calls[0][0]
+
+        expect(receivedProps.style).toEqual([{ $$css: true, tailwind: 'bg-red-500' }, undefined])
+        expect(receivedProps).not.toHaveProperty('testClassName')
     })
 
     test('[manual] Should map testClassName to color', () => {
@@ -116,6 +131,7 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_RED_500)
+        expect(receivedProps).not.toHaveProperty('testClassName')
     })
 
     test('[manual] Should override colorClassName with inline color', () => {
@@ -134,6 +150,7 @@ describe('withUniwind', () => {
 
         expect(receivedProps).toHaveProperty('color')
         expect(receivedProps.color).toBe(TW_BLUE_500)
+        expect(receivedProps).not.toHaveProperty('colorClassName')
     })
 
     test('[manual] Should add both inline style and className', () => {

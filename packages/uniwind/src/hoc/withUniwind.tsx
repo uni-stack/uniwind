@@ -20,12 +20,15 @@ export const withUniwind: WithUniwind = <
     ? withManualUniwind(Component, options)
     : withAutoUniwind(Component)
 
-const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) => {
+const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const props = { ...originalProps }
 
     const { classNames, generatedProps } = Object.entries(props).reduce((acc, [propName, propValue]) => {
         if (isColorClassProperty(propName)) {
             const colorProp = classToColor(propName)
+
+            delete props[propName]
 
             if (props[colorProp] !== undefined) {
                 return acc
@@ -54,6 +57,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
 
             acc.generatedProps[styleProp] ??= []
             acc.generatedProps[styleProp][0] = { $$css: true, tailwind: propValue }
+            delete props[propName]
 
             return acc
         }
@@ -61,6 +65,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         if (isStyleProperty(propName)) {
             acc.generatedProps[propName] ??= []
             acc.generatedProps[propName][1] = propValue
+            delete props[propName]
 
             return acc
         }
@@ -85,11 +90,14 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
     )
 }
 
-const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (props: AnyObject) => {
+const withManualUniwind = (Component: Component<AnyObject>, options: Record<PropertyKey, OptionMapping>) => (originalProps: AnyObject) => {
     const uniwindContext = useUniwindContext()
+    const props = { ...originalProps }
 
     const { generatedProps, classNames } = Object.entries(options).reduce((acc, [propName, option]) => {
-        const className = props[option.fromClassName]
+        // Read from original props because we're going to delete the prop from cloned props later
+        const className = originalProps[option.fromClassName]
+        delete props[option.fromClassName]
 
         if (className === undefined) {
             return acc

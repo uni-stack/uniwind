@@ -1,4 +1,25 @@
-## What's Changed in 1.10.0
+## What's Changed in 1.10.1
+
+
+
+### 🐛 Bug Fixes
+* fix: withUniwind remove className props on web after converting them by @Brentlok in [#615](https://github.com/uni-stack/uniwind/pull/615)
+* fix: handle multiline classes by @Brentlok in [#610](https://github.com/uni-stack/uniwind/pull/610)
+* fix: adopt applied html theme by @florian-lefebvre in [#599](https://github.com/uni-stack/uniwind/pull/599)
+* fix: vite8 not prebundling react native web by @Brentlok in [#596](https://github.com/uni-stack/uniwind/pull/596)
+* Add an internal Expo-project marker to the Uniwind Metro config and use it to lazily choose the correct transform worker. by @sync in [#593](https://github.com/uni-stack/uniwind/pull/593)
+* fix: Remove reference to Touchable in package types by @huntie in [#592](https://github.com/uni-stack/uniwind/pull/592)
+
+
+### 🏠 Chores
+* chore: update to expo 57 by @Brentlok in [#591](https://github.com/uni-stack/uniwind/pull/591)
+
+
+### New Contributors
+* @florian-lefebvre made their first contribution in [#599](https://github.com/uni-stack/uniwind/pull/599)
+* @sync made their first contribution in [#593](https://github.com/uni-stack/uniwind/pull/593)
+* @huntie made their first contribution in [#592](https://github.com/uni-stack/uniwind/pull/592)
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.10.0...v1.10.1## What's Changed in 1.10.0
 
 
 
