@@ -2,6 +2,7 @@ const { getDefaultConfig } = require('expo/metro-config')
 const { withModuleFederation } = require('@module-federation/metro')
 const { withUniwindConfig } = require('uniwind/metro')
 const path = require('path')
+const { sharedClassNames } = require('./shared-class-names')
 
 const REACT_VERSION = require('react/package.json').version
 const REACT_NATIVE_VERSION = require('react-native/package.json').version
@@ -169,16 +170,18 @@ const createMetroConfig = ({
     // Module Federation additions rather than replacing them.
     const uniwindConfig = withUniwindConfig(bridgedConfig, {
         cssEntryFile,
-        // MF's container name is the stable owner used to replace or dispose
-        // this remote's native style delta without reinitializing the host.
-        ...(isRemote
+        federation: isRemote
             ? {
-                federation: {
-                    role: 'remote',
-                    id: federation.name,
-                },
+                // MF's container name is the stable owner used to replace or
+                // dispose this remote's native style delta.
+                role: 'remote',
+                id: federation.name,
+                sharedClassNames,
             }
-            : {}),
+            : {
+                role: 'host',
+                sharedClassNames,
+            },
     })
 
     return withFederationRuntimeResolver(uniwindConfig, bridgedConfig, config, projectRoot)

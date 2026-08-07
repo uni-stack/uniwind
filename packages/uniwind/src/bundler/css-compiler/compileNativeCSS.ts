@@ -7,7 +7,7 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
     Processor.transform(tailwindCSS)
 
     // Federated remotes resolve Uniwind's runtime globals from the host.
-    if (bundlerConfig.federation) {
+    if (bundlerConfig.isFederationRemote) {
         delete Processor.vars['--uniwind-em']
     }
 
@@ -29,7 +29,7 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
         .join('')
-    const currentColorVar = bundlerConfig.federation
+    const currentColorVar = bundlerConfig.isFederationRemote
         ? ''
         : `currentColor: () => rt.colorScheme === 'dark' ? '#ffffff' : '#000000',`
 

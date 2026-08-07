@@ -17,9 +17,11 @@ const signalIds = [
     'host-only',
     'host-conflict',
     'host-variable',
+    'remote-a-host-shared',
     'remote-a-only',
     'remote-a-conflict',
     'remote-a-variable',
+    'remote-b-host-shared',
     'remote-b-only',
     'remote-b-conflict',
     'remote-b-variable',
@@ -82,9 +84,11 @@ const expectedRgb = {
     'host-only': 'rgb(22, 163, 74)',
     'host-conflict': 'rgb(22, 163, 74)',
     'host-variable': 'rgb(22, 163, 74)',
+    'remote-a-host-shared': 'rgb(22, 163, 74)',
     'remote-a-only': 'rgb(250, 204, 21)',
     'remote-a-conflict': 'rgb(250, 204, 21)',
     'remote-a-variable': 'rgb(250, 204, 21)',
+    'remote-b-host-shared': 'rgb(22, 163, 74)',
     'remote-b-only': 'rgb(37, 99, 235)',
     'remote-b-conflict': 'rgb(37, 99, 235)',
     'remote-b-variable': 'rgb(37, 99, 235)',
@@ -94,9 +98,11 @@ const expectedHex = {
     'host-only': '#16a34a',
     'host-conflict': '#16a34a',
     'host-variable': '#16a34a',
+    'remote-a-host-shared': '#16a34a',
     'remote-a-only': '#facc15',
     'remote-a-conflict': '#facc15',
     'remote-a-variable': '#facc15',
+    'remote-b-host-shared': '#16a34a',
     'remote-b-only': '#2563eb',
     'remote-b-conflict': '#2563eb',
     'remote-b-variable': '#2563eb',
@@ -136,7 +142,7 @@ try {
         throw new Error(`Browser errors:\n${browserErrors.join('\n')}`)
     }
 
-    console.log('PASS: host and prefixed remote classes and variables remain stable in both load orders')
+    console.log('PASS: host-shared and prefixed remote classes and variables remain stable in both load orders')
 } finally {
     await browser.close()
 }

@@ -7,5 +7,8 @@
         "stop": "bun ./stop.mjs",
         "verify:web": "node ./verify-web.mjs",
         "web": "bun ./start.mjs web"
+    },
+    "devDependencies": {
+        "lightningcss": "1.30.1"
     }
 }

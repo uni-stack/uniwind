@@ -223,7 +223,8 @@ function App() {
                 <Text style={styles.explanationTitle}>What this proves</Text>
                 <Text style={styles.explanationText}>
                     Remote source uses explicit rma: and rmb: classes, including prefixed theme variables. Web selectors cannot collide. Native
-                    registrations merge under remoteA and remoteB instead of replacing the host. All nine bars remain stable in either load order.
+                    registrations merge under remoteA and remoteB instead of replacing the host. Unprefixed shared candidates resolve from the host in
+                    both remotes.
                 </Text>
             </View>
         </ScrollView>

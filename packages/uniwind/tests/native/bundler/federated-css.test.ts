@@ -34,6 +34,22 @@ const compileRegistration = (css: string, federated: boolean): GenerateStyleShee
 }
 
 describe('federated native CSS', () => {
+    test('keeps runtime globals in a federation host build', () => {
+        const config = UniwindBundlerConfig.fromMetroConfig(
+            {
+                cssEntryFile: './unused.css',
+                federation: {
+                    role: 'host',
+                },
+            },
+            Platform.iOS,
+        )
+        const virtualCode = compileNativeCSS(config, '')
+
+        expect(virtualCode).toContain('currentColor')
+        expect(virtualCode).toContain('"--uniwind-em"')
+    })
+
     test('resolves host-owned runtime globals without remote conflicts', () => {
         const warn = jest.spyOn(Logger, 'warn').mockImplementation()
 

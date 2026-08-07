@@ -39,6 +39,11 @@ export default function RemotePanel() {
             </View>
             <Text style={styles.moduleId}>remoteB/Panel</Text>
             <Signal
+                className="mf-host-only"
+                label="Host-shared mf-host-only: #16a34a"
+                testID="remote-b-host-shared"
+            />
+            <Signal
                 className="rmb:mf-remote-b-only"
                 label="rmb:mf-remote-b-only: #2563eb"
                 testID="remote-b-only"

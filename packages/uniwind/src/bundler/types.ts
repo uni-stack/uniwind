@@ -1,7 +1,15 @@
-export type UniwindFederationConfig = {
-    role: 'remote'
-    id: string
+type UniwindFederationSharedConfig = {
+    sharedClassNames?: ReadonlyArray<string>
 }
+
+export type UniwindFederationConfig =
+    | UniwindFederationSharedConfig & {
+        role: 'host'
+    }
+    | UniwindFederationSharedConfig & {
+        role: 'remote'
+        id: string
+    }
 
 export type UniwindConfig = {
     cssEntryFile: string

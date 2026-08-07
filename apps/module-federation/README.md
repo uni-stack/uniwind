@@ -10,13 +10,16 @@ Federation singletons. It demonstrates Strategy A:
 - Remote B emits a CSS delta with the explicit `rmb` prefix and registers its
   native delta under the MF container name `remoteB`.
 
-There are three separate signals in each panel:
+The host has three signals and each remote has four:
 
 - An owner-only class proves that all three registrations remain installed.
 - Each build uses the same semantic `mf-conflict` utility name. Remote selectors
   become `rma:mf-conflict` and `rmb:mf-conflict`, so they cannot collide.
 - Each build defines `--color-mf-shared`. Tailwind emits remote variables as
   `--rma-color-mf-shared` and `--rmb-color-mf-shared`.
+- Both remotes use the unprefixed `mf-host-only` candidate published by the
+  host's inline source contract. The candidate is absent from both remote
+  deltas and resolves through the host stylesheet/native registry.
 
 The diagnostic UI uses inline styles except for the colored signal bars. This
 keeps the controls independent from the behavior under test. Each signal prints
@@ -77,13 +80,22 @@ needed to load the three graphs are described below.
 ## Strategy A integration
 
 The remotes deliberately write their prefixes in both CSS and source
-`className` values. There is no `StyleNamespace`, runtime class mapping, or
-shared-class contract in this strategy.
+`className` values for remote-owned classes. There is no `StyleNamespace` or
+runtime class mapping.
+
+`shared-class-names.js` parses the host's `@source inline(...)` declarations
+with Lightning CSS and passes that exact candidate list to all three Uniwind
+Metro configurations. The host build includes the candidates while remote
+scanner candidates exclude them. Shared classes remain unprefixed in remote
+source and resolve from the host on web and native. Tailwind processes inline
+sources outside Uniwind's scanner list, so remote authors must not add a shared
+candidate to a remote `@source inline(...)` declaration.
 
 `metro.shared.js` derives Uniwind's native owner ID from the existing Module
-Federation `name`. The host keeps the normal `__reinit` path. Remote CSS modules
-emit `__mergeStyles(remoteName, ...)`, so each remote replaces only its own
-registration during HMR and disposes only its own registration.
+Federation `name`. The host declares `role: 'host'` and keeps the normal
+`__reinit` path. Remote CSS modules emit `__mergeStyles(remoteName, ...)`, so
+each remote replaces only its own registration during HMR and disposes only its
+own registration.
 
 On web, Tailwind prefixing isolates generated selectors and theme variables.
 The remote entries import only `tailwindcss/theme.css`,
@@ -125,10 +137,11 @@ prevents the local development runtime from loading normally.
 A full reload is required between scenarios because loaded JavaScript modules
 and web stylesheets remain registered for the lifetime of the runtime.
 
-Expected on web and native: all nine signals retain their declared values in
-both load orders. Web selectors and variables are unique by prefix. Native
-styles and variables are merged by owner, with the host registration taking
-precedence over accidental unprefixed conflicts.
+Expected on web and native: all eleven signals retain their declared values in
+both load orders. The two unprefixed remote signals resolve from the host.
+Remote-owned web selectors and variables are unique by prefix. Native styles
+and variables are merged by owner, with the host registration taking precedence
+over accidental unprefixed conflicts.
 
 ## Remaining upstream work
 

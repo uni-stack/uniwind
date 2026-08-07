@@ -102,7 +102,7 @@ Configuration shape:
 - `cssEntryFile`: required CSS entry path, resolved from `process.cwd()`.
 - `extraThemes`: optional named themes added to default `light` and `dark`.
 - `dtsFile`: optional generated declaration file path, default `uniwind-types.d.ts`.
-- Metro-only `federation`: optional native remote build contract with a stable owner ID.
+- Metro-only `federation`: optional host/remote build contract. Hosts may declare exact shared class candidates that are force-generated into the base build; remotes use a stable owner ID and exclude those exact candidates from their scanned delta.
 - Metro-only `polyfills.rem`: custom rem base, default `16`.
 - Metro-only `debug` and `isTV` flags exist in types.
 
@@ -177,6 +177,8 @@ Web components:
 ## Federated Style Contract
 
 - The host owns the base/global CSS. Remotes emit only explicitly prefixed deltas.
+- Shared class candidates are an explicit build-time contract. Host builds include them, remote scanner candidates exclude them, and remote source uses them unprefixed so they resolve from the host on web and native.
+- `@source inline(...)` candidates are compiled by Tailwind outside Uniwind's scanner candidate set. Remote authors must not reintroduce shared candidates through inline sources.
 - Native deltas merge by owner; existing keys win, same-owner registration replaces, and non-federated `__reinit` behavior is unchanged.
 
 `withUniwind`:
