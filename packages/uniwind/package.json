@@ -45,18 +45,21 @@
             "style": "./uniwind.css",
             "types": "./dist/module/index.d.ts",
             "react-native": "./src/index.ts",
+            "browser": "./dist/module/index.js",
             "import": "./dist/module/index.js",
             "default": "./dist/common/index.js"
         },
         "./components": {
             "types": "./no-types.d.ts",
             "react-native": "./src/components/index.ts",
+            "browser": "./dist/module/components/web/index.js",
             "import": "./dist/module/components/web/index.js",
             "default": "./dist/common/components/web/index.js"
         },
         "./components/*": {
             "types": "./no-types.d.ts",
             "react-native": "./src/components/native/*.tsx",
+            "browser": "./dist/module/components/web/*.js",
             "import": "./dist/module/components/web/*.js",
             "default": "./dist/common/components/web/*.js"
         },
