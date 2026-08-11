@@ -1,5 +1,6 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
+import { arrayEquals } from '../../common/utils'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
@@ -21,7 +22,7 @@ type StyleRegistration = {
 
 const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
-class UniwindStoreBuilder {
+export class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
@@ -29,6 +30,12 @@ class UniwindStoreBuilder {
     private baseRegistration: StyleRegistration | null = null
     private remoteRegistrations = new Map<string, StyleRegistration>()
     private runtimeVariableOverrides = {} as Record<ThemeName, Vars>
+    private warnedClassConflicts = new Set<string>()
+    private warnedVariableConflicts = new Set<string>()
+
+    get hasHostRegistration() {
+        return this.baseRegistration !== null
+    }
 
     getStyles(
         className: string | undefined,
@@ -70,6 +77,8 @@ class UniwindStoreBuilder {
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
+        this.validateRemoteThemes(themes)
+
         this.runtimeVariableOverrides = {}
         this.baseRegistration = {
             config: generateStyleSheetCallback(this.runtime),
@@ -83,6 +92,12 @@ class UniwindStoreBuilder {
         }
     }
 
+    validateRemoteThemes = (themes: Array<string>) => {
+        for (const registration of this.remoteRegistrations.values()) {
+            this.validateThemes(registration.owner, registration.themes, themes)
+        }
+    }
+
     updateCSSVariables = (theme: ThemeName, variables: Vars) => {
         this.runtimeVariableOverrides[theme] ??= {}
         Object.assign(this.runtimeVariableOverrides[theme], variables)
@@ -91,6 +106,13 @@ class UniwindStoreBuilder {
     }
 
     merge = (id: string, generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
+        const registeredThemes = this.baseRegistration?.themes
+            ?? this.remoteRegistrations.values().next().value?.themes
+
+        if (registeredThemes) {
+            this.validateThemes(id, themes, registeredThemes)
+        }
+
         const registration = {
             config: generateStyleSheetCallback(this.runtime),
             owner: id,
@@ -112,6 +134,12 @@ class UniwindStoreBuilder {
         }
     }
 
+    private validateThemes(id: string, themes: Array<string>, expectedThemes: Array<string>) {
+        if (!arrayEquals(themes, expectedThemes)) {
+            throw new Error(`Uniwind: Federated styles '${id}' must use the host themes.`)
+        }
+    }
+
     private rebuild() {
         const registrations = [
             ...(this.baseRegistration ? [this.baseRegistration] : []),
@@ -129,7 +157,10 @@ class UniwindStoreBuilder {
                 const existingOwner = classNameOwners.get(className)
 
                 if (existingOwner !== undefined) {
-                    if (__DEV__) {
+                    const conflictKey = `${registration.owner}\0${className}`
+
+                    if (__DEV__ && !this.warnedClassConflicts.has(conflictKey)) {
+                        this.warnedClassConflicts.add(conflictKey)
                         Logger.warn(
                             `Federated class "${className}" from "${registration.owner}" was dropped because it is already registered by "${existingOwner}". Prefix remote class names to avoid conflicts.`,
                         )
@@ -152,7 +183,10 @@ class UniwindStoreBuilder {
                 const existingOwner = variableOwners.get(variableName)
 
                 if (existingOwner !== undefined) {
-                    if (__DEV__) {
+                    const conflictKey = `${registration.owner}\0${String(variableName)}`
+
+                    if (__DEV__ && !this.warnedVariableConflicts.has(conflictKey)) {
+                        this.warnedVariableConflicts.add(conflictKey)
                         Logger.warn(
                             `Federated CSS variable "${
                                 String(variableName)

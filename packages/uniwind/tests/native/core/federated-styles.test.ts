@@ -3,7 +3,7 @@ import { Uniwind, useCSSVariable } from '../../../src'
 import { StyleDependency } from '../../../src/common/consts'
 import { UniwindListener } from '../../../src/core/listener'
 import { Logger } from '../../../src/core/logger'
-import { UniwindStore } from '../../../src/core/native'
+import { UniwindStore, UniwindStoreBuilder } from '../../../src/core/native'
 import type { GenerateStyleSheetsCallback, Style, ThemeName, UniwindContextType, Vars } from '../../../src/core/types'
 
 const context = {
@@ -109,37 +109,112 @@ describe('federated native styles', () => {
         expect(getBackgroundColor('rma:variable')).toBe('#facc15')
     })
 
-    test('drops accidental class and variable overrides', () => {
-        const warn = jest.spyOn(Logger, 'warn').mockImplementation()
-
-        disposers.push(UniwindStore.merge(
+    test('accepts custom-theme remotes before matching host initialization', () => {
+        const store = new UniwindStoreBuilder()
+        const themes = ['light', 'dark', 'premium']
+        const dispose = store.merge(
             'remote-a',
-            createRegistration(
-                {
-                    'host-conflict': '#facc15',
-                    'rma:host-variable': vars => vars['--shared-color'](vars) as string,
-                },
-                {
-                    '--shared-color': '#facc15',
-                },
-            ),
-            ['light', 'dark'],
-        ))
-
-        expect(getBackgroundColor('host-conflict')).toBe('#16a34a')
-        expect(getBackgroundColor('host-variable')).toBe('#16a34a')
-        expect(getBackgroundColor('rma:host-variable')).toBe('#16a34a')
-        expect(warn).toHaveBeenNthCalledWith(
-            1,
-            'Federated class "host-conflict" from "remote-a" was dropped because it is already registered by "host". Prefix remote class names to avoid conflicts.',
+            createRegistration({ 'rma:only': '#facc15' }),
+            themes,
         )
-        expect(warn).toHaveBeenNthCalledWith(
-            2,
-            'Federated CSS variable "--shared-color" from "remote-a" was dropped because it is already registered by "host". Prefix remote CSS variables to avoid conflicts.',
-        )
-        expect(warn).toHaveBeenCalledTimes(2)
 
-        warn.mockRestore()
+        try {
+            store.reinit(createRegistration({ 'host-only': '#16a34a' }), themes)
+
+            expect(store.getStyles('host-only', undefined, undefined, context).styles.backgroundColor).toBe('#16a34a')
+            expect(store.getStyles('rma:only', undefined, undefined, context).styles.backgroundColor).toBe('#facc15')
+        } finally {
+            dispose()
+        }
+    })
+
+    test('exposes remote-first custom themes through the public config', () => {
+        jest.isolateModules(() => {
+            const isolatedUniwind = require('../../../src/core/config/config.native').Uniwind as typeof Uniwind & {
+                __mergeStyles: (
+                    id: string,
+                    generateStyleSheetCallback: GenerateStyleSheetsCallback,
+                    themes: Array<string>,
+                ) => VoidFunction
+                __reinit: (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => void
+            }
+            const isolatedStore = require('../../../src/core/native').UniwindStore as typeof UniwindStore
+            const themes = ['light', 'dark', 'premium']
+            const dispose = isolatedUniwind.__mergeStyles(
+                'remote-a',
+                createRegistration({ 'rma:only': '#facc15' }),
+                themes,
+            )
+
+            try {
+                expect(isolatedUniwind.themes).toEqual(themes)
+                expect(() => isolatedUniwind.setTheme('premium')).not.toThrow()
+                expect(isolatedUniwind.currentTheme).toBe('premium')
+                expect(isolatedStore.runtime.currentThemeName).toBe('premium')
+
+                isolatedUniwind.__reinit(createRegistration({ 'host-only': '#16a34a' }), themes)
+
+                expect(isolatedUniwind.themes).toEqual(themes)
+                expect(isolatedStore.getStyles('rma:only', undefined, undefined, context).styles.backgroundColor).toBe('#facc15')
+            } finally {
+                dispose()
+            }
+        })
+    })
+
+    test('rejects host themes that differ from a remote registered first', () => {
+        const store = new UniwindStoreBuilder()
+        const dispose = store.merge(
+            'remote-a',
+            createRegistration({ 'rma:only': '#facc15' }),
+            ['light', 'dark', 'premium'],
+        )
+
+        try {
+            expect(() => {
+                store.reinit(createRegistration({ 'host-only': '#16a34a' }), ['light', 'dark'])
+            }).toThrow('Uniwind: Federated styles \'remote-a\' must use the host themes.')
+        } finally {
+            dispose()
+        }
+    })
+
+    test('drops accidental overrides and warns once per owner and name', () => {
+        const warn = jest.spyOn(Logger, 'warn').mockImplementation()
+        const registration = createRegistration(
+            {
+                'host-conflict': '#facc15',
+                'rma:host-variable': vars => vars['--shared-color'](vars) as string,
+            },
+            {
+                '--shared-color': '#facc15',
+            },
+        )
+
+        try {
+            disposers.push(UniwindStore.merge(
+                'remote-a',
+                registration,
+                ['light', 'dark'],
+            ))
+
+            expect(getBackgroundColor('host-conflict')).toBe('#16a34a')
+            expect(getBackgroundColor('host-variable')).toBe('#16a34a')
+            expect(getBackgroundColor('rma:host-variable')).toBe('#16a34a')
+            expect(warn).toHaveBeenNthCalledWith(
+                1,
+                'Federated class "host-conflict" from "remote-a" was dropped because it is already registered by "host". Prefix remote class names to avoid conflicts.',
+            )
+            expect(warn).toHaveBeenNthCalledWith(
+                2,
+                'Federated CSS variable "--shared-color" from "remote-a" was dropped because it is already registered by "host". Prefix remote CSS variables to avoid conflicts.',
+            )
+
+            disposers.push(UniwindStore.merge('remote-a', registration, ['light', 'dark']))
+            expect(warn).toHaveBeenCalledTimes(2)
+        } finally {
+            warn.mockRestore()
+        }
     })
 
     test('replaces only the registration with the same owner ID', () => {
@@ -195,8 +270,19 @@ describe('federated native styles', () => {
 
     test('updates public CSS variable APIs when remote registrations change', () => {
         const variableName = '--rma-shared-color'
-        const warn = jest.spyOn(Logger, 'warn').mockImplementation()
-        const { result } = renderHook(() => useCSSVariable(variableName))
+        const { result } = (() => {
+            const warn = jest.spyOn(Logger, 'warn').mockImplementation()
+
+            try {
+                const hook = renderHook(() => useCSSVariable(variableName))
+
+                expect(warn).toHaveBeenCalledWith(expect.stringContaining(`couldn't find your variable ${variableName}`))
+
+                return hook
+            } finally {
+                warn.mockRestore()
+            }
+        })()
         let staleDispose = () => {}
 
         expect(Uniwind.getCSSVariable(variableName)).toBeUndefined()
@@ -211,37 +297,46 @@ describe('federated native styles', () => {
         })
         disposers.push(staleDispose)
 
+        expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
+        expect(Uniwind.getCSSVariable(variableName)).toBe('#facc15')
+        expect(result.current).toBe('#facc15')
+
+        let currentDispose = () => {}
+
+        act(() => {
+            currentDispose = UniwindStore.merge(
+                'remote-a',
+                createRegistration({}, { [variableName]: '#2563eb' }),
+                ['light', 'dark'],
+            )
+        })
+        disposers.push(currentDispose)
+
+        expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
+        expect(result.current).toBe('#2563eb')
+
+        act(() => staleDispose())
+
+        expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
+        expect(result.current).toBe('#2563eb')
+
+        act(() => currentDispose())
+
+        expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
+        expect(Uniwind.getCSSVariable(variableName)).toBeUndefined()
+        expect(result.current).toBeUndefined()
+    })
+
+    test('ignores invalid runtime CSS variable names in production', () => {
+        const previousDev = (globalThis as typeof globalThis & { __DEV__: boolean }).__DEV__
+
         try {
-            expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
-            expect(Uniwind.getCSSVariable(variableName)).toBe('#facc15')
-            expect(result.current).toBe('#facc15')
+            ;(globalThis as typeof globalThis & { __DEV__: boolean }).__DEV__ = false
+            Uniwind.updateCSSVariables('light', { 'invalid-name': '#facc15' })
 
-            let currentDispose = () => {}
-
-            act(() => {
-                currentDispose = UniwindStore.merge(
-                    'remote-a',
-                    createRegistration({}, { [variableName]: '#2563eb' }),
-                    ['light', 'dark'],
-                )
-            })
-            disposers.push(currentDispose)
-
-            expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
-            expect(result.current).toBe('#2563eb')
-
-            act(() => staleDispose())
-
-            expect(Uniwind.getCSSVariable(variableName)).toBe('#2563eb')
-            expect(result.current).toBe('#2563eb')
-
-            act(() => currentDispose())
-
-            expect(Uniwind.getCSSVariable('--shared-color')).toBe('#16a34a')
-            expect(Uniwind.getCSSVariable(variableName)).toBeUndefined()
-            expect(result.current).toBeUndefined()
+            expect(Object.hasOwn(UniwindStore.vars.light, 'invalid-name')).toBe(false)
         } finally {
-            warn.mockRestore()
+            ;(globalThis as typeof globalThis & { __DEV__: boolean }).__DEV__ = previousDev
         }
     })
 

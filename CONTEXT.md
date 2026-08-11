@@ -180,6 +180,7 @@ Web components:
 - Shared class candidates are an explicit build-time contract. Host builds include them, remote scanner candidates exclude them, and remote source uses them unprefixed so they resolve from the host on web and native.
 - `@source inline(...)` candidates are compiled by Tailwind outside Uniwind's scanner candidate set. Remote authors must not reintroduce shared candidates through inline sources.
 - Native deltas merge by owner; existing keys win, same-owner registration replaces, and non-federated `__reinit` behavior is unchanged.
+- Native registrations must use the same ordered theme list. A remote may register before the host; the first remote establishes the provisional public theme list, and host initialization validates those themes before changing config or store state.
 
 `withUniwind`:
 

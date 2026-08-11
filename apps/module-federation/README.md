@@ -42,9 +42,8 @@ browser assertions used to verify both load orders:
 bun run --cwd apps/module-federation verify:web
 ```
 
-The verifier uses the repository's existing Playwright installation; the demo
-does not add Playwright as a dependency. If Chromium is not installed locally,
-run `bunx playwright install chromium` once.
+If Chromium is not installed locally, run `bunx playwright install chromium`
+once.
 
 For the iOS simulator:
 

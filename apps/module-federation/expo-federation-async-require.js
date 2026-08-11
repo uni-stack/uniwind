@@ -8,15 +8,19 @@ const getPublicPath = origin => origin?.split('/').slice(0, -1).join('/')
 const getBundleId = (bundlePath, publicPath) => {
     let value = bundlePath
 
-    if (isUrl(value)) {
-        value = value.replace(publicPath, '')
+    if (isUrl(value) && publicPath) {
+        const normalizedPublicPath = publicPath.replace(/\/+$/, '')
+
+        if (value === normalizedPublicPath || value.startsWith(`${normalizedPublicPath}/`)) {
+            value = value.slice(normalizedPublicPath.length)
+        }
     }
 
     return value
         .replace(/^\/+/, '')
         .split('?')[0]
         .replaceAll('\\', '/')
-        .replace('.bundle', '')
+        .replace(/\.bundle$/, '')
 }
 
 const loadBundle = async url => {
@@ -27,6 +31,7 @@ const loadBundle = async url => {
     }
 
     const code = await response.text()
+    // Metro bundles must execute in global scope so their module definitions register.
     globalThis.eval(code)
 }
 
@@ -64,8 +69,8 @@ globalThis[`${metroGlobalPrefix}__loadBundleAsync`] = async bundlePath => {
     await pending
 
     const bundleId = getBundleId(url, publicPath)
-    const shared = scope.deps.shared[bundleId] ?? []
-    const remotes = scope.deps.remotes[bundleId] ?? []
+    const shared = scope.deps?.shared?.[bundleId] ?? []
+    const remotes = scope.deps?.remotes?.[bundleId] ?? []
     const registry = require('mf:remote-module-registry')
 
     await Promise.all([

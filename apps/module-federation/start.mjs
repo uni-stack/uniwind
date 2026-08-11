@@ -1,7 +1,8 @@
-import { spawn, spawnSync } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { readFileSync, rmSync, writeFileSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { isManagedLauncher } from './managed-launcher.mjs'
 
 const platform = process.argv[2]
 const expoCli = fileURLToPath(new URL('../../node_modules/expo/bin/cli', import.meta.url))
@@ -19,26 +20,15 @@ const getManagedLauncher = () => {
 
     try {
         activePid = Number.parseInt(readFileSync(pidFile, 'utf8'), 10)
-        process.kill(activePid, 0)
     } catch (error) {
-        if (error?.code === 'ENOENT' || error?.code === 'ESRCH') {
+        if (error?.code === 'ENOENT') {
             return null
         }
 
         throw error
     }
 
-    const processInfo = spawnSync('ps', ['-p', String(activePid), '-o', 'command='], {
-        encoding: 'utf8',
-    })
-
-    if (processInfo.error) {
-        throw processInfo.error
-    }
-
-    return processInfo.status === 0 && processInfo.stdout.includes('start.mjs')
-        ? activePid
-        : null
+    return isManagedLauncher(activePid) ? activePid : null
 }
 
 const activePid = getManagedLauncher()
@@ -127,6 +117,8 @@ const stopAll = signal => {
             }
         }
     }
+
+    exitWhenChildrenStop()
 }
 
 const startChild = (name, args, cwd, env = process.env) => {
@@ -170,6 +162,10 @@ const startChild = (name, args, cwd, env = process.env) => {
 for (const project of projects) {
     startChild(project.name, project.args, project.cwd)
 }
+
+process.on('SIGINT', () => stopAll('SIGTERM'))
+process.on('SIGTERM', () => stopAll('SIGTERM'))
+process.on('exit', cleanupPidFile)
 
 const waitForUrl = async (name, url) => {
     const deadline = Date.now() + 60_000
@@ -215,7 +211,3 @@ if (platform === 'ios') {
         stopAll('SIGTERM')
     }
 }
-
-process.on('SIGINT', () => stopAll('SIGTERM'))
-process.on('SIGTERM', () => stopAll('SIGTERM'))
-process.on('exit', cleanupPidFile)

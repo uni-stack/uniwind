@@ -1,6 +1,7 @@
-import { spawnSync } from 'node:child_process'
 import { readFileSync, rmSync } from 'node:fs'
+import process from 'node:process'
 import { fileURLToPath } from 'node:url'
+import { isManagedLauncher } from './managed-launcher.mjs'
 
 const pidFile = fileURLToPath(new URL('./.servers.pid', import.meta.url))
 let pid
@@ -16,33 +17,22 @@ try {
     throw error
 }
 
-const processInfo = spawnSync('ps', ['-p', String(pid), '-o', 'command='], {
-    encoding: 'utf8',
-})
-
-if (processInfo.error) {
-    throw processInfo.error
-}
-
-if (
-    processInfo.status !== 0
-    || !processInfo.stdout.includes('start.mjs')
-) {
+if (!isManagedLauncher(pid)) {
     rmSync(pidFile)
     console.log('[module-federation] Removed a stale server PID file')
     process.exit(0)
 }
 
-const result = spawnSync('kill', ['-TERM', String(pid)], {
-    stdio: 'inherit',
-})
+try {
+    process.kill(pid, 'SIGTERM')
+} catch (error) {
+    if (error?.code === 'ESRCH') {
+        rmSync(pidFile)
+        console.log('[module-federation] Removed a stale server PID file')
+        process.exit(0)
+    }
 
-if (result.error) {
-    throw result.error
-}
-
-if (result.status !== 0) {
-    process.exit(result.status ?? 1)
+    throw error
 }
 
 console.log(`[module-federation] Stopped servers managed by PID ${pid}`)

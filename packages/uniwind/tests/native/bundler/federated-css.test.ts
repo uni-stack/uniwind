@@ -28,10 +28,7 @@ const compileRegistration = (css: string, federated: boolean): GenerateStyleShee
     )
     const virtualCode = compileNativeCSS(config, css)
 
-    return rt => {
-        // oxlint-disable-next-line no-eval
-        return eval(`(${virtualCode})`)
-    }
+    return rt => new Function('rt', `return (${virtualCode})`)(rt)
 }
 
 describe('federated native CSS', () => {
@@ -53,21 +50,24 @@ describe('federated native CSS', () => {
 
     test('resolves host-owned runtime globals without remote conflicts', () => {
         const warn = jest.spyOn(Logger, 'warn').mockImplementation()
+        let dispose = () => {}
 
-        UniwindStore.reinit(compileRegistration('', false), ['light', 'dark'])
-        const dispose = UniwindStore.merge(
-            'remote-a',
-            compileRegistration('.runtime-globals { color: currentColor; width: 1em; }', true),
-            ['light', 'dark'],
-        )
+        try {
+            UniwindStore.reinit(compileRegistration('', false), ['light', 'dark'])
+            dispose = UniwindStore.merge(
+                'remote-a',
+                compileRegistration('.runtime-globals { color: currentColor; width: 1em; }', true),
+                ['light', 'dark'],
+            )
 
-        expect(UniwindStore.getStyles('runtime-globals', undefined, undefined, context).styles).toMatchObject({
-            color: '#000000',
-            width: 16,
-        })
-        expect(warn).not.toHaveBeenCalled()
-
-        dispose()
-        warn.mockRestore()
+            expect(UniwindStore.getStyles('runtime-globals', undefined, undefined, context).styles).toMatchObject({
+                color: '#000000',
+                width: 16,
+            })
+            expect(warn).not.toHaveBeenCalled()
+        } finally {
+            dispose()
+            warn.mockRestore()
+        }
     })
 })

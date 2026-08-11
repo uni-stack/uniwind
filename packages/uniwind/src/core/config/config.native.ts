@@ -1,6 +1,5 @@
 import type { Insets } from 'react-native'
 import { StyleDependency } from '../../common/consts'
-import { arrayEquals } from '../../common/utils'
 import { UniwindListener } from '../listener'
 import { Logger } from '../logger'
 import { UniwindStore } from '../native'
@@ -17,8 +16,10 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         const runtimeVars = {} as Vars
 
         Object.entries(variables).forEach(([varName, varValue]) => {
-            if (!varName.startsWith('--') && __DEV__) {
-                Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
+            if (!varName.startsWith('--')) {
+                if (__DEV__) {
+                    Logger.error(`CSS variable name must start with "--", instead got: ${varName}`)
+                }
 
                 return
             }
@@ -39,16 +40,19 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
     }
 
     protected __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
+        UniwindStore.validateRemoteThemes(themes)
         super.__reinit(generateStyleSheetCallback, themes)
         UniwindStore.reinit(generateStyleSheetCallback, themes)
     }
 
     protected __mergeStyles(id: string, generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
-        if (!arrayEquals(themes, this._themes)) {
-            throw new Error(`Uniwind: Federated styles '${id}' must use the host themes.`)
+        const dispose = UniwindStore.merge(id, generateStyleSheetCallback, themes)
+
+        if (!UniwindStore.hasHostRegistration) {
+            super.__reinit(generateStyleSheetCallback, themes)
         }
 
-        return UniwindStore.merge(id, generateStyleSheetCallback, themes)
+        return dispose
     }
 
     protected onThemeChange() {

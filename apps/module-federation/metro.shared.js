@@ -10,15 +10,16 @@ const UNIWIND_VERSION = require('uniwind/package.json').version
 
 const withRuntimeRequireBridge = (config, federationName) => {
     const getRunModuleStatement = config.serializer.getRunModuleStatement
+        ?? (moduleId => `__r(${JSON.stringify(moduleId)});`)
 
     return {
         ...config,
         serializer: {
             ...config.serializer,
-            getRunModuleStatement: moduleId =>
+            getRunModuleStatement: (moduleId, globalPrefix) =>
                 [
                     `globalThis[${JSON.stringify(`${federationName}__r`)}] ??= globalThis.__r;`,
-                    getRunModuleStatement(moduleId),
+                    getRunModuleStatement(moduleId, globalPrefix),
                 ].join('\n'),
         },
     }
@@ -72,6 +73,8 @@ const withFederationRuntimeResolver = (uniwindConfig, federatedConfig, baseConfi
         resolver: {
             ...uniwindConfig.resolver,
             resolveRequest: (context, moduleName, platform) => {
+                const originModulePath = context.originModulePath ?? ''
+
                 // Expo 57 does not initialize the prefixed loader that MF wraps,
                 // causing `loadBundleAsync is not a function`. Use an adapter
                 // that evaluates the bundle and updates MF's module registries.
@@ -97,13 +100,13 @@ const withFederationRuntimeResolver = (uniwindConfig, federatedConfig, baseConfi
                 }
 
                 if (
-                    context.originModulePath.startsWith(uniwindRoot)
+                    originModulePath.startsWith(uniwindRoot)
                     && (moduleName === 'uniwind' || moduleName.startsWith('uniwind/'))
                 ) {
                     return resolveWithBaseConfig(context, moduleName, platform)
                 }
 
-                if (context.originModulePath.startsWith(federationRuntimeRoot)) {
+                if (originModulePath.startsWith(federationRuntimeRoot)) {
                     return federationResolver(context, moduleName, platform)
                 }
 
