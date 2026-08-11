@@ -137,12 +137,12 @@ describe('ScopedVariables (web)', () => {
 
     test('getWebVariable applies number values as px and clears them afterwards', () => {
         expect(
-            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 }, variablesCacheKey: null }),
+            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: { '--gap': 8 } }),
         ).toEqual('8px')
 
         // The dummy parent is cleared after the read, so a plain read falls back
         expect(
-            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: null, variablesCacheKey: null }),
+            getWebVariable('--gap', { scopedTheme: null, rtl: null, variables: null }),
         ).toEqual('')
     })
 })
