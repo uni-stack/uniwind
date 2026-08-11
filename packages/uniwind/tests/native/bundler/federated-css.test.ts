@@ -8,6 +8,7 @@ import type { GenerateStyleSheetsCallback, UniwindContextType } from '../../../s
 const context = {
     rtl: null,
     scopedTheme: null,
+    variables: null,
 } satisfies UniwindContextType
 
 const compileRegistration = (css: string, federated: boolean): GenerateStyleSheetsCallback => {

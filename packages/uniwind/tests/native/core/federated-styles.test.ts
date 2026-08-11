@@ -9,6 +9,7 @@ import type { GenerateStyleSheetsCallback, Style, ThemeName, UniwindContextType,
 const context = {
     rtl: null,
     scopedTheme: null,
+    variables: null,
 } satisfies UniwindContextType
 
 const createStyle = (className: string, value: string | ((vars: Vars) => string)): Style => ({
