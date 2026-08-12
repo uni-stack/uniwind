@@ -9,7 +9,15 @@ import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../ty
 const SYSTEM_THEME = 'system' as const
 // Platform.constants is not defined in RNW
 const RN_VERSION = Platform.constants?.reactNativeVersion?.minor ?? 0
-const UNSPECIFIED_THEME = RN_VERSION >= 82 ? 'unspecified' : undefined
+// RN 0.87 deprecated 'unspecified' in favor of 'auto'
+const SYSTEM_COLOR_SCHEME = RN_VERSION >= 87
+    ? 'auto'
+    : RN_VERSION >= 82
+    ? 'unspecified'
+    : undefined
+
+// RN <0.87 also reports 'unspecified'
+type RNColorScheme = 'light' | 'dark' | 'unspecified' | null | undefined
 
 export class UniwindConfigBuilder {
     protected _themes = ['light', 'dark']
@@ -18,9 +26,10 @@ export class UniwindConfigBuilder {
 
     constructor() {
         Appearance.addChangeListener(event => {
-            const colorScheme = event.colorScheme === 'unspecified'
+            const eventColorScheme = event.colorScheme as RNColorScheme
+            const colorScheme = eventColorScheme === 'unspecified'
                 ? ColorScheme.Light
-                : event.colorScheme ?? ColorScheme.Light
+                : eventColorScheme ?? ColorScheme.Light
             const prevTheme = this.#currentTheme
 
             if (this.#hasAdaptiveThemes && prevTheme !== colorScheme) {
@@ -44,7 +53,7 @@ export class UniwindConfigBuilder {
     }
 
     private get colorScheme() {
-        const colorScheme = Appearance.getColorScheme()
+        const colorScheme = Appearance.getColorScheme() as RNColorScheme
 
         if (colorScheme === 'unspecified') {
             return ColorScheme.Light
@@ -66,7 +75,7 @@ export class UniwindConfigBuilder {
 
                 if (Platform.OS !== 'web') {
                     // @ts-expect-error RN >0.82 - breaking change
-                    Appearance.setColorScheme(UNSPECIFIED_THEME)
+                    Appearance.setColorScheme(SYSTEM_COLOR_SCHEME)
                 }
 
                 return
@@ -84,7 +93,7 @@ export class UniwindConfigBuilder {
                     // @ts-expect-error RN >0.82 - breaking change
                     isAdaptiveTheme
                         ? this.#currentTheme as ColorScheme
-                        : UNSPECIFIED_THEME,
+                        : SYSTEM_COLOR_SCHEME,
                 )
             }
         } finally {
