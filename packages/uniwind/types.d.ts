@@ -14,6 +14,8 @@ declare module 'react-native' {
     interface FlatListProps<ItemT> extends VirtualizedListProps<ItemT> {
         columnWrapperClassName?: string
         contentContainerClassName?: string
+        ListFooterComponentClassName?: string
+        ListHeaderComponentClassName?: string
     }
 
     interface ImageBackgroundProps extends ImagePropsBase {
@@ -41,6 +43,8 @@ declare module 'react-native' {
 
     interface SectionListProps<ItemT> extends VirtualizedListProps<ItemT> {
         contentContainerClassName?: string
+        ListFooterComponentClassName?: string
+        ListHeaderComponentClassName?: string
     }
 
     interface SwitchProps {
