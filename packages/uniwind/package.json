@@ -15,6 +15,7 @@
         "precommit": "bun lint",
         "build": "unbuild",
         "check:typescript": "tsc --noEmit",
+        "check:typescript:test": "tsc --project tsconfig.test.json --noEmit",
         "lint": "oxlint src",
         "lint:fix": "oxlint src --fix",
         "format": "dprint fmt",

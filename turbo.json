@@ -10,6 +10,7 @@
             "interactive": true
         },
         "check:typescript": {},
+        "uniwind#check:typescript:test": {},
         "lint": {},
         "//#check:format": {},
         "circular:check": {},
@@ -17,6 +18,7 @@
             "dependsOn": [
                 "lint",
                 "check:typescript",
+                "uniwind#check:typescript:test",
                 "circular:check",
                 "test:native",
                 "test:web",

@@ -18,10 +18,10 @@ async function getWebStyles(
     context: UniwindContextType = { scopedTheme: null, rtl: null, variables: null },
 ) {
     return page.evaluate(
-        ([cls, ctx]) => {
-            return window.__uniwind.getWebStyles(cls, undefined, ctx)
+        ({ className, context }) => {
+            return window.__uniwind.getWebStyles(className, undefined, context)
         },
-        [className, context],
+        { className, context },
     )
 }
 

@@ -3,11 +3,16 @@
     "compilerOptions": {
         "jsx": "react-jsx",
         "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
+        "allowSyntheticDefaultImports": true,
+        "noUncheckedIndexedAccess": false,
+        "rootDir": "."
     },
     "include": [
         "./src",
         "./types.d.ts",
         "./tests"
+    ],
+    "exclude": [
+        "./tests/type-test"
     ]
 }

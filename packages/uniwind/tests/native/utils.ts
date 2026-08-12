@@ -1,7 +1,7 @@
 import { render } from '@testing-library/react-native'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
-import type { RNStyle } from '../../../src/core/types'
+import type { RNStyle } from '../../src/core/types'
 
 export const renderUniwind = <T>(component: React.ReactElement<T>) => {
     const renderResult = render(component)
