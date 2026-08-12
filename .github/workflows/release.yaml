@@ -67,6 +67,10 @@ jobs:
       - name: Check types
         run: bun run check:typescript
 
+      - name: Check test types
+        run: bun run check:typescript:test
+        working-directory: packages/uniwind
+
       - name: Check linting and formatting
         run: bun run lint
 
