@@ -103,19 +103,23 @@ export const getWebStyles = (
 
         const dataSet = generateDataSet(componentProps ?? {})
 
-        Object.entries(dataSet).forEach(([key, value]) => {
-            if (value === false || value === undefined) {
-                return
-            }
+        if (dataSet) {
+            Object.entries(dataSet).forEach(([key, value]) => {
+                if (value === false || value === undefined) {
+                    return
+                }
 
-            dummy.dataset[key] = String(value)
-        })
+                dummy.dataset[key] = String(value)
+            })
+        }
 
         const computedStyles = getActiveStylesForClass(className)
 
-        Object.keys(dataSet).forEach(key => {
-            delete dummy.dataset[key]
-        })
+        if (dataSet) {
+            Object.keys(dataSet).forEach(key => {
+                delete dummy.dataset[key]
+            })
+        }
 
         return Object.fromEntries(
             Object.entries(computedStyles)
