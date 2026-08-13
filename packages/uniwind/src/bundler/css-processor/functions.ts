@@ -1,7 +1,23 @@
 import type { CalcFor_DimensionPercentageFor_LengthValue, CalcFor_Length, CssColor, Function as FunctionType } from 'lightningcss'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
-import { pipe } from './utils'
+import { pipe, roundToPrecision } from './utils'
+
+const FILTER_FUNCTIONS = [
+    'blur',
+    'brightness',
+    'contrast',
+    'grayscale',
+    'hue-rotate',
+    'invert',
+    'opacity',
+    'saturate',
+    'sepia',
+]
+
+const FILTER_UNITS: Record<string, string> = {
+    blur: 'px',
+}
 
 export class Functions {
     private readonly logger = new Logger('Functions')
@@ -86,21 +102,11 @@ export class Functions {
             return this.Processor.Color.processColor(color as CssColor)
         }
 
-        if (
-            [
-                'blur',
-                'brightness',
-                'contrast',
-                'grayscale',
-                'hue-rotate',
-                'invert',
-                'opacity',
-                'saturate',
-                'sepia',
-                'conic-gradient',
-                'radial-gradient',
-            ].includes(fn.name)
-        ) {
+        if (FILTER_FUNCTIONS.includes(fn.name)) {
+            return this.processFilterFunction(fn)
+        }
+
+        if (['conic-gradient', 'radial-gradient'].includes(fn.name)) {
             // Not supported by RN
             return '""'
         }
@@ -192,6 +198,15 @@ export class Functions {
 
             return value
         }
+    }
+
+    private processFilterFunction(fn: FunctionType) {
+        const [argument] = fn.arguments
+        const amount = argument?.type === 'token' && argument.value.type === 'percentage'
+            ? roundToPrecision(argument.value.value, 2)
+            : this.Processor.CSS.processValue(fn.arguments)
+
+        return `rt.filterFn("${fn.name}", ${amount}, "${FILTER_UNITS[fn.name] ?? ''}")`
     }
 
     private processColorMix(fn: FunctionType) {
