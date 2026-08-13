@@ -81,11 +81,16 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: Any
         return dispose
     }, [classNames])
 
+    const dataSet = generateDataSet(props)
+
+    if (dataSet) {
+        generatedProps.dataSet = dataSet
+    }
+
     return (
         <Component
             {...props}
             {...generatedProps}
-            dataSet={generateDataSet(props)}
         />
     )
 }
@@ -133,11 +138,16 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         return dispose
     }, [classNames])
 
+    const dataSet = generateDataSet(props)
+
+    if (dataSet) {
+        generatedProps.dataSet = dataSet
+    }
+
     return (
         <Component
             {...props}
             {...generatedProps}
-            dataSet={generateDataSet(props)}
         />
     )
 }
