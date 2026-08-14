@@ -205,8 +205,9 @@ export class Functions {
         const amount = argument?.type === 'token' && argument.value.type === 'percentage'
             ? roundToPrecision(argument.value.value, 2)
             : this.Processor.CSS.processValue(fn.arguments)
+        const expression = typeof amount === 'string' && amount.startsWith('"') ? amount : `(${amount})`
 
-        return `rt.filterFn("${fn.name}", ${amount}, "${FILTER_UNITS[fn.name] ?? ''}")`
+        return `"${fn.name}(" + ${expression} + "${FILTER_UNITS[fn.name] ?? ''})"`
     }
 
     private processColorMix(fn: FunctionType) {

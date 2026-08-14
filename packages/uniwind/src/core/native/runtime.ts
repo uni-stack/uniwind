@@ -24,7 +24,6 @@ export const UniwindRuntime = {
         right: 0,
     },
     colorMix,
-    filterFn: (name: string, amount: number | string, unit: string) => `${name}(${amount}${unit})`,
     pixelRatio: value => value * PixelRatio.get(),
     cubicBezier: () => '',
     lightDark: () => '',
