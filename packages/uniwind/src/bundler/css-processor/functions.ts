@@ -3,7 +3,7 @@ import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
 import { pipe, roundToPrecision } from './utils'
 
-const FILTER_FUNCTIONS = [
+const FILTER_FUNCTIONS = new Set([
     'blur',
     'brightness',
     'contrast',
@@ -13,7 +13,7 @@ const FILTER_FUNCTIONS = [
     'opacity',
     'saturate',
     'sepia',
-]
+])
 
 const FILTER_UNITS: Record<string, string> = {
     blur: 'px',
@@ -102,7 +102,7 @@ export class Functions {
             return this.Processor.Color.processColor(color as CssColor)
         }
 
-        if (FILTER_FUNCTIONS.includes(fn.name)) {
+        if (FILTER_FUNCTIONS.has(fn.name)) {
             return this.processFilterFunction(fn)
         }
 
