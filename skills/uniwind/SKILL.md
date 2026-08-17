@@ -19,7 +19,7 @@ If user has lower version, recommend updating to 1.7.0+ (free) / 1.2.1+ (Pro) fo
 
 `LayoutDirection` is available from Uniwind 1.8.0+.
 
-`ScopedVariables` scopes CSS variable overrides to a component subtree.
+`ScopedVariables` scopes CSS variable overrides to a component subtree and is available from Uniwind 1.11.0+ / Uniwind Pro 1.6.0+.
 
 Uniwind brings Tailwind CSS v4 to React Native. All core React Native components support the `className` prop out of the box. Styles are compiled at build time — no runtime overhead.
 
