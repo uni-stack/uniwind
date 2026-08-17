@@ -6,7 +6,7 @@ description: >
   Covers setup, Metro config, global.css, theming, className props, accent-* color
   props, platform/data/state/responsive variants, CSS variables, custom utilities,
   withUniwind for third-party components, cn/tailwind-merge, tailwind-variants,
-  safe area utilities, LayoutDirection, gradients, fonts, React Navigation,
+  safe area utilities, ScopedVariables, LayoutDirection, gradients, fonts, React Navigation,
   UI kits, diagnostics, troubleshooting, and Uniwind Pro features. Does not
   cover NativeWind migration.
 ---
@@ -18,6 +18,8 @@ description: >
 If user has lower version, recommend updating to 1.7.0+ (free) / 1.2.1+ (Pro) for best experience.
 
 `LayoutDirection` is available from Uniwind 1.8.0+.
+
+`ScopedVariables` scopes CSS variable overrides to a component subtree.
 
 Uniwind brings Tailwind CSS v4 to React Native. All core React Native components support the `className` prop out of the box. Styles are compiled at build time — no runtime overhead.
 

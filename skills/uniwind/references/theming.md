@@ -182,6 +182,28 @@ import { ScopedTheme } from 'uniwind';
 - `withUniwind`-wrapped components inside the scope also resolve scoped theme values
 - Custom themes require registration in `extraThemes`
 
+### ScopedVariables
+
+Override CSS variables for a subtree without changing the global or scoped theme:
+
+```tsx
+import { ScopedVariables } from 'uniwind';
+
+<View className="gap-3">
+  <PreviewCard /> {/* Uses --color-primary from the active theme */}
+
+  <ScopedVariables variables={{ '--color-primary': '#7c3aed' }}>
+    <PreviewCard /> {/* Its bg-primary now uses purple */}
+  </ScopedVariables>
+</View>
+```
+
+- Variable names must start with `--`; invalid names are ignored.
+- Values apply to `className`, `useCSSVariable`, `useResolveClassNames`, and `withUniwind`-wrapped components in the subtree.
+- Nested scopes merge with their parents; the nearest value wins.
+- On web, numeric values become pixel values (`20` becomes `20px`).
+- Use it for local overrides such as previews, branded sections, or component-specific tokens. Use `Uniwind.updateCSSVariables` for global theme updates.
+
 ### LayoutDirection (v1.8.0+)
 
 Scope RTL/LTR variants to a subtree without changing global device RTL state:
