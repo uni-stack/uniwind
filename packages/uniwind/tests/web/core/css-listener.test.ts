@@ -133,6 +133,63 @@ describe('CSSListener', () => {
         }
     })
 
+    test('reuses stylesheet lookups across a media-query change batch', async () => {
+        const originalMatchMedia = window.matchMedia
+        const mediaListeners = new Set<EventListener>()
+        const mediaQueryList = {
+            addEventListener: (_: string, listener: EventListener) => mediaListeners.add(listener),
+            dispatchEvent: () => true,
+            matches: false,
+            media: '(min-width: 1000px)',
+            onchange: null,
+            removeEventListener: (_: string, listener: EventListener) => mediaListeners.delete(listener),
+        }
+
+        Object.defineProperty(window, 'matchMedia', {
+            configurable: true,
+            value: jest.fn(() => mediaQueryList),
+        })
+
+        const querySelectorAll = jest.spyOn(document, 'querySelectorAll')
+        const style = document.createElement('style')
+        const styleSheetSelector = 'link[rel~="stylesheet"], style'
+        const styleSheetQueryCount = () =>
+            querySelectorAll.mock.calls
+                .filter(([selector]) => selector === styleSheetSelector)
+                .length
+
+        try {
+            style.textContent = `
+                @media (min-width: 1000px) {
+                    .batch-class-a { background-color: red; }
+                    .batch-class-b { background-color: blue; }
+                }
+            `
+            document.head.appendChild(style)
+
+            await waitFor(() => {
+                expect(mediaListeners.size).toBe(2)
+                expect(styleSheetQueryCount()).toBe(1)
+            })
+
+            querySelectorAll.mockClear()
+            mediaQueryList.matches = true
+            mediaListeners.forEach(mediaListener => mediaListener(new Event('change')))
+
+            expect(styleSheetQueryCount()).toBe(1)
+            expect(Array.from(CSSListener.activeRules).filter(rule => rule.selectorText.startsWith('.batch-class-'))).toHaveLength(2)
+        } finally {
+            style.remove()
+
+            await waitFor(() => expect(mediaListeners.size).toBe(0))
+            querySelectorAll.mockRestore()
+            Object.defineProperty(window, 'matchMedia', {
+                configurable: true,
+                value: originalMatchMedia,
+            })
+        }
+    })
+
     test('retains media-query subscriptions for classes loaded later', async () => {
         const originalMatchMedia = window.matchMedia
         const mediaListeners = new Set<EventListener>()

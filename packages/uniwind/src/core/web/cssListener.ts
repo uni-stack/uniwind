@@ -88,9 +88,15 @@ const parseLeadingClassName = (selectorText: string) => {
     return className ? unescapeCSSIdentifier(className) : null
 }
 
+type StyleSheetContext = {
+    connectedSheets: Set<CSSStyleSheet>
+    elements: WeakMap<CSSStyleSheet, HTMLLinkElement | HTMLStyleElement>
+}
+
 class CSSListenerBuilder {
     activeRules = new Set<CSSStyleRule>()
     private classNameListeners = new Map<string, Set<VoidFunction>>()
+    private mediaChangeStyleSheetContext: StyleSheetContext | undefined
     private mediaQueryRuleListeners = new Map<CSSStyleRule, {
         listener: VoidFunction
         mediaQueryList: MediaQueryList
@@ -204,22 +210,47 @@ class CSSListenerBuilder {
         }
     }
 
-    private getStyleSheetElement(sheet: CSSStyleSheet) {
-        return Array.from(document.querySelectorAll<HTMLLinkElement | HTMLStyleElement>('link[rel~="stylesheet"], style'))
-            .find(element => element.sheet === sheet)
+    private createStyleSheetContext(): StyleSheetContext {
+        const elements = new WeakMap<CSSStyleSheet, HTMLLinkElement | HTMLStyleElement>()
+
+        for (const element of document.querySelectorAll<HTMLLinkElement | HTMLStyleElement>('link[rel~="stylesheet"], style')) {
+            if (element.sheet) {
+                elements.set(element.sheet, element)
+            }
+        }
+
+        return {
+            connectedSheets: new Set(Array.from(document.styleSheets)),
+            elements,
+        }
     }
 
-    private getStyleSheetMediaQuery(sheet: CSSStyleSheet) {
+    private getMediaChangeStyleSheetContext() {
+        if (!this.mediaChangeStyleSheetContext) {
+            this.mediaChangeStyleSheetContext = this.createStyleSheetContext()
+            queueMicrotask(() => {
+                this.mediaChangeStyleSheetContext = undefined
+            })
+        }
+
+        return this.mediaChangeStyleSheetContext
+    }
+
+    private getStyleSheetElement(sheet: CSSStyleSheet, context: StyleSheetContext) {
+        return context.elements.get(sheet)
+    }
+
+    private getStyleSheetMediaQuery(sheet: CSSStyleSheet, context: StyleSheetContext) {
         const mediaText = sheet.media?.mediaText
-            || this.getStyleSheetElement(sheet)?.media
+            || this.getStyleSheetElement(sheet, context)?.media
             || ''
         const query = mediaText.trim()
 
         return query && query !== 'all' ? query : null
     }
 
-    private isStyleSheetDisabled(sheet: CSSStyleSheet) {
-        const element = this.getStyleSheetElement(sheet)
+    private isStyleSheetDisabled(sheet: CSSStyleSheet, context: StyleSheetContext) {
+        const element = this.getStyleSheetElement(sheet, context)
         const elementDisabled = element
             ? element.hasAttribute('disabled') || (element instanceof HTMLLinkElement && element.disabled)
             : false
@@ -227,12 +258,12 @@ class CSSListenerBuilder {
         return sheet.disabled || elementDisabled
     }
 
-    private isStyleSheetActive(sheet: CSSStyleSheet, connectedSheets = new Set(Array.from(document.styleSheets))) {
-        if (!connectedSheets.has(sheet) || this.isStyleSheetDisabled(sheet)) {
+    private isStyleSheetActive(sheet: CSSStyleSheet, context: StyleSheetContext) {
+        if (!context.connectedSheets.has(sheet) || this.isStyleSheetDisabled(sheet, context)) {
             return false
         }
 
-        const query = this.getStyleSheetMediaQuery(sheet)
+        const query = this.getStyleSheetMediaQuery(sheet, context)
 
         if (!query) {
             return true
@@ -243,8 +274,8 @@ class CSSListenerBuilder {
         return registration?.query === query && registration.mediaQueryList.matches
     }
 
-    private syncStyleSheetMediaListener(sheet: CSSStyleSheet) {
-        const query = this.getStyleSheetMediaQuery(sheet)
+    private syncStyleSheetMediaListener(sheet: CSSStyleSheet, context: StyleSheetContext) {
+        const query = this.getStyleSheetMediaQuery(sheet, context)
         const existingRegistration = this.styleSheetMediaListeners.get(sheet)
 
         if (existingRegistration?.query === query) {
@@ -310,11 +341,11 @@ class CSSListenerBuilder {
         return styleSheetsChanged
     }
 
-    private pruneStaleRules(connectedSheets: Set<CSSStyleSheet>) {
+    private pruneStaleRules(context: StyleSheetContext) {
         let styleSheetsChanged = false
 
         for (const sheet of this.processedStyleSheets) {
-            if (!this.isStyleSheetActive(sheet, connectedSheets)) {
+            if (!this.isStyleSheetActive(sheet, context)) {
                 const sheetChanged = this.removeStyleSheetRules(sheet)
                 styleSheetsChanged ||= sheetChanged
             }
@@ -351,7 +382,7 @@ class CSSListenerBuilder {
         }
 
         for (const [sheet, registration] of this.styleSheetMediaListeners) {
-            if (!connectedSheets.has(sheet)) {
+            if (!context.connectedSheets.has(sheet)) {
                 registration.mediaQueryList.removeEventListener('change', registration.listener)
                 this.styleSheetMediaListeners.delete(sheet)
             }
@@ -362,17 +393,17 @@ class CSSListenerBuilder {
 
     private initialize() {
         this.pendingInitialization = undefined
-        const connectedSheets = new Set(Array.from(document.styleSheets))
+        const context = this.createStyleSheetContext()
 
-        connectedSheets.forEach(sheet => this.syncStyleSheetMediaListener(sheet))
+        context.connectedSheets.forEach(sheet => this.syncStyleSheetMediaListener(sheet, context))
 
         let styleSheetsChanged = this.pendingStyleSheetsChanged
         this.pendingStyleSheetsChanged = false
-        const staleRulesChanged = this.pruneStaleRules(connectedSheets)
+        const staleRulesChanged = this.pruneStaleRules(context)
         styleSheetsChanged ||= staleRulesChanged
 
-        for (const sheet of connectedSheets) {
-            if (!this.isStyleSheetActive(sheet, connectedSheets)) {
+        for (const sheet of context.connectedSheets) {
+            if (!this.isStyleSheetActive(sheet, context)) {
                 continue
             }
 
@@ -399,7 +430,7 @@ class CSSListenerBuilder {
             this.processedStyleSheets.add(sheet)
             styleSheetsChanged = true
 
-            this.addMediaQueriesDeep(rules)
+            this.addMediaQueriesDeep(rules, context)
         }
 
         if (styleSheetsChanged) {
@@ -441,7 +472,7 @@ class CSSListenerBuilder {
         return Array.from(new Set(acc))
     }
 
-    private addMediaQueriesDeep(rules: CSSRuleList) {
+    private addMediaQueriesDeep(rules: CSSRuleList, context: StyleSheetContext) {
         for (const rule of Array.from(rules)) {
             if (this.isStyleRule(rule)) {
                 const mediaQueries = this.collectParentMediaQueries(rule)
@@ -449,7 +480,7 @@ class CSSListenerBuilder {
                 this.activeRules.add(rule)
 
                 if (mediaQueries.length > 0) {
-                    this.addMediaQuery(mediaQueries, rule)
+                    this.addMediaQuery(mediaQueries, rule, context)
                 }
 
                 continue
@@ -460,39 +491,39 @@ class CSSListenerBuilder {
                     continue
                 }
 
-                this.addMediaQueriesDeep(rule.cssRules)
+                this.addMediaQueriesDeep(rule.cssRules, context)
 
                 continue
             }
 
             if (this.hasNestedRules(rule)) {
-                this.addMediaQueriesDeep(rule.cssRules)
+                this.addMediaQueriesDeep(rule.cssRules, context)
 
                 continue
             }
         }
     }
 
-    private addMediaQuery(mediaQueries: Array<CSSMediaRule>, rule: CSSStyleRule) {
+    private addMediaQuery(mediaQueries: Array<CSSMediaRule>, rule: CSSStyleRule, context: StyleSheetContext) {
         const rules = mediaQueries.map(mediaQuery => mediaQuery.conditionText).sort().join(' and ')
         const existingRegistration = this.mediaQueryRuleListeners.get(rule)
 
         if (existingRegistration) {
-            this.toggleRule(existingRegistration.mediaQueryList, rule)
+            this.toggleRule(existingRegistration.mediaQueryList, rule, context)
             return
         }
 
         const parsedClassName = parseLeadingClassName(rule.selectorText)
         const mediaQueryList = this.registeredRulesMediaQueries.get(rules) ?? window.matchMedia(rules)
         const listener = () => {
-            this.toggleRule(mediaQueryList, rule)
+            this.toggleRule(mediaQueryList, rule, this.getMediaChangeStyleSheetContext())
 
             if (parsedClassName) {
                 this.notifyClassName(parsedClassName)
             }
         }
 
-        this.toggleRule(mediaQueryList, rule)
+        this.toggleRule(mediaQueryList, rule, context)
         this.registeredRulesMediaQueries.set(rules, mediaQueryList)
         this.mediaQueryRuleListeners.set(rule, {
             listener,
@@ -506,13 +537,13 @@ class CSSListenerBuilder {
         this.classNameListeners.get(className)?.forEach(listener => listener())
     }
 
-    private isRuleLive(rule: CSSStyleRule) {
+    private isRuleLive(rule: CSSStyleRule, context: StyleSheetContext) {
         const sheet = rule.parentStyleSheet
-        return sheet !== null && this.isStyleSheetActive(sheet)
+        return sheet !== null && this.isStyleSheetActive(sheet, context)
     }
 
-    private toggleRule(mqList: MediaQueryList, rule: CSSStyleRule) {
-        if (mqList.matches && this.isRuleLive(rule)) {
+    private toggleRule(mqList: MediaQueryList, rule: CSSStyleRule, context: StyleSheetContext) {
+        if (mqList.matches && this.isRuleLive(rule, context)) {
             this.activeRules.add(rule)
         } else {
             this.activeRules.delete(rule)
