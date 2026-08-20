@@ -52,6 +52,11 @@ export default defineBuildConfig({
             name: 'metro/transformer',
         },
         {
+            builder: 'rollup',
+            input: './src/bundler/adapters/metro/babel-transformer.ts',
+            name: 'metro/babel-transformer',
+        },
+        {
             builder: 'mkdist',
             input: './src/bundler/adapters/metro',
             outDir: 'dist/metro',

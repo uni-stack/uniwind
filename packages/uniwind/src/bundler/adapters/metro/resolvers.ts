@@ -1,6 +1,7 @@
 import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { realpathSync } from 'node:fs'
 import { basename, dirname, sep } from 'node:path'
+import { NATIVE_COMPONENT_NAME_SET } from './constants'
 
 type ResolverConfig = {
     platform: string | null
@@ -40,31 +41,10 @@ const isInternalOrigin = (originModulePath: string) => {
     }
 }
 
-const SUPPORTED_COMPONENTS = [
-    'ActivityIndicator',
-    'Button',
-    'FlatList',
-    'Image',
-    'ImageBackground',
-    'InputAccessoryView',
-    'KeyboardAvoidingView',
-    'Modal',
-    'Pressable',
-    'RefreshControl',
-    'SafeAreaView',
-    'ScrollView',
-    'SectionList',
-    'Switch',
-    'Text',
-    'TextInput',
-    'TouchableHighlight',
-    'TouchableNativeFeedback',
-    'TouchableOpacity',
-    'TouchableWithoutFeedback',
-    'View',
-    'VirtualizedList',
+const SUPPORTED_COMPONENTS = new Set([
+    ...NATIVE_COMPONENT_NAME_SET,
     'createOrderedCSSStyleSheet',
-]
+])
 
 export const nativeResolver = ({
     context,
@@ -98,7 +78,7 @@ export const nativeResolver = ({
         const filename = basename(resolution.filePath.split(sep).at(-1) ?? '')
         const module = filename.split('.').at(0)
 
-        if (module !== undefined && SUPPORTED_COMPONENTS.includes(module)) {
+        if (module !== undefined && SUPPORTED_COMPONENTS.has(module)) {
             return resolver(context, `uniwind/components/${module}`, platform)
         }
     }
@@ -132,7 +112,7 @@ export const webResolver = ({
         return resolver(context, `uniwind/components/createOrderedCSSStyleSheet`, platform)
     }
 
-    if (!isIndex || module === undefined || !SUPPORTED_COMPONENTS.includes(module) || context.originModulePath.endsWith(`${module}${sep}index.js`)) {
+    if (!isIndex || module === undefined || !SUPPORTED_COMPONENTS.has(module) || context.originModulePath.endsWith(`${module}${sep}index.js`)) {
         return resolution
     }
 
