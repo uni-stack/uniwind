@@ -38,6 +38,11 @@ test('keeps internal imports internal when Metro reports a symlinked origin', ()
         })
 
         expect(calls).toEqual(['react-native'])
+
+        if (resolution.type !== 'sourceFile') {
+            throw new Error(`Expected a source file resolution, got ${resolution.type}`)
+        }
+
         expect(resolution.filePath).toBe(join(root, 'node_modules', 'react-native', 'index.js'))
     } finally {
         rmSync(root, { force: true, recursive: true })
