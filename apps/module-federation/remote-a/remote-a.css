@@ -1,0 +1,19 @@
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme) prefix(rma);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(rma);
+@import 'uniwind';
+
+@source inline("rma:mf-remote-a-only rma:mf-conflict rma:bg-mf-shared");
+
+@theme {
+    --color-mf-shared: #facc15;
+}
+
+@utility mf-remote-a-only {
+    background-color: #facc15;
+}
+
+@utility mf-conflict {
+    background-color: #facc15;
+}

@@ -6,6 +6,11 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
 
     Processor.transform(tailwindCSS)
 
+    // Federated remotes resolve Uniwind's runtime globals from the host.
+    if (bundlerConfig.isFederationRemote) {
+        delete Processor.vars['--uniwind-em']
+    }
+
     const stylesheet = serializeJSObject(
         addMetaToStylesTemplate(Processor, bundlerConfig.platform),
         (key, value) => `"${key}": ${value}`,
@@ -24,7 +29,9 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
     const serializedScopedVars = Object.entries(scopedVars)
         .map(([scopedVarsName, scopedVars]) => `"${scopedVarsName}": ({ ${scopedVars} }),`)
         .join('')
-    const currentColorVar = `currentColor: () => rt.colorScheme === 'dark' ? '#ffffff' : '#000000',`
+    const currentColorVar = bundlerConfig.isFederationRemote
+        ? ''
+        : `currentColor: () => rt.colorScheme === 'dark' ? '#ffffff' : '#000000',`
 
     return [
         '({',

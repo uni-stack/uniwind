@@ -1,5 +1,5 @@
 import { UniwindBundlerConfig } from '@/bundler/config'
-import type { UniwindConfig } from '@/bundler/types'
+import type { UniwindMetroConfig } from '@/bundler/types'
 import { Platform } from '@/common/consts'
 import type { MetroConfig } from 'metro-config'
 import type { CustomResolver } from 'metro-resolver'
@@ -23,7 +23,7 @@ const isExpoMetroConfig = (config: MetroConfig) => {
 
 export const withUniwindConfig = <T extends MetroConfig>(
     config: T,
-    uniwindConfig: UniwindConfig,
+    uniwindConfig: UniwindMetroConfig,
 ): T => {
     const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(uniwindConfig)
     const pinnedUniwindOrigin = join(config.projectRoot ?? process.cwd(), 'package.json')

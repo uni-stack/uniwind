@@ -1,6 +1,8 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
+import { arrayEquals } from '../../common/utils'
 import { UniwindListener } from '../listener'
+import { Logger } from '../logger'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
 import { getScopedVars } from './native-utils'
 import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
@@ -12,13 +14,28 @@ type StylesResult = {
     dependencySum: number
 }
 
+type StyleRegistration = {
+    config: ReturnType<GenerateStyleSheetsCallback>
+    owner: string
+    themes: Array<string>
+}
+
 const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
-class UniwindStoreBuilder {
+export class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
+    private baseRegistration: StyleRegistration | null = null
+    private remoteRegistrations = new Map<string, StyleRegistration>()
+    private runtimeVariableOverrides = {} as Record<ThemeName, Vars>
+    private warnedClassConflicts = new Set<string>()
+    private warnedVariableConflicts = new Set<string>()
+
+    get hasHostRegistration() {
+        return this.baseRegistration !== null
+    }
 
     getStyles(
         className: string | undefined,
@@ -60,8 +77,151 @@ class UniwindStoreBuilder {
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
-        const config = generateStyleSheetCallback(this.runtime)
-        const { scopedVars, stylesheet, vars } = config
+        this.validateRemoteThemes(themes)
+
+        this.runtimeVariableOverrides = {}
+        this.baseRegistration = {
+            config: generateStyleSheetCallback(this.runtime),
+            owner: 'host',
+            themes,
+        }
+        this.rebuild()
+
+        if (__DEV__ || this.remoteRegistrations.size > 0) {
+            UniwindListener.notifyAll()
+        }
+    }
+
+    validateRemoteThemes = (themes: Array<string>) => {
+        for (const registration of this.remoteRegistrations.values()) {
+            this.validateThemes(registration.owner, registration.themes, themes)
+        }
+    }
+
+    updateCSSVariables = (theme: ThemeName, variables: Vars) => {
+        this.runtimeVariableOverrides[theme] ??= {}
+        Object.assign(this.runtimeVariableOverrides[theme], variables)
+        this.vars[theme] ??= {}
+        Object.assign(this.vars[theme], variables)
+    }
+
+    merge = (id: string, generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
+        const registeredThemes = this.baseRegistration?.themes
+            ?? this.remoteRegistrations.values().next().value?.themes
+
+        if (registeredThemes) {
+            this.validateThemes(id, themes, registeredThemes)
+        }
+
+        const registration = {
+            config: generateStyleSheetCallback(this.runtime),
+            owner: id,
+            themes,
+        }
+
+        this.remoteRegistrations.set(id, registration)
+        this.rebuild()
+        UniwindListener.notify([StyleDependency.Stylesheet, StyleDependency.Variables])
+
+        return () => {
+            if (this.remoteRegistrations.get(id) !== registration) {
+                return
+            }
+
+            this.remoteRegistrations.delete(id)
+            this.rebuild()
+            UniwindListener.notify([StyleDependency.Stylesheet, StyleDependency.Variables])
+        }
+    }
+
+    private validateThemes(id: string, themes: Array<string>, expectedThemes: Array<string>) {
+        if (!arrayEquals(themes, expectedThemes)) {
+            throw new Error(`Uniwind: Federated styles '${id}' must use the host themes.`)
+        }
+    }
+
+    private rebuild() {
+        const registrations = [
+            ...(this.baseRegistration ? [this.baseRegistration] : []),
+            ...this.remoteRegistrations.values(),
+        ]
+        const themes = this.baseRegistration?.themes ?? registrations[0]?.themes ?? []
+        const stylesheet = {} as StyleSheets
+        const vars = {} as Vars
+        const scopedVars = {} as Partial<Record<string, Vars>>
+        const classNameOwners = new Map<string, string>()
+        const variableOwners = new Map<PropertyKey, string>()
+
+        for (const registration of registrations) {
+            for (const [className, styles] of Object.entries(registration.config.stylesheet)) {
+                const existingOwner = classNameOwners.get(className)
+
+                if (existingOwner !== undefined) {
+                    const conflictKey = `${registration.owner}\0${className}`
+
+                    if (__DEV__ && !this.warnedClassConflicts.has(conflictKey)) {
+                        this.warnedClassConflicts.add(conflictKey)
+                        Logger.warn(
+                            `Federated class "${className}" from "${registration.owner}" was dropped because it is already registered by "${existingOwner}". Prefix remote class names to avoid conflicts.`,
+                        )
+                    }
+
+                    continue
+                }
+
+                classNameOwners.set(className, registration.owner)
+                stylesheet[className] = styles
+            }
+
+            const registrationVariableNames = new Set<PropertyKey>([
+                ...Reflect.ownKeys(registration.config.vars),
+                ...Object.values(registration.config.scopedVars).flatMap(value => value ? Reflect.ownKeys(value) : []),
+            ])
+            const acceptedVariableNames = new Set<PropertyKey>()
+
+            for (const variableName of registrationVariableNames) {
+                const existingOwner = variableOwners.get(variableName)
+
+                if (existingOwner !== undefined) {
+                    const conflictKey = `${registration.owner}\0${String(variableName)}`
+
+                    if (__DEV__ && !this.warnedVariableConflicts.has(conflictKey)) {
+                        this.warnedVariableConflicts.add(conflictKey)
+                        Logger.warn(
+                            `Federated CSS variable "${
+                                String(variableName)
+                            }" from "${registration.owner}" was dropped because it is already registered by "${existingOwner}". Prefix remote CSS variables to avoid conflicts.`,
+                        )
+                    }
+
+                    continue
+                }
+
+                variableOwners.set(variableName, registration.owner)
+                acceptedVariableNames.add(variableName)
+            }
+
+            for (const variableName of acceptedVariableNames) {
+                if (Object.hasOwn(registration.config.vars, variableName)) {
+                    vars[variableName] = registration.config.vars[variableName]!
+                }
+            }
+
+            for (const [scope, registrationVars] of Object.entries(registration.config.scopedVars)) {
+                if (!registrationVars) {
+                    continue
+                }
+
+                const targetVars = scopedVars[scope] ??= {}
+
+                for (const variableName of acceptedVariableNames) {
+                    if (Object.hasOwn(registrationVars, variableName)) {
+                        targetVars[variableName] = registrationVars[variableName]!
+                    }
+                }
+            }
+        }
+
         const platform = this.getCurrentPlatform()
         const commonPlatform = platform.includes('tv') ? UniwindPlatform.TV : UniwindPlatform.Native
         const commonPlatformVars = scopedVars[`${UNIWIND_PLATFORM_VARIABLES}${commonPlatform}`]
@@ -84,13 +244,15 @@ class UniwindStoreBuilder {
                 Object.assign(clonedVars, themeVars)
             }
 
+            const runtimeVariableOverrides = this.runtimeVariableOverrides[theme]
+
+            if (runtimeVariableOverrides) {
+                Object.assign(clonedVars, runtimeVariableOverrides)
+            }
+
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
-
-        if (__DEV__) {
-            UniwindListener.notifyAll()
-        }
     }
 
     private resolveStyles(
@@ -112,8 +274,8 @@ class UniwindStoreBuilder {
             )
         const originalVars = vars
         let hasDataAttributes = false
-        const dependencies = new Set<StyleDependency>()
-        let dependencySum = 0
+        const dependencies = new Set<StyleDependency>([StyleDependency.Stylesheet])
+        let dependencySum = 1 << StyleDependency.Stylesheet
         const bestBreakpoints = new Map<string, Style>()
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const classNameTokens = classNames.includes('\n')

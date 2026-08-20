@@ -20,6 +20,15 @@ export const compileTailwind = async (bundlerConfig: UniwindBundlerConfig) => {
             },
         ],
     })
+    const scannedCandidates = scanner.scan()
+    const sharedClassNames = new Set(bundlerConfig.sharedClassNames)
+    let candidates = scannedCandidates
 
-    return compiler.build(scanner.scan())
+    if (bundlerConfig.isFederationHost) {
+        candidates = Array.from(new Set([...scannedCandidates, ...sharedClassNames]))
+    } else if (bundlerConfig.isFederationRemote) {
+        candidates = scannedCandidates.filter(candidate => !sharedClassNames.has(candidate))
+    }
+
+    return compiler.build(candidates)
 }
