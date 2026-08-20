@@ -176,7 +176,7 @@ Web components:
 
 ## Federated Style Contract
 
-- The host owns the base/global CSS. Remotes emit only explicitly prefixed deltas.
+- The host owns the base/global CSS. Remote-owned classes and CSS variables must use explicit owner prefixes on web and native; owner-keyed native merging scopes registration lifecycle, not class or variable names, so unprefixed remote-owned styles can still collide.
 - Shared class candidates are an explicit build-time contract. Host builds include them, remote scanner candidates exclude them, and remote source uses them unprefixed so they resolve from the host on web and native.
 - `@source inline(...)` candidates are compiled by Tailwind outside Uniwind's scanner candidate set. Remote authors must not reintroduce shared candidates through inline sources.
 - Native deltas merge by owner; existing keys win, same-owner registration replaces, and non-federated `__reinit` behavior is unchanged.

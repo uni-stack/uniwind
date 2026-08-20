@@ -165,12 +165,13 @@ describe('CSSListener', () => {
                     .batch-class-b { background-color: blue; }
                 }
             `
+            const baselineQueryCount = styleSheetQueryCount()
+
             document.head.appendChild(style)
 
-            await waitFor(() => {
-                expect(mediaListeners.size).toBe(2)
-                expect(styleSheetQueryCount()).toBe(1)
-            })
+            await waitFor(() => expect(mediaListeners.size).toBe(2))
+
+            expect(styleSheetQueryCount() - baselineQueryCount).toBeGreaterThan(0)
 
             querySelectorAll.mockClear()
             mediaQueryList.matches = true

@@ -304,6 +304,22 @@ class CSSListenerBuilder {
         })
     }
 
+    private pruneRegisteredQueries(staleQueries: Set<string>) {
+        if (staleQueries.size === 0) {
+            return
+        }
+
+        const liveQueries = new Set(
+            Array.from(this.mediaQueryRuleListeners.values(), registration => registration.query),
+        )
+
+        for (const query of staleQueries) {
+            if (!liveQueries.has(query)) {
+                this.registeredRulesMediaQueries.delete(query)
+            }
+        }
+    }
+
     private removeStyleSheetRules(sheet: CSSStyleSheet) {
         let styleSheetsChanged = false
 
@@ -329,14 +345,7 @@ class CSSListenerBuilder {
             }
         }
 
-        for (const query of staleQueries) {
-            const queryIsRegistered = Array.from(this.mediaQueryRuleListeners.values())
-                .some(registration => registration.query === query)
-
-            if (!queryIsRegistered) {
-                this.registeredRulesMediaQueries.delete(query)
-            }
-        }
+        this.pruneRegisteredQueries(staleQueries)
 
         return styleSheetsChanged
     }
@@ -372,14 +381,7 @@ class CSSListenerBuilder {
             }
         }
 
-        for (const query of staleQueries) {
-            const queryIsRegistered = Array.from(this.mediaQueryRuleListeners.values())
-                .some(registration => registration.query === query)
-
-            if (!queryIsRegistered) {
-                this.registeredRulesMediaQueries.delete(query)
-            }
-        }
+        this.pruneRegisteredQueries(staleQueries)
 
         for (const [sheet, registration] of this.styleSheetMediaListeners) {
             if (!context.connectedSheets.has(sheet)) {
