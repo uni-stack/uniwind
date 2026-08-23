@@ -90,4 +90,57 @@ describe('Filters', () => {
 
         expect(filterOf(getStylesFromId('combined'))).toBe('blur(12px) grayscale(1)')
     })
+
+    test('Drop shadow', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View
+                    className="drop-shadow-sm"
+                    testID="drop-shadow-sm"
+                />
+                <View
+                    className="drop-shadow-md"
+                    testID="drop-shadow-md"
+                />
+                <View
+                    className="drop-shadow-lg"
+                    testID="drop-shadow-lg"
+                />
+                <View
+                    className="drop-shadow-xl"
+                    testID="drop-shadow-xl"
+                />
+                <View
+                    className="drop-shadow-2xl"
+                    testID="drop-shadow-2xl"
+                />
+                <View
+                    className="drop-shadow-none"
+                    testID="drop-shadow-none"
+                />
+                <View
+                    className="drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]"
+                    testID="drop-shadow-arbitrary"
+                />
+                <View
+                    className="drop-shadow-md blur-md"
+                    testID="drop-shadow-combined"
+                />
+                <View
+                    className="drop-shadow-md drop-shadow-red-500"
+                    testID="drop-shadow-colored"
+                />
+            </React.Fragment>,
+        )
+
+        expect(filterOf(getStylesFromId('drop-shadow-sm'))).toBe('drop-shadow(0 1 2 #00000026)')
+        expect(filterOf(getStylesFromId('drop-shadow-md'))).toBe('drop-shadow(0 3 3 #0000001f)')
+        expect(filterOf(getStylesFromId('drop-shadow-lg'))).toBe('drop-shadow(0 4 4 #00000026)')
+        expect(filterOf(getStylesFromId('drop-shadow-xl'))).toBe('drop-shadow(0 9 7 #0000001a)')
+        expect(filterOf(getStylesFromId('drop-shadow-2xl'))).toBe('drop-shadow(0 25 25 #00000026)')
+        expect(filterOf(getStylesFromId('drop-shadow-none'))).toBe('')
+        expect(filterOf(getStylesFromId('drop-shadow-arbitrary'))).toBe('drop-shadow(0 10 8 #00000080)')
+        expect(filterOf(getStylesFromId('drop-shadow-combined'))).toBe('blur(12px) drop-shadow(0 3 3 #0000001f)')
+        expect(filterOf(getStylesFromId('drop-shadow-colored'))).toBe('drop-shadow(0 3 3 #fb2c36ff)')
+    })
 })

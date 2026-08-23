@@ -136,7 +136,7 @@ export class Functions {
         }
 
         if (fn.name === 'drop-shadow') {
-            return undefined
+            return this.processDropShadow(fn)
         }
 
         this.logger.warn(`Unsupported function - ${fn.name}`)
@@ -208,6 +208,24 @@ export class Functions {
         const expression = typeof amount === 'string' && amount.startsWith('"') ? amount : `(${amount})`
 
         return `"${fn.name}(" + ${expression} + "${FILTER_UNITS[fn.name] ?? ''})"`
+    }
+
+    private processDropShadow(fn: FunctionType) {
+        const nonWhitespaceArgs = fn.arguments.filter(
+            arg => !(typeof arg === 'object' && 'type' in arg && arg.type === 'token' && arg.value.type === 'white-space'),
+        )
+
+        const parts = nonWhitespaceArgs.map(arg => {
+            const processed = this.Processor.CSS.processValue(arg)
+
+            return typeof processed === 'string' && processed.startsWith('"')
+                ? processed
+                : `(${processed})`
+        })
+
+        const expression = parts.join(' + " " + ')
+
+        return `"drop-shadow(" + ${expression} + ")"`
     }
 
     private processColorMix(fn: FunctionType) {
