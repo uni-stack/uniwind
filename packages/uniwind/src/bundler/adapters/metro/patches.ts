@@ -24,6 +24,35 @@ interface TraverseDependencies {
     __patched?: boolean
 }
 
+interface InitialTraverseDependencies {
+    (options: GraphOptions<any>): Promise<GraphResult<any>>
+    __uniwindLazyCssEntryPatched?: boolean
+}
+
+export const patchMetroGraphToIncludeCssInLazyGraphs = (cssEntryPath: string) => {
+    const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof MetroGraphModule
+
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
+    const original_initialTraverseDependencies = Graph.prototype.initialTraverseDependencies as unknown as InitialTraverseDependencies
+
+    if (original_initialTraverseDependencies.__uniwindLazyCssEntryPatched) {
+        return
+    }
+
+    async function initialTraverseDependencies(this: Graph, options: GraphOptions<any>) {
+        if (options.lazy && options.transformOptions.dev) {
+            const entryPoints = this.entryPoints as Set<string>
+            entryPoints.add(cssEntryPath)
+        }
+
+        return original_initialTraverseDependencies.call(this, options)
+    }
+
+    // @ts-expect-error patch Graph initialTraverseDependencies method
+    Graph.prototype.initialTraverseDependencies = initialTraverseDependencies
+    initialTraverseDependencies.__uniwindLazyCssEntryPatched = true
+}
+
 export const patchMetroGraphToSupportUncachedModules = () => {
     const { Graph } = require('metro/private/DeltaBundler/Graph') as typeof MetroGraphModule
 
