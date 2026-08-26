@@ -1,15 +1,16 @@
 import { render } from '@testing-library/react'
 import * as React from 'react'
+import { describe, expect, test, vi } from 'vitest'
 import { ScopedVariables } from '../../../src'
 import { getWebVariable } from '../../../src/core/web'
 import { useCSSVariable } from '../../../src/hooks/useCSSVariable'
 
 describe('ScopedVariables (web)', () => {
     test('scoped custom property resolves on a child, falls back outside', () => {
-        const outside = jest.fn()
-        const inside = jest.fn()
+        const outside = vi.fn()
+        const inside = vi.fn()
 
-        const Probe = ({ test }: { test: jest.Mock }) => {
+        const Probe = ({ test }: { test: (value: string | number | undefined) => void }) => {
             test(useCSSVariable('--color-primary'))
 
             return null

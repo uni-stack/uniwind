@@ -1,4 +1,6 @@
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
+import { cleanup } from '@testing-library/react'
+import { afterEach, beforeAll } from 'vitest'
 
 {
     // Define __DEV__ global for tests
@@ -35,3 +37,5 @@ beforeAll(() => {
         document.documentElement.className = 'light'
     }
 })
+
+afterEach(cleanup)

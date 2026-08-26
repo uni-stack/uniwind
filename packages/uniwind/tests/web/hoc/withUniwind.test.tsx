@@ -1,22 +1,23 @@
 import { render } from '@testing-library/react'
 import * as React from 'react'
 import { ActivityIndicator, ActivityIndicatorProps } from 'react-native'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import * as webCore from '../../../src/core/web'
 import { withUniwind } from '../../../src/hoc/withUniwind'
 import { TW_BLUE_500, TW_RED_500, UNIWIND_CONTEXT_MOCK } from '../../consts'
 
 const Component: React.FC<ActivityIndicatorProps> = (props) => <ActivityIndicator {...props} />
 
-const ComponentWithSpy = jest.fn((props: ActivityIndicatorProps) => <ActivityIndicator {...props} />)
+const ComponentWithSpy = vi.fn((props: ActivityIndicatorProps) => <ActivityIndicator {...props} />)
 
-jest.mock('../../../src/core/web', () => ({
-    ...jest.requireActual('../../../src/core/web'),
-    getWebStyles: jest.fn(),
+vi.mock('../../../src/core/web', async importOriginal => ({
+    ...await importOriginal(),
+    getWebStyles: vi.fn(),
 }))
 
 describe('withUniwind', () => {
     beforeEach(() => {
-        jest.clearAllMocks()
+        vi.clearAllMocks()
     })
 
     test('[auto] Should map className to style', () => {
@@ -40,7 +41,7 @@ describe('withUniwind', () => {
     })
 
     test('[auto] Should map colorClassName to color', () => {
-        const mockGetWebStyles = webCore.getWebStyles as jest.MockedFunction<typeof webCore.getWebStyles>
+        const mockGetWebStyles = vi.mocked(webCore.getWebStyles)
 
         mockGetWebStyles.mockReturnValue({ accentColor: TW_RED_500 })
         ComponentWithSpy.mockClear()
@@ -113,7 +114,7 @@ describe('withUniwind', () => {
     })
 
     test('[manual] Should map testClassName to color', () => {
-        const mockGetWebStyles = webCore.getWebStyles as jest.MockedFunction<typeof webCore.getWebStyles>
+        const mockGetWebStyles = vi.mocked(webCore.getWebStyles)
 
         mockGetWebStyles.mockReturnValue({ fill: TW_RED_500 })
         ComponentWithSpy.mockClear()

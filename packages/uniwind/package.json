@@ -22,7 +22,7 @@
         "prepublishOnly": "bun run build",
         "circular:check": "dpdm --no-warning --no-tree -T --exit-code circular:1 'src/**/*.ts' 'src/**/*.tsx'",
         "test:native": "jest --config jest.config.native.js",
-        "test:web": "jest --config jest.config.web.js",
+        "test:web": "vitest run --config vitest.config.ts",
         "test:types": "tsc --project tests/type-test/tsconfig.json",
         "test:e2e": "bun --bun playwright test",
         "release": "release-it"
@@ -113,8 +113,6 @@
         "@playwright/test": "1.60.0",
         "@react-native/babel-preset": "0.86.0",
         "@react-native/jest-preset": "0.86.0",
-        "@swc/core": "1.15.33",
-        "@swc/jest": "0.2.39",
         "@testing-library/jest-dom": "6.9.1",
         "@testing-library/jest-native": "5.4.3",
         "@testing-library/react": "16.3.2",
@@ -126,7 +124,7 @@
         "dpdm": "4.2.0",
         "git-cliff": "2.13.1",
         "jest": "29.7.0",
-        "jest-environment-jsdom": "29.7.0",
+        "jsdom": "30.0.1",
         "metro": "0.85.0",
         "prettier": "3.8.3",
         "react-native-web": "catalog:",
@@ -134,6 +132,7 @@
         "release-it": "20.0.1",
         "typescript": "catalog:",
         "unbuild": "3.6.1",
-        "vite": "catalog:"
+        "vite": "catalog:",
+        "vitest": "4.1.11"
     }
 }

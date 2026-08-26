@@ -187,7 +187,7 @@ Package scripts:
 - `bun run lint`: oxlint on `src`.
 - `bun run circular:check`: dpdm circular dependency check.
 - `bun run test:native`: Jest native tests.
-- `bun run test:web`: Jest web tests.
+- `bun run test:web`: Vitest web tests.
 - `bun run test:types`: type-level tests.
 - `bun run test:e2e`: Playwright e2e tests.
 

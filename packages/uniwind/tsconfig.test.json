@@ -5,7 +5,8 @@
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
         "noUncheckedIndexedAccess": false,
-        "rootDir": "."
+        "rootDir": ".",
+        "types": ["jest"]
     },
     "include": [
         "./src",
