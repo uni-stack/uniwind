@@ -8,6 +8,8 @@ import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../ty
 import { UniwindConfigBuilder as UniwindConfigBuilderBase } from './config.common'
 
 class UniwindConfigBuilder extends UniwindConfigBuilderBase {
+    private stylesFingerprint: string | undefined
+
     constructor() {
         super()
     }
@@ -35,9 +37,18 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
         UniwindListener.notify([StyleDependency.Insets])
     }
 
-    protected __reinit(generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) {
+    protected __reinit(
+        generateStyleSheetCallback: GenerateStyleSheetsCallback,
+        themes: Array<string>,
+        stylesFingerprint?: string,
+    ) {
+        if (__DEV__ && stylesFingerprint !== undefined && stylesFingerprint === this.stylesFingerprint) {
+            return
+        }
+
         super.__reinit(generateStyleSheetCallback, themes)
         UniwindStore.reinit(generateStyleSheetCallback, themes)
+        this.stylesFingerprint = stylesFingerprint
     }
 
     protected onThemeChange() {
