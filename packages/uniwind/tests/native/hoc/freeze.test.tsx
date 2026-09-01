@@ -1,23 +1,30 @@
 import { act } from '@testing-library/react-native'
 import * as React from 'react'
-import { ActivityIndicator, ActivityIndicatorProps } from 'react-native'
+import { ActivityIndicator as RNActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import { useUniwind } from '../../../src'
+import ActivityIndicator from '../../../src/components/native/ActivityIndicator'
+import View from '../../../src/components/native/View'
 import { Uniwind } from '../../../src/core'
 import { withUniwind } from '../../../src/hoc/withUniwind.native'
 import { useCSSVariable } from '../../../src/hooks/useCSSVariable'
 import { renderUniwind } from '../utils'
 
-const Component: React.FC<ActivityIndicatorProps> = (props) => <ActivityIndicator {...props} />
-const WithUniwind = withUniwind(Component)
+const Component: React.FC<ActivityIndicatorProps> = (props) => <RNActivityIndicator {...props} />
+const AutoWithUniwind = withUniwind(Component)
+const ManualWithUniwind = withUniwind(Component, {
+    style: { fromClassName: 'styleClassName' },
+    color: { fromClassName: 'colorClassName', styleProperty: 'accentColor' },
+})
 
-describe('withUniwind freeze', () => {
+describe('freeze', () => {
     afterEach(() => {
         act(() => Uniwind.setTheme('light'))
     })
 
-    test('catches up after a suspended tree is revealed', () => {
+    test('external stores catch up after a suspended tree is revealed', () => {
         const pending = { then() {} }
-        const seen = jest.fn()
+        const themes = jest.fn()
+        const variables = jest.fn()
 
         const Suspender = (props: { freeze: boolean; children: React.ReactNode }) => {
             if (props.freeze) {
@@ -26,29 +33,54 @@ describe('withUniwind freeze', () => {
 
             return props.children
         }
-        const Probe = () => {
-            const background = useCSSVariable(['--color-background'])[0]
-            seen(useUniwind().theme, background)
+        const ThemeProbe = () => {
+            themes(useUniwind().theme)
 
-            return <WithUniwind className="bg-background" testID="probe" />
+            return null
+        }
+        const VariableProbe = () => {
+            variables(useCSSVariable('--color-background'))
+
+            return null
         }
         const App = ({ freeze }: { freeze: boolean }) => (
             <React.Suspense fallback={null}>
                 <Suspender freeze={freeze}>
-                    <Probe />
+                    <ThemeProbe />
+                    <VariableProbe />
+                    <View className="bg-background" testID="regular-class" />
+                    <ActivityIndicator colorClassName="accent-background" testID="regular-color" />
+                    <AutoWithUniwind className="bg-background" colorClassName="accent-background" testID="auto" />
+                    <ManualWithUniwind
+                        styleClassName="bg-background"
+                        colorClassName="accent-background"
+                        testID="manual"
+                    />
                 </Suspender>
             </React.Suspense>
         )
 
-        const { getStylesFromId, rerender } = renderUniwind(<App freeze={false} />)
-        expect(seen).toHaveBeenLastCalledWith('light', '#ffffff')
-        expect(getStylesFromId('probe').backgroundColor).toBe('#ffffff')
+        const { getByTestId, getStylesFromId, rerender } = renderUniwind(<App freeze={false} />)
+        expect(themes).toHaveBeenLastCalledWith('light')
+        expect(variables).toHaveBeenLastCalledWith('#ffffff')
+        expect(getStylesFromId('regular-class').backgroundColor).toBe('#ffffff')
+        expect(getByTestId('regular-color').props.color).toBe('#ffffff')
+        expect(getStylesFromId('auto').backgroundColor).toBe('#ffffff')
+        expect(getByTestId('auto').props.color).toBe('#ffffff')
+        expect(getStylesFromId('manual').backgroundColor).toBe('#ffffff')
+        expect(getByTestId('manual').props.color).toBe('#ffffff')
 
         rerender(<App freeze />)
         act(() => Uniwind.setTheme('dark'))
         rerender(<App freeze={false} />)
 
-        expect(seen).toHaveBeenLastCalledWith('dark', '#000000')
-        expect(getStylesFromId('probe').backgroundColor).toBe('#000000')
+        expect(themes).toHaveBeenLastCalledWith('dark')
+        expect(variables).toHaveBeenLastCalledWith('#000000')
+        expect(getStylesFromId('regular-class').backgroundColor).toBe('#000000')
+        expect(getByTestId('regular-color').props.color).toBe('#000000')
+        expect(getStylesFromId('auto').backgroundColor).toBe('#000000')
+        expect(getByTestId('auto').props.color).toBe('#000000')
+        expect(getStylesFromId('manual').backgroundColor).toBe('#000000')
+        expect(getByTestId('manual').props.color).toBe('#000000')
     })
 })
