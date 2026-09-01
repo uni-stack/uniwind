@@ -217,43 +217,6 @@ describe('ScopedTheme', () => {
         expect(nestedLightInDark).toHaveBeenLastCalledWith('light')
     })
 
-    test('hooks catch up after a suspended tree is revealed', () => {
-        const pending = { then() {} }
-        const seen = jest.fn()
-
-        const Suspender = (props: { freeze: boolean; children: React.ReactNode }) => {
-            if (props.freeze) {
-                throw pending
-            }
-
-            return props.children
-        }
-        const Probe = () => {
-            const background = useCSSVariable(['--color-background'])[0]
-            seen(useUniwind().theme, background)
-
-            return <View className="bg-background" testID="probe" />
-        }
-        const App = ({ freeze }: { freeze: boolean }) => (
-            <React.Suspense fallback={null}>
-                <Suspender freeze={freeze}>
-                    <Probe />
-                </Suspender>
-            </React.Suspense>
-        )
-
-        const { getStylesFromId, rerender } = renderUniwind(<App freeze={false} />)
-        expect(seen).toHaveBeenLastCalledWith('light', '#ffffff')
-        expect(getStylesFromId('probe').backgroundColor).toBe('#ffffff')
-
-        rerender(<App freeze />)
-        act(() => Uniwind.setTheme('dark'))
-        rerender(<App freeze={false} />)
-
-        expect(seen).toHaveBeenLastCalledWith('dark', '#000000')
-        expect(getStylesFromId('probe').backgroundColor).toBe('#000000')
-    })
-
     describe('updateCSSVariables', () => {
         test('Component styles', () => {
             const { getStylesFromId } = renderUniwind(

@@ -5,6 +5,17 @@ type SubscribeOptions = {
 }
 
 class UniwindListenerBuilder {
+    private revisions = {
+        [StyleDependency.ColorScheme]: 0,
+        [StyleDependency.Theme]: 0,
+        [StyleDependency.Dimensions]: 0,
+        [StyleDependency.Orientation]: 0,
+        [StyleDependency.Insets]: 0,
+        [StyleDependency.FontScale]: 0,
+        [StyleDependency.Rtl]: 0,
+        [StyleDependency.AdaptiveThemes]: 0,
+        [StyleDependency.Variables]: 0,
+    }
     private listeners = {
         [StyleDependency.ColorScheme]: new Set<() => void>(),
         [StyleDependency.Theme]: new Set<() => void>(),
@@ -17,13 +28,21 @@ class UniwindListenerBuilder {
         [StyleDependency.Variables]: new Set<() => void>(),
     }
 
+    getSnapshot = (dependencies: Array<StyleDependency>) =>
+        dependencies.reduce(
+            (snapshot, dependency) => snapshot + this.revisions[dependency],
+            0,
+        )
+
     notify(dependencies: Array<StyleDependency>) {
         dependencies.forEach(dep => {
+            this.revisions[dep]++
             this.listeners[dep].forEach(callback => callback())
         })
     }
 
     notifyAll() {
+        Object.keys(this.revisions).forEach(dep => this.revisions[Number(dep) as StyleDependency]++)
         Object.values(this.listeners).forEach(listenerSet => {
             listenerSet.forEach(callback => callback())
         })

@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { useLayoutEffect, useReducer } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import { isDefined } from '../common/utils'
 import { generateDataSet } from '../components/web/generateDataSet'
 import { useUniwindContext } from '../core/context'
@@ -9,6 +9,19 @@ import type { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 
 let warnedOnce = false
+
+const useClassNames = (classNames: string) => {
+    const subscribe = useCallback(
+        (callback: () => void) => CSSListener.subscribeToClassName(classNames, callback),
+        [classNames],
+    )
+    const getSnapshot = useCallback(
+        () => CSSListener.getSnapshot(classNames),
+        [classNames],
+    )
+
+    useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
 
 export const withUniwind: WithUniwind = <
     TComponent extends Component,
@@ -73,13 +86,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (originalProps: Any
         return acc
     }, { generatedProps: {} as AnyObject, classNames: '' })
 
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useLayoutEffect(() => {
-        const dispose = CSSListener.subscribeToClassName(classNames, rerender)
-
-        return dispose
-    }, [classNames])
+    useClassNames(classNames)
 
     const dataSet = generateDataSet(props)
 
@@ -130,13 +137,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         return acc
     }, { generatedProps: {} as AnyObject, classNames: '' })
 
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useLayoutEffect(() => {
-        const dispose = CSSListener.subscribeToClassName(classNames, rerender)
-
-        return dispose
-    }, [classNames])
+    useClassNames(classNames)
 
     const dataSet = generateDataSet(props)
 

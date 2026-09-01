@@ -47,6 +47,18 @@ class CSSListenerBuilder {
         })
     }
 
+    getSnapshot(classNames: string) {
+        const mediaQueries = new Set(
+            classNames
+                .split(' ')
+                .map(className => this.classNameMediaQueryListeners.get(className))
+                .filter(mediaQuery => mediaQuery !== undefined),
+        )
+        const themeSnapshot = UniwindListener.getSnapshot([StyleDependency.Theme, StyleDependency.Variables])
+
+        return `${themeSnapshot}:${Array.from(mediaQueries).map(mediaQuery => Number(mediaQuery.matches)).join('')}`
+    }
+
     subscribeToClassName(classNames: string, listener: VoidFunction) {
         const disposables = [] as Array<VoidFunction>
 

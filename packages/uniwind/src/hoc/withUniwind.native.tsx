@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { useLayoutEffect, useReducer } from 'react'
+import { useCallback, useSyncExternalStore } from 'react'
 import type { StyleDependency } from '../common/consts'
 import { isDefined } from '../common/utils'
 import { useUniwindContext } from '../core/context'
@@ -10,6 +10,24 @@ import type { AnyObject, Component, OptionMapping, WithUniwind } from './types'
 import { classToColor, classToStyle, isClassProperty, isColorClassProperty, isStyleProperty } from './withUniwindUtils'
 
 let warnedOnce = false
+
+const useDependencies = (dependencies: Array<StyleDependency>) => {
+    const uniqueDependencies = Array.from(new Set(dependencies))
+    const dependencySum = uniqueDependencies.reduce((acc, dependency) => {
+        acc |= 1 << dependency
+        return acc
+    }, 0)
+    const subscribe = useCallback(
+        (callback: () => void) => UniwindListener.subscribe(callback, uniqueDependencies),
+        [dependencySum],
+    )
+    const getSnapshot = useCallback(
+        () => UniwindListener.getSnapshot(uniqueDependencies),
+        [dependencySum],
+    )
+
+    useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+}
 
 export const withUniwind: WithUniwind = <
     TComponent extends Component,
@@ -67,17 +85,7 @@ const withAutoUniwind = (Component: Component<AnyObject>) => (props: AnyObject) 
         return acc
     }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
 
-    const dependencySum = dependencies.reduce((acc, dependency) => {
-        acc |= 1 << dependency
-        return acc
-    }, 0)
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
-
-        return dispose
-    }, [dependencySum])
+    useDependencies(dependencies)
 
     return (
         <Component
@@ -132,17 +140,7 @@ const withManualUniwind = (Component: Component<AnyObject>, options: Record<Prop
         return acc
     }, { generatedProps: {} as AnyObject, dependencies: [] as Array<StyleDependency> })
 
-    const dependencySum = dependencies.reduce((acc, dependency) => {
-        acc |= 1 << dependency
-        return acc
-    }, 0)
-    const [, rerender] = useReducer(() => ({}), {})
-
-    useLayoutEffect(() => {
-        const dispose = UniwindListener.subscribe(rerender, Array.from(new Set(dependencies)))
-
-        return dispose
-    }, [dependencySum])
+    useDependencies(dependencies)
 
     return (
         <Component
