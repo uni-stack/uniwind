@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { useCallback, useSyncExternalStore } from 'react'
+import { useCallback, useLayoutEffect, useReducer } from 'react'
 import type { StyleDependency } from '../common/consts'
 import { isDefined } from '../common/utils'
 import { useUniwindContext } from '../core/context'
@@ -25,8 +25,15 @@ const useDependencies = (dependencies: Array<StyleDependency>) => {
         () => UniwindListener.getSnapshot(uniqueDependencies),
         [dependencySum],
     )
+    const [snapshot, rerender] = useReducer(getSnapshot, undefined, getSnapshot)
 
-    useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+    useLayoutEffect(() => {
+        if (getSnapshot() !== snapshot) {
+            rerender()
+        }
+
+        return subscribe(rerender)
+    }, [subscribe, getSnapshot])
 }
 
 export const withUniwind: WithUniwind = <

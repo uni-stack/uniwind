@@ -1,4 +1,4 @@
-import { useMemo, useRef, useSyncExternalStore } from 'react'
+import { useLayoutEffect, useMemo, useReducer, useRef } from 'react'
 import { Platform } from 'react-native'
 import { StyleDependency } from '../../common/consts'
 import { arrayEquals } from '../../common/utils'
@@ -93,5 +93,15 @@ export const useCSSVariable: GetCSSVariable = (name: string | Array<string>) => 
         }
     }, [stableName, uniwindContext])
 
-    return useSyncExternalStore(subscribe, getSnapshot, getSnapshot) as never
+    const [snapshot, rerender] = useReducer(getSnapshot, undefined, getSnapshot)
+
+    useLayoutEffect(() => {
+        if (getSnapshot() !== snapshot) {
+            rerender()
+        }
+
+        return subscribe(rerender)
+    }, [subscribe, getSnapshot])
+
+    return snapshot as never
 }
