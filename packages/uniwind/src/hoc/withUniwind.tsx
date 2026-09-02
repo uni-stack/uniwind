@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react'
-import { useCallback, useSyncExternalStore } from 'react'
+import { useCallback, useLayoutEffect, useReducer } from 'react'
 import { isDefined } from '../common/utils'
 import { generateDataSet } from '../components/web/generateDataSet'
 import { useUniwindContext } from '../core/context'
@@ -20,7 +20,15 @@ const useClassNames = (classNames: string) => {
         [classNames],
     )
 
-    useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+    const [snapshot, rerender] = useReducer(getSnapshot, undefined, getSnapshot)
+
+    useLayoutEffect(() => {
+        if (getSnapshot() !== snapshot) {
+            rerender()
+        }
+
+        return subscribe(rerender)
+    }, [subscribe, getSnapshot])
 }
 
 export const withUniwind: WithUniwind = <
