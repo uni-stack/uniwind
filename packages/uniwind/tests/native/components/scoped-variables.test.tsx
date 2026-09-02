@@ -105,6 +105,33 @@ describe('ScopedVariables', () => {
         expect(inside).toHaveBeenCalledWith('#123456')
     })
 
+    test('useCSSVariable reflects a changed variable name during render', () => {
+        const seen: Array<string | number | undefined> = []
+        const variables = { '--color-primary': '#3b82f6', '--color-secondary': '#ff0000' }
+
+        const Probe = ({ name }: { name: string }) => {
+            seen.push(useCSSVariable(name))
+
+            return null
+        }
+
+        const Wrapper = ({ name }: { name: string }) => (
+            <ScopedVariables variables={variables}>
+                <Probe name={name} />
+            </ScopedVariables>
+        )
+
+        const { rerender } = renderUniwind(<Wrapper name="--color-primary" />)
+        const renderCount = seen.length
+
+        act(() => {
+            rerender(<Wrapper name="--color-secondary" />)
+        })
+
+        expect(seen.slice(renderCount)).not.toContain('#3b82f6')
+        expect(seen.at(-1)).toEqual('#ff0000')
+    })
+
     test('useCSSVariable reflects an updated variables prop', () => {
         const seen: Array<string | number | undefined> = []
 

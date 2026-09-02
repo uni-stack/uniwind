@@ -94,6 +94,7 @@ export const useCSSVariable: GetCSSVariable = (name: string | Array<string>) => 
     }, [stableName, uniwindContext])
 
     const [snapshot, rerender] = useReducer(getSnapshot, undefined, getSnapshot)
+    const currentSnapshot = getSnapshot()
 
     useLayoutEffect(() => {
         if (getSnapshot() !== snapshot) {
@@ -103,5 +104,5 @@ export const useCSSVariable: GetCSSVariable = (name: string | Array<string>) => 
         return subscribe(rerender)
     }, [subscribe, getSnapshot])
 
-    return snapshot as never
+    return currentSnapshot as never
 }
