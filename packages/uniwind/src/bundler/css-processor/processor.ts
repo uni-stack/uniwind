@@ -1,6 +1,6 @@
 import { UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '@/common/consts'
 import { isDefined } from '@/common/utils'
-import type { Declaration, MediaQuery, Rule } from 'lightningcss'
+import type { Declaration, MediaQuery, Rule, Selector } from 'lightningcss'
 import { transform } from 'lightningcss'
 import type { UniwindBundlerConfig } from '../config'
 import { Color } from './color'
@@ -123,6 +123,87 @@ export class ProcessorBuilder {
         }
     }
 
+    /**
+     * Variant tokens (`:active`, `:disabled`, `:where(.dark)`, `[data-x]`, ...) found in a selector,
+     * or null when it carries none. Tailwind < 4.3.3 nests them under the class as `&:active`,
+     * Tailwind >= 4.3.3 flattens them into the class selector, so both call sites share this.
+     */
+    private readSelectorVariants(selector: Selector) {
+        let rtl = null as boolean | null
+        let theme = null as string | null
+        let active = null as boolean | null
+        let focus = null as boolean | null
+        let disabled = null as boolean | null
+        let dataAttributes = null as Record<string, string> | null
+
+        selector.forEach(component => {
+            if (component.type === 'pseudo-class' && component.kind === 'where') {
+                component.selectors.forEach(selector => {
+                    selector.forEach(component => {
+                        if (component.type === 'class' && this.bundlerConfig.themes.includes(component.name)) {
+                            theme = component.name
+                        }
+
+                        if (component.type === 'pseudo-class' && component.kind === 'dir') {
+                            rtl = component.direction === 'rtl'
+                        }
+                    })
+                })
+            }
+
+            if (component.type === 'pseudo-class' && component.kind === 'active') {
+                active = true
+            }
+
+            if (component.type === 'pseudo-class' && component.kind === 'focus') {
+                focus = true
+            }
+
+            if (component.type === 'pseudo-class' && component.kind === 'disabled') {
+                disabled = true
+            }
+
+            // data-x
+            if (component.type === 'attribute' && component.operation === null && component.name.startsWith('data-')) {
+                dataAttributes ??= {}
+                dataAttributes[component.name] = `"true"`
+            }
+
+            // data-x=
+            if (component.type === 'attribute' && component.operation?.operator === 'equal' && component.name.startsWith('data-')) {
+                dataAttributes ??= {}
+                dataAttributes[component.name] = `"${component.operation.value}"`
+            }
+        })
+
+        if (![rtl, theme, active, focus, disabled, dataAttributes].some(isDefined)) {
+            return null
+        }
+
+        return { rtl, theme, active, focus, disabled, dataAttributes }
+    }
+
+    private withSelectorVariants(
+        variants: NonNullable<ReturnType<ProcessorBuilder['readSelectorVariants']>>,
+        parse: () => void,
+    ) {
+        this.declarationConfig.rtl ??= variants.rtl
+        this.declarationConfig.theme ??= variants.theme
+        this.declarationConfig.active ??= variants.active
+        this.declarationConfig.focus ??= variants.focus
+        this.declarationConfig.disabled ??= variants.disabled
+        this.declarationConfig.dataAttributes ??= variants.dataAttributes
+
+        parse()
+
+        this.declarationConfig.rtl = null
+        this.declarationConfig.theme = null
+        this.declarationConfig.active = null
+        this.declarationConfig.focus = null
+        this.declarationConfig.disabled = null
+        this.declarationConfig.dataAttributes = null
+    }
+
     private parseRuleRec(rule: Rule<Declaration, MediaQuery>) {
         if (this.declarationConfig.className !== null) {
             const lastStyle = this.stylesheets[this.declarationConfig.className]?.at(-1)
@@ -142,78 +223,40 @@ export class ProcessorBuilder {
                     this.stylesheets[newClassName] ??= []
                     this.stylesheets[newClassName].push({})
 
-                    rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
-                    rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-                    rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+                    // Tailwind >= 4.3.3 emits `.active\:x:active {}` instead of nesting
+                    // `&:active` under the class, so the variant tokens follow the class token.
+                    // A compound the runtime cannot express (e.g. `[aria-disabled="true"]`)
+                    // used to be an empty nested rule and must not become unconditional.
+                    const trailing = selector.slice(1)
+                    const variants = this.readSelectorVariants(trailing)
+
+                    if (trailing.length > 0 && variants === null) {
+                        return
+                    }
+
+                    const parseClassRule = () => {
+                        rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
+                        rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
+                        rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+                    }
+
+                    if (variants === null) {
+                        parseClassRule()
+                    } else {
+                        this.withSelectorVariants(variants, parseClassRule)
+                    }
 
                     return
                 }
 
-                let rtl = null as boolean | null
-                let theme = null as string | null
-                let active = null as boolean | null
-                let focus = null as boolean | null
-                let disabled = null as boolean | null
-                let dataAttributes = null as Record<string, string> | null
+                const variants = this.readSelectorVariants(selector)
 
-                selector.forEach(selector => {
-                    if (selector.type === 'pseudo-class' && selector.kind === 'where') {
-                        selector.selectors.forEach(selector => {
-                            selector.forEach(selector => {
-                                if (selector.type === 'class' && this.bundlerConfig.themes.includes(selector.name)) {
-                                    theme = selector.name
-                                }
-
-                                if (selector.type === 'pseudo-class' && selector.kind === 'dir') {
-                                    rtl = selector.direction === 'rtl'
-                                }
-                            })
-                        })
-                    }
-
-                    if (selector.type === 'pseudo-class' && selector.kind === 'active') {
-                        active = true
-                    }
-
-                    if (selector.type === 'pseudo-class' && selector.kind === 'focus') {
-                        focus = true
-                    }
-
-                    if (selector.type === 'pseudo-class' && selector.kind === 'disabled') {
-                        disabled = true
-                    }
-
-                    // data-x
-                    if (selector.type === 'attribute' && selector.operation === null && selector.name.startsWith('data-')) {
-                        dataAttributes ??= {}
-                        dataAttributes[selector.name] = `"true"`
-                    }
-
-                    // data-x=
-                    if (selector.type === 'attribute' && selector.operation?.operator === 'equal' && selector.name.startsWith('data-')) {
-                        dataAttributes ??= {}
-                        dataAttributes[selector.name] = `"${selector.operation.value}"`
-                    }
-                })
-
-                if ([rtl, theme, active, focus, disabled, dataAttributes].some(isDefined)) {
-                    this.declarationConfig.rtl ??= rtl
-                    this.declarationConfig.theme ??= theme
-                    this.declarationConfig.active ??= active
-                    this.declarationConfig.focus ??= focus
-                    this.declarationConfig.disabled ??= disabled
-                    this.declarationConfig.dataAttributes ??= dataAttributes
-
-                    rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
-                    rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-                    rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-
-                    this.declarationConfig.rtl = null
-                    this.declarationConfig.theme = null
-                    this.declarationConfig.active = null
-                    this.declarationConfig.focus = null
-                    this.declarationConfig.disabled = null
-                    this.declarationConfig.dataAttributes = null
+                if (variants !== null) {
+                    this.withSelectorVariants(variants, () => {
+                        rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
+                        rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
+                        rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+                    })
 
                     return
                 }

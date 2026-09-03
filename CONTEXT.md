@@ -141,6 +141,7 @@ Important concepts:
 - CSS variables live in `vars`; theme and platform-scoped variables live in `scopedVars` with internal prefixes.
 - The processor treats declarations under `:root` or outside class rules as variables.
 - Theme variants are recognized from known theme names.
+- Variant tokens (`:active`, `:focus`, `:disabled`, `:where(.theme)`, `:dir()`, `[data-x]`) are read from two selector shapes: nested under the class as `&:active` (Tailwind < 4.3.3) and flattened into the class selector as `.active\:x:active` (Tailwind >= 4.3.3). A flattened compound the runtime cannot observe (e.g. `[aria-disabled="true"]`) is dropped, never applied unconditionally.
 - Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
 - Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata.
 - Important declarations are preserved as `importantProperties`.
