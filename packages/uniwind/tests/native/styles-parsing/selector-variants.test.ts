@@ -66,6 +66,22 @@ describe('Selector variants', () => {
 
             expect(styles.every(style => style.opacity === undefined)).toBe(true)
         })
+
+        test('an unobservable compound stacked on a supported variant is skipped, not weakened', () => {
+            // `disabled:active:` emits `:disabled:active` and `[aria-disabled="true"]:active`.
+            // The second must not survive as a plain `active` style.
+            const styles = compile(rule('disabled\\:active\\:opacity-50', '&[aria-disabled="true"]:active'))['disabled:active:opacity-50']
+
+            expect(styles.every(style => style.opacity === undefined)).toBe(true)
+        })
+
+        test('stacked supported variants keep every condition', () => {
+            const [style] = compile(rule('disabled\\:active\\:opacity-50', '&:disabled:active'))['disabled:active:opacity-50']
+
+            expect(style.disabled).toBe(true)
+            expect(style.active).toBe(true)
+            expect(style.opacity).toBe(0.5)
+        })
     })
 
     test('a plain class keeps no variant flags', () => {

@@ -124,8 +124,10 @@ export class ProcessorBuilder {
     }
 
     /**
-     * Variant tokens (`:active`, `:disabled`, `:where(.dark)`, `[data-x]`, ...) found in a selector,
-     * or null when it carries none. Tailwind < 4.3.3 nests them under the class as `&:active`,
+     * Variant tokens (`:active`, `:disabled`, `:where(.dark)`, `[data-x]`, ...) found in a selector.
+     * Returns null when it carries none, or `unsupported` when a compound the runtime cannot observe
+     * (e.g. `[aria-disabled="true"]`) is present: the declarations must then be skipped, not applied
+     * under a weaker condition. Tailwind < 4.3.3 nests variants under the class as `&:active`,
      * Tailwind >= 4.3.3 flattens them into the class selector, so both call sites share this.
      */
     private readSelectorVariants(selector: Selector) {
@@ -135,8 +137,14 @@ export class ProcessorBuilder {
         let focus = null as boolean | null
         let disabled = null as boolean | null
         let dataAttributes = null as Record<string, string> | null
+        let unsupported = false
 
         selector.forEach(component => {
+            // `&` in a nested rule and `:root` carry no condition of their own.
+            if (component.type === 'nesting' || (component.type === 'pseudo-class' && component.kind === 'root')) {
+                return
+            }
+
             if (component.type === 'pseudo-class' && component.kind === 'where') {
                 component.selectors.forEach(selector => {
                     selector.forEach(component => {
@@ -149,32 +157,50 @@ export class ProcessorBuilder {
                         }
                     })
                 })
+
+                return
             }
 
             if (component.type === 'pseudo-class' && component.kind === 'active') {
                 active = true
+
+                return
             }
 
             if (component.type === 'pseudo-class' && component.kind === 'focus') {
                 focus = true
+
+                return
             }
 
             if (component.type === 'pseudo-class' && component.kind === 'disabled') {
                 disabled = true
+
+                return
             }
 
             // data-x
             if (component.type === 'attribute' && component.operation === null && component.name.startsWith('data-')) {
                 dataAttributes ??= {}
                 dataAttributes[component.name] = `"true"`
+
+                return
             }
 
             // data-x=
             if (component.type === 'attribute' && component.operation?.operator === 'equal' && component.name.startsWith('data-')) {
                 dataAttributes ??= {}
                 dataAttributes[component.name] = `"${component.operation.value}"`
+
+                return
             }
+
+            unsupported = true
         })
+
+        if (unsupported) {
+            return 'unsupported'
+        }
 
         if (![rtl, theme, active, focus, disabled, dataAttributes].some(isDefined)) {
             return null
@@ -184,7 +210,7 @@ export class ProcessorBuilder {
     }
 
     private withSelectorVariants(
-        variants: NonNullable<ReturnType<ProcessorBuilder['readSelectorVariants']>>,
+        variants: Exclude<ReturnType<ProcessorBuilder['readSelectorVariants']>, null | 'unsupported'>,
         parse: () => void,
     ) {
         this.declarationConfig.rtl ??= variants.rtl
@@ -225,12 +251,9 @@ export class ProcessorBuilder {
 
                     // Tailwind >= 4.3.3 emits `.active\:x:active {}` instead of nesting
                     // `&:active` under the class, so the variant tokens follow the class token.
-                    // A compound the runtime cannot express (e.g. `[aria-disabled="true"]`)
-                    // used to be an empty nested rule and must not become unconditional.
-                    const trailing = selector.slice(1)
-                    const variants = this.readSelectorVariants(trailing)
+                    const variants = this.readSelectorVariants(selector.slice(1))
 
-                    if (trailing.length > 0 && variants === null) {
+                    if (variants === 'unsupported') {
                         return
                     }
 
@@ -250,6 +273,10 @@ export class ProcessorBuilder {
                 }
 
                 const variants = this.readSelectorVariants(selector)
+
+                if (variants === 'unsupported') {
+                    return
+                }
 
                 if (variants !== null) {
                     this.withSelectorVariants(variants, () => {

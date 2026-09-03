@@ -21,8 +21,15 @@ export class RuleVisitor implements LightningRuleVisitors {
 
     style = (styleRule: Extract<LightningRuleVisitor, { type: 'style' }>) => {
         const firstSelector = styleRule.value.selectors.at(0)?.at(0)
+        const secondSelector = styleRule.value.selectors.at(0)?.at(1)
 
         if (this.currentLayerName === 'theme' && firstSelector?.type === 'pseudo-class' && firstSelector.kind === 'root') {
+            // Tailwind >= 4.3.3 flattens `:root { &:where(.dark, .dark *) {} }` into a sibling
+            // `:root:where(.dark, .dark *) {}` rule, so the theme variant sits on the root rule itself.
+            if (secondSelector?.type === 'pseudo-class' && secondSelector.kind === 'where') {
+                return this.removeNulls(this.processThemeStyle(styleRule, secondSelector)) as ReturnedRule
+            }
+
             return this.removeNulls(this.processThemeRoot(styleRule)) as Array<ReturnedRule>
         }
 
