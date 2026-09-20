@@ -45,3 +45,34 @@
   color: var(--inline-after);
   --inline-after: #123456;
 }
+
+.media-query-boundaries {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@media (width > 390px) {
+  .media-query-boundaries {
+    top: 1px;
+  }
+}
+
+@media (width >= 390px) {
+  .media-query-boundaries {
+    right: 1px;
+  }
+}
+
+@media (width < 390px) {
+  .media-query-boundaries {
+    bottom: 1px;
+  }
+}
+
+@media (width <= 390px) {
+  .media-query-boundaries {
+    left: 1px;
+  }
+}

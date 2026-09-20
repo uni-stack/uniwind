@@ -143,7 +143,7 @@ Important concepts:
 - Theme variants are recognized from known theme names.
 - Variant tokens (`:active`, `:focus`, `:disabled`, `:where(.theme)`, `:dir()`, `[data-x]`) are read from two selector shapes: nested under the class as `&:active` (Tailwind < 4.3.3) and flattened into the class selector as `.active\:x:active` (Tailwind >= 4.3.3). A selector carrying any token the runtime cannot observe (e.g. `[aria-disabled="true"]`, alone or stacked with a supported variant) is skipped, never applied under a weaker condition.
 - Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
-- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Native exclusive width bounds use the generated artifact's `0.01pt` numeric precision to exclude equality.
+- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Native exclusive width bounds use the generated artifact's `0.01pt` numeric precision to exclude equality, including bounds expressed with viewport-relative units.
 - Important declarations are preserved as `importantProperties`.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.
 - Tailwind composes `filter` from per-utility `--tw-*` variables and relies on `var(--x,)` empty fallbacks for unset parts, so `Var` resolves those to an empty string. Each filter function compiles to `rt.filterFn(name, amount, unit)` because `addMissingSpaces` would otherwise corrupt an inline `blur(${...}px)` template.

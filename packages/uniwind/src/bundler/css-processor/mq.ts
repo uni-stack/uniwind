@@ -55,7 +55,9 @@ export class MQ {
         }
 
         if (operator === 'greater-than') {
-            mq.minWidth = result + EXCLUSIVE_BOUND_EPSILON
+            mq.minWidth = typeof result === 'number'
+                ? result + EXCLUSIVE_BOUND_EPSILON
+                : `(${result}) + ${EXCLUSIVE_BOUND_EPSILON}`
         }
 
         if (operator === 'less-than-equal') {
@@ -63,7 +65,9 @@ export class MQ {
         }
 
         if (operator === 'less-than') {
-            mq.maxWidth = result - EXCLUSIVE_BOUND_EPSILON
+            mq.maxWidth = typeof result === 'number'
+                ? result - EXCLUSIVE_BOUND_EPSILON
+                : `(${result}) - ${EXCLUSIVE_BOUND_EPSILON}`
         }
     }
 

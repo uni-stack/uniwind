@@ -2,6 +2,7 @@ import { UniwindBundlerConfig } from '../../../src/bundler/config'
 import { compileCSS } from '../../../src/bundler/css-compiler'
 import { Platform, StyleDependency } from '../../../src/common/consts'
 import { StyleSheets } from '../../../src/core/types'
+import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../consts'
 
 type CompiledResult = {
     stylesheet: StyleSheets
@@ -14,7 +15,7 @@ const compileMetadata = async (): Promise<CompiledResult> => {
     const virtualCode = await compileCSS(bundlerConfig)
 
     // oxlint-disable-next-line no-unused-vars
-    const rt = {}
+    const rt = { screen: { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } }
 
     // oxlint-disable-next-line no-eval
     return eval(`(${virtualCode})`)
