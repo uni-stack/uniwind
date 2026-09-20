@@ -4,6 +4,8 @@ import type { MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
 import type { ProcessorBuilder } from './processor'
 import type { MediaQueryResolver } from './types'
 
+const EXCLUSIVE_BOUND_EPSILON = 0.01
+
 export class MQ {
     constructor(private readonly Processor: ProcessorBuilder) {}
 
@@ -48,12 +50,20 @@ export class MQ {
         const { operator, value } = query
         const result = this.Processor.CSS.processValue(value)
 
-        if (operator === 'greater-than-equal' || operator === 'greater-than') {
+        if (operator === 'greater-than-equal') {
             mq.minWidth = result
         }
 
-        if (operator === 'less-than-equal' || operator === 'less-than') {
+        if (operator === 'greater-than') {
+            mq.minWidth = result + EXCLUSIVE_BOUND_EPSILON
+        }
+
+        if (operator === 'less-than-equal') {
             mq.maxWidth = result
+        }
+
+        if (operator === 'less-than') {
+            mq.maxWidth = result - EXCLUSIVE_BOUND_EPSILON
         }
     }
 
