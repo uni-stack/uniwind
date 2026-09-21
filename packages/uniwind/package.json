@@ -41,12 +41,14 @@
     "license": "MIT",
     "style": "./uniwind.css",
     "source": "src/index",
+    "react-native": "./src/index.ts",
+    "main": "./dist/common/index.js",
     "exports": {
         ".": {
+            "react-native": "./src/index.ts",
             "style": "./uniwind.css",
             "types": "./dist/module/index.d.ts",
             "browser": "./dist/module/index.js",
-            "react-native": "./src/index.ts",
             "import": "./dist/module/index.js",
             "default": "./dist/common/index.js"
         },
