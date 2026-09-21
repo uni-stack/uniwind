@@ -41,6 +41,7 @@
     "license": "MIT",
     "style": "./uniwind.css",
     "source": "src/index",
+    "react-native": "./src/index.ts",
     "exports": {
         ".": {
             "types": "./dist/module/index.d.ts",
