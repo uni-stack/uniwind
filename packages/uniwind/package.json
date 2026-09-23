@@ -43,8 +43,8 @@
     "source": "src/index",
     "exports": {
         ".": {
-            "style": "./uniwind.css",
             "types": "./dist/module/index.d.ts",
+            "style": "./uniwind.css",
             "browser": "./dist/module/index.js",
             "react-native": "./src/index.ts",
             "import": "./dist/module/index.js",
@@ -82,6 +82,7 @@
         "metro",
         "vite",
         "uniwind.css",
+        "no-types.d.ts",
         "types.d.ts",
         "readme.md",
         "LICENSE"

@@ -36,6 +36,7 @@ Important paths:
 - `packages/uniwind/src/bundler`: Metro/Vite adapters, Tailwind compilation, CSS processing, artifact generation.
 - `packages/uniwind/tests`: native, web, type, and e2e tests.
 - `packages/uniwind/uniwind.css`: package-level CSS artifact referenced by package `style` export.
+- `packages/uniwind/no-types.d.ts`: published placeholder declaration for component subpath exports.
 
 Public exports from `src/index.ts`:
 
