@@ -49,7 +49,7 @@ Public exports from `src/index.ts`:
 
 Package subpath exports:
 
-- `uniwind`: main runtime API.
+- `uniwind`: main runtime API. `package.json` also sets `react-native` (`./src/index.ts`) and `main` (`./dist/common/index.js`) so Metro can still resolve the root entry when it skips `exports` (no `main` previously made it look for `index`). The `"."` export lists `react-native` first so condition matching prefers the native entry.
 - `uniwind/components`: React Native component replacements.
 - `uniwind/components/*`: individual component replacements.
 - `uniwind/metro`: Metro adapter.
