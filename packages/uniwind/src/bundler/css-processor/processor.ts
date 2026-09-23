@@ -311,13 +311,22 @@ export class ProcessorBuilder {
 
         if (rule.type === 'media') {
             const { mediaQueries } = rule.value.query
+            // The block's media queries have to outlive the reset between its
+            // sibling rules: resetting only after each parse left every rule past
+            // the first without the block's queries, shipping `ios:`/`android:`
+            // variants and later utilities of a width breakpoint unguarded to
+            // every platform/breakpoint. Reset to the outer config instead of a
+            // fresh one so media nested inside a class rule keeps writing into
+            // that class.
+            const outerConfig = this.declarationConfig
+            const blockMediaQueries = [...outerConfig.mediaQueries, ...mediaQueries]
 
-            this.declarationConfig.mediaQueries.push(...mediaQueries)
             rule.value.rules.forEach(rule => {
+                this.declarationConfig = { ...outerConfig, mediaQueries: blockMediaQueries }
                 this.parseRuleRec(rule)
-                this.declarationConfig = this.getDeclarationConfig()
             })
 
+            this.declarationConfig = outerConfig
             return
         }
 

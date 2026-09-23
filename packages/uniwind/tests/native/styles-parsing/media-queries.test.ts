@@ -38,3 +38,31 @@ describe('media query boundaries', () => {
         expect(resolveAtWidth('max-[500px]:right-[1px]', 500)).toEqual({})
     })
 })
+
+describe('media blocks shared by multiple utilities', () => {
+    const originalScreen = UniwindStore.runtime.screen
+
+    afterEach(() => {
+        UniwindStore.runtime.screen = originalScreen
+        UniwindListener.notify([StyleDependency.Dimensions])
+    })
+
+    test('keeps every utility of a platform block on its platform', () => {
+        expect(resolveAtWidth('ios-block-first', 390)).toMatchObject({ paddingTop: 1 })
+        expect(resolveAtWidth('ios-block-second', 390)).toMatchObject({ paddingTop: 2 })
+        expect(resolveAtWidth('android-block-first', 390)).toEqual({})
+        expect(resolveAtWidth('android-block-second', 390)).toEqual({})
+    })
+
+    test('keeps every utility of a width block behind its breakpoint', () => {
+        expect(resolveAtWidth('wide-block-first', 390)).toEqual({})
+        expect(resolveAtWidth('wide-block-second', 390)).toEqual({})
+        expect(resolveAtWidth('wide-block-first', 500)).toMatchObject({ paddingTop: 4 })
+        expect(resolveAtWidth('wide-block-second', 500)).toMatchObject({ paddingTop: 5 })
+    })
+
+    test('keeps media rules nested inside a class rule attached to the class', () => {
+        expect(resolveAtWidth('nested-mq', 390)).toMatchObject({ paddingTop: 6 })
+        expect(resolveAtWidth('nested-mq', 500)).toMatchObject({ paddingTop: 7 })
+    })
+})

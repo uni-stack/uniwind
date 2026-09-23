@@ -76,3 +76,44 @@
     left: 1px;
   }
 }
+
+/* Platform variants are emitted by tailwind as one @media ios/android block
+   containing every matching utility. */
+@media ios {
+  .ios-block-first {
+    padding-top: 1px;
+  }
+
+  .ios-block-second {
+    padding-top: 2px;
+  }
+}
+
+@media android {
+  .android-block-first {
+    padding-top: 3px;
+  }
+
+  .android-block-second {
+    padding-top: 8px;
+  }
+}
+
+/* Width breakpoints group their utilities into a shared block too. */
+@media (width >= 500px) {
+  .wide-block-first {
+    padding-top: 4px;
+  }
+
+  .wide-block-second {
+    padding-top: 5px;
+  }
+}
+
+/* Media rules can also be nested inside the class rule itself. */
+.nested-mq {
+  padding-top: 6px;
+  @media (width >= 500px) {
+    padding-top: 7px;
+  }
+}
