@@ -4,11 +4,14 @@ import fs from 'fs'
 import path from 'path'
 import type { UniwindBundlerConfig } from '../config'
 
-export const compileTailwind = async (bundlerConfig: UniwindBundlerConfig) => {
+export const compileTailwind = async (
+    bundlerConfig: UniwindBundlerConfig,
+    onDependency: (dependency: string) => void = () => void 0,
+) => {
     const css = await fs.promises.readFile(bundlerConfig.cssPath, 'utf-8')
     const compiler = await compile(css, {
         base: path.dirname(bundlerConfig.cssPath),
-        onDependency: () => void 0,
+        onDependency,
     })
     const scanner = new Scanner({
         sources: [
