@@ -79,10 +79,10 @@ Web runtime:
 
 - Web keeps styles in CSS and passes `{ $$css: true, tailwind: className }` through RNW style arrays.
 - `getWebStyles` uses a hidden DOM element to compute style values when a JS value is needed, such as color extraction or `useResolveClassNames`.
-- `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when class-dependent media rules change.
+- `CSSListener` tracks active CSS rules and media queries, then notifies subscribers when class-dependent media rules change. Candidate rules are cached by class string and invalidated when stylesheets are processed or media rules are toggled; computed values and selector matching remain live.
 - `ScopedTheme` renders a `div` with the theme class and `display: contents` on web.
 - `LayoutDirection` renders a contents-style wrapper with `direction`/`dir` semantics so RTL/LTR variants can be scoped to a subtree.
-- `ScopedVariables` renders a `display: contents` wrapper and sets its variables as inline custom properties on that wrapper, so the real DOM cascade resolves `var(--name)` to the scoped value for every descendant (numbers become px). During JS reads (`getWebVariable` / `useResolveClassNames`) it also applies the variables to the hidden `dummyParent`, then clears them.
+- `ScopedVariables` renders a `display: contents` wrapper and sets its variables as inline custom properties on that wrapper, so the real DOM cascade resolves `var(--name)` to the scoped value for every descendant (numbers become px). During JS reads (`getWebVariable` / `useResolveClassNames`) it also applies the variables to the private hidden `dummyParent`. Each read compares variable values against the applied inline properties, including changes made in place to the same variables object. Unchanged values avoid writes; switching scopes removes stale properties and applies changed values.
 - Dynamic CSS variable updates are written into a generated `#uniwind-dynamic-styles` style element.
 
 Shared runtime:
