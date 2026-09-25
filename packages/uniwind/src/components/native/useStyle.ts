@@ -10,9 +10,16 @@ export const useStyle = (className: string | undefined, componentProps: Record<s
     const [_, rerender] = useReducer(() => ({}), {})
     const styleState = UniwindStore.getStyles(className, componentProps, state, uniwindContext)
 
+    const renderedSnapshot = UniwindListener.getSnapshot(styleState.dependencies)
+
     useLayoutEffect(() => {
         if (__DEV__ || styleState.dependencies.length > 0) {
             const dispose = UniwindListener.subscribe(rerender, styleState.dependencies)
+
+            // Activity and Suspense can reconnect effects without rendering.
+            if (renderedSnapshot !== UniwindListener.getSnapshot(styleState.dependencies)) {
+                rerender()
+            }
 
             return dispose
         }
