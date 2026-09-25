@@ -2,7 +2,89 @@ import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
-import { nativeResolver } from '../../../src/bundler/adapters/metro/resolvers'
+import { nativeResolver, webResolver } from '../../../src/bundler/adapters/metro/resolvers'
+
+test('rewrites dependency imports when the project path contains a react-native directory', () => {
+    const root = join(tmpdir(), 'react-native', 'my-app')
+    const originModulePath = join(root, 'node_modules', 'heroui-native', 'lib', 'surface.js')
+    const calls: Array<string> = []
+    const resolver: CustomResolver = (_context, moduleName) => {
+        calls.push(moduleName)
+
+        return {
+            type: 'sourceFile',
+            filePath: join(root, 'node_modules', moduleName, 'index.js'),
+        }
+    }
+    const context = {
+        originModulePath,
+        resolveRequest: resolver,
+    } as CustomResolutionContext
+
+    const resolution = nativeResolver({
+        context,
+        moduleName: 'react-native',
+        platform: 'ios',
+        resolver,
+    })
+
+    expect(calls).toEqual(['react-native', 'uniwind/components'])
+    expect(resolution).toMatchObject({
+        type: 'sourceFile',
+        filePath: join(root, 'node_modules', 'uniwind/components', 'index.js'),
+    })
+})
+
+test('does not rewrite unrelated web modules when the project path contains react-native-web', () => {
+    const root = join(tmpdir(), 'react-native-web', 'my-app')
+    const calls: Array<string> = []
+    const resolver: CustomResolver = (_context, moduleName) => {
+        calls.push(moduleName)
+
+        return {
+            type: 'sourceFile',
+            filePath: join(root, 'node_modules', 'other-package', 'View', 'index.js'),
+        }
+    }
+    const context = {
+        originModulePath: join(root, 'src', 'App.tsx'),
+        resolveRequest: resolver,
+    } as CustomResolutionContext
+
+    const resolution = webResolver({
+        context,
+        moduleName: 'other-package/View',
+        platform: 'web',
+        resolver,
+    })
+
+    expect(calls).toEqual(['other-package/View'])
+    expect(resolution).toMatchObject({
+        type: 'sourceFile',
+        filePath: join(root, 'node_modules', 'other-package', 'View', 'index.js'),
+    })
+})
+
+test('rewrites React Native Web component files', () => {
+    const root = join(tmpdir(), 'my-app')
+    const calls: Array<string> = []
+    const resolver: CustomResolver = (_context, moduleName) => {
+        calls.push(moduleName)
+
+        return {
+            type: 'sourceFile',
+            filePath: join(root, 'node_modules', 'react-native-web', 'dist', 'exports', 'View', 'index.js'),
+        }
+    }
+    const context = {
+        originModulePath: join(root, 'src', 'App.tsx'),
+        resolveRequest: resolver,
+    } as CustomResolutionContext
+
+    webResolver({ context, moduleName: 'react-native-web', platform: 'web', resolver })
+
+    expect(calls).toEqual(['react-native-web', 'uniwind/components/View'])
+})
 
 test('keeps internal imports internal when Metro reports a symlinked origin', () => {
     const root = mkdtempSync(join(tmpdir(), 'uniwind-resolver-'))

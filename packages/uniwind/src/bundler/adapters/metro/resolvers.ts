@@ -75,9 +75,10 @@ export const nativeResolver = ({
     const resolution = resolver(context, moduleName, platform)
 
     const isInternal = isInternalOrigin(context.originModulePath)
-    const isFromNodeModules = context.originModulePath.includes(`${sep}node_modules${sep}`)
-    const isFromReactNative = context.originModulePath.includes(`${sep}react-native${sep}`)
-        || context.originModulePath.includes(`${sep}@react-native${sep}`)
+    const nodeModulesPath = context.originModulePath.split(`${sep}node_modules${sep}`).at(-1) ?? ''
+    const isFromNodeModules = nodeModulesPath !== context.originModulePath
+    const isFromReactNative = nodeModulesPath.startsWith(`react-native${sep}`)
+        || nodeModulesPath.startsWith(`@react-native${sep}`)
     const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
 
     if (
@@ -113,11 +114,14 @@ export const webResolver = ({
     resolver,
 }: ResolverConfig) => {
     const resolution = resolver(context, moduleName, platform)
+    const resolvedNodeModulesPath = resolution.type === 'sourceFile'
+        ? resolution.filePath.split(`${sep}node_modules${sep}`).at(-1) ?? ''
+        : ''
 
     if (
         isInternalOrigin(context.originModulePath)
         || resolution.type !== 'sourceFile'
-        || !resolution.filePath.includes(`${sep}react-native-web${sep}`)
+        || !resolvedNodeModulesPath.startsWith(`react-native-web${sep}`)
     ) {
         return resolution
     }
