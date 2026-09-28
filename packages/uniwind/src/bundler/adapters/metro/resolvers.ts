@@ -11,7 +11,7 @@ type ResolverConfig = {
 
 let cachedInternalBasePath: string | null = null
 
-const isInternalOrigin = (originModulePath: string) => {
+export const isInternalOrigin = (originModulePath: string) => {
     if (cachedInternalBasePath === null) {
         try {
             cachedInternalBasePath = dirname(realpathSync(require.resolve('uniwind/package.json')))
