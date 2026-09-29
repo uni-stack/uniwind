@@ -173,6 +173,7 @@ Web components:
 - Web wrappers import from `react-native` as resolved by bundler aliases.
 - Web wrappers map `className` to RNW CSS style markers through `toRNWClassName`.
 - Web wrappers pass generated `dataSet` so data attribute variants can match.
+- `InputAccessoryView` wraps React Native Web's export when available (0.21.3+) and uses `View` with older React Native Web versions, while supporting Uniwind classes and data attributes.
 
 `withUniwind`:
 
