@@ -88,12 +88,24 @@ export const transform = async (
         'utf-8',
     )
 
+    // Expo reconciles optimized modules by graph path, where this module is still a .css file.
+    // Transform native CSS as regular JS so its require is rewritten and the module is wrapped.
+    const transformOptions = config.uniwind.isExpoProject && !isWeb
+        ? {
+            ...options,
+            customTransformOptions: {
+                ...options.customTransformOptions,
+                optimize: 'false',
+            },
+        }
+        : options
+
     const transform: any = await worker.transform(
         config,
         projectRoot,
         `${filePath}${isWeb ? '' : '.js'}`,
         data,
-        options,
+        transformOptions,
     )
 
     transform.output[0].data.css ??= {}
