@@ -132,15 +132,20 @@ describe('Typography', () => {
                 <View className="[font-variation-settings:'wght'_650]" testID="single" />
                 <View className="[font-variation-settings:'wght'_650,'slnt'_-10]" testID="multiple" />
                 <View className="[font-variation-settings:normal]" testID="normal" />
+                <View className="[--ab:'wght'_900] [font-variation-settings:var(--ab)]" testID="short-var" />
+                <View className="[--axis:'wght'_900,'wdth'_25] [font-variation-settings:var(--axis)]" testID="axis-var" />
+                <View className="[--w:650] [font-variation-settings:'wght'_var(--w)]" testID="value-var" />
+                <View className="[--ab:650] [font-variation-settings:'wght'_var(--ab)]" testID="short-value-var" />
             </React.Fragment>,
         )
 
-        // RN types gain fontVariationSettings in 0.88
-        const getSettings = (id: string) => (getStylesFromId(id) as { fontVariationSettings?: string }).fontVariationSettings
-
-        expect(getSettings('single')).toBe('\'wght\' 650')
-        expect(getSettings('multiple')).toBe('\'wght\' 650, \'slnt\' -10')
-        expect(getSettings('normal')).toBe('normal')
+        expect(getStylesFromId('single').fontVariationSettings).toBe('\'wght\' 650')
+        expect(getStylesFromId('multiple').fontVariationSettings).toBe('\'wght\' 650, \'slnt\' -10')
+        expect(getStylesFromId('normal').fontVariationSettings).toBe('normal')
+        expect(getStylesFromId('short-var').fontVariationSettings).toBe('\'wght\' 900')
+        expect(getStylesFromId('axis-var').fontVariationSettings).toBe('\'wght\' 900, \'wdth\' 25')
+        expect(getStylesFromId('value-var').fontVariationSettings).toBe('\'wght\' 650')
+        expect(getStylesFromId('short-value-var').fontVariationSettings).toBe('\'wght\' 650')
     })
 
     test('Font Style & Transform', () => {

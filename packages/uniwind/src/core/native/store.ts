@@ -3,7 +3,14 @@ import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLAT
 import { UniwindListener } from '../listener'
 import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
 import { getScopedVars } from './native-utils'
-import { parseBoxShadow, parseFontVariant, parseTextShadowMutation, parseTransformsMutation, resolveGradient } from './parsers'
+import {
+    parseBoxShadow,
+    parseFontVariant,
+    parseFontVariationSettings,
+    parseTextShadowMutation,
+    parseTransformsMutation,
+    resolveGradient,
+} from './parsers'
 import { UniwindRuntime } from './runtime'
 
 type StylesResult = {
@@ -217,6 +224,10 @@ class UniwindStoreBuilder {
 
         if (result.fontVariant !== undefined) {
             result.fontVariant = parseFontVariant(result.fontVariant)
+        }
+
+        if (typeof result.fontVariationSettings === 'string') {
+            result.fontVariationSettings = parseFontVariationSettings(result.fontVariationSettings)
         }
 
         parseTransformsMutation(result)

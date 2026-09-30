@@ -152,7 +152,7 @@ Important concepts:
 - Filter runtime support is platform-dependent: Android applies filters at the default release level (blur and drop-shadow need API 31+, and one blur in the chain sends the whole chain down that path), while iOS renders blur/grayscale/saturate/contrast/hue-rotate only behind the `enableSwiftUIBasedFilters` React Native feature flag — experimental in RN 0.83-0.86, canary in 0.87, absent before 0.83.
 - `backdrop-filter` has no RN equivalent and is still dropped.
 - `text-align: start/end` passes through as `textAlign`; RN resolves `end` from 0.87 (older versions fall back to natural alignment).
-- `font-variation-settings` maps to `fontVariationSettings` with axis tags re-quoted (`'wght' 650`), which RN applies from 0.88; unquoted tags are rejected on both iOS and Android.
+- `font-variation-settings` maps to `fontVariationSettings` with axis tags re-quoted at runtime once variables resolve (`'wght' 650`), which RN applies from 0.88; unquoted tags are rejected on both iOS and Android.
 
 Web visitor behavior:
 

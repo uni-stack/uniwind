@@ -67,6 +67,7 @@ export type UniwindRuntime = {
 export type RNStyle = ViewStyle & TextStyle & ImageStyle & {
     accentColor?: string
     fill?: string
+    fontVariationSettings?: string
 }
 
 export type RNStylesProps =
