@@ -163,6 +163,11 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
     fontVariantNumeric: value => ({
         fontVariant: value,
     }),
+    fontVariationSettings: value => ({
+        fontVariationSettings: typeof value === 'string'
+            ? value.replace(/"([^"]{4})"/g, `"'$1'"`)
+            : value,
+    }),
     display: value => {
         if (value === '"box"') {
             return {

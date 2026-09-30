@@ -113,6 +113,8 @@ describe('Typography', () => {
                 <View className="text-center" testID="text-center" />
                 <View className="text-right" testID="text-right" />
                 <View className="text-justify" testID="text-justify" />
+                <View className="text-start" testID="text-start" />
+                <View className="text-end" testID="text-end" />
             </React.Fragment>,
         )
 
@@ -120,6 +122,25 @@ describe('Typography', () => {
         expect(getStylesFromId('text-center').textAlign).toBe('center')
         expect(getStylesFromId('text-right').textAlign).toBe('right')
         expect(getStylesFromId('text-justify').textAlign).toBe('justify')
+        expect(getStylesFromId('text-start').textAlign).toBe('start')
+        expect(getStylesFromId('text-end').textAlign).toBe('end')
+    })
+
+    test('Font Variation Settings', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="[font-variation-settings:'wght'_650]" testID="single" />
+                <View className="[font-variation-settings:'wght'_650,'slnt'_-10]" testID="multiple" />
+                <View className="[font-variation-settings:normal]" testID="normal" />
+            </React.Fragment>,
+        )
+
+        // RN types gain fontVariationSettings in 0.88
+        const getSettings = (id: string) => (getStylesFromId(id) as { fontVariationSettings?: string }).fontVariationSettings
+
+        expect(getSettings('single')).toBe('\'wght\' 650')
+        expect(getSettings('multiple')).toBe('\'wght\' 650, \'slnt\' -10')
+        expect(getSettings('normal')).toBe('normal')
     })
 
     test('Font Style & Transform', () => {
