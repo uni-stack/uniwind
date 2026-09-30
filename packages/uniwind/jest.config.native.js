@@ -9,5 +9,6 @@ export default {
     moduleNameMapper: {
         '^react-native$': '<rootDir>/../../node_modules/react-native',
         '^@/(.*)$': '<rootDir>/src/$1',
+        '^\\./transformer\\.cjs$': '<rootDir>/src/bundler/adapters/metro/transformer.ts',
     },
 }
