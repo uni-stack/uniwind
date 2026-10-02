@@ -63,13 +63,28 @@ export const transform = async (
     }
 
     if (!isCss) {
+        if (!config.uniwind.isExpoProject && options.platform !== Platform.Web && options.type !== 'asset' && filePath.endsWith('.css')) {
+            // Plain Metro parses CSS as JavaScript; these modules only register watched files.
+            return worker.transform(config, projectRoot, `${filePath}.js`, Buffer.from(''), options)
+        }
+
         return worker.transform(config, projectRoot, filePath, data, options)
     }
 
     const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(config.uniwind, options.platform)
     await bundlerConfig.generateArtifacts(cssArtifactPath)
-    const virtualCode = await compileCSS(bundlerConfig)
     const isWeb = bundlerConfig.platform === Platform.Web
+    const importedStylesheets = new Set<string>()
+    const virtualCode = await compileCSS(bundlerConfig, dependency => {
+        if (!isWeb && dependency.endsWith('.css') && !dependency.includes(`${path.sep}node_modules${path.sep}`)) {
+            importedStylesheets.add(dependency)
+        }
+    })
+    const importedStylesheetRequires = Array.from(importedStylesheets).sort().map(stylesheet => {
+        const relativePath = path.relative(path.dirname(bundlerConfig.cssPath), stylesheet).split(path.sep).join('/')
+
+        return `require(${JSON.stringify(relativePath.startsWith('../') ? relativePath : `./${relativePath}`)});`
+    })
     const nativeStylesFingerprint = isWeb
         ? undefined
         : createHash('sha256')
@@ -82,6 +97,7 @@ export const transform = async (
         isWeb
             ? virtualCode
             : [
+                ...importedStylesheetRequires,
                 `const { Uniwind } = require('uniwind');`,
                 `Uniwind.__reinit(rt => ${virtualCode}, ${bundlerConfig.stringifiedThemes}, '${nativeStylesFingerprint}');`,
             ].join(''),
