@@ -61,6 +61,8 @@ Stability policy: public package and subpath exports are semver-stable. Generate
 
 Dependency policy: peer dependency floors are support contracts. Raising support floors for Tailwind, React, or React Native requires semver-major unless an upstream ecosystem break makes that impossible to honor.
 
+Workspace dependency alignment: the examples share Expo SDK 57's React Native 0.86 and React 19.2 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.2.3 and React 19.2 types. Development uses Node.js 22.13+ (or a supported newer LTS), including Vitest 5. TypeScript stays on 6 until the declaration-build tooling supports TypeScript 7's compiler API changes, and native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.5 until that pin is lifted.
+
 ## Runtime Model
 
 Native runtime:
@@ -206,6 +208,10 @@ Testing layout:
 - `tests/web`: web config, components, and HOC behavior.
 - `tests/type-test`: public type expectations.
 - `tests/e2e`: browser checks for web style extraction and generated artifacts.
+
+Native test setup disables Node's optional `module.register` and `module.registerHooks` before importing Tailwind. Jest 30 cannot run these loader hooks in its module sandbox; Tailwind uses its normal module-loading path when the hooks are unavailable.
+
+The bare example's React Native CLI uses Metro 0.84 internally. The Metro development dependency stays on 0.85 until that CLI is upgraded: Metro 0.86/0.87 transformer workers emit full source maps that the older CLI serializer cannot consume. Metro dependency upgrades must pass the bare production bundle checks.
 
 Source-of-truth policy: repository code and tests win for implementation details. External docs at `docs.uniwind.dev` describe intended public behavior and should be updated when public behavior changes.
 

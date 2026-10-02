@@ -147,7 +147,7 @@ export class RuleVisitor implements LightningRuleVisitors {
         if (typeof value === 'object' && value !== null) {
             return Object.fromEntries(
                 Object.entries(value)
-                    .filter(([_, value]) => {
+                    .filter(([, value]) => {
                         if (value === null) {
                             return false
                         }

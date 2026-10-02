@@ -18,13 +18,13 @@
         "uniwind": "workspace:*"
     },
     "devDependencies": {
-        "@types/node": "25.9.1",
+        "@types/node": "26.6.4",
         "@types/react": "catalog:",
-        "@types/react-dom": "19.2.3",
-        "@vitejs/plugin-react": "6.0.2",
-        "globals": "17.6.0",
+        "@types/react-dom": "catalog:",
+        "@vitejs/plugin-react": "6.1.1",
+        "globals": "17.13.0",
         "typescript": "catalog:",
         "vite": "catalog:",
-        "vite-plugin-rnw": "0.0.11"
+        "vite-plugin-rnw": "0.0.12"
     }
 }
