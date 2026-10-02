@@ -124,6 +124,7 @@ Metro integration:
 - Native platform CSS transforms into a JS module that calls `Uniwind.__reinit(...)` with a fingerprint of the generated styles and themes. During development, the native runtime skips reinitialization when that fingerprint is unchanged.
 - Web platform CSS transforms into CSS plus web runtime setup.
 - Resolver swaps React Native component imports to Uniwind-aware implementations where needed.
+- On web, imports originating inside React Native Web keep their original components, preventing cycles through Uniwind wrappers. Animated component imports still receive wrappers, matching the native resolver, and the internal `createOrderedCSSStyleSheet` override remains active. Application and third-party component imports still resolve to styled wrappers.
 - `uniwind` and `uniwind/*` requests resolve from `<projectRoot>/package.json`, so every importer gets the app's copy. If the configured resolver returns a source file outside this package (e.g. Expo autolinking resolution picks a hoisted public `uniwind` while Pro is installed under an alias such as `"uniwind": "npm:uniwind-pro"`), the request is resolved again with Metro's default `metro-resolver`.
 
 Vite integration:

@@ -136,7 +136,17 @@ export const webResolver = ({
         return resolver(context, `uniwind/components/createOrderedCSSStyleSheet`, platform)
     }
 
-    if (!isIndex || module === undefined || !SUPPORTED_COMPONENTS.includes(module) || context.originModulePath.endsWith(`${module}${sep}index.js`)) {
+    const originNodeModulesPath = context.originModulePath.split(`${sep}node_modules${sep}`).at(-1) ?? ''
+    const isFromReactNativeWeb = originNodeModulesPath !== context.originModulePath
+        && originNodeModulesPath.startsWith(`react-native-web${sep}`)
+    const isReactNativeAnimated = context.originModulePath.includes(`${sep}Animated${sep}components${sep}`)
+
+    if (
+        (isFromReactNativeWeb && !isReactNativeAnimated)
+        || !isIndex
+        || module === undefined
+        || !SUPPORTED_COMPONENTS.includes(module)
+    ) {
         return resolution
     }
 
