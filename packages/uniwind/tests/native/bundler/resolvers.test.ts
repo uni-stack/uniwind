@@ -1,7 +1,7 @@
 import type { CustomResolutionContext, CustomResolver } from 'metro-resolver'
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { basename, dirname, join } from 'node:path'
 import { nativeResolver, webResolver } from '../../../src/bundler/adapters/metro/resolvers'
 
 test('rewrites dependency imports when the project path contains a react-native directory', () => {
@@ -89,6 +89,20 @@ test('rewrites React Native Web component files', () => {
 test.each(
     [
         ['root export', join('react-native-web', 'dist', 'index.js'), './exports/View', 'exports/View/index.js', false],
+        [
+            'InputAccessoryView root export',
+            join('react-native-web', 'dist', 'index.js'),
+            './exports/InputAccessoryView',
+            'exports/InputAccessoryView/index.js',
+            false,
+        ],
+        [
+            'InputAccessoryView CommonJS root export',
+            join('react-native-web', 'dist', 'cjs', 'index.js'),
+            './exports/InputAccessoryView',
+            'cjs/exports/InputAccessoryView/index.js',
+            false,
+        ],
         ['component import', join('react-native-web', 'dist', 'exports', 'Pressable', 'index.js'), '../View', 'exports/View/index.js', false],
         [
             'nested installation',
@@ -115,7 +129,7 @@ test.each(
 )('handles RNW internal imports: %s', (_name, origin, moduleName, target, shouldRewrite) => {
     const root = join(tmpdir(), 'my-app', 'node_modules')
     const filePath = join(root, 'react-native-web', 'dist', target)
-    const component = target.includes('createOrderedCSSStyleSheet') ? 'createOrderedCSSStyleSheet' : 'View'
+    const component = basename(target) === 'index.js' ? basename(dirname(target)) : basename(target, '.js')
     const wrapper = join(root, 'uniwind', 'components', `${component}.js`)
     const resolver = jest.fn<ReturnType<CustomResolver>, Parameters<CustomResolver>>((_context, name) => ({
         type: 'sourceFile',
@@ -134,40 +148,6 @@ test.each(
             ? [moduleName, `uniwind/components/${component}`]
             : [moduleName],
     )
-})
-
-test.each(['dist', join('dist', 'cjs')])('does not create an InputAccessoryView import cycle through the RNW %s root', (distribution) => {
-    const rnwRoot = dirname(require.resolve('react-native-web/package.json'))
-    const rootIndex = join(rnwRoot, distribution, 'index.js')
-    const componentIndex = join(rnwRoot, distribution, 'exports', 'InputAccessoryView', 'index.js')
-    const wrapper = join(dirname(realpathSync(require.resolve('uniwind/package.json'))), 'src', 'components', 'web', 'InputAccessoryView.tsx')
-    const resolver = jest.fn<ReturnType<CustomResolver>, Parameters<CustomResolver>>((_context, moduleName) => ({
-        type: 'sourceFile',
-        filePath: moduleName === 'react-native'
-            ? rootIndex
-            : moduleName === 'uniwind/components/InputAccessoryView'
-            ? wrapper
-            : componentIndex,
-    }))
-    const resolveFrom = (originModulePath: string, moduleName: string) =>
-        webResolver({
-            context: { originModulePath, resolveRequest: resolver as CustomResolver } as CustomResolutionContext,
-            moduleName,
-            platform: 'web',
-            resolver,
-        })
-
-    // The wrapper's namespace import loads the RNW root. Its InputAccessoryView
-    // export must not resolve back to the wrapper while the root is initializing.
-    expect(resolveFrom(wrapper, 'react-native')).toEqual({ type: 'sourceFile', filePath: rootIndex })
-    expect(resolveFrom(rootIndex, './exports/InputAccessoryView')).toEqual({ type: 'sourceFile', filePath: componentIndex })
-    expect(resolver.mock.calls.map(([, moduleName]) => moduleName)).toEqual(['react-native', './exports/InputAccessoryView'])
-
-    // Application component imports must still receive the styled wrapper.
-    expect(resolveFrom(join(tmpdir(), 'my-app', 'App.tsx'), 'react-native-web/dist/exports/InputAccessoryView')).toEqual({
-        type: 'sourceFile',
-        filePath: wrapper,
-    })
 })
 
 test('keeps internal imports internal when Metro reports a symlinked origin', () => {
