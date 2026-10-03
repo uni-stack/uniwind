@@ -295,6 +295,7 @@ export class ProcessorBuilder {
                         rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                         rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                         rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+                        this.declarationConfig.root = false
                     }
                 })
             })
