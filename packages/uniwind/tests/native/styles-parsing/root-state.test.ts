@@ -14,9 +14,42 @@ const compile = (css: string) => {
 const rules = ':root { --root-width: 10px; } .after-root { width: 42px; }'
 
 describe(':root parser state', () => {
-    test('preserves the outer root state after a nested root rule', () => {
+    test.each([
+        ['plain', '.sibling&', false],
+        ['active', '.sibling&:active', true],
+    ])('keeps nested %s class declarations out of root variables', (_name, selector, active) => {
         const processor = compile(`
-            .box, :root {
+            :root {
+                &:root { --inner: 1px; }
+                ${selector} { width: 5px !important; }
+            }
+        `)
+
+        expect(processor.stylesheets.sibling[0].width).toBe(5)
+        expect(processor.stylesheets.sibling[0].active).toBe(active || null)
+        expect(processor.stylesheets.sibling[0].importantProperties).toContain('width')
+        expect(processor.vars.width).toBeUndefined()
+        expect(processor.vars['--inner']).toBeDefined()
+    })
+
+    test('preserves root declarations after nested class and root rules', () => {
+        const processor = compile(`
+            :root {
+                .before& { height: 3px; }
+                &:root { --inner: 1px; }
+                --after: 2px;
+            }
+        `)
+
+        expect(processor.vars['--after']).toBeDefined()
+        expect(processor.stylesheets.before[0].height).toBe(3)
+        expect(processor.vars.height).toBeUndefined()
+        expect(processor.stylesheets.before.some(style => '--after' in style)).toBe(false)
+    })
+
+    test.each(['.box, :root', ':root, .box'])('preserves the outer root state in %s', selector => {
+        const processor = compile(`
+            ${selector} {
                 &:root { --inner: 1px; }
                 --after: 2px;
             }
