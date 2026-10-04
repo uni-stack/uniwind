@@ -14,6 +14,21 @@ const compile = (css: string) => {
 const rules = ':root { --root-width: 10px; } .after-root { width: 42px; }'
 
 describe(':root parser state', () => {
+    test('preserves the outer root state after a nested root rule', () => {
+        const processor = compile(`
+            .box, :root {
+                &:root { --inner: 1px; }
+                --after: 2px;
+            }
+            .after-root { width: 42px; }
+        `)
+
+        expect(processor.vars['--inner']).toBeDefined()
+        expect(processor.vars['--after']).toBeDefined()
+        expect(processor.vars.width).toBeUndefined()
+        expect(processor.stylesheets['after-root'][0].width).toBe(42)
+    })
+
     test.each([
         ['top level', rules],
         ['layer', `@layer utilities { ${rules} }`],

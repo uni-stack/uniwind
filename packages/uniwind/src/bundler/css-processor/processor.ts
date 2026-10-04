@@ -290,12 +290,13 @@ export class ProcessorBuilder {
 
                 selector.forEach(selectorToken => {
                     if (selectorToken.type === 'pseudo-class' && selectorToken.kind === 'root') {
+                        const previousRoot = this.declarationConfig.root
                         this.declarationConfig.root = true
 
                         rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
                         rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
                         rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-                        this.declarationConfig.root = false
+                        this.declarationConfig.root = previousRoot
                     }
                 })
             })
