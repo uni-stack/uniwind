@@ -203,6 +203,8 @@ Package scripts:
 
 Root scripts use Turbo for monorepo-wide build, typecheck, lint, test, format, and circular checks.
 
+The release workflow runs the build, type checks, lint, formatting, circular dependency checks, and all test suites before releasing. It uses release-it to bump the version and generate the changelog, then follows release-it's default order: publish to npm, push the release commit/tag, and create the GitHub release. Husky is disabled for the release commit because the workflow has already run the checks. The package's release-it configuration controls npm provenance, public access, and prerelease tags. Dry runs use release-it's `--dry-run`, and pending release issues are closed only after the full release succeeds.
+
 Testing layout:
 
 - `tests/native`: component behavior and native style parsing.

@@ -71,8 +71,11 @@ jobs:
         run: bun run check:typescript:test
         working-directory: packages/uniwind
 
-      - name: Check linting and formatting
+      - name: Check linting
         run: bun run lint
+
+      - name: Check formatting
+        run: bun run check:format
 
       - name: Check circular dependencies
         run: bun run circular:check
@@ -101,9 +104,10 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
 
-          npx release-it $ARGS
+          bun run release $ARGS
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HUSKY: '0'
 
       - name: Close pending release issues
         if: ${{ inputs.dry_run == false }}
