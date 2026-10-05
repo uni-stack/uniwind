@@ -4,7 +4,7 @@
         "noEmit": true,
         "rootDir": ".",
         "paths": {
-            "uniwind": ["../../dist/module/index.d.ts"]
+            "uniwind": ["../../dist/index.d.mts"]
         }
     },
     "include": [

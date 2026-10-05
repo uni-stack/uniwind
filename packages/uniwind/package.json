@@ -13,7 +13,7 @@
     "sideEffects": false,
     "scripts": {
         "precommit": "bun lint",
-        "build": "unbuild",
+        "build": "tsdown",
         "check:typescript": "tsc --noEmit",
         "check:typescript:test": "tsc --project tsconfig.test.json --noEmit",
         "lint": "oxlint src",
@@ -41,37 +41,43 @@
     "license": "MIT",
     "style": "./uniwind.css",
     "source": "src/index",
-    "main": "./dist/common/index.js",
+    "main": "./dist/index.cjs",
     "react-native": "./src/index.ts",
     "exports": {
         ".": {
-            "types": "./dist/module/index.d.ts",
+            "types": {
+                "import": "./dist/index.d.mts",
+                "default": "./dist/index.d.cts"
+            },
             "style": "./uniwind.css",
-            "browser": "./dist/module/index.js",
+            "browser": "./dist/index.mjs",
             "react-native": "./src/index.ts",
-            "import": "./dist/module/index.js",
-            "default": "./dist/common/index.js"
+            "import": "./dist/index.mjs",
+            "default": "./dist/index.cjs"
         },
         "./components": {
             "types": "./no-types.d.ts",
-            "browser": "./dist/module/components/web/index.js",
+            "browser": "./dist/components/web/index.mjs",
             "react-native": "./src/components/index.ts",
-            "import": "./dist/module/components/web/index.js",
-            "default": "./dist/common/components/web/index.js"
+            "import": "./dist/components/web/index.mjs",
+            "default": "./dist/components/web/index.cjs"
         },
         "./components/*": {
             "types": "./no-types.d.ts",
-            "browser": "./dist/module/components/web/*.js",
+            "browser": "./dist/components/web/*.mjs",
             "react-native": "./src/components/native/*.tsx",
-            "import": "./dist/module/components/web/*.js",
-            "default": "./dist/common/components/web/*.js"
+            "import": "./dist/components/web/*.mjs",
+            "default": "./dist/components/web/*.cjs"
         },
         "./metro": {
-            "types": "./dist/metro/index.d.ts",
+            "types": "./dist/metro/index.d.cts",
             "default": "./dist/metro/index.cjs"
         },
         "./vite": {
-            "types": "./dist/vite/index.d.ts",
+            "types": {
+                "import": "./dist/vite/index.d.mts",
+                "default": "./dist/vite/index.d.cts"
+            },
             "import": "./dist/vite/index.mjs",
             "default": "./dist/vite/index.cjs"
         },
@@ -133,8 +139,8 @@
         "react-native-web": "catalog:",
         "react-test-renderer": "19.2.3",
         "release-it": "21.1.0",
+        "tsdown": "0.23.0",
         "typescript": "catalog:",
-        "unbuild": "3.6.1",
         "vite": "catalog:",
         "vitest": "5.0.3"
     }

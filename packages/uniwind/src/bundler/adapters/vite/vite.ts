@@ -10,11 +10,11 @@ import type { UniwindConfig } from '@/bundler/types'
 const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
 const componentPath = path.resolve(
     dirname,
-    '../module/components/web/index.js',
+    '../components/web/index.mjs',
 )
 const styleSheetPath = path.resolve(
     dirname,
-    '../module/components/web/createOrderedCSSStyleSheet.js',
+    '../components/web/createOrderedCSSStyleSheet.mjs',
 )
 const cssArtifactPath = path.resolve(dirname, '../../uniwind.css')
 const require = createRequire(import.meta.url)
@@ -136,7 +136,7 @@ export const uniwind = (config: UniwindConfig): Plugin => {
         transform: (code, id) => {
             const normalizedId = normalizePath(id)
 
-            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
+            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.mjs')) {
                 return {
                     code: `${code}\n;Uniwind.__reinit(() => ({}), ${bundlerConfig.stringifiedThemes})`,
                 }

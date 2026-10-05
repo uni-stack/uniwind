@@ -50,7 +50,7 @@ Public exports from `src/index.ts`:
 
 Package subpath exports:
 
-- `uniwind`: main runtime API. `package.json` also sets top-level `react-native` (`./src/index.ts`) and `main` (`./dist/common/index.js`), mirroring `exports["."]`, so Metro can still resolve the root entry when it skips `exports` (file-map miss, installer stub, older resolvers). Keep both: without `main` Metro defaults to a non-existent `index`.
+- `uniwind`: main runtime API. `package.json` also sets top-level `react-native` (`./src/index.ts`) and `main` (`./dist/index.cjs`), mirroring `exports["."]`, so Metro can still resolve the root entry when it skips `exports` (file-map miss, installer stub, older resolvers). Keep both: without `main` Metro defaults to a non-existent `index`.
 - `uniwind/components`: React Native component replacements.
 - `uniwind/components/*`: individual component replacements.
 - `uniwind/metro`: Metro adapter.
@@ -61,7 +61,7 @@ Stability policy: public package and subpath exports are semver-stable. Generate
 
 Dependency policy: peer dependency floors are support contracts. Raising support floors for Tailwind, React, or React Native requires semver-major unless an upstream ecosystem break makes that impossible to honor.
 
-Workspace dependency alignment: the examples share Expo SDK 57's React Native 0.86 and React 19.2 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.2.3 and React 19.2 types. Development uses Node.js 22.13+ (or a supported newer LTS), including Vitest 5. TypeScript stays on 6 until the declaration-build tooling supports TypeScript 7's compiler API changes, and native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.5 until that pin is lifted.
+Workspace dependency alignment: the examples share Expo SDK 57's React Native 0.86 and React 19.2 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.2.3 and React 19.2 types. Development uses Node.js 22.18+ (or a supported newer LTS), required by tsdown. TypeScript 7 is shared through the workspace catalog, and tsdown uses its native compiler for declaration generation. Native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.5 until that pin is lifted.
 
 ## Runtime Model
 
@@ -98,6 +98,10 @@ Shared runtime:
 - `ScopedVariables` sets `UniwindContext.variables`; the subtree overrides CSS variables for style resolution and `useCSSVariable` without mutating the global theme. Nested providers merge with ancestors, nearest wins.
 
 ## Build And Bundler Model
+
+Package builds use `tsdown.config.ts`. Runtime files preserve their source module structure directly under `dist`, with CommonJS `.cjs`/`.d.cts` and ES module `.mjs`/`.d.mts` files side by side (for example, `dist/index.cjs` and `dist/index.mjs`). There are no directories separating the module formats; `dist/common` contains only utilities from `src/common`. Metro, Vite, and CLI entries are bundled into their existing `dist/metro`, `dist/vite`, and `dist/cli` directories. The CLI emits only `dist/cli/index.mjs`, selected by the package's `bin` entry. Metro and Vite retain their handwritten public declarations. Package export conditions select declarations matching the consumer's module format. The build copies the root README and license into the package.
+
+The runtime build explicitly externalizes `react-native-web`, which is a development dependency. The ordered stylesheet wrapper imports the app's installed RNW implementation; tsdown must not copy that implementation into `dist/node_modules`.
 
 Configuration shape:
 
@@ -192,7 +196,7 @@ Web components:
 
 Package scripts:
 
-- `bun run build`: unbuild package outputs.
+- `bun run build`: tsdown package outputs.
 - `bun run check:typescript`: TypeScript no-emit check.
 - `bun run lint`: oxlint on `src`.
 - `bun run circular:check`: dpdm circular dependency check.

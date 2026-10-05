@@ -64,6 +64,25 @@ const runResolveId = async (
 }
 
 describe('Vite adapter', () => {
+    test('initializes configured themes in the emitted ESM runtime', async () => {
+        const plugin = uniwind({ ...config, extraThemes: ['premium'] })
+        const hook = plugin.transform
+
+        if (hook === undefined) {
+            throw new Error('Expected the Uniwind plugin to define a transform hook')
+        }
+
+        const handler = typeof hook === 'function' ? hook : hook.handler
+        const result = await Reflect.apply(handler, {}, [
+            'const Uniwind = {}',
+            path.resolve('node_modules/uniwind/dist/core/config/config.mjs'),
+        ])
+
+        expect(result).toEqual({
+            code: 'const Uniwind = {}\n;Uniwind.__reinit(() => ({}), [\'light\', \'dark\', \'premium\'])',
+        })
+    })
+
     test('avoids the deprecated customResolver with Vite 8', async () => {
         const plugin = uniwind(config)
         const alias = await getReactNativeAlias(plugin)
@@ -74,7 +93,7 @@ describe('Vite adapter', () => {
     test('resolves Uniwind internal React Native imports through React Native Web with Vite 8', async () => {
         const plugin = uniwind(config)
         const alias = await getReactNativeAlias(plugin)
-        const importer = path.resolve('node_modules/uniwind/dist/module/components/web/View.js').replaceAll('/', '\\')
+        const importer = path.resolve('node_modules/uniwind/dist/components/web/View.mjs').replaceAll('/', '\\')
         const source = alias.replacement.replaceAll('/', '\\')
         const resolved = { id: path.resolve('node_modules/react-native-web/index.js') }
         const resolve = vi.fn().mockResolvedValue(resolved)
@@ -97,7 +116,7 @@ describe('Vite adapter', () => {
         })
 
         try {
-            const importer = path.resolve('node_modules/uniwind/dist/module/components/web/View.js')
+            const importer = path.resolve('node_modules/uniwind/dist/components/web/View.mjs')
             const resolved = await server.pluginContainer.resolveId('react-native', importer)
             const expected = await server.pluginContainer.resolveId('react-native-web', importer)
 
@@ -131,7 +150,7 @@ describe('Vite adapter', () => {
         const plugin = uniwind(config)
         const alias = await getReactNativeAlias(plugin)
         const importer = importerType === 'internal'
-            ? path.resolve('node_modules/uniwind/dist/module/components/web/View.js')
+            ? path.resolve('node_modules/uniwind/dist/components/web/View.mjs')
             : undefined
         const source = sourceType === 'component' ? alias.replacement : sourceType
         const resolve = vi.fn()
@@ -155,7 +174,7 @@ describe('Vite adapter', () => {
         )
 
         expect(resolved).toBe(path.resolve(
-            'src/bundler/adapters/module/components/web/createOrderedCSSStyleSheet.js',
+            'src/bundler/adapters/components/web/createOrderedCSSStyleSheet.mjs',
         ))
         expect(resolve).not.toHaveBeenCalled()
     })
