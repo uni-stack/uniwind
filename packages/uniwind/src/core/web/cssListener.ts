@@ -124,6 +124,7 @@ class CSSListenerBuilder {
     private initialize() {
         this.pendingInitialization = undefined
         this.pruneStaleRules()
+        let added = false
 
         for (const sheet of Array.from(document.styleSheets)) {
             // Skip already processed stylesheets
@@ -149,6 +150,11 @@ class CSSListenerBuilder {
             this.processedStyleSheets.add(sheet)
 
             this.addMediaQueriesDeep(rules)
+            added = true
+        }
+
+        if (added) {
+            UniwindListener.notify([StyleDependency.Variables])
         }
     }
 
