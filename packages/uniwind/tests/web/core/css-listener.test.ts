@@ -6,6 +6,41 @@ afterEach(() => {
     vi.unstubAllGlobals()
 })
 
+test.each(['timeout', 'idle callback'])('ignores a pending %s scan after document teardown', async scheduler => {
+    vi.useFakeTimers()
+    vi.stubGlobal(
+        'requestIdleCallback',
+        scheduler === 'idle callback'
+            ? (callback: VoidFunction) => setTimeout(callback, 50)
+            : undefined,
+    )
+    vi.stubGlobal('cancelIdleCallback', (handle: number) => clearTimeout(handle))
+
+    const style = document.createElement('style')
+    style.textContent = '.accent-teardown { accent-color: rgb(255, 0, 0); }'
+
+    const listener = vi.fn()
+    const dispose = CSSListener.subscribeToClassName('accent-teardown', listener)
+
+    try {
+        document.head.appendChild(style)
+        await Promise.resolve()
+        expect(vi.getTimerCount()).toBeGreaterThan(0)
+
+        vi.stubGlobal('document', undefined)
+
+        await vi.advanceTimersByTimeAsync(50)
+        expect(vi.getTimerCount()).toBe(0)
+        expect(listener).not.toHaveBeenCalled()
+    } finally {
+        vi.unstubAllGlobals()
+        dispose()
+        style.remove()
+        await Promise.resolve()
+        await vi.advanceTimersByTimeAsync(50)
+    }
+})
+
 test('notifies class subscribers after discovering a stylesheet injected later', async () => {
     vi.useFakeTimers()
     vi.stubGlobal('requestIdleCallback', undefined)

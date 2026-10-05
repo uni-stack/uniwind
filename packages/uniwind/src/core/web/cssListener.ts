@@ -123,6 +123,11 @@ class CSSListenerBuilder {
 
     private initialize() {
         this.pendingInitialization = undefined
+
+        if (typeof document === 'undefined') {
+            return
+        }
+
         this.pruneStaleRules()
         let added = false
 
