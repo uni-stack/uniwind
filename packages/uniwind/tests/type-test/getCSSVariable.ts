@@ -1,5 +1,5 @@
 import { Uniwind, useCSSVariable } from 'uniwind'
-import type { Equal, Expect } from './checks.js'
+import type { Equal, Expect } from './checks'
 
 type CSSVariable = string | number | undefined
 

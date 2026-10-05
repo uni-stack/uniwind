@@ -50,7 +50,7 @@ export const transform = async (
     const worker = getTransformWorker(config.uniwind.isExpoProject)
     const isCss = options.type !== 'asset' && path.join(process.cwd(), config.uniwind.cssEntryFile) === path.join(projectRoot, filePath)
 
-    if (/\/components\/web\/metro-injected\.(?:mjs|cjs)$/.test(filePath)) {
+    if (filePath.endsWith('/components/web/metro-injected.js')) {
         const bundlerConfig = UniwindBundlerConfig.fromMetroConfig(config.uniwind, Platform.Web)
 
         data = Buffer.from(

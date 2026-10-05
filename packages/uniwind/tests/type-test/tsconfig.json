@@ -3,14 +3,12 @@
     "compilerOptions": {
         "noEmit": true,
         "rootDir": ".",
-        "allowJs": false,
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        "paths": {}
+        "paths": {
+            "uniwind": ["../../dist/module/index.d.ts"]
+        }
     },
     "include": [
         "setup.d.ts",
-        "*.ts",
-        "*.cts"
+        "*.ts"
     ]
 }

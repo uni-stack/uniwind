@@ -1,5 +1,5 @@
 import type { Graph, Result as GraphResult } from '@expo/metro/metro/DeltaBundler/Graph'
-import { FileStore as FileStoreBase } from 'metro-cache'
+import FileStoreBase from 'metro-cache/private/stores/FileStore'
 import type * as MetroGraphModule from 'metro/private/DeltaBundler/Graph'
 import type { Options as GraphOptions } from 'metro/private/DeltaBundler/types'
 import os from 'os'

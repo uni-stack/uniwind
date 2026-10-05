@@ -1,7 +1,8 @@
 import { normalizePath } from '@tailwindcss/node'
 import { createRequire } from 'node:module'
 import path from 'path'
-import type { Plugin, ResolverFunction, UserConfig } from 'vite'
+import type { PluginContext } from 'rollup'
+import type { Plugin, UserConfig } from 'vite'
 
 import { UniwindBundlerConfig } from '@/bundler/config'
 import type { UniwindConfig } from '@/bundler/types'
@@ -9,11 +10,11 @@ import type { UniwindConfig } from '@/bundler/types'
 const dirname = typeof __dirname !== 'undefined' ? __dirname : import.meta.dirname
 const componentPath = path.resolve(
     dirname,
-    '../components/web/index.mjs',
+    '../module/components/web/index.js',
 )
 const styleSheetPath = path.resolve(
     dirname,
-    '../components/web/createOrderedCSSStyleSheet.mjs',
+    '../module/components/web/createOrderedCSSStyleSheet.js',
 )
 const cssArtifactPath = path.resolve(dirname, '../../uniwind.css')
 const require = createRequire(import.meta.url)
@@ -87,7 +88,7 @@ const vite7Resolve = {
         find: /^react-native$/,
         replacement: componentPath,
         customResolver: {
-            resolveId(this: ThisParameterType<ResolverFunction>, _: string, importer: string | undefined) {
+            resolveId(this: PluginContext, _: string, importer: string | undefined) {
                 // Check if import comes from uniwind
                 if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
                     return this.resolve('react-native-web')
@@ -135,7 +136,7 @@ export const uniwind = (config: UniwindConfig): Plugin => {
         transform: (code, id) => {
             const normalizedId = normalizePath(id)
 
-            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.mjs')) {
+            if (normalizedId.includes('uniwind/dist') && normalizedId.includes('config/config.js')) {
                 return {
                     code: `${code}\n;Uniwind.__reinit(() => ({}), ${bundlerConfig.stringifiedThemes})`,
                 }
