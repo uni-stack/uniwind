@@ -1,8 +1,7 @@
 import { normalizePath } from '@tailwindcss/node'
 import { createRequire } from 'node:module'
 import path from 'path'
-import type { PluginContext } from 'rollup'
-import type { Plugin, UserConfig } from 'vite'
+import type { Plugin, ResolverFunction, UserConfig } from 'vite'
 
 import { UniwindBundlerConfig } from '@/bundler/config'
 import type { UniwindConfig } from '@/bundler/types'
@@ -88,7 +87,7 @@ const vite7Resolve = {
         find: /^react-native$/,
         replacement: componentPath,
         customResolver: {
-            resolveId(this: PluginContext, _: string, importer: string | undefined) {
+            resolveId(this: ThisParameterType<ResolverFunction>, _: string, importer: string | undefined) {
                 // Check if import comes from uniwind
                 if (importer !== undefined && normalizePath(importer).includes('uniwind/dist')) {
                     return this.resolve('react-native-web')

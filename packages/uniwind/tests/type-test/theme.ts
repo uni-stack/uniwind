@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { ScopedTheme, type ThemeName, Uniwind, useUniwind } from 'uniwind'
-import { type Equal, type Expect } from './checks'
+import { type Equal, type Expect } from './checks.js'
 
 type ExpectedThemeName = 'light' | 'dark' | 'premium' | 'custom'
 

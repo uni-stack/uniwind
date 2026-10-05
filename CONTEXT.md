@@ -211,7 +211,7 @@ Testing layout:
 
 - `tests/native`: component behavior and native style parsing.
 - `tests/web`: web config, components, and HOC behavior.
-- `tests/type-test`: public type expectations.
+- `tests/type-test`: public type expectations and ESM/CommonJS consumers resolved through package exports with NodeNext, without paths pointing directly to declarations.
 - `tests/e2e`: browser checks for web style extraction and generated artifacts.
 
 Native test setup disables Node's optional `module.register` and `module.registerHooks` before importing Tailwind. Jest 30 cannot run these loader hooks in its module sandbox; Tailwind uses its normal module-loading path when the hooks are unavailable.
