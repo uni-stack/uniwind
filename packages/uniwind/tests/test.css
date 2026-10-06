@@ -77,6 +77,59 @@
   }
 }
 
+.height-media-query-boundaries {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@media (height > 844px) {
+  .height-media-query-boundaries {
+    top: 1px;
+  }
+}
+
+@media (height >= 844px) {
+  .height-media-query-boundaries {
+    right: 1px;
+  }
+}
+
+@media (height < 844px) {
+  .height-media-query-boundaries {
+    bottom: 1px;
+  }
+}
+
+@media (height <= 844px) {
+  .height-media-query-boundaries {
+    left: 1px;
+  }
+}
+
+@media (min-height: 600px) {
+  .height-breakpoint-low {
+    opacity: 0.5;
+  }
+
+  .height-block-second {
+    padding-top: 2px;
+  }
+}
+
+@media (min-height: 800px) {
+  .height-breakpoint-high {
+    opacity: 0.75;
+  }
+}
+
+@media (min-width: 300px) and (min-height: 700px) and (max-height: 900px) {
+  .width-height-range {
+    opacity: 0.5;
+  }
+}
+
 /* Platform variants are emitted by tailwind as one @media ios/android block
    containing every matching utility. */
 @media ios {

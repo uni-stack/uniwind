@@ -2,8 +2,8 @@ import { StyleDependency } from '../../../src/common/consts'
 import { UniwindListener } from '../../../src/core/listener'
 import { UniwindStore } from '../../../src/core/native/store'
 
-const resolveAtWidth = (className: string, width: number) => {
-    UniwindStore.runtime.screen = { ...UniwindStore.runtime.screen, width }
+const resolveAtSize = (className: string, width: number, height: number) => {
+    UniwindStore.runtime.screen = { width, height }
     UniwindListener.notify([StyleDependency.Dimensions])
 
     return UniwindStore.getStyles(
@@ -13,6 +13,9 @@ const resolveAtWidth = (className: string, width: number) => {
         { scopedTheme: null, rtl: null, variables: null },
     ).styles
 }
+
+const resolveAtWidth = (className: string, width: number) => resolveAtSize(className, width, UniwindStore.runtime.screen.height)
+const resolveAtHeight = (className: string, height: number) => resolveAtSize(className, UniwindStore.runtime.screen.width, height)
 
 describe('media query boundaries', () => {
     const originalScreen = UniwindStore.runtime.screen
@@ -24,7 +27,9 @@ describe('media query boundaries', () => {
 
     test.each([
         [389.99, { top: 0, right: 0, bottom: 1, left: 1 }],
+        [389.999, { top: 0, right: 0, bottom: 1, left: 1 }],
         [390, { top: 0, right: 1, bottom: 0, left: 1 }],
+        [390.001, { top: 1, right: 1, bottom: 0, left: 0 }],
         [390.01, { top: 1, right: 1, bottom: 0, left: 0 }],
     ])('resolves width %s', (width, expected) => {
         expect(resolveAtWidth('media-query-boundaries', width)).toMatchObject(expected)
@@ -36,6 +41,50 @@ describe('media query boundaries', () => {
         expect(resolveAtWidth('min-[300px]:top-[1px]', 300)).toMatchObject({ top: 1 })
         expect(resolveAtWidth('max-[500px]:right-[1px]', 499.99)).toMatchObject({ right: 1 })
         expect(resolveAtWidth('max-[500px]:right-[1px]', 500)).toEqual({})
+    })
+})
+
+describe('height media queries', () => {
+    const originalScreen = UniwindStore.runtime.screen
+
+    afterEach(() => {
+        UniwindStore.runtime.screen = originalScreen
+        UniwindListener.notify([StyleDependency.Dimensions])
+    })
+
+    test.each([
+        [843.999, { top: 0, right: 0, bottom: 1, left: 1 }],
+        [844, { top: 0, right: 1, bottom: 0, left: 1 }],
+        [844.001, { top: 1, right: 1, bottom: 0, left: 0 }],
+    ])('resolves height %s independently of width', (height, expected) => {
+        expect(resolveAtHeight('height-media-query-boundaries', height)).toMatchObject(expected)
+    })
+
+    test('height changes invalidate cached matches and non-matches', () => {
+        expect(resolveAtHeight('height-breakpoint-low', 599.999)).toEqual({})
+        expect(resolveAtHeight('height-breakpoint-low', 600)).toEqual({ opacity: 0.5 })
+        expect(resolveAtHeight('height-breakpoint-low', 599.999)).toEqual({})
+    })
+
+    test('keeps every utility of a height block behind its breakpoint', () => {
+        expect(resolveAtHeight('height-breakpoint-low height-block-second', 599.999)).toEqual({})
+        expect(resolveAtHeight('height-breakpoint-low height-block-second', 600)).toEqual({ opacity: 0.5, paddingTop: 2 })
+    })
+
+    test.each([
+        'height-breakpoint-low height-breakpoint-high',
+        'height-breakpoint-high height-breakpoint-low',
+    ])('higher minimum heights win for %s', className => {
+        expect(resolveAtHeight(className, 799.999)).toEqual({ opacity: 0.5 })
+        expect(resolveAtHeight(className, 800)).toEqual({ opacity: 0.75 })
+    })
+
+    test('width and height bounds must all match', () => {
+        expect(resolveAtSize('width-height-range', 299.999, 800)).toEqual({})
+        expect(resolveAtSize('width-height-range', 300, 699.999)).toEqual({})
+        expect(resolveAtSize('width-height-range', 300, 700)).toEqual({ opacity: 0.5 })
+        expect(resolveAtSize('width-height-range', 300, 900)).toEqual({ opacity: 0.5 })
+        expect(resolveAtSize('width-height-range', 300, 900.001)).toEqual({})
     })
 })
 

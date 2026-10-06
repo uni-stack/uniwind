@@ -16,10 +16,15 @@ import type {
 export type MediaQueryResolver = {
     maxWidth: any
     minWidth: any
+    minWidthOperator: '>' | '>=' | null
+    maxWidthOperator: '<' | '<=' | null
+    minHeight: any
+    maxHeight: any
+    minHeightOperator: '>' | '>=' | null
+    maxHeightOperator: '<' | '<=' | null
     platform: Platform | null
     rtl: boolean | null
     important: boolean
-    importantProperties?: Array<string>
     colorScheme: ColorScheme | null
     theme: string | null
     orientation: Orientation | null
@@ -52,6 +57,9 @@ export type ProcessMetaValues = {
     className?: string | null
 }
 
-export type StyleSheetTemplate = {
-    [K: string]: Array<MediaQueryResolver & Record<string, unknown>>
+export type StyleTemplate = {
+    styles: Record<string, unknown>
+    meta: MediaQueryResolver & { importantProperties: Array<string> }
 }
+
+export type StyleSheetTemplate = Record<string, Array<StyleTemplate>>

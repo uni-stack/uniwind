@@ -1,8 +1,8 @@
 import { Platform, StyleDependency } from '@/common/consts'
 import { isDefined } from '@/common/utils'
+import { generateStyleMatcher } from './generateStyleMatcher'
 import type { ProcessorBuilder } from './processor'
 import { serialize } from './serialize'
-import type { StyleSheetTemplate } from './types'
 import { toCamelCase } from './utils'
 
 const extractVarsFromString = (value: string) => {
@@ -54,35 +54,18 @@ const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, vi
 }
 
 export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlatform: Platform) => {
-    const stylesheetsEntries = Object.entries(Processor.stylesheets as StyleSheetTemplate)
+    const stylesheetsEntries = Object.entries(Processor.stylesheets)
         .map(([className, stylesPerMediaQuery]) => {
-            const styles = stylesPerMediaQuery.map((style, index) => {
-                const {
-                    platform,
-                    rtl,
-                    theme,
-                    orientation,
-                    minWidth,
-                    maxWidth,
-                    colorScheme,
-                    important: _,
-                    importantProperties,
-                    active,
-                    focus,
-                    disabled,
-                    dataAttributes,
-                    ...rest
-                } = style
-
-                const entries = Object.entries(rest)
+            const compiledStyles = stylesPerMediaQuery.map(({ styles, meta }, index) => {
+                const entries = Object.entries(styles)
                     .flatMap(([property, value]) => Processor.RN.cssToRN(property, value))
                     .map(([property, value]) => [`"${property}"`, `function(vars) { return ${serialize(value)} }`])
 
-                if (platform) {
+                if (meta.platform) {
                     const isTV = currentPlatform === Platform.AndroidTV || currentPlatform === Platform.AppleTV
                     const commonPlatform = isTV ? Platform.TV : Platform.Native
 
-                    if (platform !== commonPlatform && platform !== currentPlatform) {
+                    if (meta.platform !== commonPlatform && meta.platform !== currentPlatform) {
                         return null
                     }
                 }
@@ -100,21 +83,23 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     dependencies.push(StyleDependency.Variables)
                 }
 
-                if (theme !== null || isUsingThemedVar || stringifiedEntries.includes('rt.lightDark')) {
+                if (meta.theme !== null || isUsingThemedVar || stringifiedEntries.includes('rt.lightDark')) {
                     dependencies.push(StyleDependency.Theme)
                 }
 
-                if (orientation !== null) {
+                if (meta.orientation !== null) {
                     dependencies.push(StyleDependency.Orientation)
                 }
 
-                if (rtl !== null) {
+                if (meta.rtl !== null) {
                     dependencies.push(StyleDependency.Rtl)
                 }
 
                 if (
-                    Number(minWidth) !== 0
-                    || Number(maxWidth) !== Number.MAX_VALUE
+                    meta.minWidthOperator !== null
+                    || meta.maxWidthOperator !== null
+                    || meta.minHeightOperator !== null
+                    || meta.maxHeightOperator !== null
                     || stringifiedEntries.includes('rt.screen')
                 ) {
                     dependencies.push(StyleDependency.Dimensions)
@@ -130,38 +115,32 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
 
                 return {
                     entries,
-                    minWidth,
-                    maxWidth,
-                    theme: makeSafeForSerialization(theme),
-                    orientation: makeSafeForSerialization(orientation),
-                    rtl,
-                    colorScheme: makeSafeForSerialization(colorScheme),
-                    native: platform !== null,
+                    matches: generateStyleMatcher(meta),
+                    minWidth: meta.minWidth,
+                    minHeight: meta.minHeight,
                     dependencies: dependencies.length > 0 ? dependencies : null,
                     index,
                     className: makeSafeForSerialization(className),
-                    active,
-                    focus,
-                    disabled,
-                    importantProperties: importantProperties
-                        ?.map(property => property.startsWith('--') ? property : toCamelCase(property))
-                        .map(makeSafeForSerialization) ?? [],
-                    dataAttributes,
+                    importantProperties: meta.importantProperties
+                        .map(property => property.startsWith('--') ? property : toCamelCase(property))
+                        .map(makeSafeForSerialization),
+                    hasDataAttributes: meta.dataAttributes !== null,
                     complexity: [
-                        minWidth !== 0,
-                        theme !== null,
-                        orientation !== null,
-                        rtl !== null,
-                        platform !== null,
-                        active !== null,
-                        focus !== null,
-                        disabled !== null,
-                        dataAttributes !== null,
+                        meta.minWidthOperator !== null,
+                        meta.minHeightOperator !== null,
+                        meta.theme !== null,
+                        meta.orientation !== null,
+                        meta.rtl !== null,
+                        meta.platform !== null,
+                        meta.active !== null,
+                        meta.focus !== null,
+                        meta.disabled !== null,
+                        meta.dataAttributes !== null,
                     ].filter(Boolean).length,
                 }
             })
 
-            const filteredStyles = styles.filter(isDefined)
+            const filteredStyles = compiledStyles.filter(isDefined)
 
             if (filteredStyles.length === 0) {
                 return null

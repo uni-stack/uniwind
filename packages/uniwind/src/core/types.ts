@@ -8,21 +8,20 @@ export type Var = (vars: Vars) => unknown
 
 export type Style = {
     entries: Array<[string, Var]>
+    matches: (
+        rt: UniwindRuntime,
+        props: Record<string, any> | undefined,
+        state: ComponentState | undefined,
+        context: UniwindContextType,
+    ) => boolean
     minWidth: number
-    maxWidth: number
-    orientation: Orientation | null
-    theme: ThemeName | null
-    rtl: boolean | null
-    native: boolean
+    minHeight: number
     dependencies: Array<StyleDependency> | null
     index: number
     className: string
     importantProperties: Array<string>
     complexity: number
-    active: boolean | null
-    focus: boolean | null
-    disabled: boolean | null
-    dataAttributes: Record<string, string> | null
+    hasDataAttributes: boolean
 }
 
 export type StyleSheets = Record<string, Array<Style>>

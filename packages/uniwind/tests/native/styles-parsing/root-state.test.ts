@@ -25,9 +25,9 @@ describe(':root parser state', () => {
             }
         `)
 
-        expect(processor.stylesheets.sibling[0].width).toBe(5)
-        expect(processor.stylesheets.sibling[0].active).toBe(active || null)
-        expect(processor.stylesheets.sibling[0].importantProperties).toContain('width')
+        expect(processor.stylesheets.sibling[0].styles.width).toBe(5)
+        expect(processor.stylesheets.sibling[0].meta.active).toBe(active || null)
+        expect(processor.stylesheets.sibling[0].meta.importantProperties).toContain('width')
         expect(processor.vars.width).toBeUndefined()
         expect(processor.vars['--inner']).toBeDefined()
     })
@@ -42,9 +42,9 @@ describe(':root parser state', () => {
         `)
 
         expect(processor.vars['--after']).toBeDefined()
-        expect(processor.stylesheets.before[0].height).toBe(3)
+        expect(processor.stylesheets.before[0].styles.height).toBe(3)
         expect(processor.vars.height).toBeUndefined()
-        expect(processor.stylesheets.before.some(style => '--after' in style)).toBe(false)
+        expect(processor.stylesheets.before.some(style => '--after' in style.styles)).toBe(false)
     })
 
     test.each(['.box, :root', ':root, .box'])('preserves the outer root state in %s', selector => {
@@ -59,7 +59,7 @@ describe(':root parser state', () => {
         expect(processor.vars['--inner']).toBeDefined()
         expect(processor.vars['--after']).toBeDefined()
         expect(processor.vars.width).toBeUndefined()
-        expect(processor.stylesheets['after-root'][0].width).toBe(42)
+        expect(processor.stylesheets['after-root'][0].styles.width).toBe(42)
     })
 
     test.each([
@@ -71,7 +71,7 @@ describe(':root parser state', () => {
 
         expect(processor.vars['--root-width']).toBeDefined()
         expect(processor.vars.width).toBeUndefined()
-        expect(processor.stylesheets['after-root'][0].width).toBe(42)
+        expect(processor.stylesheets['after-root'][0].styles.width).toBe(42)
     })
 
     test.each([
@@ -81,8 +81,8 @@ describe(':root parser state', () => {
         const processor = compile(`@media ios { ${css} }`)
         const style = processor.stylesheets['after-root'][0]
 
-        expect(style.width).toBe(42)
-        expect(style.platform).toBe(Platform.iOS)
+        expect(style.styles.width).toBe(42)
+        expect(style.meta.platform).toBe(Platform.iOS)
         expect(processor.vars.width).toBeUndefined()
     })
 })

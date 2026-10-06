@@ -74,7 +74,7 @@ Native runtime:
 - During resolve, `ScopedVariables` overrides are overlaid onto a prototype-chained clone of the theme vars so unset variables fall through to the theme.
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
-- Native style resolution filters rules by screen width, orientation, theme, RTL, active/focus/disabled state, and `data-*` props.
+- Native style resolution calls each rule's build-generated `matches(runtime, props, state, context)` predicate for screen dimensions, orientation, theme, RTL, active/focus/disabled state, and `data-*` props. Predicates read current runtime values and honor scoped theme/direction overrides. The runtime retains dependency subscriptions even for rules that do not currently match; rules with data conditions bypass the style cache.
 - Native post-processing adapts CSS concepts to RN shapes, including line-height multipliers, shadows, transforms, gradients, visibility, borders, outlines, font variants, and filters.
 
 Web runtime:
@@ -112,7 +112,7 @@ Compilation flow:
 - `compileTailwind` reads `cssEntryFile`, runs Tailwind v4 compile, scans files under the CSS entry directory, and builds final CSS.
 - `compileCSS` routes to web or native by platform.
 - `compileWebCSS` runs Lightning CSS with `UniwindCSSVisitor` and returns CSS.
-- `compileNativeCSS` runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet metadata into JS source.
+- `compileNativeCSS` runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet records with build-generated matching predicates into JS source.
 - `UniwindBundlerConfig.generateArtifacts` writes CSS artifacts and generated theme typings.
 - Generated artifacts are rewritten in place and Metro regenerates them from a worker pool, so `buildCSS` and `buildDtsFile` write through `writeFileAtomicSync`: a unique temporary file next to the target, renamed over it. Readers racing the write see the whole old file or the whole new one, the rename breaks the package manager's hardlink into its content-addressable store instead of mutating the shared copy, and a rename a lock refuses is retried before it fails the build.
 - Internal package aliases such as `@/*` are only safe inside `packages/uniwind/src/bundler`. Bundler files are built and transformed to JS, but runtime/component/hook/HOC files are published directly as `.ts`/`.tsx` React Native entrypoints, so aliases in those files are not rewritten.
@@ -143,13 +143,13 @@ Native processing converts Tailwind-generated CSS into metadata-rich style recor
 
 Important concepts:
 
-- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, native flag, dependencies, source index, class name, important properties, selector complexity, pseudo-states, and data attributes.
+- Processor style templates separate declarations (`styles`) from matching and specificity metadata (`meta`). Generated runtime `Style` records replace matching conditions with a `matches` function and a `hasDataAttributes` cache flag; they retain entries, minimum breakpoint width and height for cascade precedence, dependencies, source index, class name, important properties, and selector complexity. Platform filtering happens at build time, so generated records do not carry a native flag.
 - CSS variables live in `vars`; theme and platform-scoped variables live in `scopedVars` with internal prefixes.
 - The processor treats declarations under `:root` or outside class rules as variables.
 - Theme variants are recognized from known theme names.
 - Variant tokens (`:active`, `:focus`, `:disabled`, `:where(.theme)`, `:dir()`, `[data-x]`) are read from two selector shapes: nested under the class as `&:active` (Tailwind < 4.3.3) and flattened into the class selector as `.active\:x:active` (Tailwind >= 4.3.3). A selector carrying any token the runtime cannot observe (e.g. `[aria-disabled="true"]`, alone or stacked with a supported variant) is skipped, never applied under a weaker condition.
 - Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
-- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Native exclusive width bounds use the generated artifact's `0.01pt` numeric precision to exclude equality, including bounds expressed with viewport-relative units.
+- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Generated matchers preserve inclusive and exclusive width and height bounds and evaluate viewport-relative bounds against current dimensions.
 - Important declarations are preserved as `importantProperties`.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.
 - Tailwind composes `filter` from per-utility `--tw-*` variables and relies on `var(--x,)` empty fallbacks for unset parts, so `Var` resolves those to an empty string. Each filter function compiles to `rt.filterFn(name, amount, unit)` because `addMissingSpaces` would otherwise corrupt an inline `blur(${...}px)` template.

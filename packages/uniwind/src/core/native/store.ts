@@ -144,21 +144,11 @@ class UniwindStoreBuilder {
                     })
                 }
 
-                if (style.dataAttributes !== null) {
+                if (style.hasDataAttributes) {
                     hasDataAttributes = true
                 }
 
-                if (
-                    style.minWidth > this.runtime.screen.width
-                    || style.maxWidth < this.runtime.screen.width
-                    || (style.theme !== null && theme !== style.theme)
-                    || (style.orientation !== null && this.runtime.orientation !== style.orientation)
-                    || (style.rtl !== null && !this.validateDir(style.rtl, uniwindContext))
-                    || (style.active !== null && state?.isPressed !== style.active)
-                    || (style.focus !== null && state?.isFocused !== style.focus)
-                    || (style.disabled !== null && state?.isDisabled !== style.disabled)
-                    || (style.dataAttributes !== null && !this.validateDataAttributes(style.dataAttributes, componentProps))
-                ) {
+                if (!style.matches(this.runtime, componentProps, state, uniwindContext)) {
                     continue
                 }
 
@@ -167,6 +157,7 @@ class UniwindStoreBuilder {
 
                     if (previousBest) {
                         const previousWins = previousBest.minWidth > style.minWidth
+                            || previousBest.minHeight > style.minHeight
                             || previousBest.complexity > style.complexity
                             || (
                                 previousBest.complexity === style.complexity
@@ -246,42 +237,6 @@ class UniwindStoreBuilder {
             dependencySum,
             hasDataAttributes,
         }
-    }
-
-    private validateDataAttributes(dataAttributes: Record<string, string>, props: Record<string, any> = {}) {
-        for (const [attribute, expectedAttributeValue] of Object.entries(dataAttributes)) {
-            const attributeValue = props[attribute]
-
-            if (expectedAttributeValue === 'true') {
-                if (attributeValue !== true && attributeValue !== 'true') {
-                    return false
-                }
-
-                continue
-            }
-
-            if (expectedAttributeValue === 'false') {
-                if (attributeValue !== false && attributeValue !== 'false') {
-                    return false
-                }
-
-                continue
-            }
-
-            if (attributeValue !== expectedAttributeValue) {
-                return false
-            }
-        }
-
-        return true
-    }
-
-    private validateDir(rtl: boolean, uniwindContext: UniwindContextType) {
-        if (uniwindContext.rtl !== null) {
-            return rtl === uniwindContext.rtl
-        }
-
-        return rtl === this.runtime.rtl
     }
 
     private getCurrentPlatform() {

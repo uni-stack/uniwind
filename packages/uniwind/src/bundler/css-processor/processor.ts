@@ -8,12 +8,12 @@ import { CSS } from './css'
 import { Functions } from './functions'
 import { MQ } from './mq'
 import { RN } from './rn'
-import type { ProcessMetaValues } from './types'
+import type { ProcessMetaValues, StyleSheetTemplate, StyleTemplate } from './types'
 import { Units } from './units'
 import { Var } from './var'
 
 export class ProcessorBuilder {
-    stylesheets = {} as Record<string, Array<any>>
+    stylesheets = {} as StyleSheetTemplate
     vars = {} as Record<string, any>
     scopedVars = {} as Record<string, Record<string, any>>
     CSS = new CSS(this)
@@ -62,9 +62,10 @@ export class ProcessorBuilder {
     private addDeclaration(declaration: Declaration, important = false) {
         const isVar = this.declarationConfig.root || this.declarationConfig.className === null
         const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries)
+        const styleTemplate = isVar ? null : this.stylesheets[this.declarationConfig.className!]!.at(-1)!
         const style = (() => {
-            if (!isVar) {
-                return this.stylesheets[this.declarationConfig.className!]?.at(-1)
+            if (styleTemplate !== null) {
+                return styleTemplate.styles
             }
 
             if (mq.platform !== null) {
@@ -84,23 +85,23 @@ export class ProcessorBuilder {
             return this.scopedVars[themeKey]
         })()
 
-        if (!isVar) {
-            Object.assign(style, mq)
-            style.importantProperties ??= []
-            style.rtl = this.declarationConfig.rtl
-            style.theme = mq.colorScheme ?? this.declarationConfig.theme
-            style.active = this.declarationConfig.active
-            style.focus = this.declarationConfig.focus
-            style.disabled = this.declarationConfig.disabled
-            style.dataAttributes = this.declarationConfig.dataAttributes
+        if (styleTemplate !== null) {
+            Object.assign(styleTemplate.meta, mq, {
+                rtl: this.declarationConfig.rtl,
+                theme: mq.colorScheme ?? this.declarationConfig.theme,
+                active: this.declarationConfig.active,
+                focus: this.declarationConfig.focus,
+                disabled: this.declarationConfig.disabled,
+                dataAttributes: this.declarationConfig.dataAttributes,
+            })
             this.meta.className = this.declarationConfig.className
         }
 
         if (declaration.property === 'unparsed') {
             style[declaration.value.propertyId.property] = this.CSS.processValue(declaration.value.value)
 
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.propertyId.property)
+            if (styleTemplate !== null && important) {
+                styleTemplate.meta.importantProperties.push(declaration.value.propertyId.property)
             }
 
             return
@@ -109,8 +110,8 @@ export class ProcessorBuilder {
         if (declaration.property === 'custom') {
             style[declaration.value.name] = this.CSS.processValue(declaration.value.value)
 
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.name)
+            if (styleTemplate !== null && important) {
+                styleTemplate.meta.importantProperties.push(declaration.value.name)
             }
 
             return
@@ -118,8 +119,18 @@ export class ProcessorBuilder {
 
         style[declaration.property] = this.CSS.processValue(declaration.value, declaration.property)
 
-        if (!isVar && important) {
-            style.importantProperties.push(declaration.property)
+        if (styleTemplate !== null && important) {
+            styleTemplate.meta.importantProperties.push(declaration.property)
+        }
+    }
+
+    private createStyleTemplate(): StyleTemplate {
+        return {
+            styles: {},
+            meta: {
+                ...this.MQ.processMediaQueries(this.declarationConfig.mediaQueries),
+                importantProperties: [],
+            },
         }
     }
 
@@ -234,8 +245,8 @@ export class ProcessorBuilder {
         if (this.declarationConfig.className !== null) {
             const lastStyle = this.stylesheets[this.declarationConfig.className]?.at(-1)
 
-            if (lastStyle !== undefined && Object.keys(lastStyle).length > 0) {
-                this.stylesheets[this.declarationConfig.className]?.push({})
+            if (lastStyle !== undefined && Object.keys(lastStyle.styles).length > 0) {
+                this.stylesheets[this.declarationConfig.className]?.push(this.createStyleTemplate())
             }
         }
 
@@ -250,7 +261,7 @@ export class ProcessorBuilder {
                 if (newClassName !== undefined) {
                     this.declarationConfig.className = newClassName
                     this.stylesheets[newClassName] ??= []
-                    this.stylesheets[newClassName].push({})
+                    this.stylesheets[newClassName].push(this.createStyleTemplate())
 
                     // Tailwind >= 4.3.3 emits `.active\:x:active {}` instead of nesting
                     // `&:active` under the class, so the variant tokens follow the class token.
