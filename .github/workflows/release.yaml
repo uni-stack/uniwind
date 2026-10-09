@@ -87,6 +87,12 @@ jobs:
       - name: Run tests
         run: bun run test
 
+      - name: Check uniwind.css
+        run: |
+          git update-index --no-assume-unchanged uniwind.css
+          git diff --exit-code uniwind.css
+        working-directory: packages/uniwind
+
       - name: Release
         working-directory: packages/uniwind
         run: |

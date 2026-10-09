@@ -1,5 +1,5 @@
-import { rmSync } from 'fs'
 import { Dimensions } from 'react-native'
+import { buildCSS } from '../src/bundler/artifacts/css'
 import { UniwindBundlerConfig } from '../src/bundler/config'
 import { compileCSS } from '../src/bundler/css-compiler'
 import { Platform } from '../src/common/consts'
@@ -11,8 +11,9 @@ beforeAll(async () => {
     const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({
         cssEntryFile: './tests/test.css',
     }, Platform.iOS)
-    await bundlerConfig.generateArtifacts('./uniwind.css')
-    rmSync('uniwind-types.d.ts', { force: true })
+    // tests/test.css imports this package's uniwind.css, which npm publishes as it is on disk,
+    // so build it like a project without theme variables instead of from the test themes.
+    await buildCSS(bundlerConfig.themes, './tests/default.css', './uniwind.css')
     const virtualCode = await compileCSS(bundlerConfig)
 
     eval(

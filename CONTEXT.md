@@ -204,7 +204,7 @@ Package scripts:
 
 Root scripts use Turbo for monorepo-wide build, typecheck, lint, test, format, and circular checks.
 
-The release workflow runs the build, type checks, lint, formatting, circular dependency checks, and all test suites before releasing. It uses release-it to bump the version and generate the changelog, then follows release-it's default order: publish to npm, push the release commit/tag, and create the GitHub release. Husky is disabled for the release commit because the workflow has already run the checks. The package's release-it configuration controls npm provenance, public access, and prerelease tags. Dry runs use release-it's `--dry-run`, and pending release issues are closed only after the full release succeeds.
+The release workflow runs the build, type checks, lint, formatting, circular dependency checks, and all test suites before releasing, then fails if `uniwind.css` differs from the committed file: npm publishes it as it is on disk, and the root `postinstall` marks it `assume-unchanged`, so `git status` does not show rewrites. It uses release-it to bump the version and generate the changelog, then follows release-it's default order: publish to npm, push the release commit/tag, and create the GitHub release. Husky is disabled for the release commit because the workflow has already run the checks. The package's release-it configuration controls npm provenance, public access, and prerelease tags. Dry runs use release-it's `--dry-run`, and pending release issues are closed only after the full release succeeds.
 
 Testing layout:
 
@@ -214,6 +214,8 @@ Testing layout:
 - `tests/e2e`: browser checks for web style extraction and generated artifacts.
 
 Native test setup disables Node's optional `module.register` and `module.registerHooks` before importing Tailwind. Jest 30 cannot run these loader hooks in its module sandbox; Tailwind uses its normal module-loading path when the hooks are unavailable.
+
+`@import "uniwind"` in `tests/test.css` resolves to the package's `uniwind.css`. Native test setup builds that file for a project without theme variables (`tests/default.css`), which matches the committed file, never from the test themes, so a test run leaves the published artifact unchanged.
 
 The bare example's React Native CLI uses Metro 0.84 internally. The Metro development dependency stays on 0.85 until that CLI is upgraded: Metro 0.86/0.87 transformer workers emit full source maps that the older CLI serializer cannot consume. Metro dependency upgrades must pass the bare production bundle checks.
 
