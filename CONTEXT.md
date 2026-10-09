@@ -75,6 +75,7 @@ Native runtime:
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
 - Native style resolution filters rules by screen width, orientation, theme, RTL, active/focus/disabled state, and `data-*` props.
+- Native height media queries use separate minimum/maximum height bounds in generated style metadata and subscribe to dimension changes. Height constraints are evaluated against screen height independently of width, including strict comparison boundaries and viewport-relative values. Relative height bounds are emitted as lazy callbacks so resizing does not freeze a viewport-based threshold. Dimension queries support equality, ranges, intervals, and `and` intersections, including platform-qualified conditions. Font-relative media-query units use the configured initial font size, independently of scoped variables or element declarations. Height minima break ties only between equally complex, non-important rules with equal width minima, preserving existing width-breakpoint precedence and more specific theme/state rules.
 - Native post-processing adapts CSS concepts to RN shapes, including line-height multipliers, shadows, transforms, gradients, visibility, borders, outlines, font variants, and filters.
 
 Web runtime:

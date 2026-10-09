@@ -151,6 +151,22 @@ Custom breakpoints:
 
 Usage: `xs:p-2 tablet:p-4 3xl:p-8`
 
+Height breakpoints use custom variants instead of `--breakpoint-*` (which defines width breakpoints):
+
+```css
+@custom-variant tall (@media (min-height: 700px));
+@custom-variant compact (@media (max-height: 700px));
+```
+
+```tsx
+<Text className="text-base tall:text-lg">Fits taller screens</Text>
+<View className="p-4 compact:p-2" />
+```
+
+Native height queries respond to dimension changes and can be combined with width or platform variants.
+They support `min-height`, `max-height`, exact height, range comparisons and intervals such as
+`(600px < height <= 800px)`. Use `and` to require multiple dimension constraints.
+
 **Design mobile-first** — start with base styles (no prefix), enhance with breakpoints:
 
 ```tsx

@@ -10,6 +10,8 @@ export type Style = {
     entries: Array<[string, Var]>
     minWidth: number
     maxWidth: number
+    minHeight: number | (() => number)
+    maxHeight: number | (() => number)
     orientation: Orientation | null
     theme: ThemeName | null
     rtl: boolean | null

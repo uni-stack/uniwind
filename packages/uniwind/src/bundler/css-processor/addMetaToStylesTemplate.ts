@@ -64,6 +64,8 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     orientation,
                     minWidth,
                     maxWidth,
+                    minHeight,
+                    maxHeight,
                     colorScheme,
                     important: _,
                     importantProperties,
@@ -115,6 +117,8 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                 if (
                     Number(minWidth) !== 0
                     || Number(maxWidth) !== Number.MAX_VALUE
+                    || Number(minHeight) !== 0
+                    || Number(maxHeight) !== Number.MAX_VALUE
                     || stringifiedEntries.includes('rt.screen')
                 ) {
                     dependencies.push(StyleDependency.Dimensions)
@@ -132,6 +136,8 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     entries,
                     minWidth,
                     maxWidth,
+                    minHeight: typeof minHeight === 'number' ? minHeight : `function() { return ${minHeight} }`,
+                    maxHeight: typeof maxHeight === 'number' ? maxHeight : `function() { return ${maxHeight} }`,
                     theme: makeSafeForSerialization(theme),
                     orientation: makeSafeForSerialization(orientation),
                     rtl,
@@ -149,6 +155,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     dataAttributes,
                     complexity: [
                         minWidth !== 0,
+                        minHeight !== 0 || maxHeight !== Number.MAX_VALUE,
                         theme !== null,
                         orientation !== null,
                         rtl !== null,

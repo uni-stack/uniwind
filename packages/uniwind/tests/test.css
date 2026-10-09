@@ -1,6 +1,55 @@
 @import "tailwindcss";
 @import "uniwind";
 
+@custom-variant tall (@media (min-height: 700px));
+@custom-variant taller (@media (min-height: 800px));
+@custom-variant compact (@media (max-height: 700px));
+
+.height-query-boundaries {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@media (height > 700px) {
+  .height-query-boundaries { top: 1px; }
+}
+@media (height >= 700px) {
+  .height-query-boundaries { right: 1px; }
+}
+@media (height < 700px) {
+  .height-query-boundaries { bottom: 1px; }
+}
+@media (height <= 700px) {
+  .height-query-boundaries { left: 1px; }
+}
+@media (height > 100vw) {
+  .height-relative-query { top: 1px; }
+}
+@media (height > 100vh) {
+  .height-self-relative { top: 1px; }
+}
+@media (min-width: 500px) and (min-height: 700px) {
+  .wide-and-tall { top: 1px; }
+}
+@media (height: 700px) {
+  .exact-height { top: 1px; }
+}
+@media (min-height: 800px) and (min-height: 700px) {
+  .height-intersection { top: 1px; }
+}
+@media (600px < height <= 800px) {
+  .height-interval { top: 1px; }
+}
+
+@media (min-height: 40em) {
+  .height-em-query { top: 1px; }
+}
+@media (max-height: 40em) {
+  .height-em-max-query { right: 1px; }
+}
+
 :root {
   --foo: 120 50% 50%;
   --bar: 0.7 0.1 141;

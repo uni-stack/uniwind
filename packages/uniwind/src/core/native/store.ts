@@ -21,6 +21,8 @@ type StylesResult = {
 
 const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
+const resolveHeightBound = (bound: Style['minHeight']) => typeof bound === 'function' ? bound() : bound
+
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<ThemeName, Vars>
@@ -148,9 +150,14 @@ class UniwindStoreBuilder {
                     hasDataAttributes = true
                 }
 
+                const minHeight = resolveHeightBound(style.minHeight)
+                const maxHeight = resolveHeightBound(style.maxHeight)
+
                 if (
                     style.minWidth > this.runtime.screen.width
                     || style.maxWidth < this.runtime.screen.width
+                    || minHeight > this.runtime.screen.height
+                    || maxHeight < this.runtime.screen.height
                     || (style.theme !== null && theme !== style.theme)
                     || (style.orientation !== null && this.runtime.orientation !== style.orientation)
                     || (style.rtl !== null && !this.validateDir(style.rtl, uniwindContext))
@@ -167,6 +174,12 @@ class UniwindStoreBuilder {
 
                     if (previousBest) {
                         const previousWins = previousBest.minWidth > style.minWidth
+                            || (
+                                previousBest.minWidth === style.minWidth
+                                && previousBest.complexity === style.complexity
+                                && !style.importantProperties.includes(property)
+                                && resolveHeightBound(previousBest.minHeight) > minHeight
+                            )
                             || previousBest.complexity > style.complexity
                             || (
                                 previousBest.complexity === style.complexity
