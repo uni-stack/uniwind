@@ -12,6 +12,7 @@ const getTheme = () => Uniwind.currentTheme
 const getHasAdaptiveThemes = () => Uniwind.hasAdaptiveThemes
 
 const useSnapshot = <T>(subscribe: (callback: () => void) => () => void, getSnapshot: () => T) => {
+    'use no memo'
     const [snapshot, rerender] = useReducer(getSnapshot, undefined, getSnapshot)
     const currentSnapshot = getSnapshot()
 

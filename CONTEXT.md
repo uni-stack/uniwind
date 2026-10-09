@@ -197,7 +197,7 @@ Package scripts:
 - `bun run check:typescript`: TypeScript no-emit check.
 - `bun run lint`: oxlint on `src`.
 - `bun run circular:check`: dpdm circular dependency check.
-- `bun run test:native`: Jest native tests.
+- `bun run test:native`: Jest native tests, run twice: as written and with `src` compiled by React Compiler (`babel-plugin-react-compiler`).
 - `bun run test:web`: Vitest web tests.
 - `bun run test:types`: type-level tests.
 - `bun run test:e2e`: Playwright e2e tests.
@@ -227,5 +227,6 @@ Source-of-truth policy: repository code and tests win for implementation details
 - Any new runtime dependency should map to `StyleDependency` and invalidate only affected subscribers.
 - Theme-aware changes must account for global theme, adaptive system theme, and `ScopedTheme`.
 - CSS variables must keep lazy getter semantics on native because values may depend on current runtime state.
+- Apps may compile Uniwind's source with React Compiler, for example a workspace-linked copy. Hooks that read runtime state during render, such as `useStyle` and `useUniwind`'s snapshot, opt out with `'use no memo'`; otherwise the compiler caches the read and returns stale values.
 - Avoid introducing compatibility paths without known consumers or persisted behavior.
 - Add tests for native, web, and types when changing public API or cross-platform behavior.
