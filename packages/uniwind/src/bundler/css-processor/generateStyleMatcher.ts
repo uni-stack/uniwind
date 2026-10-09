@@ -48,11 +48,12 @@ export const generateStyleMatcher = (style: MediaQueryResolver) => {
 
     for (const [attribute, expectedValue] of Object.entries(style.dataAttributes ?? {})) {
         const value = `props?.[${JSON.stringify(attribute)}]`
+        const serializedValue = JSON.stringify(expectedValue)
 
-        if (expectedValue === '"true"' || expectedValue === '"false"') {
-            conditions.push(`(${value} === ${expectedValue.slice(1, -1)} || ${value} === ${expectedValue})`)
+        if (expectedValue === 'true' || expectedValue === 'false') {
+            conditions.push(`(${value} === ${expectedValue} || ${value} === ${serializedValue})`)
         } else {
-            conditions.push(`${value} === ${expectedValue}`)
+            conditions.push(`${value} === ${serializedValue}`)
         }
     }
 

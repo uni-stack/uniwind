@@ -148,7 +148,7 @@ Important concepts:
 - The processor treats declarations under `:root` or outside class rules as variables.
 - Theme variants are recognized from known theme names.
 - Variant tokens (`:active`, `:focus`, `:disabled`, `:where(.theme)`, `:dir()`, `[data-x]`) are read from two selector shapes: nested under the class as `&:active` (Tailwind < 4.3.3) and flattened into the class selector as `.active\:x:active` (Tailwind >= 4.3.3). A selector carrying any token the runtime cannot observe (e.g. `[aria-disabled="true"]`, alone or stacked with a supported variant) is skipped, never applied under a weaker condition.
-- Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
+- Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props. Processor metadata keeps parsed values as strings; matcher generation serializes them as JavaScript string literals.
 - Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Generated matchers preserve inclusive and exclusive width and height bounds and evaluate viewport-relative bounds against current dimensions.
 - Important declarations are preserved as `importantProperties`.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.

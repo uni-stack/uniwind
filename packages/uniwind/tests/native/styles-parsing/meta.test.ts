@@ -116,6 +116,30 @@ describe('Styles Metadata', () => {
         expect(style.matches(UniwindStore.runtime, undefined, undefined, context)).toBe(false)
     })
 
+    test.each([
+        [String.raw`quote\"value`, 'quote"value'],
+        [String.raw`back\\slash`, 'back\\slash'],
+        [String.raw`literal\\t`, 'literal\\t'],
+        [String.raw`trailing\\`, 'trailing\\'],
+        [String.raw`both\"and\\`, 'both"and\\'],
+        [String.raw`line\a break`, 'line\nbreak'],
+        ['literal${value}`', 'literal${value}`'],
+        ['', ''],
+    ])('data conditions preserve escaped selector value %s', (cssValue, value) => {
+        const stylesheet = compileStyles(`
+            .flat[data-value="${cssValue}"] { opacity: 0.5; }
+            .nested { &[data-value="${cssValue}"] { opacity: 0.5; } }
+        `)
+
+        for (const className of ['flat', 'nested']) {
+            const [style] = stylesheet[className]
+
+            expect(style.matches(UniwindStore.runtime, { 'data-value': value }, undefined, context)).toBe(true)
+            expect(style.matches(UniwindStore.runtime, { 'data-value': `${value}_different` }, undefined, context)).toBe(false)
+            expect(style.matches(UniwindStore.runtime, undefined, undefined, context)).toBe(false)
+        }
+    })
+
     test('viewport-relative bounds use current dimensions', () => {
         const [style] = compileStyles('@media (width >= 50vh) { .dynamic { opacity: 0.5; } }').dynamic
         const rt = { ...UniwindStore.runtime, screen: { width: 300, height: 400 } }

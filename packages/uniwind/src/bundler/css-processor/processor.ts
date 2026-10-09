@@ -193,7 +193,7 @@ export class ProcessorBuilder {
             // data-x
             if (component.type === 'attribute' && component.operation === null && component.name.startsWith('data-')) {
                 dataAttributes ??= {}
-                dataAttributes[component.name] = `"true"`
+                dataAttributes[component.name] = 'true'
 
                 return
             }
@@ -201,7 +201,7 @@ export class ProcessorBuilder {
             // data-x=
             if (component.type === 'attribute' && component.operation?.operator === 'equal' && component.name.startsWith('data-')) {
                 dataAttributes ??= {}
-                dataAttributes[component.name] = `"${component.operation.value}"`
+                dataAttributes[component.name] = component.operation.value
 
                 return
             }

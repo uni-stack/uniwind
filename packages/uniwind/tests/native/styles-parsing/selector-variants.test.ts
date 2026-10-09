@@ -57,7 +57,7 @@ describe('Selector variants', () => {
         test('data attribute', () => {
             const [style] = compile(rule('data-\\[x\\=on\\]\\:opacity-50', '&[data-x="on"]'))['data-[x=on]:opacity-50']
 
-            expect(style.meta.dataAttributes).toEqual({ 'data-x': '"on"' })
+            expect(style.meta.dataAttributes).toEqual({ 'data-x': 'on' })
         })
 
         test('a compound native cannot observe never becomes unconditional', () => {
