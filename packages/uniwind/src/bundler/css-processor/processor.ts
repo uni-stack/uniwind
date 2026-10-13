@@ -3,6 +3,7 @@ import { isDefined } from '@/common/utils'
 import type { Declaration, MediaQuery, Rule, Selector } from 'lightningcss'
 import { transform } from 'lightningcss'
 import type { UniwindBundlerConfig } from '../config'
+import { Cascade, getSpecificity } from './cascade'
 import { Color } from './color'
 import { CSS } from './css'
 import { Functions } from './functions'
@@ -26,6 +27,8 @@ export class ProcessorBuilder {
     meta = {} as ProcessMetaValues
 
     private declarationConfig = this.getDeclarationConfig()
+    private nextSourceOrder = 0
+    private cascade = new Cascade()
 
     constructor(private readonly bundlerConfig: UniwindBundlerConfig) {
         this.vars['--uniwind-em'] = this.bundlerConfig.polyfills?.rem ?? 16
@@ -43,6 +46,7 @@ export class ProcessorBuilder {
                     }),
             },
         })
+        this.cascade.assignRanks()
     }
 
     private getDeclarationConfig() {
@@ -56,6 +60,8 @@ export class ProcessorBuilder {
             focus: null as boolean | null,
             disabled: null as boolean | null,
             dataAttributes: null as Record<string, string> | null,
+            sourceOrder: 0,
+            specificity: 0,
         })
     }
 
@@ -86,6 +92,7 @@ export class ProcessorBuilder {
 
         if (!isVar) {
             Object.assign(style, mq)
+            this.cascade.add(style, this.declarationConfig.specificity, this.declarationConfig.sourceOrder)
             style.importantProperties ??= []
             style.rtl = this.declarationConfig.rtl
             style.theme = mq.colorScheme ?? this.declarationConfig.theme
@@ -230,7 +237,10 @@ export class ProcessorBuilder {
         this.declarationConfig.dataAttributes = null
     }
 
-    private parseRuleRec(rule: Rule<Declaration, MediaQuery>) {
+    private parseRuleRec(rule: Rule<Declaration, MediaQuery>, parentSpecificity = 0) {
+        this.declarationConfig.sourceOrder = this.nextSourceOrder++
+        this.declarationConfig.specificity = parentSpecificity
+
         if (this.declarationConfig.className !== null) {
             const lastStyle = this.stylesheets[this.declarationConfig.className]?.at(-1)
 
@@ -241,8 +251,24 @@ export class ProcessorBuilder {
 
         if (rule.type === 'style') {
             const previousRoot = this.declarationConfig.root
+            const nestedSpecificity = Math.max(...rule.value.selectors.map(selector => getSpecificity(selector, parentSpecificity)))
 
             rule.value.selectors.forEach(selector => {
+                const specificity = getSpecificity(selector, parentSpecificity)
+                this.declarationConfig.specificity = specificity
+
+                const parseNestedRule = (nestedRule: Rule<Declaration, MediaQuery>) => {
+                    const outerConfig = this.declarationConfig
+
+                    this.declarationConfig = { ...outerConfig }
+                    this.parseRuleRec(nestedRule, nestedRule.type === 'nested-declarations' ? specificity : nestedSpecificity)
+                    this.declarationConfig = outerConfig
+                }
+                const parseStyleRule = () => {
+                    rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
+                    rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
+                    rule.value.rules?.forEach(parseNestedRule)
+                }
                 const [maybeClassNameSelector] = selector
                 const newClassName = maybeClassNameSelector?.type === 'class' ? maybeClassNameSelector.name : undefined
                 this.declarationConfig.root = newClassName === undefined ? previousRoot : false
@@ -260,16 +286,10 @@ export class ProcessorBuilder {
                         return
                     }
 
-                    const parseClassRule = () => {
-                        rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
-                        rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-                        rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-                    }
-
                     if (variants === null) {
-                        parseClassRule()
+                        parseStyleRule()
                     } else {
-                        this.withSelectorVariants(variants, parseClassRule)
+                        this.withSelectorVariants(variants, parseStyleRule)
                     }
 
                     return
@@ -282,11 +302,7 @@ export class ProcessorBuilder {
                 }
 
                 if (variants !== null) {
-                    this.withSelectorVariants(variants, () => {
-                        rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
-                        rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-                        rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
-                    })
+                    this.withSelectorVariants(variants, parseStyleRule)
 
                     return
                 }
@@ -295,9 +311,7 @@ export class ProcessorBuilder {
                     if (selectorToken.type === 'pseudo-class' && selectorToken.kind === 'root') {
                         this.declarationConfig.root = true
 
-                        rule.value.declarations?.declarations?.forEach(declaration => this.addDeclaration(declaration))
-                        rule.value.declarations?.importantDeclarations?.forEach(declaration => this.addDeclaration(declaration, true))
-                        rule.value.rules?.forEach(rule => this.parseRuleRec(rule))
+                        parseStyleRule()
                     }
                 })
             })
@@ -308,7 +322,7 @@ export class ProcessorBuilder {
 
         // Skip web: variant
         if (rule.type === 'supports' && rule.value.condition.value !== 'div > div') {
-            rule.value.rules.forEach(rule => this.parseRuleRec(rule))
+            rule.value.rules.forEach(rule => this.parseRuleRec(rule, parentSpecificity))
 
             return
         }
@@ -327,15 +341,23 @@ export class ProcessorBuilder {
 
             rule.value.rules.forEach(rule => {
                 this.declarationConfig = { ...outerConfig, mediaQueries: blockMediaQueries }
-                this.parseRuleRec(rule)
+                this.parseRuleRec(rule, parentSpecificity)
             })
 
             this.declarationConfig = outerConfig
             return
         }
 
+        if (rule.type === 'layer-statement') {
+            rule.value.names.forEach(name => this.cascade.declareLayer(name))
+
+            return
+        }
+
         if (rule.type === 'layer-block') {
-            rule.value.rules.forEach(rule => this.parseRuleRec(rule))
+            this.cascade.withLayer(rule.value.name ?? null, () => {
+                rule.value.rules.forEach(rule => this.parseRuleRec(rule, parentSpecificity))
+            })
 
             return
         }

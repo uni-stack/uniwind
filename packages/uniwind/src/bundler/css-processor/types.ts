@@ -53,5 +53,5 @@ export type ProcessMetaValues = {
 }
 
 export type StyleSheetTemplate = {
-    [K: string]: Array<MediaQueryResolver & Record<string, unknown>>
+    [K: string]: Array<MediaQueryResolver & { complexity: number; importantComplexity: number } & Record<string, unknown>>
 }

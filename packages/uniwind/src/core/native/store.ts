@@ -121,7 +121,7 @@ class UniwindStoreBuilder {
         let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()
         let dependencySum = 0
-        const bestBreakpoints = new Map<string, Style>()
+        const bestRanks = new Map<string, number>()
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const classNameTokens = classNames.includes('\n')
             ? classNames.split(/\s+/).filter(Boolean)
@@ -163,19 +163,11 @@ class UniwindStoreBuilder {
                 }
 
                 for (const [property, valueGetter] of style.entries) {
-                    const previousBest = bestBreakpoints.get(property)
+                    const rank = style.importantProperties.includes(property) ? style.importantComplexity : style.complexity
+                    const previousRank = bestRanks.get(property)
 
-                    if (previousBest) {
-                        const previousWins = previousBest.minWidth > style.minWidth
-                            || previousBest.complexity > style.complexity
-                            || (
-                                previousBest.complexity === style.complexity
-                                && previousBest.importantProperties.includes(property)
-                            )
-
-                        if (previousWins) {
-                            continue
-                        }
+                    if (previousRank !== undefined && previousRank > rank) {
+                        continue
                     }
 
                     if (property[0] === '-') {
@@ -189,7 +181,7 @@ class UniwindStoreBuilder {
                         resultGetters[property] = valueGetter
                     }
 
-                    bestBreakpoints.set(property, style)
+                    bestRanks.set(property, rank)
                 }
             }
         }

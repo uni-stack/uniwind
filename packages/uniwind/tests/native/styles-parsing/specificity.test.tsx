@@ -32,9 +32,8 @@ describe('Specificity', () => {
             </React.Fragment>,
         )
 
-        expect(getStylesFromId('no-important').color).toBe(TW_BLUE_500)
-        /* NOTE: when both classes are !important, the first one wins.
-        This diverges from CSS where the last !important would win. */
+        // Tailwind emits red after blue, regardless of className order.
+        expect(getStylesFromId('no-important').color).toBe(TW_RED_500)
         expect(getStylesFromId('both-important').color).toBe(TW_RED_500)
         expect(getStylesFromId('important-first').color).toBe(TW_RED_500)
         expect(getStylesFromId('important-middle').color).toBe(TW_GREEN_500)

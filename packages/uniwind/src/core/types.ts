@@ -19,6 +19,7 @@ export type Style = {
     className: string
     importantProperties: Array<string>
     complexity: number
+    importantComplexity: number
     active: boolean | null
     focus: boolean | null
     disabled: boolean | null

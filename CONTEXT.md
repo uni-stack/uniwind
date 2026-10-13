@@ -144,7 +144,9 @@ Native processing converts Tailwind-generated CSS into metadata-rich style recor
 
 Important concepts:
 
-- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, native flag, dependencies, source index, class name, important properties, selector complexity, pseudo-states, and data attributes.
+- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, native flag, dependencies, per-class index, class name, important properties, normal and important cascade ranks (`complexity` and `importantComplexity`), pseudo-states, and data attributes.
+- Native property precedence is computed at build time from importance, cascade-layer priority, supported selector specificity, and compiled CSS order. Named layer statements, reopened layers, nested layers, anonymous layers, and unlayered rules participate; important declarations reverse layer priority. Every important rank is above every normal rank. Runtime resolution filters matching rules and compares the appropriate rank per property, independent of className token order or minimum-width priority.
+- Specificity covers the selectors native already supports: classes, state pseudo-classes and data attributes contribute; `:where(...)` and media queries do not. Nested selectors inherit their parent's specificity. This is author-rule precedence for supported selectors, not a general DOM selector engine or support for inheritance, animations, transitions, `@scope`, or `revert-layer`.
 - CSS variables live in `vars`; theme and platform-scoped variables live in `scopedVars` with internal prefixes.
 - The processor treats declarations under `:root` or outside class rules as variables.
 - Theme variants are recognized from known theme names.
