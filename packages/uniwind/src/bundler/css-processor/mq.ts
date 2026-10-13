@@ -11,6 +11,30 @@ const comparisons: Record<MediaFeatureComparison, string> = {
     'less-than-equal': '<=',
 }
 
+const normalizeMediaValue = <T>(value: T): T => {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+        // Lightning CSS widens float32s to doubles. Recover their shortest decimal
+        // before converting units; float32 needs at most nine significant digits.
+        for (let precision = 1; precision <= 9; precision++) {
+            const decimal = Number(value.toPrecision(precision))
+
+            if (Math.fround(decimal) === value) {
+                return decimal as T
+            }
+        }
+    }
+
+    if (Array.isArray(value)) {
+        return value.map(normalizeMediaValue) as T
+    }
+
+    if (typeof value === 'object' && value !== null) {
+        return Object.fromEntries(Object.entries(value).map(([key, value]) => [key, normalizeMediaValue(value)])) as T
+    }
+
+    return value
+}
+
 const platforms: Array<string> = [Platform.Android, Platform.iOS, Platform.Web, Platform.Native, Platform.AndroidTV, Platform.AppleTV, Platform.TV]
 
 const negateCondition = (condition: string) => condition === 'true' ? 'false' : condition === 'false' ? 'true' : `!(${condition})`
@@ -100,14 +124,14 @@ export class MQ {
 
             switch (query.type) {
                 case 'range':
-                    return `${dimension} ${comparisons[query.operator]} (${this.Processor.CSS.processValue(query.value)})`
+                    return `${dimension} ${comparisons[query.operator]} (${this.Processor.CSS.processValue(normalizeMediaValue(query.value))})`
                 case 'interval':
                     return combineConditions([
-                        `(${this.Processor.CSS.processValue(query.start)}) ${comparisons[query.startOperator]} ${dimension}`,
-                        `${dimension} ${comparisons[query.endOperator]} (${this.Processor.CSS.processValue(query.end)})`,
+                        `(${this.Processor.CSS.processValue(normalizeMediaValue(query.start))}) ${comparisons[query.startOperator]} ${dimension}`,
+                        `${dimension} ${comparisons[query.endOperator]} (${this.Processor.CSS.processValue(normalizeMediaValue(query.end))})`,
                     ], 'and')
                 case 'plain':
-                    return `${dimension} === (${this.Processor.CSS.processValue(query.value)})`
+                    return `${dimension} === (${this.Processor.CSS.processValue(normalizeMediaValue(query.value))})`
                 case 'boolean':
                     return `${dimension} > 0`
             }

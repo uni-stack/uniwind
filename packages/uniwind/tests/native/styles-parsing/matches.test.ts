@@ -28,25 +28,53 @@ describe('Generated style match functions', () => {
                 ['=', [false, true, false]],
             ] as const
         ) {
-            const style = compileQuery(`(${dimension} ${operator} 390.125px)`)
+            for (const bound of [390.1, 390.2, 390.3, 390.125, 390.1234]) {
+                const style = compileQuery(`(${dimension} ${operator} ${bound}px)`)
 
-            for (const [index, value] of [390.1249, 390.125, 390.1251].entries()) {
-                const rt = { ...UniwindStore.runtime, screen: { width: value, height: value } }
+                for (const [index, value] of [bound - 0.0000001, bound, bound + 0.0000001].entries()) {
+                    const rt = { ...UniwindStore.runtime, screen: { width: value, height: value } }
 
-                expect(style.matches(rt, context, undefined, undefined, {})).toBe(expected[index])
+                    expect(style.matches(rt, context, undefined, undefined, {})).toBe(expected[index])
+                }
+
+                expect(style.dependencies).toContain(StyleDependency.Dimensions)
+                expect(style).not.toHaveProperty('minWidth')
+                expect(style).not.toHaveProperty('maxWidth')
             }
+        }
+    })
 
-            expect(style.dependencies).toContain(StyleDependency.Dimensions)
-            expect(style).not.toHaveProperty('minWidth')
-            expect(style).not.toHaveProperty('maxWidth')
+    test.each(
+        [
+            ['(height: 390.1px)', 390.1, 390.1],
+            ['(height = 24.38125rem)', 390.1, 390.1],
+            ['(width = 50.1vh)', 400.8, 800],
+            ['(height = 50.1vw)', 800, 400.8],
+        ] as const,
+    )('normalizes fractional bounds before unit conversion: %s', (query, width, height) => {
+        const style = compileQuery(query)
+        const rt = { ...UniwindStore.runtime, screen: { width, height } }
+
+        expect(style.matches(rt, context, undefined, undefined, {})).toBe(true)
+        expect(style.matches({ ...rt, screen: { width: width + 0.0000001, height: height + 0.0000001 } }, context, undefined, undefined, {}))
+            .toBe(false)
+    })
+
+    test('preserves fractional interval boundaries', () => {
+        const style = compileQuery('(300.1px <= height <= 500.3px)')
+
+        for (const [height, expected] of [[300.0999999, false], [300.1, true], [500.3, true], [500.3000001, false]] as const) {
+            const rt = { ...UniwindStore.runtime, screen: { width: 390, height } }
+
+            expect(style.matches(rt, context, undefined, undefined, {})).toBe(expected)
         }
     })
 
     test.each(['width', 'height'] as const)('supports min/max queries for %s', dimension => {
-        const min = compileQuery(`(min-${dimension}: 300px)`)
-        const max = compileQuery(`(max-${dimension}: 300px)`)
+        const min = compileQuery(`(min-${dimension}: 300.1px)`)
+        const max = compileQuery(`(max-${dimension}: 300.1px)`)
 
-        for (const [value, matchesMin, matchesMax] of [[299.9999, false, true], [300, true, true], [300.0001, true, false]] as const) {
+        for (const [value, matchesMin, matchesMax] of [[300.0999999, false, true], [300.1, true, true], [300.1000001, true, false]] as const) {
             const rt = { ...UniwindStore.runtime, screen: { width: value, height: value } }
 
             expect(min.matches(rt, context, undefined, undefined, {})).toBe(matchesMin)
