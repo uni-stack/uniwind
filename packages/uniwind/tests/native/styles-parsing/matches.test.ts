@@ -1,3 +1,4 @@
+import { compile as compileTailwind } from '@tailwindcss/node'
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
 import { compileNativeCSS } from '../../../src/bundler/css-compiler/compileNativeCSS'
 import { Orientation, Platform, StyleDependency } from '../../../src/common/consts'
@@ -18,6 +19,61 @@ const compile = (css: string, platform = Platform.iOS) => {
 const compileQuery = (query: string) => compile(`@media ${query} { .rule { opacity: 0.5; } }`).stylesheet.rule[0]
 
 describe('Generated style match functions', () => {
+    test('retains Tailwind not-print and not-hover utilities on native', async () => {
+        const compiler = await compileTailwind('@tailwind utilities;', { base: process.cwd(), onDependency: () => {} })
+        const { generate, stylesheet } = compile(compiler.build(['not-print:opacity-50', 'not-hover:opacity-50']))
+
+        UniwindStore.reinit(generate, ['light', 'dark'])
+
+        for (const className of ['not-print:opacity-50', 'not-hover:opacity-50']) {
+            expect(stylesheet[className]).toBeDefined()
+            expect(UniwindStore.getStyles(className, undefined, undefined, context).styles).toEqual({ opacity: 0.5 })
+        }
+    })
+
+    test('matches screen and excludes print media at build time', () => {
+        const { stylesheet } = compile(`
+            @media screen { .screen { opacity: 0.5; } }
+            @media print { .print { opacity: 0.5; } }
+            @media not screen { .not-screen { opacity: 0.5; } }
+            @media not print { .not-print { opacity: 0.5; } }
+        `)
+
+        expect(stylesheet.print).toBeUndefined()
+        expect(stylesheet['not-screen']).toBeUndefined()
+
+        for (const className of ['screen', 'not-print']) {
+            expect(stylesheet[className][0].matches(UniwindStore.runtime, context, undefined, undefined, {})).toBe(true)
+            expect(stylesheet[className][0].dependencies).toBeNull()
+        }
+    })
+
+    test.each(['(hover: hover)', '(not (hover: hover))', 'speech', 'not speech'])(
+        'ignores unsupported media conditions without turning their negation into false: %s',
+        query => {
+            const style = compileQuery(query)
+
+            expect(style).toBeDefined()
+            expect(style.matches(UniwindStore.runtime, context, undefined, undefined, {})).toBe(true)
+            expect(style.dependencies).toBeNull()
+        },
+    )
+
+    test.each(['(not (hover: hover)) and (width >= 500px)', 'screen and (not (hover: hover)) and (width >= 500px)'])(
+        'keeps supported conditions alongside ignored features: %s',
+        query => {
+            const style = compileQuery(query)
+
+            for (const [width, expected] of [[499, false], [500, true]] as const) {
+                const rt = { ...UniwindStore.runtime, screen: { width, height: 800 } }
+
+                expect(style.matches(rt, context, undefined, undefined, {})).toBe(expected)
+            }
+
+            expect(style.dependencies).toContain(StyleDependency.Dimensions)
+        },
+    )
+
     test.each(['width', 'height'] as const)('preserves exact %s comparisons and unrounded bounds', dimension => {
         for (
             const [operator, expected] of [

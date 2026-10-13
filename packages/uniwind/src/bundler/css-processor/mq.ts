@@ -37,9 +37,10 @@ const normalizeMediaValue = <T>(value: T): T => {
 
 const platforms: Array<string> = [Platform.Android, Platform.iOS, Platform.Web, Platform.Native, Platform.AndroidTV, Platform.AppleTV, Platform.TV]
 
-const negateCondition = (condition: string) => condition === 'true' ? 'false' : condition === 'false' ? 'true' : `!(${condition})`
+const negateCondition = (condition: string | null) =>
+    condition === null ? null : condition === 'true' ? 'false' : condition === 'false' ? 'true' : `!(${condition})`
 
-const combineConditions = (conditions: Array<string>, operator: 'and' | 'or') => {
+const combineConditions = (conditions: Array<string | null>, operator: 'and' | 'or'): string | null => {
     const identity = operator === 'and' ? 'true' : 'false'
     const terminal = operator === 'and' ? 'false' : 'true'
 
@@ -47,10 +48,10 @@ const combineConditions = (conditions: Array<string>, operator: 'and' | 'or') =>
         return terminal
     }
 
-    const remaining = conditions.filter(condition => condition !== identity)
+    const remaining = conditions.filter((condition): condition is string => condition !== null && condition !== identity)
 
     if (remaining.length === 0) {
-        return identity
+        return conditions.includes(null) ? null : identity
     }
 
     return remaining.length === 1 ? remaining[0]! : `(${remaining.join(operator === 'and' ? ' && ' : ' || ')})`
@@ -77,7 +78,7 @@ export class MQ {
         for (const mediaQueries of mediaQueryGroups) {
             // Alternatives in one @media block use OR; nested blocks use AND.
             const alternatives = mediaQueries.map(({ condition, mediaType, qualifier }) => {
-                const conditions: Array<string> = []
+                const conditions: Array<string | null> = []
 
                 if (platforms.includes(mediaType)) {
                     mq.platform = mediaType as Platform
@@ -85,6 +86,8 @@ export class MQ {
                     const commonPlatform = isTV ? Platform.TV : Platform.Native
 
                     conditions.push(mediaType === currentPlatform || mediaType === commonPlatform ? 'true' : 'false')
+                } else {
+                    conditions.push(mediaType === 'print' ? 'false' : mediaType === 'all' || mediaType === 'screen' ? 'true' : null)
                 }
 
                 if (condition) {
@@ -96,7 +99,7 @@ export class MQ {
                 return qualifier === 'not' ? negateCondition(expression) : expression
             })
 
-            mq.conditions.push(combineConditions(alternatives, 'or'))
+            mq.conditions.push(combineConditions(alternatives, 'or') ?? 'true')
         }
 
         mq.dependencies = Array.from(dependencies)
@@ -104,7 +107,7 @@ export class MQ {
         return mq
     }
 
-    private processCondition(condition: MediaCondition, dependencies: Set<StyleDependency>): string {
+    private processCondition(condition: MediaCondition, dependencies: Set<StyleDependency>): string | null {
         switch (condition.type) {
             case 'not':
                 return negateCondition(this.processCondition(condition.value, dependencies))
@@ -115,7 +118,7 @@ export class MQ {
         }
     }
 
-    private processFeature(query: QueryFeatureFor_MediaFeatureId, dependencies: Set<StyleDependency>): string {
+    private processFeature(query: QueryFeatureFor_MediaFeatureId, dependencies: Set<StyleDependency>): string | null {
         const { name } = query
 
         if (name === 'width' || name === 'height') {
@@ -151,6 +154,7 @@ export class MQ {
             }
         }
 
-        return 'true'
+        // Ignored features must remain unknown through negation, rather than becoming false.
+        return null
     }
 }
