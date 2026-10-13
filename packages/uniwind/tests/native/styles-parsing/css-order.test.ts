@@ -111,6 +111,43 @@ describe('Compiled CSS order', () => {
         expect(resolve(className).opacity).toBe(0.75)
     })
 
+    test.each([
+        ['border-inline-width', { borderLeftWidth: 4, borderRightWidth: 4 }],
+        ['border-block-width', { borderTopWidth: 4, borderBottomWidth: 4 }],
+        ['border-width', { borderWidth: 4 }],
+        ['padding-inline', { paddingLeft: 4, paddingRight: 4 }],
+        ['margin-inline-start', { marginStart: 4 }],
+    ])('preserves importance when converting %s to native entries', (property, expected) => {
+        compile(`
+            .important { ${property}: 4px !important; opacity: 0.25; }
+            .normal { ${property}: 1px; opacity: 0.75; }
+        `)
+
+        for (const className of ['important normal', 'normal important']) {
+            expect(resolve(className)).toMatchObject({ ...expected, opacity: 0.75 })
+        }
+    })
+
+    test('preserves font-size importance for the generated em variable', () => {
+        compile(`
+            .important { font-size: 20px !important; width: 2em; }
+            .normal { font-size: 10px; }
+        `)
+
+        for (const className of ['important normal', 'normal important']) {
+            expect(resolve(className)).toMatchObject({ fontSize: 20, width: 40 })
+        }
+    })
+
+    test.each([
+        'padding-inline: 1px; padding-left: 2px; padding-inline: 4px !important;',
+        'padding-left: 2px; padding-inline: 4px !important;',
+    ])('preserves importance when declarations share a native entry: %s', declarations => {
+        compile(`.box { ${declarations} }`)
+
+        expect(resolve('box')).toMatchObject({ paddingLeft: 4, paddingRight: 4 })
+    })
+
     test('where selectors have zero specificity', () => {
         compile(`
             .themed:where(.light, .light *) { opacity: 0.25; }
