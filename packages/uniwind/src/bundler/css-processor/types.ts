@@ -1,4 +1,4 @@
-import type { ColorScheme, Orientation, Platform } from '@/common/consts'
+import type { Platform, StyleDependency } from '@/common/consts'
 import type {
     AbsoluteFontWeight,
     Declaration,
@@ -14,15 +14,13 @@ import type {
 } from 'lightningcss'
 
 export type MediaQueryResolver = {
-    maxWidth: any
-    minWidth: any
+    conditions: Array<string>
+    dependencies: Array<StyleDependency>
     platform: Platform | null
     rtl: boolean | null
     important: boolean
     importantProperties?: Array<string>
-    colorScheme: ColorScheme | null
     theme: string | null
-    orientation: Orientation | null
     disabled: boolean | null
     active: boolean | null
     focus: boolean | null

@@ -1,5 +1,6 @@
-import { Platform, StyleDependency } from '@/common/consts'
+import { StyleDependency } from '@/common/consts'
 import { isDefined } from '@/common/utils'
+import { generateMatches } from './matches'
 import type { ProcessorBuilder } from './processor'
 import { serialize } from './serialize'
 
@@ -21,7 +22,7 @@ const makeSafeForSerialization = (value: any) => {
     }
 
     if (typeof value === 'string') {
-        return `"${value}"`
+        return JSON.stringify(value)
     }
 
     return value
@@ -51,26 +52,22 @@ const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, vi
     })
 }
 
-export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlatform: Platform) => {
+export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
     const stylesheetsEntries = Object.entries(Processor.stylesheets)
         .map(([className, stylesPerMediaQuery]) => {
             const styles = stylesPerMediaQuery.map(({ style, meta }, index) => {
                 const {
-                    platform,
                     rtl,
                     theme,
-                    orientation,
-                    minWidth,
-                    maxWidth,
-                    colorScheme,
                     importantProperties,
-                    active,
-                    focus,
-                    disabled,
                     dataAttributes,
                     complexity,
                     importantComplexity,
                 } = meta
+
+                if (meta.conditions.includes('false')) {
+                    return null
+                }
 
                 const nativeEntries = new Map<string, any>()
                 const nativeImportantProperties = new Set<string>()
@@ -94,72 +91,48 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                 const entries = Array.from(nativeEntries)
                     .map(([property, value]) => [`"${property}"`, `function(vars) { return ${serialize(value)} }`])
 
-                if (platform) {
-                    const isTV = currentPlatform === Platform.AndroidTV || currentPlatform === Platform.AppleTV
-                    const commonPlatform = isTV ? Platform.TV : Platform.Native
-
-                    if (platform !== commonPlatform && platform !== currentPlatform) {
-                        return null
-                    }
-                }
-
                 if (entries.length === 0) {
                     return null
                 }
 
-                const dependencies: Array<StyleDependency> = []
-                const stringifiedEntries = JSON.stringify(entries)
+                const matches = generateMatches(meta)
+                const dependencies = new Set(meta.dependencies)
+                const stringifiedEntries = JSON.stringify(entries) + matches
                 const usedVars = extractVarsFromString(stringifiedEntries)
                 const isUsingThemedVar = usedVars.some(usedVarName => hasThemedVarDependency(usedVarName, Processor))
 
                 if (usedVars.length > 0) {
-                    dependencies.push(StyleDependency.Variables)
+                    dependencies.add(StyleDependency.Variables)
                 }
 
                 if (theme !== null || isUsingThemedVar || stringifiedEntries.includes('rt.lightDark')) {
-                    dependencies.push(StyleDependency.Theme)
-                }
-
-                if (orientation !== null) {
-                    dependencies.push(StyleDependency.Orientation)
+                    dependencies.add(StyleDependency.Theme)
                 }
 
                 if (rtl !== null) {
-                    dependencies.push(StyleDependency.Rtl)
+                    dependencies.add(StyleDependency.Rtl)
                 }
 
-                if (
-                    Number(minWidth) !== 0
-                    || Number(maxWidth) !== Number.MAX_VALUE
-                    || stringifiedEntries.includes('rt.screen')
-                ) {
-                    dependencies.push(StyleDependency.Dimensions)
+                if (stringifiedEntries.includes('rt.screen')) {
+                    dependencies.add(StyleDependency.Dimensions)
                 }
 
                 if (stringifiedEntries.includes('rt.insets')) {
-                    dependencies.push(StyleDependency.Insets)
+                    dependencies.add(StyleDependency.Insets)
                 }
 
                 if (stringifiedEntries.includes('rt.fontScale')) {
-                    dependencies.push(StyleDependency.FontScale)
+                    dependencies.add(StyleDependency.FontScale)
                 }
 
                 return {
                     entries,
-                    minWidth,
-                    maxWidth,
-                    theme: makeSafeForSerialization(theme),
-                    orientation: makeSafeForSerialization(orientation),
-                    rtl,
-                    colorScheme: makeSafeForSerialization(colorScheme),
-                    dependencies: dependencies.length > 0 ? dependencies : null,
+                    matches,
+                    hasDataAttributes: dataAttributes !== null,
+                    dependencies: dependencies.size > 0 ? Array.from(dependencies) : null,
                     index,
                     className: makeSafeForSerialization(className),
-                    active,
-                    focus,
-                    disabled,
                     importantProperties: Array.from(nativeImportantProperties).map(makeSafeForSerialization),
-                    dataAttributes,
                     complexity,
                     importantComplexity,
                 }

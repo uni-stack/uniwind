@@ -1,7 +1,8 @@
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
 import { compileCSS } from '../../../src/bundler/css-compiler'
 import { Platform, StyleDependency } from '../../../src/common/consts'
-import { StyleSheets } from '../../../src/core/types'
+import { UniwindStore } from '../../../src/core/native/store'
+import type { ComponentState, StyleSheets } from '../../../src/core/types'
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../../consts'
 
 type CompiledResult = {
@@ -32,19 +33,21 @@ describe('Styles Metadata', () => {
     test('Combined variants', async () => {
         const { stylesheet } = await compileMetadata()
 
-        const expectMeta = (className: string, expected: Partial<StyleSheets[string][number]>) => {
-            const meta = stylesheet[className][0]
+        const expectMatches = (className: string, state: ComponentState) => {
+            const style = stylesheet[className][0]
+            const context = { scopedTheme: 'dark', rtl: null, variables: null }
+            const rt = UniwindStore.runtime
 
-            expect(meta.theme).toBe(expected.theme ?? null)
-            expect(meta.active).toBe(expected.active ?? null)
-            expect(meta.focus).toBe(expected.focus ?? null)
-            expect(meta.rtl).toBe(expected.rtl ?? null)
-            expect(meta.disabled).toBe(expected.disabled ?? null)
-            expect(meta.dataAttributes).toEqual(expected.dataAttributes ?? null)
+            expect(style.matches(rt, context, undefined, state, {})).toBe(true)
+            expect(style.matches(rt, { ...context, scopedTheme: 'light' }, undefined, state, {})).toBe(false)
+            expect(style.matches(rt, context, undefined, {}, {})).toBe(false)
+            expect(style).not.toHaveProperty('theme')
+            expect(style).not.toHaveProperty('active')
+            expect(style).not.toHaveProperty('dataAttributes')
         }
 
-        expectMeta('dark:active:bg-purple-700', { theme: 'dark', active: true })
-        expectMeta('dark:active:focus:bg-purple-700', { theme: 'dark', active: true, focus: true })
-        expectMeta('active:dark:bg-purple-700', { theme: 'dark', active: true })
+        expectMatches('dark:active:bg-purple-700', { isPressed: true })
+        expectMatches('dark:active:focus:bg-purple-700', { isPressed: true, isFocused: true })
+        expectMatches('active:dark:bg-purple-700', { isPressed: true })
     })
 })

@@ -1,107 +1,132 @@
-import type { ColorScheme, Orientation } from '@/common/consts'
-import { Platform } from '@/common/consts'
-import type { MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
+import { Platform, StyleDependency } from '@/common/consts'
+import type { MediaCondition, MediaFeatureComparison, MediaQuery, QueryFeatureFor_MediaFeatureId } from 'lightningcss'
 import type { ProcessorBuilder } from './processor'
 import type { MediaQueryResolver } from './types'
 
-const EXCLUSIVE_BOUND_EPSILON = 0.01
+const comparisons: Record<MediaFeatureComparison, string> = {
+    'equal': '===',
+    'greater-than': '>',
+    'greater-than-equal': '>=',
+    'less-than': '<',
+    'less-than-equal': '<=',
+}
+
+const platforms: Array<string> = [Platform.Android, Platform.iOS, Platform.Web, Platform.Native, Platform.AndroidTV, Platform.AppleTV, Platform.TV]
+
+const negateCondition = (condition: string) => condition === 'true' ? 'false' : condition === 'false' ? 'true' : `!(${condition})`
+
+const combineConditions = (conditions: Array<string>, operator: 'and' | 'or') => {
+    const identity = operator === 'and' ? 'true' : 'false'
+    const terminal = operator === 'and' ? 'false' : 'true'
+
+    if (conditions.includes(terminal)) {
+        return terminal
+    }
+
+    const remaining = conditions.filter(condition => condition !== identity)
+
+    if (remaining.length === 0) {
+        return identity
+    }
+
+    return remaining.length === 1 ? remaining[0]! : `(${remaining.join(operator === 'and' ? ' && ' : ' || ')})`
+}
 
 export class MQ {
     constructor(private readonly Processor: ProcessorBuilder) {}
 
-    processMediaQueries(mediaQueries: Array<MediaQuery>) {
-        const mq = this.getInitialMediaQueryResolver()
-
-        mediaQueries.forEach(mediaQuery => {
-            const { condition, mediaType } = mediaQuery
-
-            if (
-                [
-                    Platform.Android,
-                    Platform.iOS,
-                    Platform.Native,
-                    Platform.AndroidTV,
-                    Platform.AppleTV,
-                    Platform.TV,
-                ].includes(mediaType as Platform)
-            ) {
-                mq.platform = mediaType as Platform
-
-                return
-            }
-
-            if (condition?.type !== 'feature') {
-                return
-            }
-
-            if (condition.value.type === 'range') {
-                this.processWidthMediaQuery(condition.value, mq)
-            }
-
-            if (condition.value.type === 'plain') {
-                this.processPlainMediaQuery(condition.value, mq)
-            }
-        })
-
-        return mq
-    }
-
-    private processWidthMediaQuery(query: QueryFeatureFor_MediaFeatureId & { type: 'range' }, mq: MediaQueryResolver) {
-        const { operator, value } = query
-        const result = this.Processor.CSS.processValue(value)
-
-        if (operator === 'greater-than-equal') {
-            mq.minWidth = result
-        }
-
-        if (operator === 'greater-than') {
-            mq.minWidth = typeof result === 'number'
-                ? result + EXCLUSIVE_BOUND_EPSILON
-                : `(${result}) + ${EXCLUSIVE_BOUND_EPSILON}`
-        }
-
-        if (operator === 'less-than-equal') {
-            mq.maxWidth = result
-        }
-
-        if (operator === 'less-than') {
-            mq.maxWidth = typeof result === 'number'
-                ? result - EXCLUSIVE_BOUND_EPSILON
-                : `(${result}) - ${EXCLUSIVE_BOUND_EPSILON}`
-        }
-    }
-
-    private processPlainMediaQuery(query: QueryFeatureFor_MediaFeatureId & { type: 'plain' }, mq: MediaQueryResolver) {
-        const { value, name } = query
-
-        switch (name) {
-            case 'orientation':
-                mq.orientation = value.value as Orientation
-
-                break
-            case 'prefers-color-scheme':
-                mq.colorScheme = value.value as ColorScheme
-
-                break
-            default:
-                break
-        }
-    }
-
-    private getInitialMediaQueryResolver(): MediaQueryResolver {
-        return {
-            minWidth: 0,
-            maxWidth: Number.MAX_VALUE,
+    processMediaQueries(mediaQueryGroups: Array<Array<MediaQuery>>, currentPlatform: Platform): MediaQueryResolver {
+        const dependencies = new Set<StyleDependency>()
+        const mq: MediaQueryResolver = {
+            conditions: [],
+            dependencies: [],
             platform: null,
             rtl: null,
             important: false,
-            colorScheme: null,
-            orientation: null,
             theme: null,
             active: null,
             focus: null,
             disabled: null,
             dataAttributes: null,
         }
+
+        for (const mediaQueries of mediaQueryGroups) {
+            // Alternatives in one @media block use OR; nested blocks use AND.
+            const alternatives = mediaQueries.map(({ condition, mediaType, qualifier }) => {
+                const conditions: Array<string> = []
+
+                if (platforms.includes(mediaType)) {
+                    mq.platform = mediaType as Platform
+                    const isTV = currentPlatform === Platform.AndroidTV || currentPlatform === Platform.AppleTV
+                    const commonPlatform = isTV ? Platform.TV : Platform.Native
+
+                    conditions.push(mediaType === currentPlatform || mediaType === commonPlatform ? 'true' : 'false')
+                }
+
+                if (condition) {
+                    conditions.push(this.processCondition(condition, dependencies))
+                }
+
+                const expression = combineConditions(conditions, 'and')
+
+                return qualifier === 'not' ? negateCondition(expression) : expression
+            })
+
+            mq.conditions.push(combineConditions(alternatives, 'or'))
+        }
+
+        mq.dependencies = Array.from(dependencies)
+
+        return mq
+    }
+
+    private processCondition(condition: MediaCondition, dependencies: Set<StyleDependency>): string {
+        switch (condition.type) {
+            case 'not':
+                return negateCondition(this.processCondition(condition.value, dependencies))
+            case 'operation':
+                return combineConditions(condition.conditions.map(condition => this.processCondition(condition, dependencies)), condition.operator)
+            case 'feature':
+                return this.processFeature(condition.value, dependencies)
+        }
+    }
+
+    private processFeature(query: QueryFeatureFor_MediaFeatureId, dependencies: Set<StyleDependency>): string {
+        const { name } = query
+
+        if (name === 'width' || name === 'height') {
+            dependencies.add(StyleDependency.Dimensions)
+            const dimension = `rt.screen.${name}`
+
+            switch (query.type) {
+                case 'range':
+                    return `${dimension} ${comparisons[query.operator]} (${this.Processor.CSS.processValue(query.value)})`
+                case 'interval':
+                    return combineConditions([
+                        `(${this.Processor.CSS.processValue(query.start)}) ${comparisons[query.startOperator]} ${dimension}`,
+                        `${dimension} ${comparisons[query.endOperator]} (${this.Processor.CSS.processValue(query.end)})`,
+                    ], 'and')
+                case 'plain':
+                    return `${dimension} === (${this.Processor.CSS.processValue(query.value)})`
+                case 'boolean':
+                    return `${dimension} > 0`
+            }
+        }
+
+        if (query.type === 'plain') {
+            if (name === 'orientation') {
+                dependencies.add(StyleDependency.Orientation)
+
+                return `rt.orientation === ${JSON.stringify(query.value.value)}`
+            }
+
+            if (name === 'prefers-color-scheme') {
+                dependencies.add(StyleDependency.Theme)
+
+                return `(context.scopedTheme ?? rt.currentThemeName) === ${JSON.stringify(query.value.value)}`
+            }
+        }
+
+        return 'true'
     }
 }

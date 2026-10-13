@@ -24,8 +24,10 @@ describe('media query boundaries', () => {
 
     test.each([
         [389.99, { top: 0, right: 0, bottom: 1, left: 1 }],
+        [389.9999, { top: 0, right: 0, bottom: 1, left: 1 }],
         [390, { top: 0, right: 1, bottom: 0, left: 1 }],
         [390.01, { top: 1, right: 1, bottom: 0, left: 0 }],
+        [390.0001, { top: 1, right: 1, bottom: 0, left: 0 }],
     ])('resolves width %s', (width, expected) => {
         expect(resolveAtWidth('media-query-boundaries', width)).toMatchObject(expected)
     })

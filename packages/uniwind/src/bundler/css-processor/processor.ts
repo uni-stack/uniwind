@@ -53,7 +53,7 @@ export class ProcessorBuilder {
         return ({
             className: null as string | null,
             rtl: null as boolean | null,
-            mediaQueries: [] as Array<MediaQuery>,
+            mediaQueries: [] as Array<Array<MediaQuery>>,
             root: false,
             theme: null as string | null,
             active: null as boolean | null,
@@ -69,7 +69,7 @@ export class ProcessorBuilder {
         return {
             style: {},
             meta: {
-                ...this.MQ.processMediaQueries([]),
+                ...this.MQ.processMediaQueries([], this.bundlerConfig.platform),
                 complexity: 0,
                 importantComplexity: 0,
             },
@@ -78,7 +78,7 @@ export class ProcessorBuilder {
 
     private addDeclaration(declaration: Declaration, important = false) {
         const isVar = this.declarationConfig.root || this.declarationConfig.className === null
-        const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries)
+        const mq = this.MQ.processMediaQueries(this.declarationConfig.mediaQueries, this.bundlerConfig.platform)
         const styleTemplate = isVar ? undefined : this.stylesheets[this.declarationConfig.className!]!.at(-1)!
         const style = (() => {
             if (!isVar) {
@@ -109,7 +109,7 @@ export class ProcessorBuilder {
             this.cascade.add(meta, this.declarationConfig.specificity, this.declarationConfig.sourceOrder)
             meta.importantProperties ??= []
             meta.rtl = this.declarationConfig.rtl
-            meta.theme = mq.colorScheme ?? this.declarationConfig.theme
+            meta.theme = this.declarationConfig.theme
             meta.active = this.declarationConfig.active
             meta.focus = this.declarationConfig.focus
             meta.disabled = this.declarationConfig.disabled
@@ -202,7 +202,7 @@ export class ProcessorBuilder {
             // data-x=
             if (component.type === 'attribute' && component.operation?.operator === 'equal' && component.name.startsWith('data-')) {
                 dataAttributes ??= {}
-                dataAttributes[component.name] = `"${component.operation.value}"`
+                dataAttributes[component.name] = JSON.stringify(component.operation.value)
 
                 return
             }
@@ -342,7 +342,7 @@ export class ProcessorBuilder {
             // fresh one so media nested inside a class rule keeps writing into
             // that class.
             const outerConfig = this.declarationConfig
-            const blockMediaQueries = [...outerConfig.mediaQueries, ...mediaQueries]
+            const blockMediaQueries = [...outerConfig.mediaQueries, mediaQueries]
 
             rule.value.rules.forEach(rule => {
                 this.declarationConfig = { ...outerConfig, mediaQueries: blockMediaQueries }

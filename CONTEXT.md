@@ -74,7 +74,7 @@ Native runtime:
 - During resolve, `ScopedVariables` overrides are overlaid onto a prototype-chained clone of the theme vars so unset variables fall through to the theme.
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
-- Native style resolution filters rules by screen width, orientation, theme, RTL, active/focus/disabled state, and `data-*` props.
+- Native style resolution calls each rule's build-generated `matches(rt, context, props, state, vars)` predicate. Predicates contain only that rule's screen width/height, orientation, theme, RTL, active/focus/disabled, and `data-*` conditions, respecting scoped themes and layout direction. Data-dependent rules carry a boolean cache-bypass flag; condition metadata stays at build time.
 - Native post-processing adapts CSS concepts to RN shapes, including line-height multipliers, shadows, transforms, gradients, visibility, borders, outlines, font variants, and filters.
 
 Web runtime:
@@ -146,7 +146,7 @@ Build-time stylesheet templates collect each rule as `{ style, meta }`: CSS decl
 
 Important concepts:
 
-- A `Style` record stores entries, breakpoint bounds, orientation, theme, RTL, dependencies, per-class index, class name, important properties, normal and important cascade ranks (`complexity` and `importantComplexity`), pseudo-states, and data attributes. Platform conditions are filtered at build time and are not emitted as a runtime flag.
+- A runtime `Style` record stores entries, a generated `matches` function, a `hasDataAttributes` flag, dependencies, per-class index, class name, important properties, and normal and important cascade ranks (`complexity` and `importantComplexity`). Media/selector condition metadata stays in build-time templates. Platform conditions are filtered at build time and are not emitted as a runtime flag.
 - Native property precedence is computed at build time from importance, cascade-layer priority, supported selector specificity, and compiled CSS order. Named layer statements, reopened layers, nested layers, anonymous layers, and unlayered rules participate; important declarations reverse layer priority. Every important rank is above every normal rank. Runtime resolution filters matching rules and compares the appropriate rank per property, independent of className token order or minimum-width priority.
 - Specificity covers the selectors native already supports: classes, state pseudo-classes and data attributes contribute; `:where(...)` and media queries do not. Nested selectors inherit their parent's specificity. This is author-rule precedence for supported selectors, not a general DOM selector engine or support for inheritance, animations, transitions, `@scope`, or `revert-layer`.
 - CSS variables live in `vars`; theme and platform-scoped variables live in `scopedVars` with internal prefixes.
@@ -154,7 +154,7 @@ Important concepts:
 - Theme variants are recognized from known theme names.
 - Variant tokens (`:active`, `:focus`, `:disabled`, `:where(.theme)`, `:dir()`, `[data-x]`) are read from two selector shapes: nested under the class as `&:active` (Tailwind < 4.3.3) and flattened into the class selector as `.active\:x:active` (Tailwind >= 4.3.3). A selector carrying any token the runtime cannot observe (e.g. `[aria-disabled="true"]`, alone or stacked with a supported variant) is skipped, never applied under a weaker condition.
 - Data attribute variants support boolean `data-x` and exact `data-x="value"` matching against component props.
-- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific metadata. Native exclusive width bounds use the generated artifact's `0.01pt` numeric precision to exclude equality, including bounds expressed with viewport-relative units.
+- Media queries drive dimensions, orientation, color scheme, platform, and native/web-specific conditions. Native width and height comparisons preserve `>`, `>=`, `<`, `<=`, and equality directly, without epsilon offsets or rounding numeric bounds. Range intervals, compound conditions, comma-separated alternatives, and nested media blocks retain their boolean grouping. Viewport-relative bounds are evaluated when matching, and width/height predicates subscribe to dimensions changes.
 - Important declarations are preserved as `importantProperties` using the emitted native entry names after CSS-to-RN conversion. Expanded, renamed, and generated entries (including `--uniwind-em`) inherit their declaration's importance; when declarations in one record emit the same entry, important values take precedence.
 - Repeated declarations retain their last declaration position before native conversion, so overlapping shorthand and longhand entries with equal importance resolve in effective CSS declaration order.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.

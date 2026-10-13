@@ -7,7 +7,7 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
     Processor.transform(tailwindCSS)
 
     const stylesheet = serializeJSObject(
-        addMetaToStylesTemplate(Processor, bundlerConfig.platform),
+        addMetaToStylesTemplate(Processor),
         (key, value) => `"${key}": ${value}`,
     )
     const vars = serializeJSObject(
