@@ -103,30 +103,21 @@ export class ProcessorBuilder {
             this.meta.className = this.declarationConfig.className
         }
 
-        if (declaration.property === 'unparsed') {
-            style[declaration.value.propertyId.property] = this.CSS.processValue(declaration.value.value)
+        const property = declaration.property === 'unparsed'
+            ? declaration.value.propertyId.property
+            : declaration.property === 'custom'
+            ? declaration.value.name
+            : declaration.property
+        const value = declaration.property === 'unparsed' || declaration.property === 'custom'
+            ? this.CSS.processValue(declaration.value.value)
+            : this.CSS.processValue(declaration.value, declaration.property)
 
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.propertyId.property)
-            }
-
-            return
-        }
-
-        if (declaration.property === 'custom') {
-            style[declaration.value.name] = this.CSS.processValue(declaration.value.value)
-
-            if (!isVar && important) {
-                style.importantProperties.push(declaration.value.name)
-            }
-
-            return
-        }
-
-        style[declaration.property] = this.CSS.processValue(declaration.value, declaration.property)
+        // Reinsert repeated properties at their last declaration position before native conversion.
+        delete style[property]
+        style[property] = value
 
         if (!isVar && important) {
-            style.importantProperties.push(declaration.property)
+            style.importantProperties.push(property)
         }
     }
 

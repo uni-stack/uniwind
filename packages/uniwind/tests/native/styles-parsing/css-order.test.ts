@@ -148,6 +148,38 @@ describe('Compiled CSS order', () => {
         expect(resolve('box')).toMatchObject({ paddingLeft: 4, paddingRight: 4 })
     })
 
+    test.each([
+        ['normal', 'padding-inline: 1px; padding-left: 2px; padding-inline: 4px;', { paddingLeft: 4, paddingRight: 4 }],
+        ['important', 'padding-inline: 1px !important; padding-left: 2px !important; padding-inline: 4px !important;', {
+            paddingLeft: 4,
+            paddingRight: 4,
+        }],
+        [
+            'unparsed',
+            `
+            --first: 1px; --side: 2px; --last: 4px;
+            border-inline-width: var(--first); border-left-width: var(--side); border-inline-width: var(--last);
+        `,
+            { borderLeftWidth: 4, borderRightWidth: 4 },
+        ],
+    ])('keeps the last declaration position for repeated %s properties', (_name, declarations, expected) => {
+        compile(`.box { ${declarations} }`)
+
+        expect(resolve('box')).toMatchObject(expected)
+    })
+
+    test('keeps a repeated longhand after an intervening shorthand', () => {
+        compile('.box { padding-left: 1px; padding-inline: 2px; padding-left: 4px; }')
+
+        expect(resolve('box')).toMatchObject({ paddingLeft: 4, paddingRight: 2 })
+    })
+
+    test('keeps a repeated custom property after a generated entry', () => {
+        compile('.box { --uniwind-em: 1px; font-size: 2px; --uniwind-em: 4px; width: 2em; }')
+
+        expect(resolve('box')).toMatchObject({ fontSize: 2, width: 8 })
+    })
+
     test('where selectors have zero specificity', () => {
         compile(`
             .themed:where(.light, .light *) { opacity: 0.25; }
