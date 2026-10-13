@@ -2,7 +2,6 @@ import { Platform, StyleDependency } from '@/common/consts'
 import { isDefined } from '@/common/utils'
 import type { ProcessorBuilder } from './processor'
 import { serialize } from './serialize'
-import type { StyleSheetTemplate } from './types'
 
 const extractVarsFromString = (value: string) => {
     const varsIndexes = [...value.matchAll(/vars\[/g)].map(m => m.index)
@@ -53,9 +52,9 @@ const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, vi
 }
 
 export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlatform: Platform) => {
-    const stylesheetsEntries = Object.entries(Processor.stylesheets as StyleSheetTemplate)
+    const stylesheetsEntries = Object.entries(Processor.stylesheets)
         .map(([className, stylesPerMediaQuery]) => {
-            const styles = stylesPerMediaQuery.map((style, index) => {
+            const styles = stylesPerMediaQuery.map(({ style, meta }, index) => {
                 const {
                     platform,
                     rtl,
@@ -64,7 +63,6 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     minWidth,
                     maxWidth,
                     colorScheme,
-                    important: _,
                     importantProperties,
                     active,
                     focus,
@@ -72,13 +70,12 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     dataAttributes,
                     complexity,
                     importantComplexity,
-                    ...rest
-                } = style
+                } = meta
 
                 const nativeEntries = new Map<string, any>()
                 const nativeImportantProperties = new Set<string>()
 
-                for (const [property, value] of Object.entries(rest)) {
+                for (const [property, value] of Object.entries(style)) {
                     const important = importantProperties?.includes(property) ?? false
 
                     for (const [nativeProperty, nativeValue] of Processor.RN.cssToRN(property, value)) {
@@ -155,7 +152,6 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder, currentPlat
                     orientation: makeSafeForSerialization(orientation),
                     rtl,
                     colorScheme: makeSafeForSerialization(colorScheme),
-                    native: platform !== null,
                     dependencies: dependencies.length > 0 ? dependencies : null,
                     index,
                     className: makeSafeForSerialization(className),

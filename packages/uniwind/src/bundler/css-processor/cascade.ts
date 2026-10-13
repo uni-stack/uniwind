@@ -1,4 +1,5 @@
 import type { Selector } from 'lightningcss'
+import type { StyleTemplate } from './types'
 
 type Layer = {
     order: Array<number>
@@ -6,7 +7,7 @@ type Layer = {
 }
 
 type CascadeRule = {
-    style: Record<string, any>
+    meta: StyleTemplate['meta']
     layer: Array<number>
     specificity: number
     order: number
@@ -44,7 +45,7 @@ export class Cascade {
         order: [],
         children: new Map(),
     }
-    private rules = new Map<Record<string, any>, CascadeRule>()
+    private rules = new Map<StyleTemplate['meta'], CascadeRule>()
 
     declareLayer(name: Array<string> | null) {
         return (name ?? [Symbol()]).reduce<Layer>((parent, part) => {
@@ -70,8 +71,8 @@ export class Cascade {
         this.layer = parent
     }
 
-    add(style: Record<string, any>, specificity: number, order: number) {
-        this.rules.set(style, { style, layer: this.layer.order, specificity, order })
+    add(meta: StyleTemplate['meta'], specificity: number, order: number) {
+        this.rules.set(meta, { meta, layer: this.layer.order, specificity, order })
     }
 
     assignRanks() {
@@ -83,8 +84,8 @@ export class Cascade {
                 || a.specificity - b.specificity
                 || a.order - b.order
             )
-            rules.forEach(({ style }, index) => {
-                style[important ? 'importantComplexity' : 'complexity'] = index + (important ? rules.length : 0)
+            rules.forEach(({ meta }, index) => {
+                meta[important ? 'importantComplexity' : 'complexity'] = index + (important ? rules.length : 0)
             })
         }
     }

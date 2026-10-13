@@ -13,7 +13,6 @@ export type Style = {
     orientation: Orientation | null
     theme: ThemeName | null
     rtl: boolean | null
-    native: boolean
     dependencies: Array<StyleDependency> | null
     index: number
     className: string
