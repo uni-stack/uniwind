@@ -57,3 +57,13 @@ jobs:
       - name: Label Issue
         if: github.event_name == 'workflow_dispatch' || steps.check.outputs.valid == 'false'
         run: gh issue edit "$NUMBER" --add-label "repro-required" --repo "$REPO"
+      - name: Label valid issue
+        if: steps.template.outputs.valid == 'true' && steps.check.outputs.valid == 'true' && !github.event.issue.labels[0]
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          if echo "$BODY" | grep -qF 'I am a Uniwind Pro user'; then
+            gh issue edit "$NUMBER" --add-label "uniwind-pro,priority,triage" --repo "$REPO"
+          else
+            gh issue edit "$NUMBER" --add-label "uniwind-oss,triage" --repo "$REPO"
+          fi
