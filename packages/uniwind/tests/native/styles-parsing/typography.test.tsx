@@ -51,6 +51,14 @@ describe('Typography', () => {
         expect(getStylesFromId('font-black').fontWeight).toBe(900)
     })
 
+    test('Tabular Numbers', () => {
+        const { getStylesFromId } = renderUniwind(
+            <View className="tabular-nums" testID="tabular-nums" />,
+        )
+
+        expect(getStylesFromId('tabular-nums')).toEqual({ fontVariant: ['tabular-nums'] })
+    })
+
     test('Line Height', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
