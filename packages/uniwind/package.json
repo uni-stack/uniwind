@@ -124,6 +124,7 @@
         "@types/culori": "4.0.1",
         "@types/jest": "30.0.0",
         "@types/react": "catalog:",
+        "babel-plugin-react-compiler": "1.0.0",
         "dpdm": "4.3.0",
         "git-cliff": "2.14.2",
         "jest": "30.5.2",
