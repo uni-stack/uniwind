@@ -1,5 +1,5 @@
 import { generateDataSet } from '../../components/web/generateDataSet'
-import type { RNStyle, UniwindContextType } from '../types'
+import type { CSSVariables, RNStyle, UniwindContextType } from '../types'
 import { CSSListener } from './cssListener'
 import { parseCSSValue, toWebValue } from './webUtils'
 
@@ -17,22 +17,32 @@ if (dummyParent && dummy) {
     dummyParent.appendChild(dummy)
 }
 
-// Applies scoped variables to dummyParent so they cascade to dummy during style
-// computation. Returns a disposer that removes them
+// Keep the private probe in the current scope; only changed variables invalidate its styles.
 const applyScopedVariables = (uniwindContext: UniwindContextType) => {
-    if (!dummyParent || uniwindContext.variables === null) {
-        return () => {}
+    if (!dummyParent) {
+        return
     }
 
-    const names = Object.keys(uniwindContext.variables)
+    const variables: CSSVariables = uniwindContext.variables ?? {}
+    const style = dummyParent.style
 
-    Object.entries(uniwindContext.variables).forEach(([name, value]) => {
-        dummyParent.style.setProperty(name, toWebValue(value))
+    Array.from(style).forEach(name => {
+        if (name.startsWith('--') && !Object.prototype.hasOwnProperty.call(variables, name)) {
+            style.removeProperty(name)
+        }
     })
 
-    return () => {
-        names.forEach(name => dummyParent.style.removeProperty(name))
-    }
+    Object.entries(variables).forEach(([name, value]) => {
+        if (!name.startsWith('--')) {
+            return
+        }
+
+        const next = toWebValue(value)
+
+        if (style.getPropertyValue(name) !== next) {
+            style.setProperty(name, next)
+        }
+    })
 }
 
 const getActiveStylesForClass = (className: string) => {
@@ -42,16 +52,10 @@ const getActiveStylesForClass = (className: string) => {
         return extractedStyles
     }
 
-    const classNames = className.split(/\s+/).filter(Boolean)
     const computedStyles = window.getComputedStyle(dummy)
 
-    CSSListener.activeRules.forEach(rule => {
+    CSSListener.getRulesForClassName(className).forEach(rule => {
         const selector = rule.selectorText
-        const mightMatch = classNames.some((cls) => selector.includes(`.${CSS.escape(cls)}`))
-
-        if (!mightMatch) {
-            return
-        }
 
         // element.matches() throws errors if it sees pseudo-elements like ::before
         // So we strip them out safely just for the matching test
@@ -96,13 +100,12 @@ export const getWebStyles = (
         dummyParent?.removeAttribute('dir')
     }
 
-    const disposeScopedVariables = applyScopedVariables(uniwindContext)
+    applyScopedVariables(uniwindContext)
+    dummy.className = className
+
+    const dataSet = generateDataSet(componentProps ?? {})
 
     try {
-        dummy.className = className
-
-        const dataSet = generateDataSet(componentProps ?? {})
-
         if (dataSet) {
             Object.entries(dataSet).forEach(([key, value]) => {
                 if (value === false || value === undefined) {
@@ -114,12 +117,6 @@ export const getWebStyles = (
         }
 
         const computedStyles = getActiveStylesForClass(className)
-
-        if (dataSet) {
-            Object.keys(dataSet).forEach(key => {
-                delete dummy.dataset[key]
-            })
-        }
 
         return Object.fromEntries(
             Object.entries(computedStyles)
@@ -135,7 +132,11 @@ export const getWebStyles = (
                 }),
         )
     } finally {
-        disposeScopedVariables()
+        if (dataSet) {
+            Object.keys(dataSet).forEach(key => {
+                delete dummy.dataset[key]
+            })
+        }
     }
 }
 
@@ -156,13 +157,8 @@ export const getWebVariable = (name: string, uniwindContext: UniwindContextType)
         dummyParent.removeAttribute('dir')
     }
 
-    const disposeScopedVariables = applyScopedVariables(uniwindContext)
+    applyScopedVariables(uniwindContext)
+    const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
 
-    try {
-        const variable = window.getComputedStyle(dummyParent).getPropertyValue(name)
-
-        return parseCSSValue(variable)
-    } finally {
-        disposeScopedVariables()
-    }
+    return parseCSSValue(variable)
 }
