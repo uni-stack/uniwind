@@ -156,7 +156,7 @@ const button = tv({
 
 ## cn Utility — Class Deduplication
 
-Uniwind does **NOT** auto-deduplicate conflicting classNames. This means if the same property appears in multiple classes, **both will be applied and the result is unpredictable**. This is especially critical when mixing custom CSS classes with Tailwind utilities.
+Uniwind does **NOT** remove conflicting classNames. When two classes set the same property, the winner is decided by the CSS cascade (Uniwind 1.13.0+ / Pro 1.9.0+): `!important`, then cascade layer, then selector specificity, then order in the compiled CSS. **className order does not matter**, so `cn('p-4', props.className)` is what lets a consumer's `p-2` replace the default `p-4`: tailwind-merge removes `p-4`.
 
 ### Setup
 
@@ -185,26 +185,7 @@ import { cn } from '@/lib/cn';
 <Text className={cn('text-base', isActive && 'text-primary', disabled && 'opacity-50')} />
 ```
 
-2. **CRITICAL: Mixing custom CSS classes with Tailwind utilities** — if your custom CSS class sets a property that a Tailwind utility also sets, you MUST use `cn()` to deduplicate:
-
-```css
-/* global.css */
-.card {
-  background-color: white;
-  border-radius: 12px;
-  padding: 16px;
-}
-```
-
-```tsx
-// WRONG — both .card (padding: 16px) and p-6 (padding: 24px) apply, result is unpredictable
-<View className="card p-6" />
-
-// CORRECT — cn deduplicates, p-6 wins over .card's padding
-<View className={cn('card', 'p-6')} />
-```
-
-3. **tv() output combined with extra classes** — tv already handles its own variants, but if you add more classes on top:
+2. **tv() output combined with extra classes** — tv already handles its own variants, but if you add more classes on top:
 
 ```tsx
 <Pressable className={cn(button({ color: 'primary' }), props.className)} />
@@ -214,6 +195,7 @@ import { cn } from '@/lib/cn';
 
 - Static className with no conflicts: `<View className="flex-1 p-4 bg-white" />`
 - Single custom CSS class with no overlapping Tailwind: `<View className="card-shadow mt-4" />` (if card-shadow only sets box-shadow which no Tailwind class also sets)
+- Custom CSS class overlapping a utility: `cn()` can't fix this, because tailwind-merge ignores classes it doesn't know. Control it with cascade layers instead: declare the custom class in `@layer components` so utilities override it (see Priority rules below and `references/css-and-utilities.md`)
 
 ## Important Utilities and Style Specificity
 
@@ -230,8 +212,11 @@ import { View, Pressable } from 'react-native';
 <View className="pt-4 ios:pt-12! android:pt-8!" />;
 ```
 
-Priority rules:
-- Important utility (`bg-red-500!`) overrides non-important utility (`bg-blue-500`) for the same property.
+Priority rules (CSS cascade, Uniwind 1.13.0+ / Pro 1.9.0+), evaluated per style property:
+- Important declarations beat normal ones. `bg-red-500!` overrides `bg-blue-500`.
+- Then cascade layer: unlayered CSS > `@layer utilities` (Tailwind utilities) > `@layer components` > `@layer base`. For `!important` declarations the layer order is reversed, like in CSS.
+- Then selector specificity: classes, state variants (`active:`, `focus:`, `disabled:`) and `data-*` variants each add specificity. `:where(...)` and media queries (breakpoints, `ios:`, `dark:`) add none.
+- Then order in the compiled CSS. The order of classes inside `className` never matters: `"p-4 p-2"` and `"p-2 p-4"` resolve the same way.
 - Important variants work normally: `active:bg-red-500!`, `ios:pt-12!`, `dark:text-white!`.
 - Inline `style` always wins, even over important className utilities: `<View className="bg-red-500!" style={{ backgroundColor: 'blue' }} />` renders blue.
 - Use `!` sparingly. For reusable components and consumer overrides, prefer `cn()` with `tailwind-merge`.

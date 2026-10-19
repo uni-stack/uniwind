@@ -41,6 +41,7 @@ When styles aren't working, check in this order:
 | TypeScript errors on className | Missing types file | Run Metro to generate `uniwind-types.d.ts` |
 | `withUniwindConfig is not a function` | Wrong import | Use `require('uniwind/metro')` not `require('uniwind')` |
 | Hot reload full-reloads | global.css imported in wrong file | Move to App.tsx or root layout |
+| Editing a CSS file imported by global.css (e.g. `@import './tokens.css'`) doesn't hot reload on native | Imported CSS wasn't tracked by Metro | Fixed in Uniwind 1.13.0+ / Pro 1.9.0+. On older versions, save `global.css` or restart Metro |
 | `cssEntryFile` error / Metro crash | Absolute path used | Use relative: `'./global.css'` |
 | `withUniwindConfig` not outermost | Another wrapper wraps Uniwind | Swap order so Uniwind is outermost |
 | Dark theme not working | Missing `@variant dark` | Define dark variant in `@layer theme` |
@@ -60,6 +61,8 @@ When styles aren't working, check in this order:
 | `Uniwind.setTheme('system')` crash on Android (RN 0.82+) | RN 0.82 changed Appearance API | Update to latest Uniwind (fixed). Avoid `setTheme('system')` on older Uniwind + RN 0.82+ |
 | Styles flash/disappear on initial load (Android) | `SafeAreaListener` fires before component listeners mount | Fixed in recent versions. If persists, ensure Uniwind is latest |
 | `useTVEventHandler` is undefined | Uniwind module replacement interferes with tvOS exports | Fixed in v1.2.1+. Update Uniwind |
+| `AssetRegistry` (or another newer `react-native` export) is undefined, e.g. `expo-asset` fails with `Cannot read property 'getAssetByID' of undefined` or `useFonts` never resolves | Older Uniwind re-exported only a fixed list of React Native exports, missing ones added in RN 0.88 | Fixed in Uniwind 1.13.0+ / Pro 1.9.0+, which forwards every `react-native` export. Update Uniwind |
+| Custom CSS class now overrides a utility (or the reverse) after upgrading | Uniwind 1.13.0+ / Pro 1.9.0+ resolves conflicts by CSS cascade: unlayered custom CSS beats `@layer utilities`, and className order is ignored | Move the custom class into `@layer components { ... }` so utilities override it, or use `!` on the utility |
 | `@layer theme` variables not rendering on web | Bug with RNW + Expo SDK 55 | Fixed in v1.4.1+. Update Uniwind |
 | `updateCSSVariables` wrong theme at app start | Calling for multiple themes back-to-back; last call wins on first render | Call `updateCSSVariables` for the current theme last. After initial load, order doesn't matter |
 | Pro: animations not working | Missing Babel plugin | Add `react-native-worklets/plugin` to babel.config.js |

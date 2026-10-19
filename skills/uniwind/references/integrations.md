@@ -42,7 +42,7 @@ Use semantic color tokens (`bg-primary`, `text-foreground`) for theme consistenc
 ## Supported vs Unsupported Classes
 
 React Native uses the Yoga layout engine. Key differences from web CSS:
-- **No CSS cascade/inheritance** — styles don't inherit from parents
+- **No style inheritance** — styles don't inherit from parents (e.g. `text-*` on a `View` doesn't reach a child `Text`). Conflicting rules on the same element do follow the CSS cascade (layers, specificity, source order) from Uniwind 1.13.0+ / Pro 1.9.0+
 - **Flexbox by default** — all views use flexbox with `flexDirection: 'column'`
 - **Limited CSS properties** — no floats, grid, pseudo-elements
 

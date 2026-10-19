@@ -123,20 +123,44 @@ You can combine custom CSS classes with Tailwind utilities in a single `classNam
 </View>
 ```
 
-**WARNING**: If a custom CSS class and a Tailwind utility set the **same property**, you **MUST** use `cn()` to deduplicate. Without `cn()`, both values apply and the result is unpredictable:
+**Conflicts follow the CSS cascade** (Uniwind 1.13.0+ / Pro 1.9.0+). When a custom class and a Tailwind utility set the **same property**, native resolves it the same way the browser does: `!important` first, then cascade layer, then selector specificity, then order in the compiled CSS. The order of classes inside `className` does not matter.
+
+Tailwind utilities are emitted in `@layer utilities`. Unlayered CSS beats every layer, so a custom class written at the top level of `global.css` overrides utilities:
+
+```css
+/* global.css */
+.card-shadow {
+  border-radius: 12px; /* unlayered: beats rounded-2xl */
+}
+```
 
 ```tsx
-// WRONG — .container sets flex:1, and flex-1 also sets flex:1 (harmless but wasteful)
-// WRONG — .container sets width:100%, and w-full also sets width:100% (redundant)
-// DANGEROUS — .card-shadow sets border-radius:12px, and rounded-2xl sets border-radius:16px — CONFLICT!
+// .card-shadow wins, border-radius is 12px (same result for "rounded-2xl card-shadow")
 <View className="card-shadow rounded-2xl" />
 
-// CORRECT — cn ensures rounded-2xl wins
-import { cn } from '@/lib/cn';
+// cn() does NOT help here: tailwind-merge doesn't know `card-shadow`, so both classes stay
 <View className={cn('card-shadow', 'rounded-2xl')} />
 ```
 
-**Rule of thumb**: If your custom CSS class sets properties that might overlap with Tailwind utilities you'll also use, always wrap with `cn()`. See **cn Utility** section for full setup.
+To make a custom class a base that utilities can override, put it in `@layer components`:
+
+```css
+/* global.css */
+@layer components {
+  .card-shadow {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+```
+
+```tsx
+// rounded-2xl wins, border-radius is 16px
+<View className="card-shadow rounded-2xl" />
+```
+
+**Rule of thumb**: Put reusable custom classes in `@layer components` so consumers can override them with utilities. Keep a class unlayered only when it must win over utilities. Use `!` (`rounded-2xl!`) to force a single utility over an unlayered class.
 
 ### Guidelines for Custom CSS
 
