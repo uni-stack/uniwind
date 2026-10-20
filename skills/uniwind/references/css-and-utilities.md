@@ -125,7 +125,7 @@ You can combine custom CSS classes with Tailwind utilities in a single `classNam
 
 **Conflicts follow the CSS cascade** (Uniwind 1.13.0+ / Pro 1.9.0+). When a custom class and a Tailwind utility set the **same property**, native resolves it the same way the browser does: `!important` first, then cascade layer, then selector specificity, then order in the compiled CSS. The order of classes inside `className` does not matter.
 
-Tailwind utilities are emitted in `@layer utilities`. Unlayered CSS beats every layer, so a custom class written at the top level of `global.css` overrides utilities:
+Tailwind utilities are emitted in `@layer utilities`. For normal (non-`!important`) declarations, unlayered CSS beats layered CSS, so a custom class written at the top level of `global.css` overrides utilities (for `!important` declarations the layer order is reversed):
 
 ```css
 /* global.css */
