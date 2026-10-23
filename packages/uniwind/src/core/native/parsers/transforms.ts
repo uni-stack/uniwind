@@ -36,7 +36,8 @@ export const parseTransformsMutation = (styles: Record<string, any>) => {
         if (transformTokens.length > 0) {
             // Transforms inside transform - transform: rotate(45deg);
             for (const token of transformTokens) {
-                if (!token.startsWith(transform)) {
+                // Match the function name exactly, `rotate` must not take `rotateX(45deg)`
+                if (!token.startsWith(`${transform}(`)) {
                     continue
                 }
 

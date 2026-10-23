@@ -111,7 +111,7 @@ export class Functions {
             return '""'
         }
 
-        if (['skewX', 'skewY'].includes(fn.name)) {
+        if (['rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY'].includes(fn.name)) {
             return `"${fn.name}(${this.Processor.CSS.processValue(fn.arguments).replace(/"/g, '')})"`
         }
 
