@@ -39,6 +39,24 @@ describe('Transforms', () => {
         expect(getStylesFromId('-rotate-90').transform).toEqual([{ rotateZ: '-90deg' }])
     })
 
+    test('Rotate 3D', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="rotate-x-45" testID="rotate-x-45" />
+                <View className="rotate-y-180" testID="rotate-y-180" />
+                <View className="-rotate-y-45" testID="-rotate-y-45" />
+                <View className="rotate-z-30" testID="rotate-z-30" />
+                <View className="rotate-x-12 rotate-y-12" testID="rotate-x-12-rotate-y-12" />
+            </React.Fragment>,
+        )
+
+        expect(getStylesFromId('rotate-x-45').transform).toEqual([{ rotateX: '45deg' }])
+        expect(getStylesFromId('rotate-y-180').transform).toEqual([{ rotateY: '180deg' }])
+        expect(getStylesFromId('-rotate-y-45').transform).toEqual([{ rotateY: '-45deg' }])
+        expect(getStylesFromId('rotate-z-30').transform).toEqual([{ rotateZ: '30deg' }])
+        expect(getStylesFromId('rotate-x-12-rotate-y-12').transform).toEqual([{ rotateX: '12deg' }, { rotateY: '12deg' }])
+    })
+
     test('Translate', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
