@@ -20,13 +20,18 @@ describe('Tailwind import options', () => {
         'prefix(tw)',
         'theme(static)',
     ])('@import with %s still collects theme variables', async option => {
-        fs.writeFileSync(path.join(dir, 'theme.css'), '@variant dark { --color-background: black; }')
+        fs.writeFileSync(
+            path.join(dir, 'theme.css'),
+            [
+                '@variant light { --color-background: white; }',
+                '@variant dark { --color-background: black; }',
+            ].join('\n'),
+        )
         fs.writeFileSync(
             path.join(dir, 'global.css'),
             [
                 `@import 'tailwindcss' ${option};`,
                 `@import './theme.css' ${option};`,
-                '@variant light { --color-background: white; }',
             ].join('\n'),
         )
 
