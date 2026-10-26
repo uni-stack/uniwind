@@ -247,7 +247,7 @@ class UniwindStoreBuilder {
 
 export const UniwindStore = new UniwindStoreBuilder()
 
-Dimensions.addEventListener('change', ({ window }) => {
+Dimensions.addEventListener('change', ({ window }: { window: ReturnType<typeof Dimensions.get> }) => {
     const newOrientation = window.width > window.height ? Orientation.Landscape : Orientation.Portrait
     const orientationChanged = UniwindStore.runtime.orientation !== newOrientation
 

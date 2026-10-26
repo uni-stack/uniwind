@@ -1,6 +1,8 @@
-import type { GradientValue } from 'react-native'
+import type { ViewStyle } from 'react-native'
 
 type InferFromReadonlyArray<T> = T extends ReadonlyArray<infer U> ? U : never
+
+type BackgroundImageValue = InferFromReadonlyArray<ViewStyle['backgroundImage']>
 
 const gradientDirectionTokens = new Set(['to', 'top', 'right', 'bottom', 'left'])
 
@@ -15,7 +17,7 @@ export const resolveGradient = (value: string) => {
         return {
             color: color!,
             positions: position !== undefined ? [position] : undefined,
-        } satisfies InferFromReadonlyArray<GradientValue['colorStops']>
+        } satisfies InferFromReadonlyArray<BackgroundImageValue['colorStops']>
     })
 
     const direction = directionToken
@@ -35,5 +37,5 @@ export const resolveGradient = (value: string) => {
             type: 'linear-gradient',
             direction,
         },
-    ] satisfies Array<GradientValue>
+    ] satisfies Array<BackgroundImageValue>
 }

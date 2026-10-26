@@ -39,6 +39,10 @@ declare module 'react-native' {
     interface ScrollViewProps extends ViewProps, ScrollViewPropsBase {
         contentContainerClassName?: string
         endFillColorClassName?: string
+        /** Only applies to VirtualizedList; declared here for React Native's generated VirtualizedListProps. */
+        ListFooterComponentClassName?: string
+        /** Only applies to VirtualizedList; declared here for React Native's generated VirtualizedListProps. */
+        ListHeaderComponentClassName?: string
     }
 
     interface SectionListProps<ItemT> extends VirtualizedListProps<ItemT> {

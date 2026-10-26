@@ -48,7 +48,6 @@ export const patchMetroGraphToIncludeCssInLazyGraphs = (cssEntryPath: string) =>
         return original_initialTraverseDependencies.call(this, options)
     }
 
-    // @ts-expect-error patch Graph initialTraverseDependencies method
     Graph.prototype.initialTraverseDependencies = initialTraverseDependencies
     initialTraverseDependencies.__uniwindLazyCssEntryPatched = true
 }
@@ -80,7 +79,6 @@ export const patchMetroGraphToSupportUncachedModules = () => {
         return original_traverseDependencies.call(this, paths, options)
     }
 
-    // @ts-expect-error patch Graph traverseDependencies method
     Graph.prototype.traverseDependencies = traverseDependencies
     traverseDependencies.__patched = true
 }

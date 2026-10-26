@@ -6,7 +6,9 @@ import InputAccessoryView from '../../../src/components/web/InputAccessoryView'
 describe('InputAccessoryView', () => {
     test('applies className', () => {
         const { container } = render(
-            <InputAccessoryView className="bg-red-500" />,
+            <InputAccessoryView className="bg-red-500">
+                <span>Accessory content</span>
+            </InputAccessoryView>,
         )
 
         const view = container.firstElementChild

@@ -37,7 +37,7 @@ const getConfig = (config: Config) =>
                 jsxImportSource: 'react',
             },
         },
-    ] satisfies Array<BuildConfig['entries'][number]>
+    ] satisfies Array<NonNullable<BuildConfig['entries']>[number]>
 
 export default defineBuildConfig({
     entries: [
@@ -95,6 +95,10 @@ export default defineBuildConfig({
                 '!metro/**',
                 '!bundler/adapters/metro/**',
                 '!bundler/adapters/vite/**',
+                '!components/index.ts',
+                '!components/utils.ts',
+                '!components/native/**',
+                '!components/web/**',
             ],
             declaration: true,
         }),

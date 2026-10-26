@@ -36,7 +36,7 @@ Important paths:
 - `packages/uniwind/src/bundler`: Metro/Vite adapters, Tailwind compilation, CSS processing, artifact generation.
 - `packages/uniwind/tests`: native, web, type, and e2e tests.
 - `packages/uniwind/uniwind.css`: package-level CSS artifact referenced by package `style` export.
-- `packages/uniwind/no-types.d.ts`: published placeholder declaration for component subpath exports.
+- `packages/uniwind/no-types.d.ts`: published placeholder declaration for component subpath exports. The build therefore emits no declarations for the hidden component implementations (`src/components/{index,utils}.ts`, `native/**`, `web/**`); only components re-exported from the root entry get `.d.ts` files.
 
 Public exports from `src/index.ts`:
 
@@ -61,7 +61,7 @@ Stability policy: public package and subpath exports are semver-stable. Generate
 
 Dependency policy: peer dependency floors are support contracts. Raising support floors for Tailwind, React, or React Native requires semver-major unless an upstream ecosystem break makes that impossible to honor.
 
-Workspace dependency alignment: the examples share Expo SDK 57's React Native 0.86 and React 19.2 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.2.3 and React 19.2 types. Development uses Node.js 22.13+ (or a supported newer LTS), including Vitest 5. TypeScript stays on 6 until the declaration-build tooling supports TypeScript 7's compiler API changes, and native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.5 until that pin is lifted.
+Workspace dependency alignment: the examples share Expo SDK 58's React Native 0.88 and React 19.3 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.3.0 and React 19.3 types. Development uses Bun 1.4.4 and Node.js 22.13+ (or a supported newer LTS), including Vitest 5. Formatting uses dprint. jsdom stays on 30.1.1 and release-it on 21.1.0 until the development Node.js baseline reaches 22.22.2 (or 24.15+). TypeScript stays on 6 until the declaration-build tooling supports TypeScript 7's compiler API changes, and native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.6 until that pin is lifted.
 
 ## Runtime Model
 
@@ -176,6 +176,7 @@ Web visitor behavior:
 
 Native components:
 
+- React Native 0.88's generated `VirtualizedListProps` is a type alias built from `ScrollViewProps`, so header/footer class-name props are augmented through `ScrollViewProps`. Keep the legacy `VirtualizedListWithoutRenderItemProps` augmentation for older supported React Native versions.
 - Native wrappers import the underlying `react-native` component.
 - `useStyle(className, props, state)` resolves `className` through `UniwindStore` and subscribes to style dependencies.
 - Most components combine generated style before user style: `[generatedStyle, props.style]`, preserving user overrides.
@@ -224,7 +225,7 @@ Native test setup disables Node's optional `module.register` and `module.registe
 
 `@import "uniwind"` in `tests/test.css` resolves to the package's `uniwind.css`. Native test setup builds that file for a project without theme variables (`tests/default.css`), which matches the committed file, never from the test themes, so a test run leaves the published artifact unchanged.
 
-The bare example's React Native CLI uses Metro 0.84 internally. The Metro development dependency stays on 0.85 until that CLI is upgraded: Metro 0.86/0.87 transformer workers emit full source maps that the older CLI serializer cannot consume. Metro dependency upgrades must pass the bare production bundle checks.
+The bare example's React Native CLI uses Metro 0.87 internally, matching Expo SDK 58; the uniwind package's Metro development dependency uses 0.87.1. Metro dependency upgrades must pass the bare production bundle checks.
 
 Source-of-truth policy: repository code and tests win for implementation details. External docs at `docs.uniwind.dev` describe intended public behavior and should be updated when public behavior changes.
 

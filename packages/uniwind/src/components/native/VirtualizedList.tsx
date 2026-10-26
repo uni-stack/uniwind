@@ -4,7 +4,7 @@ import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
-export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props: VirtualizedListProps<unknown>) => {
+export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props: VirtualizedListProps) => {
     const style = useStyle(props.className, props)
     const contentContainerStyle = useStyle(props.contentContainerClassName, props)
     const listFooterComponentStyle = useStyle(props.ListFooterComponentClassName, props)

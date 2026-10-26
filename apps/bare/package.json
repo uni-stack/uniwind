@@ -19,9 +19,9 @@
         "@react-native-community/cli": "20.2.0",
         "@react-native-community/cli-platform-android": "20.2.0",
         "@react-native-community/cli-platform-ios": "20.2.0",
-        "@react-native/babel-preset": "0.86.3",
-        "@react-native/metro-config": "0.86.3",
-        "@react-native/typescript-config": "0.86.3",
+        "@react-native/babel-preset": "0.88.0",
+        "@react-native/metro-config": "0.88.0",
+        "@react-native/typescript-config": "0.88.0",
         "@types/react": "catalog:",
         "typescript": "catalog:"
     },

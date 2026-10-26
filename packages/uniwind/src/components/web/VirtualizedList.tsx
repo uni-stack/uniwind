@@ -4,7 +4,7 @@ import { copyComponentProperties } from '../utils'
 import { generateDataSet } from './generateDataSet'
 import { toRNWClassName } from './rnw'
 
-export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props: VirtualizedListProps<unknown>) => {
+export const VirtualizedList = copyComponentProperties(RNVirtualizedList, (props: VirtualizedListProps) => {
     return (
         <RNVirtualizedList
             {...props}
