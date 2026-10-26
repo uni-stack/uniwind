@@ -20,6 +20,10 @@ const isExcludedDependency = (url: string) =>
         url.includes('node_modules/uniwind'),
     ].some(Boolean)
 
+// Lightning CSS only understands the standard `@import` grammar, so Tailwind's
+// `source()`, `prefix()` and `theme()` import options are syntax errors there
+const stripTailwindImportOptions = (css: string) => css.replace(/@import[^;]+;/g, rule => rule.replace(/\s+(?:source|prefix|theme)\([^)]*\)/g, ''))
+
 export const generateCSSForThemes = async (themes: Array<string>, input: string) => {
     // css generation
     const themesVariables = Object.fromEntries(themes.map(theme => [theme, new Set<string>()]))
@@ -32,7 +36,7 @@ export const generateCSSForThemes = async (themes: Array<string>, input: string)
         }
 
         const { dependencies } = transform({
-            code: Buffer.from(css),
+            code: Buffer.from(stripTailwindImportOptions(css)),
             filename: 'uniwind.css',
             analyzeDependencies: true,
             visitor: {
