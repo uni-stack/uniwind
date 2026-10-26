@@ -20,14 +20,13 @@ const isExcludedDependency = (url: string) =>
         url.includes('node_modules/uniwind'),
     ].some(Boolean)
 
-// Lightning CSS only understands the standard `@import` grammar, so Tailwind's
-// `source()`, `prefix()` and `theme()` import options are syntax errors there.
-// Quoted strings are matched as a whole, so paths like `source("./src/(app)")` are stripped correctly
-const QUOTED_OR = `"[^"]*"|'[^']*'`
-const importRuleRegex = new RegExp(`@import(?:${QUOTED_OR}|[^;"'])+;`, 'g')
-const importOptionRegex = new RegExp(`\\s+(?:source|prefix|theme)\\((?:${QUOTED_OR}|[^)"'])*\\)`, 'g')
+// Strips Tailwind's `source()`, `prefix()` and `theme()` @import options, which Lightning CSS can't parse
+const QUOTED_OR_COMMENT = `/\\*[\\s\\S]*?\\*/|"[^"]*"|'[^']*'`
+const importRuleRegex = new RegExp(`@import(?:${QUOTED_OR_COMMENT}|[^;"'])+;`, 'g')
+const importOptionRegex = new RegExp(`(${QUOTED_OR_COMMENT})|\\s+(?:source|prefix|theme)\\((?:${QUOTED_OR_COMMENT}|[^)"'])*\\)`, 'g')
 
-const stripTailwindImportOptions = (css: string) => css.replace(importRuleRegex, rule => rule.replace(importOptionRegex, ''))
+const stripTailwindImportOptions = (css: string) =>
+    css.replace(importRuleRegex, rule => rule.replace(importOptionRegex, (_, kept?: string) => kept ?? ''))
 
 export const generateCSSForThemes = async (themes: Array<string>, input: string) => {
     // css generation
