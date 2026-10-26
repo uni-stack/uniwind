@@ -16,6 +16,8 @@ describe('Tailwind import options', () => {
 
     test.each([
         `source('./')`,
+        `source("./src/(app)")`,
+        `source('./src/(app);')`,
         'source(none)',
         'prefix(tw)',
         'theme(static)',
