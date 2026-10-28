@@ -1,4 +1,26 @@
-## What's Changed in 1.13.0
+## What's Changed in 1.13.1
+
+
+
+### 🐛 Bug Fixes
+* fix: keep rotate-x/y/z angles in native transforms by @mkantautas in [#749](https://github.com/uni-stack/uniwind/pull/749)
+* fix: support Tailwind import options in theme generation by @Brentlok in [#752](https://github.com/uni-stack/uniwind/pull/752)
+* fix: keep useUniwind in sync when compiled by React Compiler by @dlebedynskyi in [#719](https://github.com/uni-stack/uniwind/pull/719)
+* fix(web): avoid repeated scoped variable mutations by @eserdeiro in [#692](https://github.com/uni-stack/uniwind/pull/692)
+
+
+### ⚡ Performance
+* perf: sort scoped variable cache keys without localeCompare by @dlebedynskyi in [#754](https://github.com/uni-stack/uniwind/pull/754)
+
+
+### 🏠 Chores
+* chore: update deps by @Brentlok in [#753](https://github.com/uni-stack/uniwind/pull/753)
+
+
+### New Contributors
+* @mkantautas made their first contribution in [#749](https://github.com/uni-stack/uniwind/pull/749)
+* @eserdeiro made their first contribution in [#692](https://github.com/uni-stack/uniwind/pull/692)
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.13.0...v1.13.1## What's Changed in 1.13.0
 
 
 
