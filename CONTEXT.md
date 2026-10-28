@@ -1,6 +1,6 @@
 # Uniwind Context
 
-This document captures working context for `packages/uniwind`, the published `uniwind` package in this monorepo. Keep it current when architecture, public APIs, supported platforms, or build/runtime contracts change.
+This document captures lasting architectural guidance and support contracts for `packages/uniwind`, the published `uniwind` package in this monorepo. Update it only when existing guidance becomes materially incorrect or a new lasting decision or contract is needed for future work. Routine bug fixes, internal refactors, optimizations, tests, and dependency bumps normally need no update. Keep implementation details in code and tests; this document is not a changelog.
 
 ## Product
 

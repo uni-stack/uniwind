@@ -4,7 +4,7 @@ Read `CONTEXT.md` before making code changes.
 
 Follow existing project patterns. Prefer small, focused changes. Do not duplicate architecture or domain context here; keep `CONTEXT.md` as the source of truth.
 
-Before changing public APIs, build/runtime contracts, supported platforms, or architecture, update `CONTEXT.md`.
+Update `CONTEXT.md` only when a change makes its existing guidance materially incorrect or introduces a lasting architectural decision or support contract that future work needs to know. Routine bug fixes, internal refactors, optimizations, tests, and dependency bumps normally need no update. Keep implementation details in code and tests; do not use this file as a changelog.
 
 ## Checks
 
