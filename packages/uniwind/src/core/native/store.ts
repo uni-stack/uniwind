@@ -1,16 +1,27 @@
 import { Dimensions, Platform } from 'react-native'
 import { Orientation, Platform as UniwindPlatform, StyleDependency, UNIWIND_PLATFORM_VARIABLES, UNIWIND_THEME_VARIABLES } from '../../common/consts'
-import { UniwindListener } from '../listener'
-import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
-import { getScopedVars } from './native-utils'
+import { coversAnyLonghand, SHORTHAND_ROLES } from '../../uniparser/src/common/shorthands'
 import {
+    applyShorthandsMutation,
+    deleteUnsetStylesMutation,
+    ONE_VALUE,
     parseBoxShadow,
+    parseFilter,
     parseFontVariant,
     parseFontVariationSettings,
     parseTextShadowMutation,
     parseTransformsMutation,
+    readShorthandEntries,
+    type ResolvedShorthand,
     resolveGradient,
-} from './parsers'
+    resolveLineHeightMutation,
+    resolveLineStylesMutation,
+    resolveVisibilityMutation,
+    toGuardedStyle,
+} from '../../uniparser/src/core/native/parsers'
+import { UniwindListener } from '../listener'
+import type { ComponentState, GenerateStyleSheetsCallback, RNStyle, Style, StyleSheets, ThemeName, UniwindContextType, Var, Vars } from '../types'
+import { getScopedVars } from './native-utils'
 import { UniwindRuntime } from './runtime'
 
 type StylesResult = {
@@ -122,6 +133,8 @@ class UniwindStoreBuilder {
         const dependencies = new Set<StyleDependency>()
         let dependencySum = 0
         const bestRanks = new Map<string, number>()
+        let shorthandBits = 0
+        let coveredBits = 0
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const classNameTokens = classNames.includes('\n')
             ? classNames.split(/\s+/).filter(Boolean)
@@ -172,25 +185,50 @@ class UniwindStoreBuilder {
                     }
 
                     bestRanks.set(property, rank)
+                    const role = SHORTHAND_ROLES.get(property)
+
+                    if (role !== undefined) {
+                        shorthandBits |= role.bit
+                        coveredBits |= role.coveredBy
+                    }
                 }
             }
         }
 
-        const result = Object.fromEntries(
-            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars)]),
-        ) as Record<string, any>
+        const result = {} as Record<string, any>
+        const shorthands: Array<ResolvedShorthand> = []
+        const hasShorthandOverLonghand = (shorthandBits & coveredBits) !== 0
 
-        if (result.lineHeight !== undefined && result.lineHeight < 6) {
-            result.lineHeight *= result.fontSize
+        for (const [property, valueGetter] of Object.entries(resultGetters)) {
+            const value = valueGetter(vars)
+            const entries = readShorthandEntries(property, value, vars)
+
+            if (entries === null || entries === ONE_VALUE) {
+                result[property] = toGuardedStyle(property, value)
+            }
+
+            // a one-value shorthand only removes longhands, so it is applied only when the class resolves one it covers
+            if (entries !== null && (entries !== ONE_VALUE || (hasShorthandOverLonghand && coversAnyLonghand(property, coveredBits)))) {
+                shorthands.push({ property, rank: bestRanks.get(property) ?? 0, entries })
+            }
         }
 
-        if (result.boxShadow !== undefined) {
+        if (shorthands.length > 0) {
+            applyShorthandsMutation(result, shorthands, bestRanks)
+        }
+
+        resolveLineHeightMutation(result)
+        resolveLineStylesMutation(result)
+
+        if (typeof result.boxShadow === 'string') {
             result.boxShadow = parseBoxShadow(result.boxShadow)
         }
 
-        if (result.visibility === 'hidden') {
-            result.display = 'none'
+        if (typeof result.filter === 'string') {
+            result.filter = parseFilter(result.filter)
         }
+
+        resolveVisibilityMutation(result)
 
         if (
             result.borderStyle !== undefined && result.borderColor === undefined
@@ -204,7 +242,7 @@ class UniwindStoreBuilder {
             result.outlineColor = '#000000'
         }
 
-        if (result.fontVariant !== undefined) {
+        if (typeof result.fontVariant === 'string') {
             result.fontVariant = parseFontVariant(result.fontVariant)
         }
 
@@ -214,13 +252,15 @@ class UniwindStoreBuilder {
 
         parseTransformsMutation(result)
 
-        if (result.experimental_backgroundImage !== undefined) {
+        if (typeof result.experimental_backgroundImage === 'string') {
             result.experimental_backgroundImage = resolveGradient(result.experimental_backgroundImage)
         }
 
-        if (result.textShadow !== undefined) {
-            parseTextShadowMutation(result)
+        if (Object.hasOwn(result, 'textShadow')) {
+            parseTextShadowMutation(result, vars)
         }
+
+        deleteUnsetStylesMutation(result)
 
         return {
             styles: result,

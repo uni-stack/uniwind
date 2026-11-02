@@ -1,0 +1,3 @@
+[submodule "packages/uniwind/src/uniparser"]
+	path = packages/uniwind/src/uniparser
+	url = https://github.com/uni-stack/uniparser.git

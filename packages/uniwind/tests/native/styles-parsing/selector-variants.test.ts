@@ -1,6 +1,6 @@
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
-import { ProcessorBuilder } from '../../../src/bundler/css-processor'
 import { Platform } from '../../../src/common/consts'
+import { ProcessorBuilder } from '../../../src/uniparser/src/bundler/css-processor'
 
 const compile = (css: string) => {
     const bundlerConfig = UniwindBundlerConfig.fromMetroConfig({

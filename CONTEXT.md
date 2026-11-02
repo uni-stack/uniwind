@@ -33,7 +33,8 @@ Important paths:
 - `packages/uniwind/src/core`: runtime config, listeners, native style store, and web style extraction.
 - `packages/uniwind/src/hooks`: public hooks.
 - `packages/uniwind/src/hoc`: `withUniwind` for custom components.
-- `packages/uniwind/src/bundler`: Metro/Vite adapters, Tailwind compilation, CSS processing, artifact generation.
+- `packages/uniwind/src/bundler`: Metro/Vite adapters, Tailwind compilation, web CSS processing, artifact generation.
+- `packages/uniwind/src/uniparser`: the `uniparser` CSS engine, a git submodule of `uni-stack/uniparser` embedded as source, which compiles native styles and parses colors. Do not edit it here; engine changes land in its repository and this repository bumps the submodule. Its tests, lockfile and config files stay out of `dist` and the npm package, and publishing without the submodule fails at `prepublishOnly`.
 - `packages/uniwind/tests`: native, web, type, and e2e tests.
 - `packages/uniwind/uniwind.css`: package-level CSS artifact referenced by package `style` export.
 - `packages/uniwind/no-types.d.ts`: published placeholder declaration for component subpath exports. The build therefore emits no declarations for the hidden component implementations (`src/components/{index,utils}.ts`, `native/**`, `web/**`); only components re-exported from the root entry get `.d.ts` files.
@@ -59,7 +60,7 @@ Package subpath exports:
 
 Stability policy: public package and subpath exports are semver-stable. Generated artifact internals are implementation details unless explicitly documented, with two notable user-facing surfaces: generated theme typings and the package `style` export (`uniwind.css`).
 
-Dependency policy: peer dependency floors are support contracts. Raising support floors for Tailwind, React, or React Native requires semver-major unless an upstream ecosystem break makes that impossible to honor.
+Dependency policy: peer dependency floors are support contracts. Raising support floors for Tailwind, React, or React Native requires semver-major unless an upstream ecosystem break makes that impossible to honor. Color parsing and formatting come from the engine (no `culori`), on native and web.
 
 Workspace dependency alignment: the examples share Expo SDK 58's React Native 0.88 and React 19.3 release lines; React Native presets/configs and React's test renderer must stay aligned with those lines. Expo's compatibility check requires React/React DOM 19.3.0 and React 19.3 types. Development uses Bun 1.4.4 and Node.js matching React Native 0.88's engine range (`^22.13.0 || ^24.3.0 || >=26.0.0`), including Vitest 5. The bare example declares the same Node.js engine range. Formatting uses dprint. jsdom stays on 30.1.1 and release-it on 21.1.0 until the development Node.js baseline reaches 22.22.2 (or 24.15+). TypeScript stays on 6 until the declaration-build tooling supports TypeScript 7's compiler API changes, and native Testing Library stays on 13 until the tests migrate to the async APIs in 14. Babel stays on 7 while the React Native and Expo presets depend on Babel 7 plugins. Lightning CSS remains pinned to 1.30.1; its existing transitive copies stay locked to 1.32.0, constraining Vite to 8.1.6 until that pin is lifted.
 
@@ -75,7 +76,7 @@ Native runtime:
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.
 - Native style resolution calls each rule's build-generated `matches(rt, context, props, state, vars)` predicate. Predicates contain only that rule's screen width/height, orientation, theme, RTL, active/focus/disabled, and `data-*` conditions, respecting scoped themes and layout direction. Data-dependent rules carry a boolean cache-bypass flag; condition metadata stays at build time.
-- Native post-processing adapts CSS concepts to RN shapes, including line-height multipliers, shadows, transforms, gradients, visibility, borders, outlines, font variants, and filters.
+- Native post-processing, from the engine's parsers, adapts CSS concepts to RN shapes, including line-height multipliers, shadows, transforms, gradients, visibility, borders, outlines, font variants, and filters.
 
 Web runtime:
 
@@ -112,7 +113,7 @@ Compilation flow:
 - `compileTailwind` reads `cssEntryFile`, runs Tailwind v4 compile, scans files under the CSS entry directory, and builds final CSS.
 - `compileCSS` routes to web or native by platform.
 - `compileWebCSS` runs Lightning CSS with `UniwindCSSVisitor` and returns CSS.
-- `compileNativeCSS` runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet metadata into JS source.
+- `compileNativeCSS` (engine) runs `ProcessorBuilder`, serializes variables, scoped variables, and native stylesheet metadata into JS source.
 - `UniwindBundlerConfig.generateArtifacts` writes CSS artifacts and generated theme typings.
 - Generated artifacts are rewritten in place and Metro regenerates them from a worker pool, so `buildCSS` and `buildDtsFile` write through `writeFileAtomicSync`: a unique temporary file next to the target, renamed over it. Readers racing the write see the whole old file or the whole new one, the rename breaks the package manager's hardlink into its content-addressable store instead of mutating the shared copy, and a rename a lock refuses is retried before it fails the build.
 - Internal package aliases such as `@/*` are only safe inside `packages/uniwind/src/bundler`. Bundler files are built and transformed to JS, but runtime/component/hook/HOC files are published directly as `.ts`/`.tsx` React Native entrypoints, so aliases in those files are not rewritten.
@@ -141,7 +142,7 @@ Vite integration:
 
 ## CSS Processing
 
-Native processing converts Tailwind-generated CSS into metadata-rich style records.
+Native processing converts Tailwind-generated CSS into metadata-rich style records. The `uniparser` engine does it; Uniwind owns the bundler config, the generated `uniwind.css` and types, and the web path (`compileWebCSS`, `UniwindCSSVisitor`).
 
 Build-time stylesheet templates collect each rule as `{ style, meta }`: CSS declarations live in `style`, while media/selector conditions, importance, and cascade ranks live in `meta`. Native conversion reads declarations directly from `style` and emits the existing runtime `Style` record format.
 
@@ -160,7 +161,7 @@ Important concepts:
 - Repeated declarations retain their last declaration position before native conversion, so overlapping shorthand and longhand entries with equal importance resolve in effective CSS declaration order.
 - Native media types treat `all` and `screen` as matching and `print` as nonmatching. Unsupported media types/features are ignored through negation and logical grouping, preserving utilities such as `not-hover` while retaining supported conditions in the same query. Ignored conditions stay distinct from boolean `true`/`false` during compilation and add no runtime dependency.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.
-- Tailwind composes `filter` from per-utility `--tw-*` variables and relies on `var(--x,)` empty fallbacks for unset parts, so `Var` resolves those to an empty string. Each filter function compiles to `rt.filterFn(name, amount, unit)` because `addMissingSpaces` would otherwise corrupt an inline `blur(${...}px)` template.
+- Tailwind composes `filter` from per-utility `--tw-*` variables and relies on `var(--x,)` empty fallbacks for unset parts, so `Var` resolves those to an empty string. Each filter function compiles to a string expression with its unit appended (`"blur(" + expr + "px)"`), so `addMissingSpaces` cannot corrupt an inline `blur(${...}px)` template.
 - Filter runtime support is platform-dependent: Android applies filters at the default release level (blur and drop-shadow need API 31+, and one blur in the chain sends the whole chain down that path), while iOS renders blur/grayscale/saturate/contrast/hue-rotate only behind the `enableSwiftUIBasedFilters` React Native feature flag — experimental in RN 0.83-0.86, canary in 0.87, absent before 0.83.
 - `backdrop-filter` has no RN equivalent and is still dropped.
 - `text-align: start/end` passes through as `textAlign`; RN resolves `end` from 0.87 (older versions fall back to natural alignment).
@@ -205,7 +206,7 @@ Package scripts:
 - `bun run check:typescript`: TypeScript no-emit check.
 - `bun run lint`: oxlint on `src`.
 - `bun run circular:check`: dpdm circular dependency check.
-- `bun run test:native`: Jest native tests, run twice: as written and with `src` compiled by React Compiler (`babel-plugin-react-compiler`).
+- `bun run test:native`: Jest native tests, run twice: as written and with `src` compiled by React Compiler (`babel-plugin-react-compiler`). Jest ignores `src/uniparser/tests`; the engine's own tests run in its repository.
 - `bun run test:web`: Vitest web tests.
 - `bun run test:types`: type-level tests.
 - `bun run test:e2e`: Playwright e2e tests.

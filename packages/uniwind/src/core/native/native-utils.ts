@@ -1,4 +1,4 @@
-import { formatHex, formatHex8, interpolate, parse } from 'culori'
+import { parseColorText, toHexColor } from '../../uniparser/src/common/color'
 import type { CSSVariables, UniwindRuntime, Var, Vars } from '../types'
 
 const scopedVarsCache = new WeakMap<CSSVariables, Vars>()
@@ -9,15 +9,9 @@ export const createVarGetter = (value: string | number): Var => () => {
         return value
     }
 
-    const parsedColor = parse(value)
+    const parsedColor = parseColorText(value)
 
-    if (parsedColor) {
-        return parsedColor.alpha === undefined || parsedColor.alpha === 1
-            ? formatHex(parsedColor)
-            : formatHex8(parsedColor)
-    }
-
-    return value
+    return parsedColor === undefined ? value : toHexColor(parsedColor)
 }
 
 export const getScopedVars = (variables: CSSVariables): Vars => {
@@ -37,28 +31,6 @@ export const getScopedVars = (variables: CSSVariables): Vars => {
     return vars
 }
 
-export const colorMix = (color: string, weight: number | string, mixColor: string) => {
-    const parsedWeight = typeof weight === 'string'
-        ? parseFloat(weight) / 100
-        : weight
-
-    // Change alpha
-    if (mixColor === '#00000000') {
-        const parsedColor = parse(color)
-
-        if (parsedColor === undefined) {
-            return color
-        }
-
-        return formatHex8({
-            ...parsedColor,
-            alpha: parsedWeight * (parsedColor.alpha ?? 1),
-        })
-    }
-
-    return formatHex(interpolate([mixColor, color])(parsedWeight))
-}
-
 export function lightDark(this: UniwindRuntime, light: string, dark: string) {
     if (this.currentThemeName === 'dark') {
         return dark
@@ -67,20 +39,15 @@ export function lightDark(this: UniwindRuntime, light: string, dark: string) {
     return light
 }
 
-export const parseColor = (type: string, color: string) => {
-    try {
-        const parsedColor = parse(`${type}(${color})`)
+// css-cascade-5 inherit: the variable below the class's own declaration (theme, ScopedVariables or root), evaluated in that scope
+export const readInheritedVariable = (vars: Vars, name: string) => {
+    let owner: Vars | null = vars
 
-        if (parsedColor === undefined) {
-            return color
-        }
-
-        if (parsedColor.alpha === 1 || parsedColor.alpha === undefined) {
-            return formatHex(parsedColor)
-        }
-
-        return formatHex8(parsedColor)
-    } catch {
-        return '#000000'
+    while (owner !== null && !Object.hasOwn(owner, name)) {
+        owner = Object.getPrototypeOf(owner) as Vars | null
     }
+
+    const parent = owner === null ? null : Object.getPrototypeOf(owner) as Vars | null
+
+    return parent === null ? undefined : parent[name]?.(parent)
 }

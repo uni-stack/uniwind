@@ -1,8 +1,8 @@
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
-import { compileNativeCSS } from '../../../src/bundler/css-compiler/compileNativeCSS'
 import { Platform } from '../../../src/common/consts'
 import { UniwindStore } from '../../../src/core/native/store'
 import type { ComponentState, UniwindRuntime } from '../../../src/core/types'
+import { compileNativeCSS } from '../../../src/uniparser/src/bundler/css-compiler'
 
 const compile = (css: string) => {
     const config = UniwindBundlerConfig.fromMetroConfig({ cssEntryFile: './tests/test.css' }, Platform.iOS)

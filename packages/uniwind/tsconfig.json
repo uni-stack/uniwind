@@ -15,6 +15,7 @@
             "@/bundler/*": ["./src/bundler/*"]
         },
         "moduleResolution": "Bundler",
+        "customConditions": ["react-native-legacy-deep-imports"],
         "module": "ESNext",
         "outDir": "dist",
         "sourceMap": false,
@@ -33,6 +34,8 @@
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "./src/uniparser/tests",
+        "./src/uniparser/node_modules"
     ]
 }

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { StyleSheet } from 'react-native'
 import View from '../../../src/components/native/View'
 import { renderUniwind } from '../utils'
 
@@ -89,5 +90,13 @@ describe('Layout', () => {
         expect(getStylesFromId('box').display).toBe('flex')
         expect(getStylesFromId('overflow-hidden').overflow).toBe('hidden')
         expect(getStylesFromId('overflow-visible').overflow).toBe('visible')
+    })
+
+    // React Native has no visibility style, so invisible hides the view instead
+    test('invisible resolves to display none only', () => {
+        const { getByTestId } = renderUniwind(<View className="invisible" testID="invisible" />)
+
+        // a hidden element is found only when asked for
+        expect(StyleSheet.flatten(getByTestId('invisible', { includeHiddenElements: true }).props.style)).toEqual({ display: 'none' })
     })
 })

@@ -1,10 +1,10 @@
 import { compile as compileTailwind } from '@tailwindcss/node'
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
-import { compileNativeCSS } from '../../../src/bundler/css-compiler/compileNativeCSS'
 import { Orientation, Platform, StyleDependency } from '../../../src/common/consts'
 import { UniwindListener } from '../../../src/core/listener'
 import { UniwindStore } from '../../../src/core/native/store'
 import type { GenerateStyleSheetsCallback, UniwindRuntime } from '../../../src/core/types'
+import { compileNativeCSS } from '../../../src/uniparser/src/bundler/css-compiler'
 
 const context = { scopedTheme: null, rtl: null, variables: null }
 

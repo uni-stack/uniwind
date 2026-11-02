@@ -69,18 +69,6 @@ describe('Gradients', () => {
                             '100%',
                         ],
                     },
-                    {
-                        color: TW_RED_500,
-                        positions: [
-                            '0%',
-                        ],
-                    },
-                    {
-                        color: TW_BLUE_500,
-                        positions: [
-                            '100%',
-                        ],
-                    },
                 ],
                 type: 'linear-gradient',
                 direction: 'to right',

@@ -5,6 +5,7 @@ const native = {
     displayName: 'native',
     testMatch: ['<rootDir>/tests/native/**/*.test.{ts,tsx}'],
     setupFilesAfterEnv: ['<rootDir>/tests/setup.node.ts', '@testing-library/jest-native/extend-expect', '<rootDir>/tests/setup.native.ts'],
+    modulePathIgnorePatterns: ['<rootDir>/src/uniparser/tests', '<rootDir>/src/uniparser/node_modules'],
     transformIgnorePatterns: [
         'node_modules/(?!((jest-)?react-native|@react-native(-community)?)/)',
     ],
