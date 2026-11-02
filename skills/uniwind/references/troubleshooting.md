@@ -51,7 +51,7 @@ When styles aren't working, check in this order:
 | Unsupported CSS warning | Web-specific CSS used | Enable `debug: true` to identify; remove unsupported properties |
 | `Failed to serialize javascript object` | Complex CSS, circular refs, or stale cache | Clear caches: `watchman watch-del-all; rm -rf node_modules/.cache; npx expo start --clear`. Also check if docs/markdown files containing CSS classes are in the scan path (see below) |
 | `Failed to serialize javascript object` from llms-full.txt or docs | Docs/markdown files with CSS classes in project dir get scanned by Tailwind | Move `.md` files with CSS examples outside the project root, or add to `.gitignore` so Tailwind's scanner skips them |
-| `unstable_enablePackageExports` conflict | App disables package exports | Use selective resolver for Uniwind and culori |
+| `unstable_enablePackageExports` conflict | App disables package exports | Use selective resolver for Uniwind (and `culori` on Uniwind versions that still depend on it) |
 | Classes from monorepo package missing | Not included in Tailwind scan | Add `@source '../../packages/ui'` in global.css |
 | Classes from `node_modules` library missing in production (bun) | Bun uses symlinks; Tailwind's Oxide scanner can't follow them | Use resolved path: `@source "../../node_modules/heroui-native/lib"` and add `public-hoist-pattern[]=heroui-native` to `.npmrc` |
 | `active:` not working with `withUniwind` | `withUniwind` does NOT support interactive state selectors | Only core RN `Pressable`/`TextInput`/`Switch` support `active:`/`focus:`/`disabled:`. Third-party pressables wrapped with `withUniwind` won't get states |
@@ -76,12 +76,12 @@ When styles aren't working, check in this order:
 
 ### unstable_enablePackageExports Selective Resolver
 
-If your app disables `unstable_enablePackageExports` (common in crypto apps), use a selective resolver:
+If your app disables `unstable_enablePackageExports` (common in crypto apps), use a selective resolver. Uniwind versions that still depend on `culori` need it in the list too: `['uniwind', 'culori']`.
 
 ```js
 config.resolver.unstable_enablePackageExports = false;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (['uniwind', 'culori'].some((prefix) => moduleName.startsWith(prefix))) {
+  if (['uniwind'].some((prefix) => moduleName.startsWith(prefix))) {
     return context.resolveRequest(
       { ...context, unstable_enablePackageExports: true },
       moduleName,

@@ -696,11 +696,11 @@ Docs: https://docs.uniwind.dev/faq
 
 **Serialization Errors** (`Failed to serialize javascript object`): Clear caches: `watchman watch-del-all 2>/dev/null; rm -rf node_modules/.cache && npx expo start --clear`. Common causes: complex `@theme` configs, circular CSS variable references.
 
-**Metro unstable_enablePackageExports Conflicts**: Some apps (crypto etc.) disable this, breaking Uniwind. Use selective resolver:
+**Metro unstable_enablePackageExports Conflicts**: Some apps (crypto etc.) disable this, breaking Uniwind. Use selective resolver (Uniwind versions that still depend on `culori` need `['uniwind', 'culori']`):
 ```js
 config.resolver.unstable_enablePackageExports = false;
 config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (['uniwind', 'culori'].some((prefix) => moduleName.startsWith(prefix))) {
+  if (['uniwind'].some((prefix) => moduleName.startsWith(prefix))) {
     return context.resolveRequest({ ...context, unstable_enablePackageExports: true }, moduleName, platform);
   }
   return context.resolveRequest(context, moduleName, platform);

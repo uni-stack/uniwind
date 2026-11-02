@@ -73,3 +73,4 @@ Layout, spacing, sizing, typography, colors, borders, effects, flexbox, position
 - `float-*` `clear-*` `columns-*`
 - `print:` `screen:`
 - `break-before-*` `break-after-*` `break-inside-*`
+- `h-lh` `min-h-lh` `max-h-lh` (the `lh` unit has no native value)
