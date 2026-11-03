@@ -75,6 +75,22 @@ describe('Colors', () => {
                     testID="custom-oklch-bar"
                 />
                 <View
+                    className="bg-baz"
+                    testID="custom-oklch-var-channel"
+                />
+                <View
+                    className="bg-percent"
+                    testID="custom-oklch-percent-channel"
+                />
+                <View
+                    className="bg-hue-var"
+                    testID="custom-hsl-hue-var"
+                />
+                <View
+                    className="bg-nested"
+                    testID="custom-oklch-nested-fallback"
+                />
+                <View
                     className="bg-p3"
                     testID="custom-p3"
                 />
@@ -98,6 +114,18 @@ describe('Colors', () => {
 
         const customOklchBarStyles = getStylesFromId('custom-oklch-bar')
         expect(customOklchBarStyles.backgroundColor).toBe('#7bae73')
+
+        const customOklchVarChannelStyles = getStylesFromId('custom-oklch-var-channel')
+        expect(customOklchVarChannelStyles.backgroundColor).toBe('#7bae73')
+
+        const customOklchPercentStyles = getStylesFromId('custom-oklch-percent-channel')
+        expect(customOklchPercentStyles.backgroundColor).toBe('#7bae73')
+
+        const customHslHueVarStyles = getStylesFromId('custom-hsl-hue-var')
+        expect(customHslHueVarStyles.backgroundColor).toBe('#40bf6c')
+
+        const customOklchNestedStyles = getStylesFromId('custom-oklch-nested-fallback')
+        expect(customOklchNestedStyles.backgroundColor).toBe('#7bae73')
 
         const customP3Styles = getStylesFromId('custom-p3')
         expect(customP3Styles.backgroundColor).toBe('#ffd400')

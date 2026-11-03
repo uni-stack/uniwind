@@ -4,12 +4,17 @@
 :root {
   --foo: 120 50% 50%;
   --bar: 0.7 0.1 141;
+  --hue: 141;
   --my-gradient: linear-gradient(90deg, var(--color-foo) 0%, var(--color-bar) 100%);
 }
 
 @theme {
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
+  --color-baz: oklch(0.7 0.1 var(--hue));
+  --color-percent: oklch(70% 0.1 var(--hue));
+  --color-hue-var: hsl(var(--hue) 50% 50%);
+  --color-nested: oklch(0.7 0.1 var(--missing-a, var(--missing-b, 141)));
   --spacing-test: 123px;
   --color-background: unset;
   --color-p3: color(display-p3 1 0.84 0.04);
