@@ -12,6 +12,7 @@ class UniwindConfigBuilder extends UniwindConfigBuilderBase {
 
     constructor() {
         super()
+        UniwindStore.runtime.currentThemeName = this.currentTheme
     }
 
     updateCSSVariables(theme: ThemeName, variables: CSSVariables) {
