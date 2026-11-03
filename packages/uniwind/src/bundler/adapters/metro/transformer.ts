@@ -3,12 +3,19 @@ import { compileCSS } from '@/bundler/css-compiler'
 import type { UniwindMetroConfig } from '@/bundler/types'
 import { Platform } from '@/common/consts'
 import type * as ExpoMetroConfig from '@expo/metro-config'
+import fs from 'fs'
 import type * as MetroTransformWorker from 'metro-transform-worker'
 import type { JsTransformerConfig, JsTransformOptions } from 'metro-transform-worker'
 import { createHash } from 'node:crypto'
 import path from 'path'
 
 const cssArtifactPath = path.resolve(__dirname, '../../uniwind.css')
+
+// Exclude the generated artifact to prevent rebuild loops when uniwind is linked.
+export const isImportedStylesheet = (stylesheet: string, artifactPath: string) =>
+    stylesheet.endsWith('.css')
+    && !stylesheet.includes(`${path.sep}node_modules${path.sep}`)
+    && fs.realpathSync(stylesheet) !== fs.realpathSync(artifactPath)
 
 // Cache workers separately for Expo (`true`) and plain Metro (`false`) configs.
 const workerCache = new Map<boolean, typeof MetroTransformWorker>()
@@ -76,7 +83,7 @@ export const transform = async (
     const isWeb = bundlerConfig.platform === Platform.Web
     const importedStylesheets = new Set<string>()
     const virtualCode = await compileCSS(bundlerConfig, dependency => {
-        if (!isWeb && options.dev && dependency.endsWith('.css') && !dependency.includes(`${path.sep}node_modules${path.sep}`)) {
+        if (!isWeb && options.dev && isImportedStylesheet(dependency, cssArtifactPath)) {
             importedStylesheets.add(dependency)
         }
     })
