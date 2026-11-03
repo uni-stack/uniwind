@@ -11,9 +11,7 @@ import path from 'path'
 
 const cssArtifactPath = path.resolve(__dirname, '../../uniwind.css')
 
-// Local stylesheets a development entry requires, so editing one re-runs its transform. When uniwind is linked
-// (a workspace package, `npm link`), `@import 'uniwind'` resolves to the generated artifact outside node_modules.
-// Requiring it would rebuild the entry after each write, and Metro servers with different themes after each other's.
+// Exclude the generated artifact to prevent rebuild loops when uniwind is linked.
 export const isImportedStylesheet = (stylesheet: string, artifactPath: string) =>
     stylesheet.endsWith('.css')
     && !stylesheet.includes(`${path.sep}node_modules${path.sep}`)
