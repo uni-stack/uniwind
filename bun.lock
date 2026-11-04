@@ -88,9 +88,9 @@
         "uniwind": "./dist/cli/index.mjs",
       },
       "dependencies": {
-        "@babel/generator": "^7.27.0",
-        "@babel/parser": "^7.25.0",
-        "@babel/types": "^7.25.2",
+        "@babel/generator": "7.29.8",
+        "@babel/parser": "7.29.9",
+        "@babel/types": "7.29.8",
         "@tailwindcss/node": "4.3.3",
         "@tailwindcss/oxide": "4.3.3",
         "lightningcss": "1.30.1",
