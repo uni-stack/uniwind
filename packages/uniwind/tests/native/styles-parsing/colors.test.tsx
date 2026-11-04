@@ -87,6 +87,14 @@ describe('Colors', () => {
                     testID="custom-hsl-hue-var"
                 />
                 <View
+                    className="bg-slash"
+                    testID="custom-oklch-slash-alpha"
+                />
+                <View
+                    className="bg-slash-var"
+                    testID="custom-oklch-slash-alpha-var"
+                />
+                <View
                     className="bg-nested"
                     testID="custom-oklch-nested-fallback"
                 />
@@ -123,6 +131,12 @@ describe('Colors', () => {
 
         const customHslHueVarStyles = getStylesFromId('custom-hsl-hue-var')
         expect(customHslHueVarStyles.backgroundColor).toBe('#40bf6c')
+
+        const customOklchSlashStyles = getStylesFromId('custom-oklch-slash-alpha')
+        expect(customOklchSlashStyles.backgroundColor).toBe('#7bae7380')
+
+        const customOklchSlashVarStyles = getStylesFromId('custom-oklch-slash-alpha-var')
+        expect(customOklchSlashVarStyles.backgroundColor).toBe('#7bae7380')
 
         const customOklchNestedStyles = getStylesFromId('custom-oklch-nested-fallback')
         expect(customOklchNestedStyles.backgroundColor).toBe('#7bae73')

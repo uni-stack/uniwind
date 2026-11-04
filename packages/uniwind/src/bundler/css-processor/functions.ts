@@ -153,7 +153,12 @@ export class Functions {
     private processRuntimeColor(fn: FunctionType) {
         const channels = fn.arguments
             .filter(argument => !(argument.type === 'token' && argument.value.type === 'white-space'))
-            .map(argument => this.Processor.CSS.processValue(argument))
+            // The slash before an alpha is plain text for parseColor, so it is quoted like a string.
+            .map(argument =>
+                argument.type === 'token' && argument.value.type === 'delim'
+                    ? JSON.stringify(argument.value.value)
+                    : this.Processor.CSS.processValue(argument)
+            )
 
         return `rt.parseColor("${fn.name}", [${channels.join(', ')}].join(" "))`
     }
