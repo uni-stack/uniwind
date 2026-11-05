@@ -1,4 +1,13 @@
-## What's Changed in 1.13.1
+## What's Changed in 1.13.2
+
+
+
+### 🐛 Bug Fixes
+* fix(metro): skip the generated uniwind.css when tracking imported CSS by @dlebedynskyi in [#720](https://github.com/uni-stack/uniwind/pull/720)
+* fix: initial theme race condition by @Brentlok in [#761](https://github.com/uni-stack/uniwind/pull/761)
+
+
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.13.1...v1.13.2## What's Changed in 1.13.1
 
 
 
