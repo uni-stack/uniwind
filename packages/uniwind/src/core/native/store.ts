@@ -21,11 +21,34 @@ type StylesResult = {
 
 const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
+const splitClassNames = (classNames: string) =>
+    classNames.includes('\n')
+        ? classNames.split(/\s+/).filter(Boolean)
+        : classNames.split(' ')
+
+// Reduces a data attribute value to what the generated match functions can tell apart:
+// true and "true" match the same rules, so do false and "false", other strings only match
+// themselves, and any other value never matches.
+const toDataAttributeCacheValue = (value: unknown) => {
+    if (value === true || value === 'true') {
+        return true
+    }
+
+    if (value === false || value === 'false') {
+        return false
+    }
+
+    return typeof value === 'string' ? value : null
+}
+
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
+    // The stylesheet doesn't change between reinits, so the data attributes a class string
+    // depends on are worked out once per class string
+    private dataAttributeNamesCache = new Map<string, Array<string>>()
 
     getStyles(
         className: string | undefined,
@@ -40,7 +63,7 @@ class UniwindStoreBuilder {
         const isScopedTheme = uniwindContext.scopedTheme !== null
         const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
-        }${uniwindContext.variables?.__uniwindVariablesCacheKey ?? ''}`
+        }${uniwindContext.variables?.__uniwindVariablesCacheKey ?? ''}${this.getDataAttributesCacheKey(className, componentProps)}`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
 
         if (!cache) {
@@ -53,17 +76,41 @@ class UniwindStoreBuilder {
 
         const result = this.resolveStyles(className, componentProps, state, uniwindContext)
 
-        // Don't cache styles that depend on data attributes
-        if (!result.hasDataAttributes) {
-            cache.set(cacheKey, result)
-            UniwindListener.subscribe(
-                () => cache.delete(cacheKey),
-                result.dependencies,
-                { once: true },
-            )
-        }
+        cache.set(cacheKey, result)
+        UniwindListener.subscribe(
+            () => cache.delete(cacheKey),
+            result.dependencies,
+            { once: true },
+        )
 
         return result
+    }
+
+    private getDataAttributesCacheKey(className: string, componentProps: Record<string, any> | undefined) {
+        let dataAttributeNames = this.dataAttributeNamesCache.get(className)
+
+        if (dataAttributeNames === undefined) {
+            const names = new Set<string>()
+
+            for (const token of splitClassNames(className)) {
+                if (!(token in this.stylesheet)) {
+                    continue
+                }
+
+                for (const style of this.stylesheet[token] as Array<Style>) {
+                    style.dataAttributeNames?.forEach(name => names.add(name))
+                }
+            }
+
+            dataAttributeNames = Array.from(names)
+            this.dataAttributeNamesCache.set(className, dataAttributeNames)
+        }
+
+        if (dataAttributeNames.length === 0) {
+            return ''
+        }
+
+        return JSON.stringify(dataAttributeNames.map(name => toDataAttributeCacheValue(componentProps?.[name])))
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
@@ -94,6 +141,7 @@ class UniwindStoreBuilder {
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
+        this.dataAttributeNamesCache = new Map()
 
         if (__DEV__) {
             UniwindListener.notifyAll()
@@ -118,14 +166,11 @@ class UniwindStoreBuilder {
                 getScopedVars(uniwindContext.variables),
             )
         const originalVars = vars
-        let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()
         let dependencySum = 0
         const bestRanks = new Map<string, number>()
         const isScopedTheme = uniwindContext.scopedTheme !== null
-        const classNameTokens = classNames.includes('\n')
-            ? classNames.split(/\s+/).filter(Boolean)
-            : classNames.split(' ')
+        const classNameTokens = splitClassNames(classNames)
 
         for (const className of classNameTokens) {
             if (!(className in this.stylesheet)) {
@@ -142,10 +187,6 @@ class UniwindStoreBuilder {
                         dependencies.add(dep)
                         dependencySum |= 1 << dep
                     })
-                }
-
-                if (style.hasDataAttributes) {
-                    hasDataAttributes = true
                 }
 
                 if (!style.matches(this.runtime, uniwindContext, componentProps, state, vars)) {
@@ -226,7 +267,6 @@ class UniwindStoreBuilder {
             styles: result,
             dependencies: Array.from(dependencies),
             dependencySum,
-            hasDataAttributes,
         }
     }
 
