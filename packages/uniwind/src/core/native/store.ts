@@ -26,9 +26,7 @@ const splitClassNames = (classNames: string) =>
         ? classNames.split(/\s+/).filter(Boolean)
         : classNames.split(' ')
 
-// Reduces a data attribute value to what the generated match functions can tell apart:
-// true and "true" match the same rules, so do false and "false", other strings only match
-// themselves, and any other value never matches.
+// The generated match functions treat true and "true" alike, and false and "false" alike
 const toDataAttributeCacheValue = (value: unknown) => {
     if (value === true || value === 'true') {
         return true
@@ -38,7 +36,7 @@ const toDataAttributeCacheValue = (value: unknown) => {
         return false
     }
 
-    return typeof value === 'string' ? value : null
+    return value
 }
 
 class UniwindStoreBuilder {
@@ -47,8 +45,8 @@ class UniwindStoreBuilder {
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
     // The stylesheet doesn't change between reinits, so the data attributes a class string
-    // depends on are worked out once per class string
-    private dataAttributeNamesCache = new Map<string, Array<string>>()
+    // depends on, and the values its rules look for, are worked out once per class string
+    private dataAttributesCache = new Map<string, Array<[string, Set<unknown>]>>()
 
     getStyles(
         className: string | undefined,
@@ -87,10 +85,10 @@ class UniwindStoreBuilder {
     }
 
     private getDataAttributesCacheKey(className: string, componentProps: Record<string, any> | undefined) {
-        let dataAttributeNames = this.dataAttributeNamesCache.get(className)
+        let dataAttributes = this.dataAttributesCache.get(className)
 
-        if (dataAttributeNames === undefined) {
-            const names = new Set<string>()
+        if (dataAttributes === undefined) {
+            const valuesByName = new Map<string, Set<unknown>>()
 
             for (const token of splitClassNames(className)) {
                 if (!(token in this.stylesheet)) {
@@ -98,19 +96,34 @@ class UniwindStoreBuilder {
                 }
 
                 for (const style of this.stylesheet[token] as Array<Style>) {
-                    style.dataAttributeNames?.forEach(name => names.add(name))
+                    for (const [name, value] of Object.entries(style.dataAttributeValues ?? {})) {
+                        let values = valuesByName.get(name)
+
+                        if (!values) {
+                            values = new Set()
+                            valuesByName.set(name, values)
+                        }
+
+                        values.add(value)
+                    }
                 }
             }
 
-            dataAttributeNames = Array.from(names)
-            this.dataAttributeNamesCache.set(className, dataAttributeNames)
+            dataAttributes = Array.from(valuesByName)
+            this.dataAttributesCache.set(className, dataAttributes)
         }
 
-        if (dataAttributeNames.length === 0) {
+        if (dataAttributes.length === 0) {
             return ''
         }
 
-        return JSON.stringify(dataAttributeNames.map(name => toDataAttributeCacheValue(componentProps?.[name])))
+        // A value that none of the rules look for can't match any of them, so all such values
+        // share one key. This keeps the cache from growing with arbitrary prop values.
+        return JSON.stringify(dataAttributes.map(([name, values]) => {
+            const value = toDataAttributeCacheValue(componentProps?.[name])
+
+            return values.has(value) ? value : null
+        }))
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
@@ -141,7 +154,7 @@ class UniwindStoreBuilder {
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
-        this.dataAttributeNamesCache = new Map()
+        this.dataAttributesCache = new Map()
 
         if (__DEV__) {
             UniwindListener.notifyAll()

@@ -28,6 +28,21 @@ const makeSafeForSerialization = (value: any) => {
     return value
 }
 
+// The value each data attribute must have, normalized the way the generated match function
+// compares it: "true" and "false" also match the booleans, so they're emitted as booleans
+const getDataAttributeValues = (dataAttributes: Record<string, string>) =>
+    Object.fromEntries(
+        Object.entries(dataAttributes).map(([name, expected]) => {
+            const value = JSON.parse(expected)
+
+            if (value === 'true' || value === 'false') {
+                return [name, value === 'true']
+            }
+
+            return [name, makeSafeForSerialization(value)]
+        }),
+    )
+
 const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, visited = new Set<string>()): boolean => {
     if (visited.has(varName)) {
         return false
@@ -128,7 +143,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
                 return {
                     entries,
                     matches,
-                    dataAttributeNames: dataAttributes !== null ? Object.keys(dataAttributes).map(makeSafeForSerialization) : null,
+                    dataAttributeValues: dataAttributes !== null ? getDataAttributeValues(dataAttributes) : null,
                     dependencies: dependencies.size > 0 ? Array.from(dependencies) : null,
                     index,
                     className: makeSafeForSerialization(className),

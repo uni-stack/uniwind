@@ -15,7 +15,7 @@ export type Style = {
         state: ComponentState | undefined,
         vars: Vars,
     ) => boolean
-    dataAttributeNames: Array<string> | null
+    dataAttributeValues: Record<string, unknown> | null
     dependencies: Array<StyleDependency> | null
     index: number
     className: string
