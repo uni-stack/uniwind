@@ -17,8 +17,6 @@ export type Style = {
     ) => boolean
     dataAttributeNames: Array<string> | null
     dependencies: Array<StyleDependency> | null
-    index: number
-    className: string
     importantProperties: Array<string>
     complexity: number
     importantComplexity: number
