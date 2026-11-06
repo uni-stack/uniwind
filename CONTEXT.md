@@ -70,7 +70,7 @@ Native runtime:
 - Build output injects a generated stylesheet callback into `Uniwind.__reinit(...)`.
 - `UniwindStore` holds generated style records, theme variables, scoped variables, runtime state, and per-theme caches.
 - `UniwindStore.getStyles(className, props, state, context)` resolves classes into React Native style objects.
-- Cache keys include class names, component state, whether theme is scoped, layout direction, and a key derived from the merged `ScopedVariables` map. Class strings with data variants also add the values of the `data-*` props their rules read; those attribute names are collected during the first resolve of the class string and cleared on reinit, so class strings without data variants keep the key they had.
+- Cache keys include class names, component state, whether theme is scoped, layout direction, and a key derived from the merged `ScopedVariables` map. Class strings with data variants also key on the values of the `data-*` props their rules read.
 - During resolve, `ScopedVariables` overrides are overlaid onto a prototype-chained clone of the theme vars so unset variables fall through to the theme.
 - Resolved styles subscribe to only dependencies they use, then invalidate cache entries on change.
 - Runtime dependencies are represented by `StyleDependency`: theme, dimensions, orientation, insets, font scale, RTL, adaptive themes, and variables.

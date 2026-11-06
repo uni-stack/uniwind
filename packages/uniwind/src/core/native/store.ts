@@ -21,17 +21,12 @@ type StylesResult = {
 
 const emptyState: StylesResult = { styles: {}, dependencies: [], dependencySum: 0 }
 
-// The generated match functions compare data props with ===, so the raw values are enough
-const getDataAttributesCacheKey = (dataAttributeNames: Array<string>, componentProps: Record<string, any> | undefined) =>
-    JSON.stringify(dataAttributeNames.map(name => componentProps?.[name] ?? null))
-
 class UniwindStoreBuilder {
     runtime = UniwindRuntime
     vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
-    // Data attributes read by class strings with data variants. Filled while resolving and cleared
-    // in reinit, so class strings without data variants never get an entry
+    // Data attributes read by each class string with data variants, filled by resolveStyles
     private dataAttributeNames = new Map<string, Array<string>>()
 
     getStyles(
@@ -54,31 +49,15 @@ class UniwindStoreBuilder {
             return emptyState
         }
 
-        // Class strings without data variants are cached under this key, as before
-        if (cache.has(baseCacheKey)) {
-            return cache.get(baseCacheKey)!
-        }
+        const cacheKey = baseCacheKey + this.getDataAttributesCacheKey(className, componentProps)
 
-        const knownNames = this.dataAttributeNames.get(className)
-        let cacheKey = baseCacheKey
-
-        if (knownNames !== undefined) {
-            cacheKey += getDataAttributesCacheKey(knownNames, componentProps)
-
-            if (cache.has(cacheKey)) {
-                return cache.get(cacheKey)!
-            }
+        if (cache.has(cacheKey)) {
+            return cache.get(cacheKey)!
         }
 
         const result = this.resolveStyles(className, componentProps, state, uniwindContext)
-
-        // The first resolve of a class string with data variants is what finds the names
-        if (knownNames === undefined && result.dataAttributeNames !== null) {
-            this.dataAttributeNames.set(className, result.dataAttributeNames)
-            cacheKey += getDataAttributesCacheKey(result.dataAttributeNames, componentProps)
-        }
-
-        const storeKey = cacheKey
+        // The first resolve of a class string fills in its data attribute names, which changes its key
+        const storeKey = baseCacheKey + this.getDataAttributesCacheKey(className, componentProps)
 
         cache.set(storeKey, result)
         UniwindListener.subscribe(
@@ -88,6 +67,12 @@ class UniwindStoreBuilder {
         )
 
         return result
+    }
+
+    private getDataAttributesCacheKey(className: string, componentProps: Record<string, any> | undefined) {
+        const names = this.dataAttributeNames.get(className)
+
+        return names === undefined ? '' : JSON.stringify(names.map(name => componentProps?.[name] ?? null))
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
@@ -248,11 +233,14 @@ class UniwindStoreBuilder {
             parseTextShadowMutation(result)
         }
 
+        if (dataAttributeNames !== null) {
+            this.dataAttributeNames.set(classNames, Array.from(dataAttributeNames))
+        }
+
         return {
             styles: result,
             dependencies: Array.from(dependencies),
             dependencySum,
-            dataAttributeNames: dataAttributeNames !== null ? Array.from(dataAttributeNames) : null,
         }
     }
 

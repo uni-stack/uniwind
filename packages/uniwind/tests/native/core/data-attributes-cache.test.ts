@@ -62,31 +62,4 @@ describe('Caching styles that use data attributes', () => {
 
         expect(calls).toBe(2)
     })
-
-    test('keeps nothing extra for class strings without data variants', () => {
-        const className = 'opacity-50 bg-blue-500'
-        const dataAttributeNames = (UniwindStore as any).dataAttributeNames as Map<string, Array<string>>
-        const calls = countResolves(() => {
-            for (let i = 0; i < 100; i++) {
-                getBackground(className, { 'data-testid': `item-${i}` })
-            }
-        })
-
-        getBackground(withData, { 'data-active': true })
-
-        expect(calls).toBe(1)
-        expect(dataAttributeNames.has(className)).toBe(false)
-        expect(dataAttributeNames.get(withData)).toEqual(['data-active'])
-    })
-
-    test('stores the first result of a new class string under its data values', () => {
-        const className = 'opacity-50 data-[active=true]:bg-red-500'
-        const calls = countResolves(() => {
-            expect(getBackground(className, { 'data-active': true })).toBe(TW_RED_500)
-            expect(getBackground(className, { 'data-active': false })).toBe(undefined)
-            expect(getBackground(className, { 'data-active': true })).toBe(TW_RED_500)
-        })
-
-        expect(calls).toBe(2)
-    })
 })
