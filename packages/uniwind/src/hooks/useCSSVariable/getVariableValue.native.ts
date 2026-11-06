@@ -3,7 +3,8 @@ import { getScopedVars } from '../../core/native/native-utils'
 import type { UniwindContextType, Vars } from '../../core/types'
 
 export const getVariableValue = (name: string, uniwindContext: UniwindContextType) => {
-    const themeVars = UniwindStore.vars[uniwindContext.scopedTheme ?? UniwindRuntime.currentThemeName]
+    const themeName = uniwindContext.scopedTheme ?? UniwindRuntime.currentThemeName
+    const themeVars = UniwindStore.vars[themeName]
 
     if (!themeVars) {
         return undefined
@@ -17,5 +18,5 @@ export const getVariableValue = (name: string, uniwindContext: UniwindContextTyp
             getScopedVars(uniwindContext.variables),
         )
 
-    return vars[name]?.(vars)
+    return vars[name]?.(vars, themeName)
 }

@@ -37,7 +37,7 @@ export class Color {
 
         try {
             if (color.type === 'currentcolor') {
-                return 'vars["currentColor"]?.(vars)'
+                return 'vars["currentColor"]?.(vars,themeName)'
             }
 
             if (color.type === 'rgb' || color.type === 'srgb') {

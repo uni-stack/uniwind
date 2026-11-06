@@ -89,7 +89,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
                 }
 
                 const entries = Array.from(nativeEntries)
-                    .map(([property, value]) => [`"${property}"`, `function(vars) { return ${serialize(value)} }`])
+                    .map(([property, value]) => [`"${property}"`, `function(vars, themeName) { return ${serialize(value)} }`])
 
                 if (entries.length === 0) {
                     return null

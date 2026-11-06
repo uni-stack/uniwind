@@ -1,5 +1,5 @@
 import { formatHex, formatHex8, interpolate, parse } from 'culori'
-import type { CSSVariables, UniwindRuntime, Var, Vars } from '../types'
+import type { CSSVariables, ThemeName, Var, Vars } from '../types'
 
 const scopedVarsCache = new WeakMap<CSSVariables, Vars>()
 
@@ -59,8 +59,8 @@ export const colorMix = (color: string, weight: number | string, mixColor: strin
     return formatHex(interpolate([mixColor, color])(parsedWeight))
 }
 
-export function lightDark(this: UniwindRuntime, light: string, dark: string) {
-    if ((this.resolvingThemeName ?? this.currentThemeName) === 'dark') {
+export function lightDark(light: string, dark: string, themeName: ThemeName) {
+    if (themeName === 'dark') {
         return dark
     }
 

@@ -12,13 +12,13 @@ export const compileNativeCSS = (bundlerConfig: UniwindBundlerConfig, tailwindCS
     )
     const vars = serializeJSObject(
         Processor.vars,
-        (key, value) => `"${key}": vars => ${value}`,
+        (key, value) => `"${key}": (vars, themeName) => ${value}`,
     )
     const scopedVars = Object.fromEntries(
         Object.entries(Processor.scopedVars)
             .map(([scopedVarsName, scopedVars]) => [
                 scopedVarsName,
-                serializeJSObject(scopedVars, (key, value) => `"${key}": vars => ${value}`),
+                serializeJSObject(scopedVars, (key, value) => `"${key}": (vars, themeName) => ${value}`),
             ]),
     )
     const serializedScopedVars = Object.entries(scopedVars)

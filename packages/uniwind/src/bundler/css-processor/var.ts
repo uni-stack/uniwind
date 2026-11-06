@@ -5,7 +5,8 @@ export class Var {
     constructor(private readonly Processor: ProcessorBuilder) {}
 
     processVar(variable: Variable): string {
-        const value = `vars[${JSON.stringify(variable.name.ident)}]?.(vars)`
+        // Keep the call free of spaces so CSS serialization treats it as one token.
+        const value = `vars[${JSON.stringify(variable.name.ident)}]?.(vars,themeName)`
 
         if (!variable.fallback) {
             return value

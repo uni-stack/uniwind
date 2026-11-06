@@ -55,18 +55,7 @@ class UniwindStoreBuilder {
             return cache.get(cacheKey)!
         }
 
-        const previousResolvingTheme = this.runtime.resolvingThemeName
-        let result: StylesResult
-
-        // Generated getters close over this runtime, including calls to lightDark.
-        this.runtime.resolvingThemeName = uniwindContext.scopedTheme ?? this.runtime.currentThemeName
-
-        try {
-            result = this.resolveStyles(className, componentProps, state, uniwindContext)
-        } finally {
-            this.runtime.resolvingThemeName = previousResolvingTheme
-        }
-
+        const result = this.resolveStyles(className, componentProps, state, uniwindContext)
         // The first resolve of a class string fills in its data attribute names, which changes its key
         const storeKey = baseCacheKey + this.getDataAttributesCacheKey(className, componentProps)
 
@@ -199,7 +188,7 @@ class UniwindStoreBuilder {
         }
 
         const result = Object.fromEntries(
-            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars)]),
+            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars, theme)]),
         ) as Record<string, any>
 
         if (result.lineHeight !== undefined && result.lineHeight < 6) {

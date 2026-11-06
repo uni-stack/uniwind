@@ -6,8 +6,10 @@ import { Platform, StyleDependency } from '../../../src/common/consts'
 import View from '../../../src/components/native/View'
 import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
 import { Uniwind } from '../../../src/core'
+import { lightDark } from '../../../src/core/native/native-utils'
 import { UniwindStore } from '../../../src/core/native/store'
-import type { UniwindRuntime } from '../../../src/core/types'
+import type { GenerateStyleSheetsCallback, UniwindRuntime } from '../../../src/core/types'
+import { getVariableValue } from '../../../src/hooks/useCSSVariable/getVariableValue.native'
 import { renderUniwind } from '../utils'
 
 describe('Native light-dark()', () => {
@@ -93,26 +95,38 @@ describe('Native light-dark()', () => {
         expect(getStylesFromId('scoped').backgroundColor).toBe('#000000')
     })
 
-    test('restores the resolution theme even when a getter throws', () => {
-        const runtime = UniwindStore.runtime
-        const lightDark = jest.spyOn(runtime, 'lightDark').mockImplementationOnce(() => {
-            throw new Error('getter failed')
-        })
+    test.each(['light', 'dark', 'sepia'])('lightDark uses its explicit %s theme argument', themeName => {
+        Uniwind.setTheme('dark')
 
-        try {
-            expect(() =>
-                UniwindStore.getStyles('direct', undefined, undefined, {
-                    scopedTheme: 'dark',
-                    rtl: null,
-                    variables: null,
-                })
-            ).toThrow('getter failed')
-        } finally {
-            lightDark.mockRestore()
+        expect(lightDark('#ffffff', '#000000', themeName)).toBe(themeName === 'dark' ? '#000000' : '#ffffff')
+    })
+
+    test('forwards the theme through style and variable getter chains', () => {
+        const config = UniwindBundlerConfig.fromMetroConfig({ cssEntryFile: './tests/test.css' }, Platform.iOS)
+        const code = compileNativeCSS(
+            config,
+            `
+            :root { --alias: var(--adaptive); }
+            .direct { background-color: light-dark(#ffffff, #000000); }
+            .variable { background-color: var(--alias); }
+        `,
+        )
+
+        UniwindStore.reinit((rt: UniwindRuntime) => {
+            const generated: ReturnType<GenerateStyleSheetsCallback> = eval(code)
+            // Use a compiled light-dark getter as the leaf to exercise variable forwarding
+            // independently of the parser's support for light-dark in custom properties.
+            generated.vars['--adaptive'] = generated.stylesheet.direct[0].entries[0][1]
+
+            return generated
+        }, ['light', 'dark'])
+
+        for (const scopedTheme of ['light', 'dark']) {
+            const context = { scopedTheme, rtl: null, variables: null }
+            const expected = scopedTheme === 'dark' ? '#000000' : '#ffffff'
+
+            expect(UniwindStore.getStyles('variable', undefined, undefined, context).styles.backgroundColor).toBe(expected)
+            expect(getVariableValue('--alias', context)).toBe(expected)
         }
-
-        expect(runtime.resolvingThemeName).toBeUndefined()
-        expect(runtime.currentThemeName).toBe('light')
-        expect(runtime.lightDark('#ffffff', '#000000')).toBe('#ffffff')
     })
 })

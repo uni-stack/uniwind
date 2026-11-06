@@ -176,7 +176,7 @@ export class CSS {
                     }
 
                     if (declarationValue.value === 'currentcolor') {
-                        return 'vars["currentColor"]?.(vars)'
+                        return 'vars["currentColor"]?.(vars,themeName)'
                     }
 
                     return declarationValue.value
@@ -212,7 +212,7 @@ export class CSS {
                 case 'pair':
                     return declarationValue.inside.type
                 case 'currentcolor':
-                    return 'vars["currentColor"]?.(vars)'
+                    return 'vars["currentColor"]?.(vars,themeName)'
                 case 'calc':
                     return this.Processor.Functions.processCalc(declarationValue.value)
                 case 'min':
@@ -269,7 +269,7 @@ export class CSS {
                 case 'close-parenthesis':
                     return ')'
                 case 'light-dark':
-                    return `rt.lightDark( ${this.processValue(declarationValue.light)}, ${this.processValue(declarationValue.dark)} )`
+                    return `rt.lightDark( ${this.processValue(declarationValue.light)}, ${this.processValue(declarationValue.dark)}, themeName )`
                 case 'unresolved-color':
                     return this.getProcessedValue(declarationValue.value)
                 case 'track-list':

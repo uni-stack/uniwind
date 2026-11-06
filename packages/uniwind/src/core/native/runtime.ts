@@ -26,8 +26,6 @@ export const UniwindRuntime = {
     colorMix,
     pixelRatio: value => value * PixelRatio.get(),
     cubicBezier: () => '',
-    lightDark: () => '',
+    lightDark,
     parseColor,
 } as UniwindRuntimeType
-
-UniwindRuntime.lightDark = lightDark.bind(UniwindRuntime)

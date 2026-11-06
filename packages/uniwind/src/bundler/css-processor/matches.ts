@@ -27,5 +27,9 @@ export const generateMatches = (meta: MediaQueryResolver) => {
         }
     }
 
-    return `function(rt, context, props, state, vars) { return ${conditions.join(' && ') || 'true'} }`
+    const themeName = conditions.some(condition => condition.includes('themeName'))
+        ? 'const themeName = context.scopedTheme ?? rt.currentThemeName; '
+        : ''
+
+    return `function(rt, context, props, state, vars) { ${themeName}return ${conditions.join(' && ') || 'true'} }`
 }
