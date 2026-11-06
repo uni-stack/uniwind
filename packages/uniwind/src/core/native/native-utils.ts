@@ -60,7 +60,7 @@ export const colorMix = (color: string, weight: number | string, mixColor: strin
 }
 
 export function lightDark(this: UniwindRuntime, light: string, dark: string) {
-    if (this.currentThemeName === 'dark') {
+    if ((this.resolvingThemeName ?? this.currentThemeName) === 'dark') {
         return dark
     }
 

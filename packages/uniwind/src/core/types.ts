@@ -45,6 +45,7 @@ export type UniwindRuntime = {
     orientation: Orientation
     colorScheme: ColorScheme
     currentThemeName: ThemeName
+    resolvingThemeName?: ThemeName
     rtl: boolean
     insets: {
         top: number
