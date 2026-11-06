@@ -55,7 +55,7 @@ const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, vi
 export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
     const stylesheetsEntries = Object.entries(Processor.stylesheets)
         .map(([className, stylesPerMediaQuery]) => {
-            const styles = stylesPerMediaQuery.map(({ style, meta }, index) => {
+            const styles = stylesPerMediaQuery.map(({ style, meta }) => {
                 const {
                     rtl,
                     theme,
@@ -130,8 +130,6 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
                     matches,
                     dataAttributeNames: dataAttributes !== null ? Object.keys(dataAttributes).map(makeSafeForSerialization) : null,
                     dependencies: dependencies.size > 0 ? Array.from(dependencies) : null,
-                    index,
-                    className: makeSafeForSerialization(className),
                     importantProperties: Array.from(nativeImportantProperties).map(makeSafeForSerialization),
                     complexity,
                     importantComplexity,
