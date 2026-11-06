@@ -227,7 +227,7 @@ describe('Generated style match functions', () => {
         expect(style.dependencies).toEqual(
             expect.arrayContaining([StyleDependency.Theme, StyleDependency.Rtl, StyleDependency.Orientation, StyleDependency.Dimensions]),
         )
-        expect(style.dataAttributeValues).toEqual({ 'data-ready': true, 'data-mode': 'on' })
+        expect(style.dataAttributeNames).toEqual(['data-ready', 'data-mode'])
     })
 
     test('matches color scheme using the scoped theme and subscribes to theme changes', () => {
@@ -258,7 +258,7 @@ describe('Generated style match functions', () => {
 
         expect(style.matches(UniwindStore.runtime, context, undefined, undefined, {})).toBe(true)
         expect(style.dependencies).toBeNull()
-        expect(style.dataAttributeValues).toBeNull()
+        expect(style.dataAttributeNames).toBeNull()
     })
 })
 

@@ -5,11 +5,6 @@ const context = { scopedTheme: null, rtl: null, variables: null }
 const plain = 'bg-blue-500 opacity-50'
 const withData = 'bg-blue-500 data-[active=true]:bg-red-500'
 const withNumberLikeValue = 'bg-blue-500 data-[x=1]:bg-red-500'
-const withStringValue = 'bg-blue-500 data-[state=open]:bg-red-500'
-
-const getCachedEntries = () => Array.from((UniwindStore as any).cache[UniwindStore.runtime.currentThemeName].entries()) as Array<[string, object]>
-// Cached style results, without the entries that record which data attributes a class string reads
-const getStylesCacheSize = () => getCachedEntries().filter(([, entry]) => 'styles' in entry).length
 
 const countResolves = (run: () => void) => {
     const spy = jest.spyOn(UniwindStore as any, 'resolveStyles')
@@ -42,43 +37,19 @@ describe('Caching styles that use data attributes', () => {
             expect(getBackground(withData, { 'data-active': true })).toBe(TW_RED_500)
             expect(getBackground(withData, { 'data-active': false })).toBe(TW_BLUE_500)
             expect(getBackground(withData, undefined)).toBe(TW_BLUE_500)
+            expect(getBackground(withData, { 'data-active': 'true' })).toBe(TW_RED_500)
             expect(getBackground(withData, { 'data-active': true })).toBe(TW_RED_500)
             expect(getBackground(withData, { 'data-active': false })).toBe(TW_BLUE_500)
         })
 
-        // false and a missing prop can't match data-[active=true], so they share an entry
-        expect(calls).toBe(2)
-    })
-
-    test('treats true and "true" as the same value, like the match function does', () => {
-        const calls = countResolves(() => {
-            expect(getBackground(withData, { 'data-active': true })).toBe(TW_RED_500)
-            expect(getBackground(withData, { 'data-active': 'true' })).toBe(TW_RED_500)
-        })
-
-        expect(calls).toBe(1)
+        // One resolve each for true, false, missing and "true"; the repeats hit the cache
+        expect(calls).toBe(4)
     })
 
     test('keeps number and string values apart', () => {
         expect(getBackground(withNumberLikeValue, { 'data-x': '1' })).toBe(TW_RED_500)
         expect(getBackground(withNumberLikeValue, { 'data-x': 1 })).toBe(TW_BLUE_500)
         expect(getBackground(withNumberLikeValue, { 'data-x': '1' })).toBe(TW_RED_500)
-    })
-
-    test('shares one cache entry for values that no rule matches', () => {
-        const sizeBefore = getStylesCacheSize()
-        const calls = countResolves(() => {
-            for (let i = 0; i < 100; i++) {
-                expect(getBackground(withStringValue, { 'data-state': `item-${i}` })).toBe(TW_BLUE_500)
-            }
-
-            expect(getBackground(withStringValue, { 'data-state': 'open' })).toBe(TW_RED_500)
-            expect(getBackground(withStringValue, { 'data-state': { open: true } })).toBe(TW_BLUE_500)
-            expect(getBackground(withStringValue, undefined)).toBe(TW_BLUE_500)
-        })
-
-        expect(calls).toBe(2)
-        expect(getStylesCacheSize() - sizeBefore).toBe(2)
     })
 
     test('ignores data props that the class string does not use', () => {
@@ -92,18 +63,20 @@ describe('Caching styles that use data attributes', () => {
         expect(calls).toBe(2)
     })
 
-    test('does no data attribute work for class strings without data variants', () => {
+    test('keeps nothing extra for class strings without data variants', () => {
         const className = 'opacity-50 bg-blue-500'
+        const dataAttributeNames = (UniwindStore as any).dataAttributeNames as Map<string, Array<string>>
         const calls = countResolves(() => {
             for (let i = 0; i < 100; i++) {
                 getBackground(className, { 'data-testid': `item-${i}` })
             }
         })
 
+        getBackground(withData, { 'data-active': true })
+
         expect(calls).toBe(1)
-        expect(getCachedEntries().filter(([key]) => key.startsWith(className))).toEqual([
-            [expect.any(String), expect.objectContaining({ styles: expect.any(Object) })],
-        ])
+        expect(dataAttributeNames.has(className)).toBe(false)
+        expect(dataAttributeNames.get(withData)).toEqual(['data-active'])
     })
 
     test('stores the first result of a new class string under its data values', () => {
