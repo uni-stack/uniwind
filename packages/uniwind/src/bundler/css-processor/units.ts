@@ -23,7 +23,7 @@ export class Units {
                 case 'rem':
                     return length.value * this.Processor.vars['--uniwind-em']
                 case 'em':
-                    return `vars["--uniwind-em"]?.(vars,themeName) * ${length.value}`
+                    return `vars["--uniwind-em"]?.(vars) * ${length.value}`
                 default:
                     this.logger.warn(`Unsupported unit - ${length.unit}`)
 

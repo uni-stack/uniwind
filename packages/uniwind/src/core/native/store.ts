@@ -100,6 +100,9 @@ class UniwindStoreBuilder {
                 Object.assign(clonedVars, themeVars)
             }
 
+            // Internal metadata inherits through scoped and inline variable overlays.
+            clonedVars.__uniwindThemeName = theme
+
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
@@ -188,7 +191,7 @@ class UniwindStoreBuilder {
         }
 
         const result = Object.fromEntries(
-            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars, theme)]),
+            Object.entries(resultGetters).map(([property, valueGetter]) => [property, valueGetter(vars)]),
         ) as Record<string, any>
 
         if (result.lineHeight !== undefined && result.lineHeight < 6) {

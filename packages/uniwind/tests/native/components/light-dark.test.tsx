@@ -5,6 +5,7 @@ import { compileNativeCSS } from '../../../src/bundler/css-compiler/compileNativ
 import { Platform, StyleDependency } from '../../../src/common/consts'
 import View from '../../../src/components/native/View'
 import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
+import { ScopedVariables } from '../../../src/components/ScopedVariables/ScopedVariables.native'
 import { Uniwind } from '../../../src/core'
 import { lightDark } from '../../../src/core/native/native-utils'
 import { UniwindStore } from '../../../src/core/native/store'
@@ -16,7 +17,18 @@ describe('Native light-dark()', () => {
     beforeEach(() => {
         Uniwind.setTheme('light')
         const config = UniwindBundlerConfig.fromMetroConfig({ cssEntryFile: './tests/test.css' }, Platform.iOS)
-        const code = compileNativeCSS(config, '.direct { background-color: light-dark(#ffffff, #000000); }')
+        const code = compileNativeCSS(
+            config,
+            `
+            .direct { background-color: light-dark(#ffffff, #000000); }
+            .overlays {
+                --inline-color: #123456;
+                background-color: light-dark(#ffffff, #000000);
+                border-color: var(--inline-color);
+                color: var(--__uniwindThemeName);
+            }
+        `,
+        )
 
         UniwindStore.reinit((rt: UniwindRuntime) => eval(code), ['light', 'dark'])
     })
@@ -58,6 +70,7 @@ describe('Native light-dark()', () => {
         const dark = resolve('dark')
 
         expect(global.dependencies).toContain(StyleDependency.Theme)
+        expect(global.dependencies).not.toContain(StyleDependency.Variables)
         expect(global.dependencySum & (1 << StyleDependency.Theme)).not.toBe(0)
         expect(light.dependencies).not.toContain(StyleDependency.Theme)
         expect(dark.dependencies).not.toContain(StyleDependency.Theme)
@@ -101,7 +114,7 @@ describe('Native light-dark()', () => {
         expect(lightDark('#ffffff', '#000000', themeName)).toBe(themeName === 'dark' ? '#000000' : '#ffffff')
     })
 
-    test('forwards the theme through style and variable getter chains', () => {
+    test('inherits the theme through style and variable getter chains', () => {
         const config = UniwindBundlerConfig.fromMetroConfig({ cssEntryFile: './tests/test.css' }, Platform.iOS)
         const code = compileNativeCSS(
             config,
@@ -127,6 +140,40 @@ describe('Native light-dark()', () => {
 
             expect(UniwindStore.getStyles('variable', undefined, undefined, context).styles.backgroundColor).toBe(expected)
             expect(getVariableValue('--alias', context)).toBe(expected)
+        }
+    })
+
+    test('preserves theme metadata through scoped and inline variables without colliding with CSS names', () => {
+        const { getStylesFromId } = renderUniwind(
+            <ScopedVariables variables={{ '--__uniwindThemeName': '#123abc' }}>
+                <View className="overlays" testID="base" />
+                <ScopedTheme theme="dark">
+                    <View className="overlays" testID="dark" />
+                    <ScopedTheme theme="light">
+                        <View className="overlays" testID="light" />
+                    </ScopedTheme>
+                </ScopedTheme>
+            </ScopedVariables>,
+        )
+
+        for (const theme of ['light', 'dark', 'light']) {
+            act(() => Uniwind.setTheme(theme))
+
+            expect(getStylesFromId('base')).toMatchObject({
+                backgroundColor: theme === 'dark' ? '#000000' : '#ffffff',
+                borderColor: '#123456',
+                color: '#123abc',
+            })
+            expect(getStylesFromId('dark')).toMatchObject({
+                backgroundColor: '#000000',
+                borderColor: '#123456',
+                color: '#123abc',
+            })
+            expect(getStylesFromId('light')).toMatchObject({
+                backgroundColor: '#ffffff',
+                borderColor: '#123456',
+                color: '#123abc',
+            })
         }
     })
 })

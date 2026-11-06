@@ -3,8 +3,10 @@ import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
-export type Vars = Record<PropertyKey, Var>
-export type Var = (vars: Vars, themeName: ThemeName) => unknown
+export type Vars = Record<PropertyKey, Var> & {
+    __uniwindThemeName?: ThemeName
+}
+export type Var = (vars: Vars) => unknown
 
 export type Style = {
     entries: Array<[string, Var]>
