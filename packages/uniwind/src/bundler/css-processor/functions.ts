@@ -97,6 +97,11 @@ export class Functions {
                 'srgb',
             ].includes(fn.name)
         ) {
+            // A variable channel is only known on the device, so the color is built there.
+            if (fn.arguments.some(argument => argument.type === 'var')) {
+                return this.processRuntimeColor(fn)
+            }
+
             const color = `${fn.name}(${this.Processor.CSS.processValue(fn.arguments)})`
 
             return this.Processor.Color.processColor(color as CssColor)
@@ -142,6 +147,20 @@ export class Functions {
         this.logger.warn(`Unsupported function - ${fn.name}`)
 
         return fn.name
+    }
+
+    /** Each channel is processed on its own, so a variable keeps its fallbacks in one piece, then the channels are joined into the color text on the device. */
+    private processRuntimeColor(fn: FunctionType) {
+        const channels = fn.arguments
+            .filter(argument => !(argument.type === 'token' && argument.value.type === 'white-space'))
+            // The slash before an alpha is plain text for parseColor, so it is quoted like a string.
+            .map(argument =>
+                argument.type === 'token' && argument.value.type === 'delim'
+                    ? JSON.stringify(argument.value.value)
+                    : this.Processor.CSS.processValue(argument)
+            )
+
+        return `rt.parseColor("${fn.name}", [${channels.join(', ')}].join(" "))`
     }
 
     processMathFunction(
