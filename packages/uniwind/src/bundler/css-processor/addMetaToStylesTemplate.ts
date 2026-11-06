@@ -128,7 +128,7 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
                 return {
                     entries,
                     matches,
-                    hasDataAttributes: dataAttributes !== null,
+                    dataAttributeNames: dataAttributes !== null ? Object.keys(dataAttributes).map(makeSafeForSerialization) : null,
                     dependencies: dependencies.size > 0 ? Array.from(dependencies) : null,
                     index,
                     className: makeSafeForSerialization(className),

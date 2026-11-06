@@ -26,6 +26,8 @@ class UniwindStoreBuilder {
     vars = {} as Record<ThemeName, Vars>
     private stylesheet = {} as StyleSheets
     private cache = {} as Record<ThemeName, Map<string, StylesResult>>
+    // Data attributes read by each class string with data variants, filled by resolveStyles
+    private dataAttributeNames = new Map<string, Array<string>>()
 
     getStyles(
         className: string | undefined,
@@ -38,7 +40,7 @@ class UniwindStoreBuilder {
         }
 
         const isScopedTheme = uniwindContext.scopedTheme !== null
-        const cacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
+        const baseCacheKey = `${className}${state?.isDisabled ?? false}${state?.isFocused ?? false}${state?.isPressed ?? false}${isScopedTheme}${
             uniwindContext.rtl ?? ''
         }${uniwindContext.variables?.__uniwindVariablesCacheKey ?? ''}`
         const cache = this.cache[uniwindContext.scopedTheme ?? this.runtime.currentThemeName]
@@ -47,23 +49,30 @@ class UniwindStoreBuilder {
             return emptyState
         }
 
+        const cacheKey = baseCacheKey + this.getDataAttributesCacheKey(className, componentProps)
+
         if (cache.has(cacheKey)) {
             return cache.get(cacheKey)!
         }
 
         const result = this.resolveStyles(className, componentProps, state, uniwindContext)
+        // The first resolve of a class string fills in its data attribute names, which changes its key
+        const storeKey = baseCacheKey + this.getDataAttributesCacheKey(className, componentProps)
 
-        // Don't cache styles that depend on data attributes
-        if (!result.hasDataAttributes) {
-            cache.set(cacheKey, result)
-            UniwindListener.subscribe(
-                () => cache.delete(cacheKey),
-                result.dependencies,
-                { once: true },
-            )
-        }
+        cache.set(storeKey, result)
+        UniwindListener.subscribe(
+            () => cache.delete(storeKey),
+            result.dependencies,
+            { once: true },
+        )
 
         return result
+    }
+
+    private getDataAttributesCacheKey(className: string, componentProps: Record<string, any> | undefined) {
+        const names = this.dataAttributeNames.get(className)
+
+        return names === undefined ? '' : JSON.stringify(names.map(name => componentProps?.[name] ?? null))
     }
 
     reinit = (generateStyleSheetCallback: GenerateStyleSheetsCallback, themes: Array<string>) => {
@@ -94,6 +103,7 @@ class UniwindStoreBuilder {
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
+        this.dataAttributeNames = new Map()
 
         if (__DEV__) {
             UniwindListener.notifyAll()
@@ -118,11 +128,11 @@ class UniwindStoreBuilder {
                 getScopedVars(uniwindContext.variables),
             )
         const originalVars = vars
-        let hasDataAttributes = false
         const dependencies = new Set<StyleDependency>()
         let dependencySum = 0
         const bestRanks = new Map<string, number>()
         const isScopedTheme = uniwindContext.scopedTheme !== null
+        let dataAttributeNames: Set<string> | null = null
         const classNameTokens = classNames.includes('\n')
             ? classNames.split(/\s+/).filter(Boolean)
             : classNames.split(' ')
@@ -144,8 +154,9 @@ class UniwindStoreBuilder {
                     })
                 }
 
-                if (style.hasDataAttributes) {
-                    hasDataAttributes = true
+                if (style.dataAttributeNames !== null) {
+                    dataAttributeNames ??= new Set()
+                    style.dataAttributeNames.forEach(name => dataAttributeNames!.add(name))
                 }
 
                 if (!style.matches(this.runtime, uniwindContext, componentProps, state, vars)) {
@@ -222,11 +233,14 @@ class UniwindStoreBuilder {
             parseTextShadowMutation(result)
         }
 
+        if (dataAttributeNames !== null) {
+            this.dataAttributeNames.set(classNames, Array.from(dataAttributeNames))
+        }
+
         return {
             styles: result,
             dependencies: Array.from(dependencies),
             dependencySum,
-            hasDataAttributes,
         }
     }
 
