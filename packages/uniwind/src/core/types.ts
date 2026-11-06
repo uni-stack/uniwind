@@ -3,7 +3,9 @@ import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
-export type Vars = Record<PropertyKey, Var>
+export type Vars = Record<PropertyKey, Var> & {
+    __uniwindThemeName?: ThemeName
+}
 export type Var = (vars: Vars) => unknown
 
 export type Style = {
@@ -57,7 +59,7 @@ export type UniwindRuntime = {
     fontScale: (value: number) => number
     colorMix: (color: string, weight: number | string, mixColor: string) => string
     cubicBezier: (x1: number, y1: number, x2: number, y2: number) => string
-    lightDark: (light: string, dark: string) => string
+    lightDark: (light: string, dark: string, themeName: ThemeName) => string
     parseColor: (type: string, color: string) => string
 }
 

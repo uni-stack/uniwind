@@ -269,7 +269,9 @@ export class CSS {
                 case 'close-parenthesis':
                     return ')'
                 case 'light-dark':
-                    return `rt.lightDark( ${this.processValue(declarationValue.light)}, ${this.processValue(declarationValue.dark)} )`
+                    return `rt.lightDark( ${this.processValue(declarationValue.light)}, ${
+                        this.processValue(declarationValue.dark)
+                    }, vars.__uniwindThemeName )`
                 case 'unresolved-color':
                     return this.getProcessedValue(declarationValue.value)
                 case 'track-list':

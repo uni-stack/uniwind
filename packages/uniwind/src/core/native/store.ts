@@ -100,6 +100,9 @@ class UniwindStoreBuilder {
                 Object.assign(clonedVars, themeVars)
             }
 
+            // Internal metadata inherits through scoped and inline variable overlays.
+            clonedVars.__uniwindThemeName = theme
+
             return [theme, clonedVars]
         }))
         this.cache = Object.fromEntries(themes.map(theme => [theme, new Map()]))
