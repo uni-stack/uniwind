@@ -3,21 +3,30 @@ import type { CSSVariables, UniwindRuntime, Var, Vars } from '../types'
 
 const scopedVarsCache = new WeakMap<CSSVariables, Vars>()
 
-// Normalizes a CSS variable value (numbers pass through, colors -> hex) and wraps it in a lazy getter
-export const createVarGetter = (value: string | number): Var => () => {
-    if (typeof value === 'number') {
-        return value
+// Normalizes a fixed CSS variable value once, on its first read.
+export const createVarGetter = (value: string | number): Var => {
+    let initialized = false
+    let normalizedValue: unknown
+
+    return () => {
+        if (!initialized) {
+            normalizedValue = value
+
+            if (typeof value === 'string') {
+                const parsedColor = parse(value)
+
+                if (parsedColor) {
+                    normalizedValue = parsedColor.alpha === undefined || parsedColor.alpha === 1
+                        ? formatHex(parsedColor)
+                        : formatHex8(parsedColor)
+                }
+            }
+
+            initialized = true
+        }
+
+        return normalizedValue
     }
-
-    const parsedColor = parse(value)
-
-    if (parsedColor) {
-        return parsedColor.alpha === undefined || parsedColor.alpha === 1
-            ? formatHex(parsedColor)
-            : formatHex8(parsedColor)
-    }
-
-    return value
 }
 
 export const getScopedVars = (variables: CSSVariables): Vars => {
