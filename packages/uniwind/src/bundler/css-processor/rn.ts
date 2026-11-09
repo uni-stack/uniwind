@@ -214,6 +214,9 @@ export class RN {
                         return x
                             .replace('InlineStart', 'Start')
                             .replace('InlineEnd', 'End')
+                            // Android below RN 0.87 swaps these two corners, their top/bottom aliases resolve the same everywhere
+                            .replace('borderStartEndRadius', 'borderTopEndRadius')
+                            .replace('borderEndStartRadius', 'borderBottomStartRadius')
                     }
 
                     return x

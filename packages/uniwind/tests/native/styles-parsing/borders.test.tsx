@@ -1,5 +1,6 @@
 import * as React from 'react'
 import View from '../../../src/components/native/View'
+import { ScopedTheme } from '../../../src/components/ScopedTheme/ScopedTheme.native'
 import { TW_RED_500 } from '../../consts'
 import { renderUniwind } from '../utils'
 
@@ -148,13 +149,32 @@ describe('Borders', () => {
                 <View className="border-e-4" testID="border-e-4" />
                 <View className="border-e-red-500" testID="border-e-red-500" />
                 <View className="rounded-s-2xl" testID="rounded-s-2xl" />
+                <View className="rounded-e-2xl" testID="rounded-e-2xl" />
+                <View className="rounded-ss-md" testID="rounded-ss-md" />
+                <View className="rounded-se-md" testID="rounded-se-md" />
+                <View className="rounded-es-md" testID="rounded-es-md" />
+                <View className="rounded-ee-md" testID="rounded-ee-md" />
+                <View className="dark:rounded-s-2xl" testID="light-rounded-s-2xl" />
+                <ScopedTheme theme="dark">
+                    <View className="dark:rounded-s-2xl" testID="dark-rounded-s-2xl" />
+                </ScopedTheme>
             </React.Fragment>,
         )
 
         expect(getStylesFromId('border-s-2').borderStartWidth).toBe(2)
         expect(getStylesFromId('border-e-4').borderEndWidth).toBe(4)
         expect(getStylesFromId('border-e-red-500').borderEndColor).toBe(TW_RED_500)
-        expect(getStylesFromId('rounded-s-2xl').borderStartStartRadius).toBe(16)
+
+        const getRadii = (id: string) => Object.fromEntries(Object.entries(getStylesFromId(id)).filter(([key]) => key.endsWith('Radius')))
+
+        expect(getRadii('rounded-s-2xl')).toEqual({ borderStartStartRadius: 16, borderBottomStartRadius: 16 })
+        expect(getRadii('rounded-e-2xl')).toEqual({ borderTopEndRadius: 16, borderEndEndRadius: 16 })
+        expect(getRadii('rounded-ss-md')).toEqual({ borderStartStartRadius: 6 })
+        expect(getRadii('rounded-se-md')).toEqual({ borderTopEndRadius: 6 })
+        expect(getRadii('rounded-es-md')).toEqual({ borderBottomStartRadius: 6 })
+        expect(getRadii('rounded-ee-md')).toEqual({ borderEndEndRadius: 6 })
+        expect(getRadii('light-rounded-s-2xl')).toEqual({})
+        expect(getRadii('dark-rounded-s-2xl')).toEqual({ borderStartStartRadius: 16, borderBottomStartRadius: 16 })
     })
 })
 
