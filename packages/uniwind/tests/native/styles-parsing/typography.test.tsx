@@ -1,5 +1,6 @@
 import * as React from 'react'
 import View from '../../../src/components/native/View'
+import { TW_RED_500 } from '../../consts'
 import { renderUniwind } from '../utils'
 
 describe('Typography', () => {
@@ -131,7 +132,7 @@ describe('Typography', () => {
         expect(getStylesFromId('decoration-dotted').textDecorationStyle).toBe('dotted')
         expect(getStylesFromId('decoration-dashed').textDecorationStyle).toBe('dashed')
         expect(getStylesFromId('decoration-wavy').textDecorationStyle).toBe('wavy')
-        expect(getStylesFromId('decoration-red-500').textDecorationColor).toBe('#fb2c36')
+        expect(getStylesFromId('decoration-red-500').textDecorationColor).toBe(TW_RED_500)
     })
 
     test('Text Align', () => {
