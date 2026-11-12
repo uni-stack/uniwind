@@ -114,6 +114,26 @@ describe('Typography', () => {
         expect(getStylesFromId('no-underline').textDecorationLine).toBe('none')
     })
 
+    test('Text Decoration Style And Color', () => {
+        const { getStylesFromId } = renderUniwind(
+            <React.Fragment>
+                <View className="decoration-solid" testID="decoration-solid" />
+                <View className="decoration-double" testID="decoration-double" />
+                <View className="decoration-dotted" testID="decoration-dotted" />
+                <View className="decoration-dashed" testID="decoration-dashed" />
+                <View className="decoration-wavy" testID="decoration-wavy" />
+                <View className="decoration-red-500" testID="decoration-red-500" />
+            </React.Fragment>,
+        )
+
+        expect(getStylesFromId('decoration-solid').textDecorationStyle).toBe('solid')
+        expect(getStylesFromId('decoration-double').textDecorationStyle).toBe('double')
+        expect(getStylesFromId('decoration-dotted').textDecorationStyle).toBe('dotted')
+        expect(getStylesFromId('decoration-dashed').textDecorationStyle).toBe('dashed')
+        expect(getStylesFromId('decoration-wavy').textDecorationStyle).toBe('wavy')
+        expect(getStylesFromId('decoration-red-500').textDecorationColor).toBe('#fb2c36')
+    })
+
     test('Text Align', () => {
         const { getStylesFromId } = renderUniwind(
             <React.Fragment>
