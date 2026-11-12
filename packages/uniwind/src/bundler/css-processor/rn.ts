@@ -40,6 +40,9 @@ const cssToRNMap: Record<string, (value: any) => Record<string, any>> = {
         experimental_backgroundImage: value,
     }),
     borderSpacing: () => ({}),
+    experimentalTextWidthMode: value => ({
+        experimental_textWidthMode: value,
+    }),
     translate: value => {
         if (typeof value === 'object' && 'x' in value && 'y' in value) {
             return {
