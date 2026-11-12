@@ -28,29 +28,38 @@ const makeSafeForSerialization = (value: any) => {
     return value
 }
 
-const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder, visited = new Set<string>()): boolean => {
+const readVarValues = (varName: string, Processor: ProcessorBuilder) =>
+    [Processor.vars[varName], ...Object.values(Processor.scopedVars).map(scopedVars => scopedVars[varName])]
+        .filter((value): value is string => typeof value === 'string')
+
+const someVarReads = (
+    varName: string,
+    Processor: ProcessorBuilder,
+    matches: (varName: string) => boolean,
+    visited = new Set<string>(),
+): boolean => {
     if (visited.has(varName)) {
         return false
     }
 
     visited.add(varName)
 
-    const isScopedVar = Object.values(Processor.scopedVars).some(scopedVars => varName in scopedVars)
-
-    if (isScopedVar) {
+    if (matches(varName)) {
         return true
     }
 
-    const globalVarValue = Processor.vars[varName]
-
-    if (typeof globalVarValue !== 'string') {
-        return false
-    }
-
-    return extractVarsFromString(globalVarValue).some(usedVarName => {
-        return hasThemedVarDependency(usedVarName, Processor, visited)
-    })
+    return readVarValues(varName, Processor).some(value =>
+        extractVarsFromString(value).some(usedVarName => someVarReads(usedVarName, Processor, matches, visited))
+    )
 }
+
+const hasThemedVarDependency = (varName: string, Processor: ProcessorBuilder) =>
+    someVarReads(varName, Processor, name => Object.values(Processor.scopedVars).some(scopedVars => name in scopedVars))
+
+const PLATFORM_COLOR = 'rt.platformColor'
+
+const usesPlatformColorVar = (varName: string, Processor: ProcessorBuilder) =>
+    someVarReads(varName, Processor, name => readVarValues(name, Processor).some(value => value.includes(PLATFORM_COLOR)))
 
 export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
     const stylesheetsEntries = Object.entries(Processor.stylesheets)
@@ -111,6 +120,12 @@ export const addMetaToStylesTemplate = (Processor: ProcessorBuilder) => {
 
                 if (rtl !== null) {
                     dependencies.add(StyleDependency.Rtl)
+                }
+
+                // Android resolves a platform color only when it is applied, so it is reapplied after an appearance change
+                if (stringifiedEntries.includes(PLATFORM_COLOR) || usedVars.some(usedVarName => usesPlatformColorVar(usedVarName, Processor))) {
+                    dependencies.add(StyleDependency.Theme)
+                    dependencies.add(StyleDependency.ColorScheme)
                 }
 
                 if (stringifiedEntries.includes('rt.screen')) {
