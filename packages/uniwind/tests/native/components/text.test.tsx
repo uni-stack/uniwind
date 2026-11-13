@@ -73,4 +73,26 @@ describe('Text', () => {
             color: TW_BLUE_500,
         })
     })
+    test('Line break classes become Text props', () => {
+        const { getByText } = render(
+            <React.Fragment>
+                <Text className="[line-break:strict] [word-break:auto-phrase]">Phrase</Text>
+                <Text className="break-all [line-break:anywhere]">Unsupported</Text>
+                <Text className="[line-break:strict]" {...{ lineBreak: 'loose' }}>Prop wins</Text>
+            </React.Fragment>,
+        )
+
+        expect(getByText('Phrase').props).toMatchObject({ lineBreak: 'strict', wordBreak: 'auto-phrase' })
+        expect(getByText('Unsupported').props.lineBreak).toBeUndefined()
+        expect(getByText('Unsupported').props.wordBreak).toBeUndefined()
+        expect(getByText('Prop wins').props.lineBreak).toBe('loose')
+    })
+
+    test('Text width mode keeps React Native experimental name', () => {
+        const { getByText } = render(<Text className="[experimental-text-width-mode:longest-line]">Longest</Text>)
+
+        expect(StyleSheet.flatten(getByText('Longest').props.style)).toEqual({
+            experimental_textWidthMode: 'longest-line',
+        })
+    })
 })

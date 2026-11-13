@@ -2,7 +2,7 @@ import { Appearance, Dimensions, I18nManager, PixelRatio, StyleSheet } from 'rea
 import { ColorScheme, Orientation } from '../../common/consts'
 import { colorMix, parseColor } from '../../uniparser/src/common/color/runtimeColors'
 import type { UniwindRuntime as UniwindRuntimeType } from '../types'
-import { lightDark, readInheritedVariable } from './native-utils'
+import { lightDark, platformColor, readInheritedVariable } from './native-utils'
 
 const window = Dimensions.get('window')
 const initialColorScheme = Appearance.getColorScheme() ?? ColorScheme.Light
@@ -30,6 +30,7 @@ export const UniwindRuntime = {
     lightDark: () => '',
     parseColor,
     readInheritedVariable,
+    platformColor,
 } as UniwindRuntimeType
 
 UniwindRuntime.lightDark = lightDark.bind(UniwindRuntime)

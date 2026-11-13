@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import type { ColorValue, ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
@@ -62,6 +62,7 @@ export type UniwindRuntime = {
     lightDark: (light: string, dark: string) => string
     parseColor: (type: string, color: string) => string
     readInheritedVariable: (vars: Vars, name: string) => unknown
+    platformColor: (iosNames: Array<string>, androidNames: Array<string>, fallback?: string) => ColorValue | undefined
 }
 
 export type RNStyle = ViewStyle & TextStyle & ImageStyle & {

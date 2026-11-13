@@ -1,4 +1,7 @@
+import { Appearance, Platform } from 'react-native'
+import { ColorScheme, Platform as UniwindPlatform } from '../../common/consts'
 import { parseColorText, toHexColor } from '../../uniparser/src/common/color'
+import { isReactNativeAtLeast } from '../reactNativeVersion'
 import type { CSSVariables, UniwindRuntime, Var, Vars } from '../types'
 
 const scopedVarsCache = new WeakMap<CSSVariables, Vars>()
@@ -50,4 +53,23 @@ export const readInheritedVariable = (vars: Vars, name: string) => {
     const parent = owner === null ? null : Object.getPrototypeOf(owner) as Vars | null
 
     return parent === null ? undefined : parent[name]?.(parent)
+}
+
+// React Native reads a fallback from 0.88, Android below it drops a color object with one
+const takesPlatformColorFallback = isReactNativeAtLeast(88)
+
+export const platformColor = (iosNames: Array<string>, androidNames: Array<string>, fallback?: string) => {
+    const isIOS = Platform.OS === UniwindPlatform.iOS
+    const names = isIOS ? iosNames : Platform.OS === UniwindPlatform.Android ? androidNames : []
+
+    if (names.length === 0) {
+        return fallback
+    }
+
+    // Android resolves a resource when the prop changes, so the color carries the appearance it was resolved in
+    const color = isIOS
+        ? { semantic: names }
+        : { resource_paths: names, uniwindColorScheme: [Appearance.getColorScheme() ?? ColorScheme.Light] }
+
+    return fallback !== undefined && takesPlatformColorFallback ? { ...color, fallback } : color
 }

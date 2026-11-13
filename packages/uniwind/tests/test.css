@@ -8,6 +8,7 @@
 }
 
 @theme {
+  --color-system-label: platform-color(label, ?android:attr/textColorPrimary, #000000);
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
   --spacing-test: 123px;

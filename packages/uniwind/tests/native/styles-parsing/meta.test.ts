@@ -30,6 +30,17 @@ describe('Styles Metadata', () => {
         expect(stylesheet['bg-foreground'][0].dependencies).toContain(StyleDependency.Theme)
     })
 
+    test('Platform colors depend on the appearance', async () => {
+        const { stylesheet } = await compileMetadata()
+
+        expect(stylesheet['bg-[platform-color(systemBlue,?attr/colorPrimary,#007aff)]'][0].dependencies).toEqual(
+            expect.arrayContaining([StyleDependency.Theme, StyleDependency.ColorScheme]),
+        )
+        expect(stylesheet['text-system-label'][0].dependencies).toEqual(
+            expect.arrayContaining([StyleDependency.Theme, StyleDependency.ColorScheme]),
+        )
+    })
+
     test('Combined variants', async () => {
         const { stylesheet } = await compileMetadata()
 

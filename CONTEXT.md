@@ -162,6 +162,7 @@ Important concepts:
 - Native media types treat `all` and `screen` as matching and `print` as nonmatching. Unsupported media types/features are ignored through negation and logical grouping, preserving utilities such as `not-hover` while retaining supported conditions in the same query. Ignored conditions stay distinct from boolean `true`/`false` during compilation and add no runtime dependency.
 - Unsupported CSS features may be silently ignored on native. Prefer documenting support coverage over adding noisy runtime failures for every unsupported CSS construct.
 - Tailwind composes `filter` from per-utility `--tw-*` variables and relies on `var(--x,)` empty fallbacks for unset parts, so `Var` resolves those to an empty string. Each filter function compiles to a string expression with its unit appended (`"blur(" + expr + "px)"`), so `addMissingSpaces` cannot corrupt an inline `blur(${...}px)` template.
+- `platform-color(<name>..., <fallback>)` compiles to React Native's PlatformColor objects: a name starting with `?` or `@` is an Android resource, any other an iOS semantic color, and the last of two or more arguments is the fallback, which is the whole color on a platform without a name and on web. The `fallback` key is sent only from React Native 0.88, where native reads it (Android's View props still throw on a name that does not resolve). Android resolves a color only when its prop changes, so its object carries the appearance it was resolved in and the class depends on theme and color scheme.
 - Filter runtime support is platform-dependent: Android applies filters at the default release level (blur and drop-shadow need API 31+, and one blur in the chain sends the whole chain down that path), while iOS renders blur/grayscale/saturate/contrast/hue-rotate only behind the `enableSwiftUIBasedFilters` React Native feature flag — experimental in RN 0.83-0.86, canary in 0.87, absent before 0.83.
 - `backdrop-filter` has no RN equivalent and is still dropped.
 - `text-align: start/end` passes through as `textAlign`; RN resolves `end` from 0.87 (older versions fall back to natural alignment).
@@ -183,6 +184,7 @@ Native components:
 - Most components combine generated style before user style: `[generatedStyle, props.style]`, preserving user overrides.
 - Stateful components such as `Pressable` pass `pressed`, `focused`, and `disabled` state into style resolution.
 - Accent-capable components use `accentColor` extraction helpers where needed.
+- `Text` passes `line-clamp` as `numberOfLines`, and `[line-break:*]` / `[word-break:auto-phrase]` as React Native's `lineBreak` / `wordBreak` Text props (RN 0.89+, Android 13+), only with values React Native takes; user props win. `[experimental-text-width-mode:*]` becomes the `experimental_textWidthMode` style.
 
 Web components:
 

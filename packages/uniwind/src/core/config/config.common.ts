@@ -4,15 +4,14 @@ import { ColorScheme, StyleDependency } from '../../common/consts'
 import type { GetCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
 import { getCSSVariable } from '../../hooks/useCSSVariable/useCSSVariable'
 import { UniwindListener } from '../listener'
+import { isReactNativeAtLeast } from '../reactNativeVersion'
 import type { CSSVariables, GenerateStyleSheetsCallback, ThemeName } from '../types'
 
 const SYSTEM_THEME = 'system' as const
-// Platform.constants is not defined in RNW
-const RN_VERSION = Platform.constants?.reactNativeVersion?.minor ?? 0
 // RN 0.87 deprecated 'unspecified' in favor of 'auto'
-const SYSTEM_COLOR_SCHEME = RN_VERSION >= 87
+const SYSTEM_COLOR_SCHEME = isReactNativeAtLeast(87)
     ? 'auto'
-    : RN_VERSION >= 82
+    : isReactNativeAtLeast(82)
     ? 'unspecified'
     : undefined
 
