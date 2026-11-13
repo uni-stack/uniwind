@@ -6,9 +6,20 @@ import { copyComponentProperties } from '../utils'
 import { useAccentColor } from './useAccentColor'
 import { useStyle } from './useStyle'
 
-type StyleWithWebkitLineClamp = {
+type TextOnlyStyle = {
     WebkitLineClamp?: number
+    lineBreak?: string
+    wordBreak?: string
 }
+
+// Supported from RN 0.89+ and Android 13+, RN logs any other value as unsupported
+const LINE_BREAKS = ['auto', 'loose', 'normal', 'strict']
+const WORD_BREAKS = ['normal', 'auto-phrase']
+
+const toLineBreakProps = ({ lineBreak, wordBreak }: TextOnlyStyle) => ({
+    ...(lineBreak !== undefined && LINE_BREAKS.includes(lineBreak) && { lineBreak }),
+    ...(wordBreak !== undefined && WORD_BREAKS.includes(wordBreak) && { wordBreak }),
+})
 
 export const Text = copyComponentProperties(RNText, (props: TextProps) => {
     const [isPressed, setIsPressed] = useState(false)
@@ -21,10 +32,11 @@ export const Text = copyComponentProperties(RNText, (props: TextProps) => {
 
     return (
         <RNText
+            {...toLineBreakProps(style as TextOnlyStyle)}
             {...props}
             style={[style, props.style]}
             selectionColor={props.selectionColor ?? selectionColor}
-            numberOfLines={(style as StyleWithWebkitLineClamp).WebkitLineClamp ?? props.numberOfLines}
+            numberOfLines={(style as TextOnlyStyle).WebkitLineClamp ?? props.numberOfLines}
             onPressIn={event => {
                 setIsPressed(true)
                 props.onPressIn?.(event)

@@ -183,6 +183,7 @@ Native components:
 - Most components combine generated style before user style: `[generatedStyle, props.style]`, preserving user overrides.
 - Stateful components such as `Pressable` pass `pressed`, `focused`, and `disabled` state into style resolution.
 - Accent-capable components use `accentColor` extraction helpers where needed.
+- `Text` passes `line-clamp` as `numberOfLines`, and `[line-break:*]` / `[word-break:auto-phrase]` as React Native's `lineBreak` / `wordBreak` Text props (RN 0.89+, Android 13+), only with values React Native takes; user props win. `[experimental-text-width-mode:*]` becomes the `experimental_textWidthMode` style.
 
 Web components:
 
