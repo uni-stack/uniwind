@@ -99,10 +99,11 @@ export const parseColor = (type: string, color: string) => {
 
 // React Native reads a fallback from 0.88, Android below it drops a color object with one
 const takesPlatformColorFallback = isReactNativeAtLeast(88)
+const isIOS = Platform.OS === UniwindPlatform.iOS
+const isAndroid = Platform.OS === UniwindPlatform.Android
 
 export const platformColor = (iosNames: Array<string>, androidNames: Array<string>, fallback?: string) => {
-    const isIOS = Platform.OS === UniwindPlatform.iOS
-    const names = isIOS ? iosNames : Platform.OS === UniwindPlatform.Android ? androidNames : []
+    const names = isIOS ? iosNames : isAndroid ? androidNames : []
 
     if (names.length === 0) {
         return fallback

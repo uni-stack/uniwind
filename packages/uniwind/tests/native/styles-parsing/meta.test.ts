@@ -41,6 +41,13 @@ describe('Styles Metadata', () => {
         )
     })
 
+    test('Platform color names keep their digits', async () => {
+        const { stylesheet } = await compileMetadata()
+        const [[, entry]] = stylesheet['bg-[platform-color(@color/primary_500,#007aff)]'][0].entries as Array<[string, () => unknown]>
+
+        expect(String(entry)).toContain('rt.platformColor([], ["@color/primary_500"], "#007aff")')
+    })
+
     test('Combined variants', async () => {
         const { stylesheet } = await compileMetadata()
 

@@ -308,6 +308,10 @@ const toPlatformColorNamePart = (argument: TokenOrValue) => {
             return `@${argument.value.value}`
         case 'colon':
             return ':'
+        case 'number':
+            return String(argument.value.value)
+        case 'dimension':
+            return `${argument.value.value}${argument.value.unit}`
         case 'white-space':
             return ' '
         default:

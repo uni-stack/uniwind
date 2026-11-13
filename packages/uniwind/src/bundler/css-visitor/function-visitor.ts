@@ -50,11 +50,11 @@ export class FunctionVisitor {
 
     // The web has no platform colors, so it takes the fallback, the last argument
     'platform-color'(fn: LightningCSSFunction): TokenOrValue {
-        const lastComma = fn.arguments.map(argument => argument.type === 'token' && argument.value.type === 'comma').lastIndexOf(true)
+        const lastCommaIndex = fn.arguments.findLastIndex(argument => argument.type === 'token' && argument.value.type === 'comma')
         const fallback = fn.arguments
-            .slice(lastComma + 1)
+            .slice(lastCommaIndex + 1)
             .filter(argument => argument.type !== 'token' || argument.value.type !== 'white-space')
 
-        return lastComma !== -1 && fallback.length === 1 ? fallback[0]! : UNSET
+        return lastCommaIndex !== -1 && fallback.length === 1 ? fallback[0]! : UNSET
     }
 }

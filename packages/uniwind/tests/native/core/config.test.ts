@@ -49,4 +49,27 @@ describe('Uniwind native config', () => {
 
         expect(reinit).toHaveBeenCalledTimes(2)
     })
+    test('notifies the color scheme on every appearance change, also with a fixed theme', () => {
+        jest.isolateModules(() => {
+            const { Appearance } = require('react-native')
+            const appearanceListeners: Array<(event: { colorScheme: string }) => void> = []
+
+            jest.spyOn(Appearance, 'addChangeListener').mockImplementation(listener => {
+                appearanceListeners.push(listener as (event: { colorScheme: string }) => void)
+
+                return { remove: () => {} }
+            })
+
+            const { Uniwind: isolatedUniwind } = require('../../../src/core/config/config.native')
+            const { UniwindListener } = require('../../../src/core/listener')
+            const { StyleDependency } = require('../../../src/common/consts')
+            const onColorScheme = jest.fn()
+
+            isolatedUniwind.setTheme('light')
+            UniwindListener.subscribe(onColorScheme, [StyleDependency.ColorScheme])
+            appearanceListeners.forEach(listener => listener({ colorScheme: 'dark' }))
+
+            expect(onColorScheme).toHaveBeenCalled()
+        })
+    })
 })

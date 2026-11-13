@@ -1,23 +1,41 @@
-import { Appearance, Platform } from 'react-native'
-import { platformColor } from '../../../src/core/native/native-utils'
+import type * as NativeUtils from '../../../src/core/native/native-utils'
+
+const loadPlatformColor = (os: 'ios' | 'android', takesFallback: boolean) => {
+    let platformColor: typeof NativeUtils.platformColor | undefined
+
+    jest.isolateModules(() => {
+        const { Platform } = require('react-native')
+
+        Platform.OS = os
+        jest.doMock('../../../src/core/reactNativeVersion', () => ({ isReactNativeAtLeast: () => takesFallback }))
+        platformColor = require('../../../src/core/native/native-utils').platformColor
+    })
+
+    return platformColor!
+}
 
 describe('platformColor', () => {
     afterEach(() => {
-        jest.restoreAllMocks()
+        jest.dontMock('../../../src/core/reactNativeVersion')
     })
 
     test('names an Android resource with the appearance it was resolved in', () => {
-        jest.replaceProperty(Platform, 'OS', 'android')
-        jest.spyOn(Appearance, 'getColorScheme').mockReturnValue('dark')
-
-        expect(platformColor(['label'], ['?attr/colorPrimary'], '#000000')).toEqual({
+        expect(loadPlatformColor('android', true)(['label'], ['?attr/colorPrimary'], '#000000')).toEqual({
             resource_paths: ['?attr/colorPrimary'],
-            uniwindColorScheme: ['dark'],
+            uniwindColorScheme: ['light'],
             fallback: '#000000',
         })
     })
 
+    test('leaves the fallback out below React Native 0.88', () => {
+        expect(loadPlatformColor('android', false)(['label'], ['?attr/colorPrimary'], '#000000')).toEqual({
+            resource_paths: ['?attr/colorPrimary'],
+            uniwindColorScheme: ['light'],
+        })
+        expect(loadPlatformColor('ios', false)(['label'], [], '#000000')).toEqual({ semantic: ['label'] })
+    })
+
     test('takes the fallback without a name for the platform', () => {
-        expect(platformColor([], ['?attr/colorPrimary'], '#000000')).toBe('#000000')
+        expect(loadPlatformColor('ios', true)([], ['?attr/colorPrimary'], '#000000')).toBe('#000000')
     })
 })
