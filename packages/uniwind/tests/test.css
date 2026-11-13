@@ -10,6 +10,7 @@
 }
 
 @theme {
+  --color-system-label: platform-color(label, ?android:attr/textColorPrimary, #000000);
   --color-foo: hsl(var(--foo));
   --color-bar: oklch(var(--bar));
   --color-baz: oklch(0.7 0.1 var(--hue));

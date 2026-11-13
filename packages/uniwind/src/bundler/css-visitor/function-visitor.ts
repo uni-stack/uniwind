@@ -5,6 +5,11 @@ const ONE_PX = {
     value: { type: 'dimension', unit: 'px', value: 1 },
 } satisfies TokenOrValue
 
+const UNSET = {
+    type: 'token',
+    value: { type: 'ident', value: 'unset' },
+} satisfies TokenOrValue
+
 export class FunctionVisitor {
     [name: string]: (fn: LightningCSSFunction) => TokenOrValue
 
@@ -41,5 +46,15 @@ export class FunctionVisitor {
 
     hairlineWidth(): TokenOrValue {
         return ONE_PX
+    }
+
+    // The web has no platform colors, so it takes the fallback, the last argument
+    'platform-color'(fn: LightningCSSFunction): TokenOrValue {
+        const lastCommaIndex = fn.arguments.findLastIndex(argument => argument.type === 'token' && argument.value.type === 'comma')
+        const fallback = fn.arguments
+            .slice(lastCommaIndex + 1)
+            .filter(argument => argument.type !== 'token' || argument.value.type !== 'white-space')
+
+        return lastCommaIndex !== -1 && fallback.length === 1 ? fallback[0]! : UNSET
     }
 }

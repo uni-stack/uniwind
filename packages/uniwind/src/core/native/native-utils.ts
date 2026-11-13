@@ -1,4 +1,7 @@
 import { formatHex, formatHex8, interpolate, parse } from 'culori'
+import { Appearance, Platform } from 'react-native'
+import { ColorScheme, Platform as UniwindPlatform } from '../../common/consts'
+import { isReactNativeAtLeast } from '../reactNativeVersion'
 import type { CSSVariables, ThemeName, Var, Vars } from '../types'
 
 const scopedVarsCache = new WeakMap<CSSVariables, Vars>()
@@ -92,4 +95,24 @@ export const parseColor = (type: string, color: string) => {
     } catch {
         return '#000000'
     }
+}
+
+// React Native reads a fallback from 0.88, Android below it drops a color object with one
+const takesPlatformColorFallback = isReactNativeAtLeast(88)
+const isIOS = Platform.OS === UniwindPlatform.iOS
+const isAndroid = Platform.OS === UniwindPlatform.Android
+
+export const platformColor = (iosNames: Array<string>, androidNames: Array<string>, fallback?: string) => {
+    const names = isIOS ? iosNames : isAndroid ? androidNames : []
+
+    if (names.length === 0) {
+        return fallback
+    }
+
+    // Android resolves a resource when the prop changes, so the color carries the appearance it was resolved in
+    const color = isIOS
+        ? { semantic: names }
+        : { resource_paths: names, uniwindColorScheme: [Appearance.getColorScheme() ?? ColorScheme.Light] }
+
+    return fallback !== undefined && takesPlatformColorFallback ? { ...color, fallback } : color
 }

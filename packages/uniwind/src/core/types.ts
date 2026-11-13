@@ -1,5 +1,5 @@
 import React from 'react'
-import type { ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
+import type { ColorValue, ImageStyle, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import type { ColorScheme, Orientation, StyleDependency } from '../common/consts'
 import type { UniwindContext } from './context'
 
@@ -61,6 +61,7 @@ export type UniwindRuntime = {
     cubicBezier: (x1: number, y1: number, x2: number, y2: number) => string
     lightDark: (light: string, dark: string, themeName: ThemeName) => string
     parseColor: (type: string, color: string) => string
+    platformColor: (iosNames: Array<string>, androidNames: Array<string>, fallback?: string) => ColorValue | undefined
 }
 
 export type RNStyle = ViewStyle & TextStyle & ImageStyle & {

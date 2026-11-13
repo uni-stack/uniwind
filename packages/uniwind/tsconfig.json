@@ -24,6 +24,7 @@
         "jsx": "react-jsx",
         "lib": [
             "es2022",
+            "es2023.array",
             "DOM"
         ]
     },

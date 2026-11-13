@@ -1,4 +1,10 @@
-import type { CalcFor_DimensionPercentageFor_LengthValue, CalcFor_Length, CssColor, Function as FunctionType } from 'lightningcss'
+import type {
+    CalcFor_DimensionPercentageFor_LengthValue,
+    CalcFor_Length,
+    CssColor,
+    Function as FunctionType,
+    TokenOrValue,
+} from 'lightningcss'
 import { Logger } from '../logger'
 import type { ProcessorBuilder } from './processor'
 import { pipe, roundToPrecision } from './utils'
@@ -83,6 +89,10 @@ export class Functions {
 
         if (fn.name === 'color-mix') {
             return this.processColorMix(fn)
+        }
+
+        if (fn.name === 'platform-color') {
+            return this.processPlatformColor(fn)
         }
 
         if (
@@ -259,5 +269,52 @@ export class Functions {
             .filter(token => !['', ',', 'in', 'srgb', 'rgb', 'hsl', 'hwb', 'lab', 'lch', 'oklab', 'oklch'].includes(token.replace(/"/g, '')))
 
         return `rt.colorMix(${tokens.join(', ')})`
+    }
+
+    // platform-color(<name>..., <fallback>): a name starting with ? or @ is an Android resource, any other name an iOS semantic color
+    private processPlatformColor(fn: FunctionType) {
+        const groups: Array<Array<TokenOrValue>> = [[]]
+
+        fn.arguments.forEach(argument => {
+            if (argument.type === 'token' && argument.value.type === 'comma') {
+                groups.push([])
+
+                return
+            }
+
+            groups.at(-1)?.push(argument)
+        })
+
+        const fallback = groups.length > 1 ? this.Processor.CSS.processValue(groups.pop()!) : 'undefined'
+        // Tailwind writes _ in an arbitrary value as a space, and no color name has a space
+        const names = groups.map(group => group.map(toPlatformColorNamePart).join('').trim().replace(/\s+/g, '_'))
+        const androidNames = names.filter(name => /^[?@]/.test(name))
+        const iosNames = names.filter(name => name !== '' && !androidNames.includes(name))
+
+        return `rt.platformColor(${JSON.stringify(iosNames)}, ${JSON.stringify(androidNames)}, ${fallback})`
+    }
+}
+
+const toPlatformColorNamePart = (argument: TokenOrValue) => {
+    if (argument.type !== 'token') {
+        return ''
+    }
+
+    switch (argument.value.type) {
+        case 'ident':
+        case 'delim':
+            return argument.value.value
+        case 'at-keyword':
+            return `@${argument.value.value}`
+        case 'colon':
+            return ':'
+        case 'number':
+            return String(argument.value.value)
+        case 'dimension':
+            return `${argument.value.value}${argument.value.unit}`
+        case 'white-space':
+            return ' '
+        default:
+            return ''
     }
 }
