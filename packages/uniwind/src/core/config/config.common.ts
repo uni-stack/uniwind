@@ -36,6 +36,8 @@ export class UniwindConfigBuilder {
                 this.onThemeChange()
                 UniwindListener.notify([StyleDependency.Theme])
             }
+
+            UniwindListener.notify([StyleDependency.ColorScheme])
         })
     }
 
