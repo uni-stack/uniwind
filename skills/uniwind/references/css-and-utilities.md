@@ -80,8 +80,6 @@ Also works in custom CSS classes (not just `@utility`):
 }
 ```
 
-Inside a [`ScopedTheme`](./theming.md#scopedtheme), `light-dark()` follows the scoped theme, not the app's theme (Uniwind 1.14.0+ / Pro 1.10.0+; older versions always used the app's theme).
-
 ### platform-color(name..., fallback) (Uniwind 1.14.0+ / Pro 1.10.0+)
 
 Uses a system color through React Native's `PlatformColor`, with a fallback for other platforms and for web.
