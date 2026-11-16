@@ -315,42 +315,6 @@ Rules:
 
 Supported component selectors: `ActivityIndicator`, `FlatList`, `Image`, `ImageBackground`, `InputAccessoryView`, `KeyboardAvoidingView`, `Modal`, `Pressable`, `RefreshControl`, `SafeAreaView`, `ScrollView`, `SectionList`, `Switch`, `Text`, `TextInput`, `TouchableHighlight`, `TouchableNativeFeedback`, `TouchableOpacity`, `TouchableWithoutFeedback`, `View`, `VirtualizedList`.
 
-### Drop Shadow Filter (Pro 1.7.0+ / Uniwind 1.12.0+)
-
-Tailwind's `drop-shadow-*` utilities compile to React Native's `filter` style, with preset sizes, arbitrary values and color modifiers, and combine with other filters like `blur-*`:
-
-```tsx
-<View className="drop-shadow-md" />
-<View className="drop-shadow-lg drop-shadow-red-500" />
-<View className="drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]" />
-<View className="blur-sm drop-shadow-lg" />
-```
-
-- Unlike `shadow-*` (React Native `boxShadow`), `drop-shadow-*` follows the rendered shape of the view and its children
-- **Android**: rendered with `RenderEffect`, so it needs Android 12 (API 31)+. Below that the whole filter chain of the element is dropped, not just the drop shadow
-- **iOS**: React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
-- `backdrop-blur-*` / `backdrop-filter` are ignored on native
-
-### Height Media Queries (Pro 1.9.0+ / Uniwind 1.13.0+)
-
-Tailwind breakpoints only check width. For screen height, define a custom variant with a `height` media query in `global.css`:
-
-```css
-@custom-variant tall (@media (height >= 800px));
-@custom-variant short (@media (height < 600px));
-@custom-variant compact-landscape (@media (orientation: landscape) and (height < 500px));
-```
-
-```tsx
-<View className="p-4 short:p-2 tall:p-8">
-  <Text className="text-2xl tall:text-4xl font-bold">Adapts to screen height</Text>
-</View>
-```
-
-- One-off: arbitrary variant `[@media(height>=800px)]:p-8`
-- Supports `min-height` / `max-height`, ranges like `(300px <= height < 500px)`, and combinations with `width`, `orientation` or platform
-- Styles update when the screen size changes (rotation, Split View resize, fold)
-
 ### Suspense Support
 
 Components inside React `Suspense` boundaries are handled correctly. While a subtree is suspended, Uniwind keeps the C++ shadow entries alive so theme updates and runtime changes (dark mode, orientation, etc.) still reach suspended nodes. When the tree unsuspends, styles are already up to date — no flash of stale theme.

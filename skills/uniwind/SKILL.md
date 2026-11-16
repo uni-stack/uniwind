@@ -52,10 +52,10 @@ Read only relevant bundled reference files under `references/` after identifying
 - React Native component className props, accent color props, or component examples: `references/component-bindings.md`
 - Third-party components, `withUniwind`, dynamic class names, `tailwind-variants`, `cn`, important utilities, or style precedence: `references/styling-patterns.md`
 - Themes, CSS variables, `ScopedTheme`, `LayoutDirection`, color spaces, or runtime variable APIs: `references/theming.md`
-- Platform, data, state, responsive, or safe-area utilities: `references/variants-and-selectors.md`
-- CSS functions (including `light-dark()`, `platform-color()`, `min()` / `max()` and `clamp()`), custom CSS, `@utility`, `@theme`, fonts, or gradients: `references/css-and-utilities.md`
+- Platform, data, state, responsive (including height media queries), or safe-area utilities: `references/variants-and-selectors.md`
+- CSS functions (including `light-dark()`, `platform-color()`, `min()` / `max()` and `clamp()`), custom CSS, `@utility`, `@theme`, fonts, drop-shadow filters, or gradients: `references/css-and-utilities.md`
 - React Navigation, UI kits, support matrix, or unsupported classes: `references/integrations.md`
-- Uniwind Pro installation, compatibility, animations, diagnostics and profiling, group variants, default styles, drop-shadow filters, height media queries, native insets, or theme transitions: `references/pro.md`
+- Uniwind Pro installation, compatibility, animations, diagnostics and profiling, group variants, default styles, native insets, or theme transitions: `references/pro.md`
 - Broken styles, setup diagnostics, errors, cache issues, FAQ answers, MCP, or related skills: `references/troubleshooting.md`
 
 ## Workflow

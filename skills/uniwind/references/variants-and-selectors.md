@@ -161,6 +161,26 @@ Usage: `xs:p-2 tablet:p-4 3xl:p-8`
 <View className="w-full lg:w-1/2 md:w-3/4 sm:w-full" />
 ```
 
+### Height Media Queries (Uniwind 1.13.0+ / Pro 1.9.0+)
+
+Tailwind breakpoints only check width. For screen height, define a custom variant with a `height` media query in `global.css`:
+
+```css
+@custom-variant tall (@media (height >= 800px));
+@custom-variant short (@media (height < 600px));
+@custom-variant compact-landscape (@media (orientation: landscape) and (height < 500px));
+```
+
+```tsx
+<View className="p-4 short:p-2 tall:p-8">
+  <Text className="text-2xl tall:text-4xl font-bold">Adapts to screen height</Text>
+</View>
+```
+
+- One-off: arbitrary variant `[@media(height>=800px)]:p-8`
+- Supports `min-height` / `max-height`, ranges like `(300px <= height < 500px)`, and combinations with `width`, `orientation` or platform
+- Styles update when the screen size changes (rotation, Split View resize, fold)
+
 ## Safe Area Utilities
 
 ### Padding

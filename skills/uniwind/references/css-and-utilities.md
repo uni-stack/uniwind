@@ -351,6 +351,22 @@ Font name must **exactly match** the font file name (without extension).
 }
 ```
 
+## Drop Shadow Filter (Uniwind 1.12.0+ / Pro 1.7.0+)
+
+Tailwind's `drop-shadow-*` utilities compile to React Native's `filter` style, with preset sizes, arbitrary values and color modifiers, and combine with other filters like `blur-*`:
+
+```tsx
+<View className="drop-shadow-md" />
+<View className="drop-shadow-lg drop-shadow-red-500" />
+<View className="drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]" />
+<View className="blur-sm drop-shadow-lg" />
+```
+
+- Unlike `shadow-*` (React Native `boxShadow`), `drop-shadow-*` follows the rendered shape of the view and its children
+- **Android**: rendered with `RenderEffect`, so it needs Android 12 (API 31)+. Below that the whole filter chain of the element is dropped, not just the drop shadow
+- **iOS**: React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
+- `backdrop-blur-*` / `backdrop-filter` are ignored on native
+
 ## Gradients
 
 Built-in support — no extra dependencies:
