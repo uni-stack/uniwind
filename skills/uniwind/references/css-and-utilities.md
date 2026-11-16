@@ -364,8 +364,9 @@ Tailwind's `drop-shadow-*` utilities compile to React Native's `filter` style, w
 ```
 
 - Unlike `shadow-*` (React Native `boxShadow`), `drop-shadow-*` follows the rendered shape of the view and its children
+- Any `filter` implies `overflow: hidden` on native, so children that extend past the view are clipped. To let them overflow, put the filter on a wrapper or a sibling view
 - **Android**: rendered with `RenderEffect`, so it needs Android 12 (API 31)+. Below that the whole filter chain of the element is dropped, not just the drop shadow
-- **iOS**: React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
+- **iOS**: needs React Native 0.83+ (older versions draw no drop shadow on iOS). React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
 - `backdrop-blur-*` / `backdrop-filter` are ignored on native
 
 ## Gradients
