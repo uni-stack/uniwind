@@ -19,6 +19,21 @@ All core React Native components support `className` out of the box. Some have a
 | `className` | `style` | — |
 | `selectionColorClassName` | `selectionColor` | ⚡ `accent-` |
 
+Text props from classes (Uniwind 1.14.0+ / Pro 1.10.0+). Tailwind has no `line-break` utility, so use arbitrary properties:
+
+| Class | Becomes | Values |
+|-------|---------|--------|
+| `[line-break:*]` | `lineBreak` prop | `auto`, `loose`, `normal`, `strict` |
+| `[word-break:*]` | `wordBreak` prop | `normal`, `auto-phrase` |
+| `[experimental-text-width-mode:*]` | `experimental_textWidthMode` style (React Native 0.89+) | e.g. `longest-line` |
+
+```tsx
+<Text className="[line-break:strict]">Strict line breaking</Text>
+<Text className="[word-break:auto-phrase]">Keeps phrases together</Text>
+```
+
+On native, other values (e.g. `break-all`, `[line-break:anywhere]`) are dropped because React Native doesn't take them; on web the class is plain CSS, so they work there. A `lineBreak` / `wordBreak` prop passed to `Text` wins over the class. React Native applies `lineBreak` / `wordBreak` from 0.89, on Android 13 (API 33)+. `auto-phrase` only changes text in a locale with phrase-based breaking (Japanese, and Korean from Android 15).
+
 #### Pressable
 
 | Prop | Maps to | Prefix |

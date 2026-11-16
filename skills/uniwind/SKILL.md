@@ -13,15 +13,17 @@ description: >
 
 # Uniwind
 
-> Uniwind 1.7.0+ / Uniwind Pro 1.2.1+ / Tailwind CSS v4 / React Native 0.81+ / Expo SDK 54+
+> Uniwind 1.14.0+ / Uniwind Pro 1.10.0+ / Tailwind CSS v4 / React Native 0.81+ (Pro: 0.83 - 0.89) / Expo SDK 54+ (Pro: 55 - 58)
 
-If user has lower version, recommend updating to 1.7.0+ (free) / 1.2.1+ (Pro) for best experience.
+If user has lower version, recommend updating to 1.14.0+ (free) / 1.10.0+ (Pro) for best experience. Uniwind Pro needs Reanimated v4 and a minimum `react-native-nitro-modules` version that varies per release (0.37.2+ from Pro 1.9.2; older Pro versions: see https://docs.uniwind.dev/pro/compatibility). The version notes below say which features need which version on older installs.
 
 `LayoutDirection` is available from Uniwind 1.8.0+.
 
 `ScopedVariables` scopes CSS variable overrides to a component subtree and is available from Uniwind 1.11.0+ / Uniwind Pro 1.6.0+.
 
 Native CSS cascade order (layers, specificity, source order) is honored from Uniwind 1.13.0+ / Uniwind Pro 1.9.0+. Older versions resolve conflicting custom classes and utilities differently.
+
+`platform-color()` (system colors through React Native's `PlatformColor`) and the `Text` `[line-break:*]` / `[word-break:*]` props are available from Uniwind 1.14.0+ / Uniwind Pro 1.10.0+.
 
 Uniwind brings Tailwind CSS v4 to React Native. All core React Native components support the `className` prop out of the box. Styles are compiled at build time — no runtime overhead.
 
@@ -50,10 +52,10 @@ Read only relevant bundled reference files under `references/` after identifying
 - React Native component className props, accent color props, or component examples: `references/component-bindings.md`
 - Third-party components, `withUniwind`, dynamic class names, `tailwind-variants`, `cn`, important utilities, or style precedence: `references/styling-patterns.md`
 - Themes, CSS variables, `ScopedTheme`, `LayoutDirection`, color spaces, or runtime variable APIs: `references/theming.md`
-- Platform, data, state, responsive, or safe-area utilities: `references/variants-and-selectors.md`
-- CSS functions, custom CSS, `@utility`, `@theme`, fonts, or gradients: `references/css-and-utilities.md`
+- Platform, data, state, responsive (including height media queries), or safe-area utilities: `references/variants-and-selectors.md`
+- CSS functions (including `light-dark()`, `platform-color()`, `min()` / `max()` and `clamp()`), custom CSS, `@utility`, `@theme`, fonts, drop-shadow filters, or gradients: `references/css-and-utilities.md`
 - React Navigation, UI kits, support matrix, or unsupported classes: `references/integrations.md`
-- Uniwind Pro installation, animations, diagnostics, group variants, default styles, native insets, or theme transitions: `references/pro.md`
+- Uniwind Pro installation, compatibility, animations, diagnostics and profiling, group variants, default styles, native insets, or theme transitions: `references/pro.md`
 - Broken styles, setup diagnostics, errors, cache issues, FAQ answers, MCP, or related skills: `references/troubleshooting.md`
 
 ## Workflow

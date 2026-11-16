@@ -1,6 +1,6 @@
 ## CSS Functions
 
-Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). Use `@utility` to create reusable Tailwind-style utility classes:
+Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}`, which only accepts static values and color functions with `var()` channels (see [OKLCH colors](./theming.md#oklch-colors-support)). The exception is `platform-color()`, which also works in `@theme` color variables. Use `@utility` to create reusable Tailwind-style utility classes:
 
 ### hairlineWidth()
 
@@ -78,6 +78,68 @@ Also works in custom CSS classes (not just `@utility`):
   background-color: light-dark(#ffffff, #1f2937);
   color: light-dark(#111827, #f9fafb);
 }
+```
+
+### platform-color(name..., fallback) (Uniwind 1.14.0+ / Pro 1.10.0+)
+
+Uses a system color through React Native's `PlatformColor`, with a fallback for other platforms and for web.
+
+- A name starting with `?` or `@` is an **Android resource** (`?attr/colorPrimary`, `?android:attr/textColorPrimary`, `@android:color/holo_blue_light`)
+- Any other name is an **iOS semantic color** (`label`, `systemBlue`)
+- With two or more arguments, the **last one is the fallback** — any color or a `var()`
+
+```css
+@theme {
+  --color-system-label: platform-color(label, ?android:attr/textColorPrimary, #000000);
+  --color-system-blue: platform-color(systemBlue, @android:color/holo_blue_light, #007aff);
+}
+
+@utility bg-accent-system {
+  background-color: platform-color(systemBlue, ?attr/colorPrimary, #007aff);
+}
+```
+
+```tsx
+<View className="bg-accent-system p-4">
+  <Text className="text-system-label">Follows the system label color</Text>
+</View>
+```
+
+- On a platform with no matching name, and on web, the fallback is the whole color
+- From React Native 0.88 the fallback is also passed to `PlatformColor`, so iOS uses it when a semantic color doesn't exist
+- On Android, classes that use `platform-color()` are applied again after theme and OS appearance changes, so theme attributes and `values-night` colors stay in sync
+- **A missing Android resource crashes the app** from React Native 0.88, even with a fallback (below 0.88 it draws nothing). Only use resources your app or Android provides
+- Attributes that hold a color state list (e.g. `?android:attr/textColorPrimary`) draw nothing before React Native 0.89
+
+### min() / max() (Uniwind 1.10.0+ / Pro 1.5.0+)
+
+`min()` returns the smallest of its arguments, `max()` the largest. Use them to cap or floor a size, e.g. a width that follows the screen but never grows past a fixed value.
+
+```css
+@utility w-card { width: min(90vw, 480px); }
+@utility h-header { height: min(25vh, 12rem); }
+```
+
+Because they are standard CSS functions, they also work in arbitrary values:
+
+```tsx
+<View className="w-[min(90vw,480px)] min-h-[max(50vh,320px)]" />
+```
+
+- Arguments can be `px`, `rem`, `vw` and `vh` lengths, plain numbers, and other functions such as `min()` / `max()`, `calc()`, `pixelRatio()` and `fontScale()`
+- **Percentages are not supported** inside `min()` / `max()`
+
+### clamp() — not supported on native
+
+`clamp()` has no native implementation. It only works when every argument is a constant, because Lightning CSS folds it at build time (`clamp(10px, 50px, 30px)` → `30px`). With a runtime value such as `vw` or `vh`, the declaration is dropped on native. Nest `min()` and `max()` instead:
+
+```css
+/* clamp(100px, 50vw, 300px) */
+@utility w-fluid { width: min(max(100px, 50vw), 300px); }
+```
+
+```tsx
+<View className="w-[min(max(100px,50vw),300px)]" />
 ```
 
 ## Custom CSS & Utilities
@@ -168,6 +230,7 @@ To make a custom class a base that utilities can override, put it in `@layer com
 - Prefer Tailwind utilities for simple, single-property styles
 - Use custom classes for complex or multi-property bundles that would be verbose in className
 - Use `light-dark()` for theme-aware custom classes
+- Use `platform-color()` for OS system colors (iOS semantic colors, Android resources) with a fallback
 - Custom classes are great for shared design tokens that don't fit Tailwind's naming (e.g., `.card`, `.chip`, `.badge-dot`)
 
 ### Custom Utilities (@utility)
@@ -288,6 +351,23 @@ Font name must **exactly match** the font file name (without extension).
   }
 }
 ```
+
+## Drop Shadow Filter (Uniwind 1.12.0+ / Pro 1.7.0+)
+
+Tailwind's `drop-shadow-*` utilities compile to React Native's `filter` style, with preset sizes, arbitrary values and color modifiers, and combine with other filters like `blur-*`:
+
+```tsx
+<View className="drop-shadow-md" />
+<View className="drop-shadow-lg drop-shadow-red-500" />
+<View className="drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]" />
+<View className="blur-sm drop-shadow-lg" />
+```
+
+- Unlike `shadow-*` (React Native `boxShadow`), `drop-shadow-*` follows the rendered shape of the view and its children
+- Any `filter` implies `overflow: hidden` on native, so children that extend past the view are clipped. To let them overflow, put the filter on a wrapper or a sibling view
+- **Android**: rendered with `RenderEffect`, so it needs Android 12 (API 31)+. Below that the whole filter chain of the element is dropped, not just the drop shadow
+- **iOS**: needs React Native 0.83+ (older versions draw no drop shadow on iOS). React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
+- `backdrop-blur-*` / `backdrop-filter` are ignored on native
 
 ## Gradients
 
