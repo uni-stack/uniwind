@@ -1,6 +1,6 @@
 ## CSS Functions
 
-Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). The exception is `platform-color()`, which also works in `@theme` color variables. Use `@utility` to create reusable Tailwind-style utility classes:
+Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}`, which only accepts static values and color functions with `var()` channels (see [OKLCH colors](./theming.md#oklch-colors-support)). The exception is `platform-color()`, which also works in `@theme` color variables. Use `@utility` to create reusable Tailwind-style utility classes:
 
 ### hairlineWidth()
 
@@ -108,7 +108,8 @@ Uses a system color through React Native's `PlatformColor`, with a fallback for 
 - On a platform with no matching name, and on web, the fallback is the whole color
 - From React Native 0.88 the fallback is also passed to `PlatformColor`, so iOS uses it when a semantic color doesn't exist
 - On Android, classes that use `platform-color()` are applied again after theme and OS appearance changes, so theme attributes and `values-night` colors stay in sync
-- **A missing Android resource crashes the app** on every React Native version, even with a fallback. Only use resources your app or Android provides
+- **A missing Android resource crashes the app** from React Native 0.88, even with a fallback (below 0.88 it draws nothing). Only use resources your app or Android provides
+- Attributes that hold a color state list (e.g. `?android:attr/textColorPrimary`) draw nothing before React Native 0.89
 
 ### min() / max() (Uniwind 1.10.0+ / Pro 1.5.0+)
 

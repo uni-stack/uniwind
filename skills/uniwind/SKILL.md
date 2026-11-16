@@ -15,7 +15,7 @@ description: >
 
 > Uniwind 1.14.0+ / Uniwind Pro 1.10.0+ / Tailwind CSS v4 / React Native 0.81+ (Pro: 0.83 - 0.89) / Expo SDK 54+ (Pro: 55 - 58)
 
-If user has lower version, recommend updating to 1.14.0+ (free) / 1.10.0+ (Pro) for best experience. Uniwind Pro also requires `react-native-nitro-modules` 0.37.2+ and Reanimated v4. The version notes below say which features need which version on older installs.
+If user has lower version, recommend updating to 1.14.0+ (free) / 1.10.0+ (Pro) for best experience. Uniwind Pro needs Reanimated v4 and a minimum `react-native-nitro-modules` version that varies per release (0.37.2+ from Pro 1.9.2; older Pro versions: see https://docs.uniwind.dev/pro/compatibility). The version notes below say which features need which version on older installs.
 
 `LayoutDirection` is available from Uniwind 1.8.0+.
 
