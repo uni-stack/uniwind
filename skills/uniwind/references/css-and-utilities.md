@@ -1,6 +1,6 @@
 ## CSS Functions
 
-Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). Use `@utility` to create reusable Tailwind-style utility classes:
+Uniwind provides CSS functions for device-aware and theme-aware styling. These can be used everywhere (custom CSS classes, `@utility`, etc.) — but NOT inside `@theme {}` (which only accepts static values). The exception is `platform-color()`, which also works in `@theme` color variables. Use `@utility` to create reusable Tailwind-style utility classes:
 
 ### hairlineWidth()
 
@@ -78,6 +78,69 @@ Also works in custom CSS classes (not just `@utility`):
   background-color: light-dark(#ffffff, #1f2937);
   color: light-dark(#111827, #f9fafb);
 }
+```
+
+Inside a [`ScopedTheme`](./theming.md#scopedtheme), `light-dark()` follows the scoped theme, not the app's theme (Uniwind 1.14.0+ / Pro 1.10.0+; older versions always used the app's theme).
+
+### platform-color(name..., fallback) (Uniwind 1.14.0+ / Pro 1.10.0+)
+
+Uses a system color through React Native's `PlatformColor`, with a fallback for other platforms and for web.
+
+- A name starting with `?` or `@` is an **Android resource** (`?attr/colorPrimary`, `?android:attr/textColorPrimary`, `@android:color/holo_blue_light`)
+- Any other name is an **iOS semantic color** (`label`, `systemBlue`)
+- With two or more arguments, the **last one is the fallback** — any color or a `var()`
+
+```css
+@theme {
+  --color-system-label: platform-color(label, ?android:attr/textColorPrimary, #000000);
+  --color-system-blue: platform-color(systemBlue, @android:color/holo_blue_light, #007aff);
+}
+
+@utility bg-accent-system {
+  background-color: platform-color(systemBlue, ?attr/colorPrimary, #007aff);
+}
+```
+
+```tsx
+<View className="bg-accent-system p-4">
+  <Text className="text-system-label">Follows the system label color</Text>
+</View>
+```
+
+- On a platform with no matching name, and on web, the fallback is the whole color
+- From React Native 0.88 the fallback is also passed to `PlatformColor`, so iOS uses it when a semantic color doesn't exist
+- On Android, classes that use `platform-color()` are applied again after theme and OS appearance changes, so theme attributes and `values-night` colors stay in sync
+- **A missing Android resource crashes the app** on every React Native version, even with a fallback. Only use resources your app or Android provides
+
+### min() / max() (Uniwind 1.10.0+ / Pro 1.5.0+)
+
+`min()` returns the smallest of its arguments, `max()` the largest. Use them to cap or floor a size, e.g. a width that follows the screen but never grows past a fixed value.
+
+```css
+@utility w-card { width: min(90vw, 480px); }
+@utility h-header { height: min(25vh, 12rem); }
+```
+
+Because they are standard CSS functions, they also work in arbitrary values:
+
+```tsx
+<View className="w-[min(90vw,480px)] min-h-[max(50vh,320px)]" />
+```
+
+- Arguments can be `px`, `rem`, `vw` and `vh` lengths, plain numbers, and other functions such as `min()` / `max()`, `calc()`, `pixelRatio()` and `fontScale()`
+- **Percentages are not supported** inside `min()` / `max()`
+
+### clamp() — not supported on native
+
+`clamp()` has no native implementation. It only works when every argument is a constant, because Lightning CSS folds it at build time (`clamp(10px, 50px, 30px)` → `30px`). With a runtime value such as `vw` or `vh`, the declaration is dropped on native. Nest `min()` and `max()` instead:
+
+```css
+/* clamp(100px, 50vw, 300px) */
+@utility w-fluid { width: min(max(100px, 50vw), 300px); }
+```
+
+```tsx
+<View className="w-[min(max(100px,50vw),300px)]" />
 ```
 
 ## Custom CSS & Utilities
@@ -168,6 +231,7 @@ To make a custom class a base that utilities can override, put it in `@layer com
 - Prefer Tailwind utilities for simple, single-property styles
 - Use custom classes for complex or multi-property bundles that would be verbose in className
 - Use `light-dark()` for theme-aware custom classes
+- Use `platform-color()` for OS system colors (iOS semantic colors, Android resources) with a fallback
 - Custom classes are great for shared design tokens that don't fit Tailwind's naming (e.g., `.card`, `.chip`, `.badge-dot`)
 
 ### Custom Utilities (@utility)

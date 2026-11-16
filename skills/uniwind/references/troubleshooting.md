@@ -64,6 +64,11 @@ When styles aren't working, check in this order:
 | `AssetRegistry` (or another newer `react-native` export) is undefined, e.g. `expo-asset` fails with `Cannot read property 'getAssetByID' of undefined` or `useFonts` never resolves | Older Uniwind re-exported only a fixed list of React Native exports, missing ones added in RN 0.88 | Fixed in Uniwind 1.13.0+ / Pro 1.9.0+, which forwards every `react-native` export. Update Uniwind |
 | Custom CSS class now overrides a utility (or the reverse) after upgrading | Uniwind 1.13.0+ / Pro 1.9.0+ resolves conflicts by CSS cascade: for normal (non-`!important`) declarations unlayered custom CSS beats `@layer utilities`, and className order is ignored | Move the custom class into `@layer components { ... }` so utilities override it, or use `!` on the utility |
 | `@layer theme` variables not rendering on web | Bug with RNW + Expo SDK 55 | Fixed in v1.4.1+. Update Uniwind |
+| `rounded-s-*` / `rounded-e-*` / `rounded-se-*` / `rounded-es-*` round the wrong corners on Android | Android below RN 0.87 maps `borderStartEndRadius` / `borderEndStartRadius` to the wrong corners | Fixed in Uniwind 1.14.0+ / Pro 1.10.0+, which emits `borderTopEndRadius` / `borderBottomStartRadius`. Update Uniwind |
+| Color with a variable channel (`oklch(0.5 0.1 var(--hue))`) doesn't render on native | Older versions generated invalid code and sent the text of the call as the color | Fixed in Uniwind 1.14.0+ / Pro 1.10.0+ (including `/ alpha` and chained `var()` fallbacks). Update Uniwind |
+| `light-dark()` inside a `ScopedTheme` uses the app's theme | Older versions ignored scoped themes in `light-dark()` | Fixed in Uniwind 1.14.0+ / Pro 1.10.0+. Update Uniwind |
+| App crashes on Android with `platform-color()` | The Android resource (`?attr/...`, `@color/...`) doesn't exist; the fallback doesn't prevent the crash | Only use resources your app or Android provides |
+| `[line-break:*]` / `[word-break:*]` has no effect | React Native applies `lineBreak` / `wordBreak` only from 0.89 on Android 13+; unsupported values are dropped; an explicit prop wins | Use RN 0.89+, a supported value, and don't pass the prop on `Text` |
 | `updateCSSVariables` wrong theme at app start | Calling for multiple themes back-to-back; last call wins on first render | Call `updateCSSVariables` for the current theme last. After initial load, order doesn't matter |
 | Pro: animations not working | Missing Babel plugin | Add `react-native-worklets/plugin` to babel.config.js |
 | Pro: module not found | No native rebuild | Run `npx expo prebuild --clean` then `npx expo run:ios` |
@@ -72,6 +77,10 @@ When styles aren't working, check in this order:
 | Pro: download limit reached | Monthly download limit hit | Check Pro dashboard, limits reset monthly |
 | Pro: `Uniwind.updateInsets` called unnecessarily | Pro injects insets natively | `Uniwind.updateInsets` is a no-op in Pro. Remove `SafeAreaListener` setup when using Pro |
 | Pro: theme transition crash | Missing `ThemeTransitionPreset` import or calling before app is ready | Import from `'uniwind'`. Ensure the app has fully mounted before calling `setTheme` with a transition |
+| Pro: inline `transformOrigin` array, `experimental_background{Size,Position,Repeat}`, `PlatformColor` or `DynamicColorIOS` lost after a theme change | Theme changes dropped or reformatted these inline styles | Fixed in Pro 1.10.0+. Update Uniwind Pro |
+| Pro: Android `PlatformColor` (theme attributes, `values-night` colors) one theme change behind | React Native resolved the resource before the theme's night mode reached the activity | Fixed in Pro 1.10.0+, which re-applies them once the night mode changes |
+| Pro: wrong top inset (`pt-safe`) in Android split-screen | Inset came from the window's visible display frame | Fixed in Pro 1.10.0+ (reads root window insets). Update Uniwind Pro |
+| Pro: view mounted just before an OS appearance change, rotation or inset change keeps old values | Native changes were applied before the view was linked to the Shadow Tree | Fixed in Pro 1.10.0+. Update Uniwind Pro |
 | Pro: default component styles not applying | Feature disabled or unsupported selector | Use Uniwind Pro 1.2.0+, enable `experimental.defaultStyles: true`, restart Metro, and use supported RN component selectors like `View` or `Text` |
 
 ### unstable_enablePackageExports Selective Resolver

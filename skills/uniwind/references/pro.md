@@ -18,12 +18,22 @@ Paid upgrade with 100% API compatibility. Built on a 2nd-generation C++ engine f
 - **55+ className props** update without re-renders across 20 components (all component bindings listed above)
 - **Reanimated animations**: `animate-*` and `transition-*` via className (Reanimated v4)
 - **Native insets & runtime values**: Automatic safe area injection, device rotation, and font size updates — no `SafeAreaListener` setup needed
-- **Theme transitions**: Native animated transitions when switching themes (fade, slide, circle mask)
+- **Theme transitions**: Native animated transitions when switching themes (fade, slide, circle mask, blur, and origin-based reveals from the pressed point)
 - **Group variants**: Tailwind `group-active:*` / `group-focus:*` propagate parent interaction state through the C++ shadow tree with zero re-renders
 - **Default styles**: Experimental `1.2.0+` feature for styling default React Native components from CSS selectors like `View { ... }` and `Text { ... }`
 - **Priority support**: Don't let technical hurdles slow your team down
 
 Package: `"uniwind": "npm:uniwind-pro@latest"` in `package.json`.
+
+### Compatibility
+
+Latest Pro version: **1.10.0**. Each release supports the full range below (extended React Native release cycle):
+
+| Uniwind Pro | React Native | Expo SDK | Nitro Modules |
+|-------------|--------------|----------|---------------|
+| 1.10.0 | 0.83 - 0.89 | 55 - 58 | >= 0.37.2 |
+
+Reanimated v4 is required for all Pro versions. Check https://docs.uniwind.dev/pro/compatibility before upgrading for older rows and dependency changes.
 
 ### Installation
 
@@ -234,6 +244,13 @@ Use for: debugging theme switches (`reportUpdates`), detecting memory leaks (mou
 
 Platform support: full diagnostics on iOS and Android. On Web, `enableDiagnostics` is a no-op stub that produces no output.
 
+### Profiling Theme Changes (React Native DevTools, Perfetto, Instruments)
+
+- **Uniwind track in React Native DevTools** (Pro 1.9.1+, development on React Native 0.86+): the Performance panel shows a `Uniwind` track with how long each part of a theme change takes, from notifying listeners and updating the Shadow Tree to applying native updates. Tracing costs nothing when DevTools is not recording
+- **Native trace spans** (Pro 1.9.2+): each step of a theme change (Shadow Tree update and commit, style patch, native updates, cleanup of unmounted views) also shows up as a `Uniwind::<name>` slice in Perfetto / systrace on Android and as a signpost in Instruments on iOS, next to React Native's own slices
+
+Use these to find which phase of a slow theme switch costs the time; use `enableDiagnostics` to see which views and props changed.
+
 ### Group Variants
 
 Tailwind `group` variants propagate parent interaction state to descendants through the C++ shadow tree. No re-renders, no context providers.
@@ -298,6 +315,42 @@ Rules:
 
 Supported component selectors: `ActivityIndicator`, `FlatList`, `Image`, `ImageBackground`, `InputAccessoryView`, `KeyboardAvoidingView`, `Modal`, `Pressable`, `RefreshControl`, `SafeAreaView`, `ScrollView`, `SectionList`, `Switch`, `Text`, `TextInput`, `TouchableHighlight`, `TouchableNativeFeedback`, `TouchableOpacity`, `TouchableWithoutFeedback`, `View`, `VirtualizedList`.
 
+### Drop Shadow Filter (Pro 1.7.0+ / Uniwind 1.12.0+)
+
+Tailwind's `drop-shadow-*` utilities compile to React Native's `filter` style, with preset sizes, arbitrary values and color modifiers, and combine with other filters like `blur-*`:
+
+```tsx
+<View className="drop-shadow-md" />
+<View className="drop-shadow-lg drop-shadow-red-500" />
+<View className="drop-shadow-[0_10px_8px_rgba(0,0,0,0.5)]" />
+<View className="blur-sm drop-shadow-lg" />
+```
+
+- Unlike `shadow-*` (React Native `boxShadow`), `drop-shadow-*` follows the rendered shape of the view and its children
+- **Android**: rendered with `RenderEffect`, so it needs Android 12 (API 31)+. Below that the whole filter chain of the element is dropped, not just the drop shadow
+- **iOS**: React Native gates `drop-shadow` (and `blur`, `grayscale`, `saturate`, `contrast`, `hue-rotate`) behind the `enableSwiftUIBasedFilters` flag, off at the stable release level. Opt in with `RCTReactNativeFactory(delegate: delegate, releaseLevel: .Canary)` on RN 0.87+ or `.Experimental` on RN 0.83 - 0.86. The release level also enables other React Native flags, so test before shipping
+- `backdrop-blur-*` / `backdrop-filter` are ignored on native
+
+### Height Media Queries (Pro 1.9.0+ / Uniwind 1.13.0+)
+
+Tailwind breakpoints only check width. For screen height, define a custom variant with a `height` media query in `global.css`:
+
+```css
+@custom-variant tall (@media (height >= 800px));
+@custom-variant short (@media (height < 600px));
+@custom-variant compact-landscape (@media (orientation: landscape) and (height < 500px));
+```
+
+```tsx
+<View className="p-4 short:p-2 tall:p-8">
+  <Text className="text-2xl tall:text-4xl font-bold">Adapts to screen height</Text>
+</View>
+```
+
+- One-off: arbitrary variant `[@media(height>=800px)]:p-8`
+- Supports `min-height` / `max-height`, ranges like `(300px <= height < 500px)`, and combinations with `width`, `orientation` or platform
+- Styles update when the screen size changes (rotation, Split View resize, fold)
+
 ### Suspense Support
 
 Components inside React `Suspense` boundaries are handled correctly. While a subtree is suspended, Uniwind keeps the C++ shadow entries alive so theme updates and runtime changes (dark mode, orientation, etc.) still reach suspended nodes. When the tree unsuspends, styles are already up to date — no flash of stale theme.
@@ -332,6 +385,17 @@ Uniwind.setTheme('ocean', { preset: ThemeTransitionPreset.CircleCenter });
 Uniwind.setTheme('dark', { preset: ThemeTransitionPreset.Blur });
 Uniwind.setTheme('dark', { preset: ThemeTransitionPreset.BlurRightToLeft });
 
+// Origin transitions (Pro 1.7.0+) — start from the pressed point
+<Pressable
+  onPress={event => {
+    const { pageX, pageY } = event.nativeEvent;
+    Uniwind.setTheme('dark', {
+      preset: ThemeTransitionPreset.CircleFromOrigin,
+      origin: { x: pageX, y: pageY },
+    });
+  }}
+/>
+
 // No animation
 Uniwind.setTheme('light');
 ```
@@ -352,3 +416,11 @@ Available presets:
 | `ThemeTransitionPreset.Blur` | Blur out animation |
 | `ThemeTransitionPreset.BlurRightToLeft` | Directional blur from right to left |
 | `ThemeTransitionPreset.BlurLeftToRight` | Directional blur from left to right |
+| `ThemeTransitionPreset.CircleFromOrigin` | Circle mask expanding from `origin` (Pro 1.7.0+) |
+| `ThemeTransitionPreset.SlideFromOrigin` | Vertical band opening left and right from `origin.x` (Pro 1.7.0+) |
+| `ThemeTransitionPreset.BlurFromOrigin` | Blurred vertical band opening left and right from `origin.x` (Pro 1.7.0+) |
+
+- `origin` is a screen-space point in logical pixels (`pageX` / `pageY` from a press event), used only by the origin presets. If omitted, they reveal from the screen center; points outside the screen are clamped. `SlideFromOrigin` and `BlurFromOrigin` use only `origin.x`
+- Durations are fixed with ease-in-out timing: most presets run ~500ms; `BlurRightToLeft`, `BlurLeftToRight` and `BlurFromOrigin` ~700ms (on Web, `Fade` and `Blur` run 750ms)
+- On Android below API 31, blur presets fall back to a fade (`Blur`) or a plain wipe (directional and origin blur presets)
+- OS-level dark/light switches (Control Center, Settings) are not animated

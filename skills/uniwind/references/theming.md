@@ -179,6 +179,7 @@ import { ScopedTheme } from 'uniwind';
 
 - Nearest `ScopedTheme` wins (nested scopes supported)
 - Hooks (`useUniwind`, `useResolveClassNames`, `useCSSVariable`) resolve against the nearest scoped theme
+- `light-dark()` picks its value from the nearest scoped theme (Uniwind 1.14.0+ / Pro 1.10.0+)
 - `withUniwind`-wrapped components inside the scope also resolve scoped theme values
 - Custom themes require registration in `extraThemes`
 
@@ -308,6 +309,20 @@ Perceptually uniform color format — wider gamut, consistent lightness:
       --color-background: oklch(0.13 0.004 17.69);
     }
   }
+}
+```
+
+Color functions can take a channel from a CSS variable, with or without alpha and with chained fallbacks (resolved on native from Uniwind 1.14.0+ / Pro 1.10.0+; older versions passed the text of the call to native):
+
+```css
+:root {
+  --hue: 240;
+}
+
+@theme {
+  --color-tint: oklch(0.5 0.1 var(--hue));
+  --color-tint-soft: oklch(0.7 0.1 var(--hue) / 0.5);
+  --color-tint-alt: oklch(0.5 0.1 var(--brand-hue, var(--hue, 141)));
 }
 ```
 
