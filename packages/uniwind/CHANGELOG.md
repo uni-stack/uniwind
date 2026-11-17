@@ -1,4 +1,32 @@
-## What's Changed in 1.13.2
+## What's Changed in 1.14.0
+
+
+
+### 🚀 Features
+* feat: platform-color() for system colors with a fallback by @jpudysz in [#772](https://github.com/uni-stack/uniwind/pull/772)
+* feat(native): pass line-break and word-break classes to Text props by @jpudysz in [#771](https://github.com/uni-stack/uniwind/pull/771)
+
+
+### 🐛 Bug Fixes
+* fix(bundler): emit top/bottom aliases for start-end and end-start radii by @jpudysz in [#768](https://github.com/uni-stack/uniwind/pull/768)
+* fix(native): resolve light-dark with scoped theme by @Brentlok in [#766](https://github.com/uni-stack/uniwind/pull/766)
+* fix(bundler): resolve a variable channel inside a native color function by @Wadiou in [#762](https://github.com/uni-stack/uniwind/pull/762)
+
+
+### ⚡ Performance
+* perf(native): memoize CSS variable value normalization by @Brentlok in [#767](https://github.com/uni-stack/uniwind/pull/767)
+* perf: drop unused index and className from native style records by @Brentlok in [#765](https://github.com/uni-stack/uniwind/pull/765)
+* perf: cache native styles that use data-[…] variants by @JaydeepAgravat in [#764](https://github.com/uni-stack/uniwind/pull/764)
+
+
+### 🧪 Testing
+* test(native): text decoration style and color, mix-blend-mode by @jpudysz in [#770](https://github.com/uni-stack/uniwind/pull/770)
+
+
+### New Contributors
+* @JaydeepAgravat made their first contribution in [#764](https://github.com/uni-stack/uniwind/pull/764)
+* @Wadiou made their first contribution in [#762](https://github.com/uni-stack/uniwind/pull/762)
+**Full Changelog**: https://github.com/uni-stack/uniwind/compare/v1.13.2...v1.14.0## What's Changed in 1.13.2
 
 
 
