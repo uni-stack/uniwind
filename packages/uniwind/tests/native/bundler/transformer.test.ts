@@ -5,6 +5,10 @@ import { isImportedStylesheet } from '../../../src/bundler/adapters/metro/transf
 import { UniwindBundlerConfig } from '../../../src/bundler/config'
 import { compileTailwind } from '../../../src/bundler/css-compiler/compileTailwind'
 
+jest.mock('metro-transform-worker', () => ({
+    transform: jest.fn(async (_config: unknown, _projectRoot: string, _filePath: string, data: Buffer) => data.toString()),
+}))
+
 let root = ''
 
 beforeEach(() => {
@@ -59,4 +63,24 @@ test.each([
         join(realRoot, 'app', 'tokens.css'),
         join(realRoot, 'packages', 'brand', 'brand.css'),
     ])
+})
+
+test.each([
+    ['POSIX', '/', 'node_modules/uniwind/dist/module/components/web/metro-injected.js'],
+    ['Windows', '\\', 'node_modules\\uniwind\\dist\\module\\components\\web\\metro-injected.js'],
+])('injects extra themes into metro-injected.js on %s', async (_, sep, filePath) => {
+    let transform: typeof import('../../../src/bundler/adapters/metro/transformer').transform
+
+    jest.isolateModules(() => {
+        jest.doMock('path', () => ({ ...jest.requireActual('path'), sep }))
+        transform = require('../../../src/bundler/adapters/metro/transformer').transform
+    })
+
+    const config = { uniwind: { cssEntryFile: './global.css', extraThemes: ['warm'] } } as unknown as Parameters<typeof transform>[0]
+    const options = { type: 'module', platform: 'web' } as Parameters<typeof transform>[4]
+
+    const output = await transform!(config, process.cwd(), filePath, Buffer.from(''), options)
+
+    expect(output).toContain('Uniwind.__reinit(() => ({}), ')
+    expect(output).toContain('warm')
 })
